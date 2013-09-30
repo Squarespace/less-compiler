@@ -16,31 +16,62 @@ public class EncodeUtils {
   private EncodeUtils() {
   }
   
+  private interface CharTest {
+
+    public boolean member(char ch);
+  
+  }
+  
+  private static final CharTest ENCODE_URI_TEST = new CharTest() {
+    @Override
+    public boolean member(char ch) {
+      return CharClass.isMember(ch, ENCODE_URI_CLASS);
+    }
+  };
+
+  private static final CharTest ENCODE_URI_COMPONENT_TEST = new CharTest() {
+    @Override
+    public boolean member(char ch) {
+      return CharClass.isMember(ch, ENCODE_URI_COMPONENT_CLASS);
+    }
+  };
+
+  private static final CharTest ESCAPE_TEST = new CharTest() {
+    @Override
+    public boolean member(char ch) {
+      return CharClass.isMember(ch, ENCODE_URI_CLASS) && !CharClass.isMember(ch, CharClass.ESCAPE);
+    }
+  };
+  
   /**
    * Implementation of JavaScript's encodeURI function.
    */
   public static String encodeURI(String uri) {
-    return encodeChars(uri, ENCODE_URI_CLASS);
+    return encodeChars(uri, ENCODE_URI_TEST);
   }
 
   /**
    * Implementation of JavaScripts encodeURIComponent function.
    */
   public static String encodeURIComponent(String uri) {
-    return encodeChars(uri, ENCODE_URI_COMPONENT_CLASS);
+    return encodeChars(uri, ENCODE_URI_COMPONENT_TEST);
   }
 
+  public static String escape(String uri) {
+    return encodeChars(uri, ESCAPE_TEST);
+  }
+  
   /**
    * Emits UTF-8 hex escape sequences for all characters which are not members of
    * the given character class. It ignores bad unicode sequences.
    */
-  private static String encodeChars(String uri, int charClass) {
+  private static String encodeChars(String uri, CharTest charTest) {
     StringBuilder buf = new StringBuilder();
     int size = uri.length();
     int i = 0;
     while (i < size) {
       char ch = uri.charAt(i);
-      if (CharClass.isMember(ch, charClass)) {
+      if (charTest.member(ch)) {
         buf.append(ch);
         i++;
         continue;

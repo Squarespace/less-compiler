@@ -22,6 +22,7 @@ public class CharClass {
   public static final int SKIPPABLE = 0x2000;
   public static final int ENCODE_URI = 0x4000;
   public static final int ENCODE_URI_COMPONENT = 0x8000;
+  public static final int ESCAPE = 0x10000;
   
   // The characters we care about all live below this limit.
   private static final int LIMIT = 0x80;
@@ -134,6 +135,8 @@ public class CharClass {
         return ENCODE_URI | ENCODE_URI_COMPONENT;
         
       case '#':
+        return ENCODE_URI | ESCAPE;
+        
       case '$':
         return ENCODE_URI;
         
@@ -147,10 +150,10 @@ public class CharClass {
         return ENCODE_URI | ENCODE_URI_COMPONENT;
         
       case '(':
-        return ENCODE_URI | ENCODE_URI_COMPONENT;
+        return ENCODE_URI | ENCODE_URI_COMPONENT | ESCAPE;
 
       case ')':
-        return SELECTOR_END | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return SELECTOR_END | ENCODE_URI | ENCODE_URI_COMPONENT | ESCAPE;
         
       case '*':
         return PROPERTY_START | ENCODE_URI | ENCODE_URI_COMPONENT;
@@ -183,13 +186,13 @@ public class CharClass {
         return DIGIT | DIMENSION_START | PROPERTY_START;
       
       case ':':
-        return ENCODE_URI;
+        return ENCODE_URI | ESCAPE;
         
       case ';':
-        return SELECTOR_END | SKIPPABLE | ENCODE_URI;
+        return SELECTOR_END | SKIPPABLE | ENCODE_URI | ESCAPE;
 
       case '=':
-        return ENCODE_URI;
+        return ENCODE_URI | ESCAPE;
         
       case '>':
         return COMBINATOR;

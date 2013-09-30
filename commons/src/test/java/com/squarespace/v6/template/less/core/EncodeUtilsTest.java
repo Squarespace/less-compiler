@@ -2,6 +2,7 @@ package com.squarespace.v6.template.less.core;
 
 import static com.squarespace.v6.template.less.core.EncodeUtils.encodeURI;
 import static com.squarespace.v6.template.less.core.EncodeUtils.encodeURIComponent;
+import static com.squarespace.v6.template.less.core.EncodeUtils.escape;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
@@ -46,4 +47,11 @@ public class EncodeUtilsTest {
     assertEquals(encodeURIComponent("#$&+,/:;?@"), "%23%24%26%2b%2c%2f%3a%3b%3f%40");
   }
   
+  @Test
+  public void testEscape() {
+    
+    // encodeURI characters that this function escapes
+    assertEquals(escape("#():;="), "%23%28%29%3a%3b%3d");
+  }
+
 }

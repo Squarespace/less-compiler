@@ -3,6 +3,7 @@ package com.squarespace.v6.template.less.plugins;
 import java.util.List;
 
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.core.EncodeUtils;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 import com.squarespace.v6.template.less.exec.Function;
 import com.squarespace.v6.template.less.exec.Registry;
@@ -18,7 +19,7 @@ public class GeneralFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Quoted str = (Quoted)args.get(0);
-      str = new Quoted('"', true, str.parts());
+      str = new Quoted(str.delimiter(), true, str.parts());
       return new Anonymous(env.context().render(str));
     }
   };
@@ -27,38 +28,13 @@ public class GeneralFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Quoted str = (Quoted)args.get(0);
-      // XXX: implement
-      return null;
-      
+      str = str.copy();
+      str.setEscape(true);
+      String value = env.context().render(str);
+      return new Anonymous(EncodeUtils.escape(value));
     }
   };
 
-  // XXX: this needs to be escapeURI()
-  private String escape(String str) {
-    StringBuilder buf = new StringBuilder();
-    int size = str.length();
-    for (int i = 0; i < size; i++) {
-      char ch = str.charAt(i);
-      switch (ch) {
-        case '=': buf.append("%3D"); break;
-        case ':': buf.append("%3A"); break;
-        case '#': buf.append("%3B"); break;
-        case '(': buf.append("%28"); break;
-        case ')': buf.append("%29"); break;
-        default: buf.append(ch);
-      }
-    }
-    return buf.toString();
-  }
-  /*
-    escape: function (str) {
-        return new(tree.Anonymous)(encodeURI(str.value).replace(/=/g, "%3D")
-        .replace(/:/g, "%3A").replace(/#/g, "%23").replace(/;/g, "%3B")
-        .replace(/\(/g, "%28").replace(/\)/g, "%29"));
-   */
-
-
-  
   public static final Function FORMAT = new Function("%", "s.") {
     
     @Override
