@@ -20,7 +20,9 @@ public class CharClass {
   public static final int PROPERTY_START = 0x800;
   public static final int VARIABLE_START = 0x1000;
   public static final int SKIPPABLE = 0x2000;
-
+  public static final int NO_ENCODE_URI = 0x4000;
+  public static final int NO_ENCODE_URI_COMPONENT = 0x8000;
+  
   // The characters we care about all live below this limit.
   private static final int LIMIT = 0x80;
   
@@ -71,6 +73,14 @@ public class CharClass {
   
   public static boolean skippable(char ch) {
     return isMember(ch, SKIPPABLE);
+  }
+  
+  public static boolean encodeUri(char ch) {
+    return !isMember(ch, NO_ENCODE_URI | LOWERCASE | UPPERCASE | DIGIT);
+  }
+  
+  public static boolean encodeUriComponent(char ch) {
+    return !isMember(ch, NO_ENCODE_URI_COMPONENT | NO_ENCODE_URI | LOWERCASE | UPPERCASE | DIGIT);
   }
   
   public static boolean whitespace(char ch) {
@@ -128,27 +138,39 @@ public class CharClass {
       case ' ':
         return WHITESPACE | SKIPPABLE;
         
+      case '!':
+      case '#':
+      case '$':
+        
       case '%':
         return CALL_START;
-        
+
+      case '&':
+      case '\'':
+      case '(':
+        return NO_ENCODE_URI;
+
       case ')':
-        return SELECTOR_END;
+        return SELECTOR_END | NO_ENCODE_URI;
         
       case '*':
-        return PROPERTY_START;
+        return PROPERTY_START | NO_ENCODE_URI;
         
       case '+':
-        return DIMENSION_START | COMBINATOR;
+        return DIMENSION_START | COMBINATOR | NO_ENCODE_URI;
         
       case ',':
-        return SELECTOR_END;
+        return SELECTOR_END | NO_ENCODE_URI;
         
       case '-':
-        return CALL_START | DIMENSION_START | KEYWORD_START | PROPERTY_START;
+        return CALL_START | DIMENSION_START | KEYWORD_START | PROPERTY_START | NO_ENCODE_URI;
         
       case '.':
-        return DIMENSION_START;
+        return DIMENSION_START | NO_ENCODE_URI;
       
+      case '/':
+        return NO_ENCODE_URI;
+        
       case '0':
       case '1':
       case '2':
@@ -161,14 +183,23 @@ public class CharClass {
       case '9':
         return DIGIT | DIMENSION_START | PROPERTY_START;
       
+      case ':':
+        return NO_ENCODE_URI;
+        
       case ';':
-        return SELECTOR_END | SKIPPABLE;
+        return SELECTOR_END | SKIPPABLE | NO_ENCODE_URI;
+
+      case '=':
+        return NO_ENCODE_URI;
         
       case '>':
         return COMBINATOR;
         
+      case '?':
+        return NO_ENCODE_URI;
+        
       case '@':
-        return VARIABLE_START;
+        return VARIABLE_START | NO_ENCODE_URI;
         
       case 'A':
       case 'B':
@@ -201,7 +232,7 @@ public class CharClass {
         return UPPERCASE | CALL_START | KEYWORD_START;
 
       case '_':
-        return CALL_START | KEYWORD_START | PROPERTY_START;
+        return CALL_START | KEYWORD_START | PROPERTY_START | NO_ENCODE_URI;
         
       case 'a':
       case 'b':
@@ -243,7 +274,7 @@ public class CharClass {
         return SELECTOR_END;
         
       case '~':
-        return COMBINATOR;
+        return COMBINATOR | NO_ENCODE_URI;
     }
 
     return (ch >= Chars.NO_BREAK_SPACE) ? NONASCII : 0;
