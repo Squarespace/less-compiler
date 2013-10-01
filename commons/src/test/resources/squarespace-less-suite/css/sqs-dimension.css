@@ -1,0 +1,61 @@
+.dimension-unitless {
+  a1: 0;
+  a2: 0.1;
+  a3: 0;
+  a4: -0.1;
+  a5: -1;
+  a6: 3.14159;
+  a7: -3.14159;
+  a8: -0.001;
+  a9: -0.000001;
+  a10: 100000000000.5;
+}
+.dimension-limits {
+  b1: 9223372036854775807;
+  b2: -9223372036854775808;
+  b3: -92233720368547760000;
+}
+.dimension-case {
+  c1: 3.5px;
+  c2: 3.5cm;
+}
+.dimension-absolute-lengths {
+  d1: -3.5cm;
+  d2: -3.5mm;
+  d3: -3.5in;
+  d4: -3.5px;
+  d5: -3.5pt;
+  d6: -3.5pc;
+}
+.dimension-font-relative-lengths {
+  e1: -3.5ch;
+  e2: -3.5em;
+  e3: -3.5ex;
+  e4: -3.5rem;
+}
+.dimension-viewport-relative-lengths {
+  f1: -3.5vh;
+  f2: -3.5vw;
+  f3: -3.5vmin;
+  f4: -3.5vmax;
+  f5: -3.5vm;
+}
+.dimension-times {
+  g1: -3.5s;
+  g2: -3.5ms;
+}
+.dimension-resolutions {
+  h1: -3.5dpi;
+  h2: -3.5dpcm;
+  h3: -3.5dppx;
+}
+.dimension-frequencies {
+  i1: -3.5hz;
+  i2: -3.5khz;
+}
+.dimension-angles {
+  j1: -3.5deg;
+  j2: -3.5grad;
+  j3: -3.5rad;
+  j4: -3.5turn;
+}

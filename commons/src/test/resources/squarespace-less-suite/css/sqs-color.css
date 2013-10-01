@@ -1,0 +1,22 @@
+.color-rgb {
+  a1: black;
+  a2: white;
+  a3: #aaa;
+  a4: #123456;
+}
+.color-keywords {
+  b1: red yellow blue green;
+}
+.color-math {
+  c1: #010101;
+  c2: black;
+  c3: white;
+  c4: #fefefe;
+  c5: #7f0000;
+  c6: magenta;
+  c7: #ff7f00;
+  c8: green, #018101;
+  c9: #888;
+  c10: #666;
+  c11: #246;
+}
