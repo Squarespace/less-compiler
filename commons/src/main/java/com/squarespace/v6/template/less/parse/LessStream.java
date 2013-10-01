@@ -1,8 +1,8 @@
 package com.squarespace.v6.template.less.parse;
 
+import java.nio.file.Path;
 import java.util.regex.Matcher;
 
-import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.model.Node;
 
@@ -70,19 +70,19 @@ public class LessStream extends Stream {
   
   private final Matcher match_WORD;
   
-  private Context context;
-
   private int matchEnd = -1;
   
   private String token;
+  
+  private Path rootPath;
 
   public LessStream(String raw) {
-    this(raw, new Context());
+    this(raw, null);
   }
   
-  public LessStream(String raw, Context ctx) {
+  public LessStream(String raw, Path rootPath) {
     super(raw);
-    this.context = ctx;
+    this.rootPath = rootPath;
     this.match_AND = Patterns.AND.matcher(raw);
     this.match_ANON_RULE_VALUE = Patterns.ANON_RULE_VALUE.matcher(raw);
     this.match_ATTRIBUTE_KEY = Patterns.ATTRIBUTE_KEY.matcher(raw);
@@ -114,8 +114,8 @@ public class LessStream extends Stream {
     this.match_WORD = Patterns.WORD.matcher(raw);
   }
 
-  public Context context() {
-    return context;
+  public Path rootPath() {
+    return rootPath;
   }
   
   /**

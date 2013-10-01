@@ -50,9 +50,13 @@ public class LessCompiler {
   }
   
   public Stylesheet parse(String raw, Context ctx) throws LessException {
+    return parse(raw, ctx, null);
+  }
+  
+  public Stylesheet parse(String raw, Context ctx, Path rootPath) throws LessException {
     LessStats stats = ctx.stats();
     long started = stats.now();
-    LessStream stm = new LessStream(raw, ctx);
+    LessStream stm = new LessStream(raw, rootPath);
     Stylesheet sheet = (Stylesheet) stm.parse(Parselets.STYLESHEET);
     if (!stm.complete()) {
       String remainder = stm.remainder();

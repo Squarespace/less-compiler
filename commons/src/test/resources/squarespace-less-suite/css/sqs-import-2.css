@@ -1,0 +1,9 @@
+.rule {
+  parent-1: true;
+  sibling-1: true;
+  sibling-2: true;
+  child-1: true;
+}
+.rule {
+  output-once: true;
+}

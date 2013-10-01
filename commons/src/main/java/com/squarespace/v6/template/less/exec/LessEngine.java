@@ -48,8 +48,7 @@ public class LessEngine {
    */
   public String render(Stylesheet sheet, Context context) throws LessException {
     sheet = evaluateStylesheet(context.newEnv(), sheet);
-    LessRenderer renderer = new LessRenderer();
-    return renderer.render(context, sheet);
+    return new LessRenderer().render(context, sheet);
   }
 
   public Stylesheet expand(Stylesheet sheet, Context context) throws LessException {
@@ -226,7 +225,10 @@ public class LessEngine {
     }
     
     Context ctx = env.context();
-    Stylesheet stylesheet = ctx.parseImport(path);
+    Stylesheet stylesheet = ctx.parseImport(path, imp.rootPath(), imp.once());
+    if (stylesheet == null) {
+      return new Block(0);
+    }
     expandImports(env, stylesheet.block());
 
     Features features = imp.features();

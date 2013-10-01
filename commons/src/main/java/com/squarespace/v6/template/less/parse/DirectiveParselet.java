@@ -132,7 +132,9 @@ public class DirectiveParselet implements Parselet {
     Features features = (Features) stm.parse(Parselets.FEATURES);
     stm.skipWs();
     if (stm.seekIf(Chars.SEMICOLON)) {
-      return new Import(path, features, once);
+      Import result = new Import(path, features, once);
+      result.setRootPath(stm.rootPath());
+      return result;
     }
     return null;
   }

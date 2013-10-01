@@ -1,12 +1,9 @@
 package com.squarespace.v6.template.less;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.apache.commons.io.IOUtils;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.exec.ExecEnv;
@@ -39,15 +36,25 @@ public class Context {
   
   private LessStats stats;
   
+  private Map<Path, Stylesheet> importCache;
+
+  private ScriptLoader loader;
+  
   public Context() {
     this(DEFAULT_OPTS);
   }
   
   public Context(Options opts) {
+    this(opts, null);
+  }
+  
+  public Context(Options opts, ScriptLoader loader) {
     this.opts = opts;
     this.renderer = new Renderer();
     this.mixinResolver = new MixinResolver();
     this.stats = new LessStats();
+    this.importCache = new HashMap<>();
+    this.loader = loader == null ? new FilesystemScriptLoader() : loader;
   }
   
   public Options options() {
@@ -71,22 +78,20 @@ public class Context {
     return (functionTable != null) ? functionTable.get(symbol) : null;
   }
   
-  // XXX: move to LessImporter
-  public Stylesheet parseImport(String rawPath) throws LessException {
-    Path root = FileSystems.getDefault().getPath(opts.importRoot());
-    Path path = root.resolve(rawPath);
-    return compiler.parse(readFile(path), this);
+  public Stylesheet parseImport(String rawPath, Path rootPath, boolean once) throws LessException {
+    if (rootPath == null) {
+      rootPath = FileSystems.getDefault().getPath(opts.importRoot());
+    }
+    Path path = rootPath.resolve(rawPath).normalize();
+    Stylesheet result = importCache.get(path);
+    if (result != null) {
+      return once ? null : result;
+    }
+    result = compiler.parse(loader.load(path), this, path.getParent());
+    importCache.put(path, result);
+    return result;
   }
   
-  private String readFile(Path path) {
-    try (InputStream input = Files.newInputStream(path)) {
-      return IOUtils.toString(input);
-      
-    } catch (IOException e) {
-      String message = String.format("Failure to read from '%s'", path);
-      throw new RuntimeException(message + ": " + e.getMessage(), e);
-    }
-  }
   
   public LessStats stats() {
     return stats;

@@ -18,13 +18,16 @@ public class ExecEnv {
 
   private FlexList<Block> frames;
 
+  private FlexList<String> rootPath;
+  
   public ExecEnv(Context ctx) {
-    this(ctx, new FlexList<Block>(64));
+    this(ctx, new FlexList<Block>(64), new FlexList<String>(3));
   }
   
-  public ExecEnv(Context ctx, FlexList<Block> initialStack) {
+  public ExecEnv(Context ctx, FlexList<Block> initialStack, FlexList<String> initialRootPath) {
     this.ctx = ctx;
     this.frames = initialStack;
+    this.rootPath = initialRootPath;
   }
   
   public Context context() {
@@ -32,7 +35,7 @@ public class ExecEnv {
   }
   
   public ExecEnv copy() {
-    return new ExecEnv(ctx, frames.copy());
+    return new ExecEnv(ctx, frames.copy(), rootPath.copy());
   }
 
   public void append(FlexList<Block> other) {

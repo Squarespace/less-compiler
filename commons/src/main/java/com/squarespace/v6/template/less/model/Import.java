@@ -2,6 +2,8 @@ package com.squarespace.v6.template.less.model;
 
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
+import java.nio.file.Path;
+
 import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
@@ -11,6 +13,8 @@ import com.squarespace.v6.template.less.exec.ExecEnv;
 public class Import extends BaseNode {
 
   private Node path;
+  
+  private Path rootPath;
 
   private Features features;
   
@@ -38,6 +42,14 @@ public class Import extends BaseNode {
 
   public boolean once() {
     return once;
+  }
+  
+  public Path rootPath() {
+    return rootPath;
+  }
+  
+  public void setRootPath(Path rootPath) {
+    this.rootPath = rootPath;
   }
   
   public String renderPath(ExecEnv env) throws LessException {
