@@ -5,10 +5,11 @@ import static com.squarespace.v6.template.less.ExecuteErrorType.PERCENT_MATH_ORD
 import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 import static com.squarespace.v6.template.less.model.Unit.PERCENTAGE;
 
+import java.math.BigDecimal;
+
 import com.squarespace.v6.template.less.ExecuteErrorType;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
-import com.squarespace.v6.template.less.core.Chars;
 import com.squarespace.v6.template.less.core.ErrorUtils;
 
 
@@ -57,16 +58,12 @@ public class Dimension extends BaseNode {
   
   @Override
   public void repr(Buffer buf) {
-    // XXX: custom precision determined by the units, or some default?
     long lval = (long)value;
     if (lval == value) {
       buf.append(lval);
+
     } else {
-      String str = Double.toString(value);
-      if (str.charAt(0) == Chars.PERIOD) {
-        buf.append('0');
-      }
-      buf.append(str);
+      buf.append(BigDecimal.valueOf(value).stripTrailingZeros().toPlainString());
     }
     if (unit != null) {
       buf.append(unit.repr());

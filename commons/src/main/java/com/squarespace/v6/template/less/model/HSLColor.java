@@ -18,7 +18,10 @@ public class HSLColor extends BaseColor {
   }
   
   public HSLColor(double hue, double saturation, double lightness, double alpha) {
-    this.hue = (hue % 360);
+    if (hue < 0 || hue > 1.0) {
+      throw new RuntimeException("Serious error: something passing hue out of range: " + hue);
+    }
+    this.hue = clamp(hue * 360.0, 0.0, 360.0);
     this.saturation = clamp(saturation, 0.0, 1.0);
     this.lightness = clamp(lightness, 0.0, 1.0);
     this.alpha = clamp(alpha, 0.0, 1.0);

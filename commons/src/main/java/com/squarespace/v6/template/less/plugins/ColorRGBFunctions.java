@@ -57,7 +57,7 @@ public class ColorRGBFunctions implements Registry<Function> {
       return new Dimension(color.green());
     }
   };
-  
+
   public static final Function RED = new Function("red", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {

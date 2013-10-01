@@ -20,10 +20,7 @@ public class DimensionParselet implements Parselet {
       unit = Unit.get(stm.token());
     }
     
-    if (value.indexOf('.') != -1) {
-      return new Dimension(Double.parseDouble(value), unit);
-    } 
-    return new Dimension(Long.parseLong(value), unit);
+    return new Dimension(Double.parseDouble(value), unit);
   }
   
 }

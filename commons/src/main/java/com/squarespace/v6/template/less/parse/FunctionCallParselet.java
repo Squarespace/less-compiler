@@ -21,11 +21,11 @@ public class FunctionCallParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
+    Mark position = stm.mark();
     if (!CharClass.callStart(stm.peek()) || !stm.matchCallName()) {
       return null;
     }
 
-    Mark position = stm.mark();
     String name = stm.token();
     String nameLC = name.toLowerCase();
     if (nameLC.equals("url")) {
@@ -38,7 +38,7 @@ public class FunctionCallParselet implements Parselet {
       if (result != null) {
         return result;
       }
-      // Fall through, consuming the rest of the call.
+      // Fall through, assuming the built-in alpha function.
     }
   
     FunctionCall call = new FunctionCall(name);

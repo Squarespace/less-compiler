@@ -17,7 +17,7 @@ import com.squarespace.v6.template.less.model.Stylesheet;
 import com.squarespace.v6.template.less.parse.LessStream;
 import com.squarespace.v6.template.less.parse.Parselets;
 import com.squarespace.v6.template.less.plugins.ColorAdjustmentFunctions;
-import com.squarespace.v6.template.less.plugins.ColorCombinationsFunctions;
+import com.squarespace.v6.template.less.plugins.ColorCombinationFunctions;
 import com.squarespace.v6.template.less.plugins.ColorHSLFunctions;
 import com.squarespace.v6.template.less.plugins.ColorRGBFunctions;
 import com.squarespace.v6.template.less.plugins.GeneralFunctions;
@@ -97,7 +97,7 @@ public class LessCompiler {
   public static FunctionTable buildFunctionTable() {
     FunctionTable table = new FunctionTable();
     table.register(new ColorAdjustmentFunctions());
-    table.register(new ColorCombinationsFunctions());
+    table.register(new ColorCombinationFunctions());
     table.register(new ColorHSLFunctions());
     table.register(new ColorRGBFunctions());
     table.register(new GeneralFunctions());

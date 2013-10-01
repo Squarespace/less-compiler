@@ -114,7 +114,7 @@ public class RGBColor extends BaseColor {
       }
       h /= 6.0;
     }
-    return new HSLColor(h * 360, s, l, alpha);
+    return new HSLColor(h, s, l, alpha);
   }
 
   public Anonymous toARGB() {
@@ -133,7 +133,7 @@ public class RGBColor extends BaseColor {
 
   }
   public static RGBColor fromHSVA(double hue, double saturation, double value, double alpha) {
-    hue = (((int)hue % 360) / 360.0) * 360;
+    hue *= 360;
     int i = (int)Math.floor(( hue / 60) % 6);
     double f = (hue / 60.0) - i;
     double[] values = new double[] {

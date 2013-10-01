@@ -8,10 +8,12 @@ import com.squarespace.v6.template.less.exec.Function;
 import com.squarespace.v6.template.less.exec.Registry;
 import com.squarespace.v6.template.less.exec.SymbolTable;
 import com.squarespace.v6.template.less.model.Colors;
+import com.squarespace.v6.template.less.model.Dimension;
 import com.squarespace.v6.template.less.model.HSLColor;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.NodeType;
 import com.squarespace.v6.template.less.model.RGBColor;
+import com.squarespace.v6.template.less.model.Unit;
 
 
 public class ColorAdjustmentFunctions implements Registry<Function> {
@@ -59,27 +61,27 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
   public static final Function FADE = new Function("fade", "cp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      HSLColor hsl = hsl(args.get(0));
-      double value = number(args.get(1));
-      return new HSLColor(hsl.hue(), hsl.saturation(), hsl.lightness(), value);
+      RGBColor rgb = rgb(args.get(0));
+      double alpha = number(args.get(1));
+      return new RGBColor(rgb.red(), rgb.green(), rgb.blue(), alpha);
     }
   };
-
+  
   public static final Function FADEIN = new Function("fadein", "cp") {
     @Override
     public Node invoke(ExecEnv env, java.util.List<Node> args) throws LessException {
-      HSLColor hsl = hsl(args.get(0));
-      double value = number(args.get(1));
-      return new HSLColor(hsl.hue(), hsl.saturation(), hsl.lightness(), hsl.alpha() + value);
+      RGBColor rgb = rgb(args.get(0));
+      double amount = number(args.get(1));
+      return new RGBColor(rgb.red(), rgb.green(), rgb.blue(), rgb.alpha() + amount);
     }
   };
   
   public static final Function FADEOUT = new Function("fadeout", "cp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      HSLColor hsl = hsl(args.get(0));
-      double value = number(args.get(1));
-      return new HSLColor(hsl.hue(), hsl.saturation(), hsl.lightness(), hsl.alpha() - value);
+      RGBColor rgb = rgb(args.get(0));
+      double amount = number(args.get(1));
+      return new RGBColor(rgb.red(), rgb.green(), rgb.blue(), rgb.alpha() - amount);
     }
   };
   
@@ -113,10 +115,15 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
-      double value = number(args.get(1));
+      Dimension amount = (Dimension)args.get(1);
+      double value = amount.value();
+      if (amount.unit() == Unit.PERCENTAGE) {
+        value = (value / 100.0) * 360;
+      }
       double hue = (hsl.hue() + value) % 360;
       hue = hue < 0 ? 360 + hue : hue;
-      return new HSLColor(hue, hsl.saturation(), hsl.lightness(), hsl.alpha());
+      Node result = new HSLColor(hue / 360.0, hsl.saturation(), hsl.lightness(), hsl.alpha());
+      return result;
     }
   };
   

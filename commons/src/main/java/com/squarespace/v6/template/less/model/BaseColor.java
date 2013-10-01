@@ -35,7 +35,7 @@ public abstract class BaseColor extends BaseNode {
   }
   
   public static double clamp(double val, double min, double max) {
-    return Math.min(max, Math.max(0, val));
+    return Math.min(Math.max(val, min), max);
   }
   
   @Override

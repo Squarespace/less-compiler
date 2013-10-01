@@ -48,7 +48,7 @@ public abstract class Function {
   public static double scaled(Node node, double scale) throws LessException {
     Dimension dim = (Dimension)node;
     double value = number(node);
-    return dim.unit() == Unit.PERCENTAGE ? value * scale : value;
+    return dim.unit() == Unit.PERCENTAGE ? (value * .01) * scale : value;
   }
   
   public static HSLColor hsl(Node node) throws LessException {

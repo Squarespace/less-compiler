@@ -22,7 +22,7 @@ public class ColorHSLFunctions implements Registry<Function> {
       double hue = number(args.get(0));
       double saturation = number(args.get(1));
       double lightness = number(args.get(2));
-      return new HSLColor(hue, saturation, lightness, 1.0);
+      return new HSLColor(hue % 360 / 360.0, saturation, lightness, 1.0);
     }
   };
 
@@ -33,7 +33,7 @@ public class ColorHSLFunctions implements Registry<Function> {
       double saturation = number(args.get(1));
       double lightness = number(args.get(2));
       double alpha = number(args.get(3));
-      return new HSLColor(hue, saturation, lightness, alpha);
+      return new HSLColor(hue % 360 / 360.0, saturation, lightness, alpha);
     }
   };
 
@@ -43,7 +43,7 @@ public class ColorHSLFunctions implements Registry<Function> {
       double hue = number(args.get(0));
       double saturation = number(args.get(1));
       double value = number(args.get(2));
-      return RGBColor.fromHSVA(hue, saturation, value, 1.0);
+      return RGBColor.fromHSVA(hue % 360 / 360.0, saturation, value, 1.0);
     }
   };
 
@@ -54,7 +54,7 @@ public class ColorHSLFunctions implements Registry<Function> {
       double saturation = number(args.get(1));
       double value = number(args.get(2));
       double alpha = number(args.get(3));
-      return RGBColor.fromHSVA(hue, saturation, value, alpha);
+      return RGBColor.fromHSVA(hue % 360 / 360.0, saturation, value, alpha);
     }
   };
   
@@ -85,14 +85,6 @@ public class ColorHSLFunctions implements Registry<Function> {
       return new Dimension(Math.round(rgb(args.get(0)).luma() * 100.0), Unit.PERCENTAGE);
     }
   };
-
-  /*
-   return new(tree.Dimension)(Math.round((0.2126 * (color.rgb[0]/255) +
-            0.7152 * (color.rgb[1]/255) +
-            0.0722 * (color.rgb[2]/255)) *
-            color.alpha * 100), '%');
-    
-   */
   
   @Override
   public void registerTo(SymbolTable<Function> table) {
