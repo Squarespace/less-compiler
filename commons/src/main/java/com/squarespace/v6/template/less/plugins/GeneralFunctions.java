@@ -1,8 +1,13 @@
 package com.squarespace.v6.template.less.plugins;
 
+import static com.squarespace.v6.template.less.ExecuteErrorType.GENERAL;
+import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+
 import java.util.List;
 
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.CharClass;
 import com.squarespace.v6.template.less.core.EncodeUtils;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 import com.squarespace.v6.template.less.exec.Function;
@@ -10,10 +15,21 @@ import com.squarespace.v6.template.less.exec.Registry;
 import com.squarespace.v6.template.less.exec.SymbolTable;
 import com.squarespace.v6.template.less.model.Anonymous;
 import com.squarespace.v6.template.less.model.Node;
+import com.squarespace.v6.template.less.model.NodeType;
 import com.squarespace.v6.template.less.model.Quoted;
 
 
 public class GeneralFunctions implements Registry<Function> {
+  
+  private static String asString(ExecEnv env, Node node, boolean escape) throws LessException {
+    if (escape && node.is(NodeType.QUOTED)) { 
+      Quoted str = (Quoted)node;
+      str = str.copy();
+      str.setEscape(true);
+      node = str;
+    }
+    return env.context().render(node);
+  }
   
   public static final Function E = new Function("e", "s") {
     @Override
@@ -27,38 +43,63 @@ public class GeneralFunctions implements Registry<Function> {
   public static final Function ESCAPE = new Function("escape", "s") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      Quoted str = (Quoted)args.get(0);
-      str = str.copy();
-      str.setEscape(true);
-      String value = env.context().render(str);
+      String value = asString(env, args.get(0), true);
       return new Anonymous(EncodeUtils.escape(value));
     }
   };
 
+  /**
+   * See http://lesscss.org/#reference  "% format" section.
+   */
   public static final Function FORMAT = new Function("%", "s.") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      // XXX: implement
-      return null;
+      Quoted orig = (Quoted)args.get(0);
+      String format = asString(env, orig, true);
+      
+      Buffer buf = env.context().newBuffer();
+      int size = format.length();
+      int i = 0; // character index
+      int j = 1; // argument index
+      while (i < size) {
+        char ch = format.charAt(i);
+        if (ch != '%') {
+          buf.append(ch);
+          i++;
+          continue;
+        }
+        
+        i++;
+        if (i == size) {
+          break;
+        }
+        ch = format.charAt(i);
+        if (ch == '%') {
+          buf.append('%');
+          i++;
+          continue;
+        }
+        
+        if (j >= args.size()) {
+          throw new LessException(error(GENERAL).arg0("Not enough arguments for the format params."));
+        }
+        
+        Node arg = args.get(j);
+        boolean escape = (ch == 's' || ch == 'S');
+        String value = asString(env, arg, escape);
+        if (CharClass.uppercase(ch)) {
+          value = EncodeUtils.encodeURIComponent(value);
+        }
+        buf.append(value);
+        i++;
+        j++;
+      }
+      Quoted result = new Quoted(orig.delimiter(), orig.escaped());
+      result.append(new Anonymous(buf.toString()));
+      return result;
     }
   };
 
-  /*  
-  '%': function (quoted, ...) {
-    var args = Array.prototype.slice.call(arguments, 1),
-        str = quoted.value;
-
-    for (var i = 0; i < args.length; i++) {
-        str = str.replace(/%[sda]/i, function(token) {
-            var value = token.match(/s/i) ? args[i].value : args[i].toCSS();
-            return token.match(/[A-Z]$/) ? encodeURIComponent(value) : value;
-        });
-    }
-    str = str.replace(/%%/g, '%');
-    return new(tree.Quoted)('"' + str + '"', str);
-  },
-  */
-  
   @Override
   public void registerTo(SymbolTable<Function> table) {
     // NO-OP

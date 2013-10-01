@@ -76,6 +76,10 @@ public class CharClass {
     return isMember(ch, SKIPPABLE);
   }
   
+  public static boolean uppercase(char ch) {
+    return isMember(ch, UPPERCASE);
+  }
+  
   public static boolean whitespace(char ch) {
     return isMember(ch, WHITESPACE);
   }

@@ -1,0 +1,10 @@
+.function-general-formatting {
+  a1: "repetitions: 3 file: "directory/file.less"";
+  a2: 'repetitions: 3 file: %22directory%2ffile.less%22';
+  a3: "repetitions: 3 file: directory/file.less";
+  a4: 'repetitions: 3 file: directory%2ffile.less';
+}
+.function-general-escape {
+  b1: foo;
+  b2: %28%20%3d%20%29;
+}
