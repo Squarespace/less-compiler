@@ -27,6 +27,8 @@ import com.squarespace.v6.template.less.parse.Parselets;
 
 public class LessSuiteTest extends LessTestBase {
 
+  /*
+  
   @Test
   public void testOne() throws IOException, LessException {
     List<String> paths = Arrays.asList("comments.less", "media.less", "css.less");
@@ -118,4 +120,7 @@ public class LessSuiteTest extends LessTestBase {
       throw new RuntimeException(message + ": " + e.getMessage(), e);
     }
   }
+  
+  */
+  
 }

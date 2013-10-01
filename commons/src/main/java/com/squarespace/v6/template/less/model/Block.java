@@ -128,7 +128,6 @@ public class Block extends BaseNode {
   @Override
   public void repr(Buffer buf) {
     int size = rules.size();
-    System.out.println("size = " + size);
     for (int i = 0; i < size; i++) {
       Node rule = rules.get(i);
       switch (rule.type()) {

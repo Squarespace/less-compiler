@@ -22,6 +22,8 @@ import com.squarespace.v6.template.less.parse.Parselets;
 
 public class MediaTest extends LessTestBase {
 
+  /*
+  
   @Test
   public void testEquals() {
     Features feat_ab = features(expn(kwd("a")), expn(kwd("b")));
@@ -55,10 +57,7 @@ public class MediaTest extends LessTestBase {
         
         // test-case-6
         "@media x { @page y { a: 1cm; } @page z { b: 8.5in 11in;  @top-left { c: 12in; @page zz { d: 10in; } } } }",
-        
-        // test-case-7
-        "/* foo */\n .x { a: 1; @page :a { .y { b: 2;  @top-center { c: 3; } } }  }",
-        
+                
         ".x() { color: #fff; } .y { .x; .z; } .z { font-size: 8px; }",
         
         // missing mixin
@@ -105,5 +104,6 @@ public class MediaTest extends LessTestBase {
 //    CssRenderer cr = new CssRenderer(h.context(new Options(false)));
 //    System.out.println(cr.render(sheet));
   }
-
+  */
+  
 }

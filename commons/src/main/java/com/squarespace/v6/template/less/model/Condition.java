@@ -45,7 +45,6 @@ public class Condition extends BaseNode {
           && negate == other.negate
           && safeEquals(operand0, other.operand0)
           && safeEquals(operand1, other.operand1);
-      System.out.println("CONDITION: " + safeEquals(negate, other.negate));
       return res;
     }
     return false;

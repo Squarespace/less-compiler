@@ -29,7 +29,7 @@ import com.squarespace.v6.template.less.model.Variable;
 
 
 public class LessTest extends LessTestBase {
-
+  /*
   @Test
   public void testBasic() throws LessException {
     Stylesheet root = stylesheet();
@@ -357,5 +357,5 @@ public class LessTest extends LessTestBase {
 //    CssRenderer r = new CssRenderer(new Context(new Options(4)));
 //    System.out.println(r.render(s));
   }
-
+  */
 }

@@ -44,7 +44,7 @@ public class VariableTest extends LessTestBase {
     h.parseEquals("@@a", var("@@a"));
     
     h = new LessHarness(VARIABLE_CURLY);
-    h.parseEquals("@{", null);
+    h.parseFails("@{", INCOMPLETE_PARSE);
     h.parseFails("@{a", INCOMPLETE_PARSE);
     h.parseFails("@{aa", INCOMPLETE_PARSE);
     h.parseEquals("@{aa}", var("@aa", true));

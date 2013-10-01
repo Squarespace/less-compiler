@@ -32,7 +32,6 @@ public class Stylesheet extends BlockNode {
   
   @Override
   public void repr(Buffer buf) {
-    System.out.println("HERE: " + block);
     block.repr(buf);
   }
   

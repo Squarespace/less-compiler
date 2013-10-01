@@ -35,12 +35,14 @@ public class FeaturesTest extends LessTestBase {
     h.parseEquals("(a: @b) and b", features(expn(rule_avb, and, kb)));
     h.parseEquals("(a: b), (a: @b)", features(expn(rule_ab), expn(rule_avb)));
 
-    h.parseEquals("handheld", expn(kwd("handheld")));
-    h.parseEquals("(screen)", expn(paren(kwd("screen"))));
+    h.parseEquals("handheld", features(expn(kwd("handheld"))));
+    h.parseEquals("(screen)", features(expn(paren(kwd("screen")))));
+    
     h.parseEquals("(min-width: @width)", 
-        expn(paren(rule(prop("min-width"), var("@width")))));
+        features(expn(paren(rule(prop("min-width"), var("@width"))))));
+
     h.parseEquals("a and (b: 12px) and c",
-        expn(kwd("a"), kwd("and"), paren(rule(prop("b"), dim(12, Unit.PX))), kwd("and"), kwd("c")));
+        features(expn(kwd("a"), kwd("and"), paren(rule(prop("b"), dim(12, Unit.PX))), kwd("and"), kwd("c"))));
   }
   
 }

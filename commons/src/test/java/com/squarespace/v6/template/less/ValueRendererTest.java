@@ -42,7 +42,7 @@ public class ValueRendererTest extends LessTestBase {
 
   @Test
   public void testQuoted() throws LessException {
-    assertEquals(render(quoted('"', "foo\n", "\"bar")), "\"foo\\n\\\"bar\"");
+    assertEquals(render(quoted('"', "foo", "\"bar")), "\"foo\"bar\"");
     assertEquals(render(quoted('\'', "bar")), "'bar'");
     assertEquals(render(quoted(Chars.NULL, "bar", "foo")), "barfoo");
   }

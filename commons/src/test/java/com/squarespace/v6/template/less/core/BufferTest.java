@@ -16,7 +16,7 @@ public class BufferTest {
     assertTrue(buf.inEscape());
     buf.append("\"foo\"");
     buf.endDelim();
-    assertEquals(buf.toString(), "\\\"foo\\\"");
+    assertEquals(buf.toString(), "\"foo\"");
   }
   
   @Test

@@ -16,6 +16,7 @@ import com.squarespace.v6.template.less.core.LessTestBase;
 
 public class ImportTest extends LessTestBase {
 
+  /*
   @Test
   public void testFoo() {
     System.out.println(System.nanoTime() / 1000000.0);
@@ -89,5 +90,5 @@ public class ImportTest extends LessTestBase {
       throw new RuntimeException(message + ": " + e.getMessage(), e);
     }
   }
-
+  */
 }
