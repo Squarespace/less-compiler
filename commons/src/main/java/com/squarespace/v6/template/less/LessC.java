@@ -17,6 +17,8 @@ import com.squarespace.v6.template.less.model.Stylesheet;
 
 public class LessC {
 
+  private static final String PROGRAM_NAME = "sqs_lessc";
+  
   private static final String IMPLNAME = "(LESS Compiler) [Java, Squarespace]";
   
   private static final String VERSION = "1.3.3";
@@ -39,6 +41,9 @@ public class LessC {
   @Parameter(names = { "-v", "-version" }, description = "Show version")
   public boolean version = false;
 
+  @Parameter(names = { "-stats" }, description = "Output statistics")
+  public boolean stats = false;
+  
   @Parameter(names = {"-W", "-wait" }, description = "Wait before executing / exiting.")
   public boolean waitForUser = false;
   
@@ -53,10 +58,14 @@ public class LessC {
     // options.trace(true); // TBD
   }
   
+  public static String version() {
+    return PROGRAM_NAME + " " + VERSION + " " + IMPLNAME;
+  }
+  
   public static void main(String[] args) {
     LessC lessc = new LessC();
     JCommander cmd = new JCommander(lessc);
-    cmd.setProgramName("sqs_lessc");
+    cmd.setProgramName(PROGRAM_NAME);
     try {
       cmd.parse(args);
     } catch (ParameterException e) {
@@ -72,7 +81,7 @@ public class LessC {
   
   private void main() {
     if (version) {
-      System.out.println("lessc " + VERSION + " " + IMPLNAME);
+      System.out.println();
       System.exit(0);
     }
     buildOptions();
@@ -131,6 +140,9 @@ public class LessC {
       System.out.println(e.errorInfo().getMessage());
       System.exit(1);
     }
+    if (stats) {
+      System.err.println(formatStats(ctx.stats()));
+    }
   }
 
   private String canonicalize(Stylesheet stylesheet) {
@@ -145,6 +157,17 @@ public class LessC {
     return buf.toString();
   }
 
+  private String formatStats(LessStats stats) {
+    StringBuilder buf = new StringBuilder();
+    buf.append("--------------------------------------------------------\n");
+    buf.append(PROGRAM_NAME).append(" statistics:\n");
+    buf.append("    parse time: ").append(stats.parseTimeMs()).append("ms\n");
+    buf.append("  compile time: ").append(stats.compileTimeMs()).append("ms\n");
+    buf.append("disk wait time: ").append(stats.diskWaitTimeMs()).append("ms\n");
+    buf.append("  import count: ").append(stats.importCount()).append('\n');
+    return buf.toString();
+  }
+  
   static enum DebugMode {
     
     CANONICAL,

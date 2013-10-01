@@ -3,6 +3,9 @@ package com.squarespace.v6.template.less.model;
 import com.squarespace.v6.template.less.core.Buffer;
 
 
+/**
+ * Color in the HSL colorspace.
+ */
 public class HSLColor extends BaseColor {
   
   private final double hue;

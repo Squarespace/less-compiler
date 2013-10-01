@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
+import com.squarespace.v6.template.less.model.BaseColor;
 import com.squarespace.v6.template.less.model.HSLColor;
 import com.squarespace.v6.template.less.model.RGBColor;
 import com.squarespace.v6.template.less.parse.Parselets;
@@ -57,6 +58,12 @@ public class ColorTest extends LessTestBase {
     
     hsl = new HSLColor(180, .5, .5);
     assertEquals(hsl.toRGB(), new RGBColor(64, 191, 191));
+  }
+  
+  @Test
+  public void testClamp() throws LessException {
+    assertEquals(BaseColor.clamp(-1, 0, 1), 0.0);
+    assertEquals(BaseColor.clamp(500, 0, 255), 255.0);
   }
   
   private void hexEquals(String hex, int red, int green, int blue) {
