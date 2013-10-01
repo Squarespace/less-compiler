@@ -16,8 +16,6 @@ public class Buffer {
   
   private int indentCurr;
 
-  private char escapeLevel = 0;
-
   private boolean compress;
   
   private char prev = Chars.LINE_FEED;
@@ -69,14 +67,6 @@ public class Buffer {
     return this;
   }
   
-  public void incrEscape() {
-    this.escapeLevel++;
-  }
-  
-  public void decrEscape() {
-    this.escapeLevel--;
-  }
-
   public boolean inEscape() {
     return delim != Chars.EOF;
   }
@@ -121,11 +111,7 @@ public class Buffer {
   }
   
   public Buffer append(char ch) {
-    if (delim != Chars.EOF) {
-      escape(ch);
-    } else {
-      buf.append(ch);
-    }
+    buf.append(ch);
     prev = ch;
     return this;
   }
@@ -138,13 +124,7 @@ public class Buffer {
     if (len == 0) {
       return this;
     }
-    if (delim != Chars.NULL && delim != Chars.EOF) {
-      for (int i = 0; i < len; i++) {
-        escape(str.charAt(i));
-      }
-    } else {
-      buf.append(str);
-    }
+    buf.append(str);
     prev = str.charAt(len - 1);
     return this;
   }
@@ -203,30 +183,4 @@ public class Buffer {
     return buf.toString();
   }
 
-  private void escape(char ch) {
-    switch (ch) {
-      
-      case Chars.LINE_FEED:
-        _escape('n'); break;
-      case Chars.HORIZONTAL_TAB:
-        _escape('t'); break;
-        
-      // XXX: complete escapes
-        
-      default:
-        if (ch == delim) {
-          _escape(ch);
-        } else {
-          buf.append(ch);
-        }
-    }
-  }
-  
-  private void _escape(char ch) {
-    for (int i = -1; i < escapeLevel; i++) {
-      buf.append('\\');
-    }
-    buf.append(ch);
-  }
-  
 }

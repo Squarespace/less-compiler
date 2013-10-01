@@ -83,7 +83,7 @@ public class VariableTest extends LessTestBase {
   }
   
   @Test
-  public void testBasic() throws LessException {
+  public void testDereference() throws LessException {
     GenericBlock defs = defs(
         def("@var", var("@link1")),
         def("@link1", var("@white")),
@@ -98,7 +98,7 @@ public class VariableTest extends LessTestBase {
   }
   
   @Test
-  public void testQuotedVars() throws LessException {
+  public void testEmbeddedReferences() throws LessException {
     GenericBlock defs = defs(
         def("@a", dim(1, Unit.EM)),
         def("@b", quoted('"', anon("foo"))),
