@@ -20,6 +20,8 @@ public class ColorTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.COLOR_KEYWORD);
     h.parseEquals("blue", rgb(0x00, 0x00, 0xff, 1.0, true));
     h.parseEquals("red", rgb(0xff, 0x00, 0x00, 1.0, true));
+    h.parseEquals("black", rgb(0, 0, 0, 1.0, true));
+    h.parseEquals("white", rgb(0, 0, 0, 1.0, true));
 
     h = new LessHarness(Parselets.COLOR);
     h.parseEquals("#fff", rgb(0xff, 0xff, 0xff));

@@ -1,5 +1,6 @@
 package com.squarespace.v6.template.less.model;
 
+import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 import static com.squarespace.v6.template.less.model.NodeType.EXPRESSION;
 
 import java.util.ArrayList;
@@ -42,8 +43,7 @@ public class Expression extends BaseNode {
   
   @Override
   public boolean equals(Object obj) {
-    // 'evaluate' field's value is derived from the list, no need to check.
-    return (obj instanceof Expression) ? LessUtils.safeEquals(values, ((Expression)obj).values) : false;
+    return (obj instanceof Expression) ? safeEquals(values, ((Expression)obj).values) : false;
   }
   
   @Override

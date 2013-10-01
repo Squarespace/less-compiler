@@ -1,11 +1,14 @@
 package com.squarespace.v6.template.less;
 
+import static com.squarespace.v6.template.less.SyntaxErrorType.INCOMPLETE_PARSE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
+import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
+import com.squarespace.v6.template.less.parse.Parselets;
 
 
 public class RatioTest extends LessTestBase {
@@ -22,6 +25,14 @@ public class RatioTest extends LessTestBase {
   @Test
   public void testModelReprSafety() {
     ratio("3/4").toString();
+  }
+ 
+  @Test
+  public void testRatio() throws LessException {
+    LessHarness h = new LessHarness(Parselets.RATIO);
+    
+    h.parseEquals("15/30", ratio("15/30"));
+    h.parseFails("foo/bar", INCOMPLETE_PARSE);
   }
   
 }

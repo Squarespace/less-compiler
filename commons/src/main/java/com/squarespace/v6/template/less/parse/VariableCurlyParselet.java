@@ -26,14 +26,15 @@ public class VariableCurlyParselet implements Parselet {
     }
     pos++;
     
-    Mark position = stm.mark();
+    Mark mark = stm.mark();
     stm.seek(pos);
     if (!stm.matchIdentifier()) {
+      stm.restore(mark);
       return null;
     }
     String token = '@' + stm.token();
     if (!stm.seekIf(Chars.RIGHT_CURLY_BRACKET)) {
-      stm.restore(position);
+      stm.restore(mark);
       return null;
     }
     return new Variable(indirect ? '@' + token : token, true);

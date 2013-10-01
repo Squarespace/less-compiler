@@ -2,6 +2,8 @@ package com.squarespace.v6.template.less;
 
 import static com.squarespace.v6.template.less.ExecuteErrorType.PERCENT_MATH_ORDER;
 import static com.squarespace.v6.template.less.model.Operator.ADD;
+import static com.squarespace.v6.template.less.model.Operator.DIVIDE;
+import static com.squarespace.v6.template.less.model.Operator.MULTIPLY;
 import static com.squarespace.v6.template.less.model.Operator.SUBTRACT;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -123,17 +125,28 @@ public class OperationTest extends LessTestBase {
     h.evalFails("10% + 10px", PERCENT_MATH_ORDER);
     h.evalFails("10% - 10px", PERCENT_MATH_ORDER);
     h.evalFails("10% / 10px", PERCENT_MATH_ORDER);
- }
+  }
+ 
+  @Test
+  public void testParse() throws LessException {
+    LessHarness h = new LessHarness(Parselets.ADDITION);
+    
+    h.parseEquals("1 + -2", oper(ADD, dim(1), dim(-2)));
+    h.parseEquals("1 - -2", oper(SUBTRACT, dim(1), dim(-2)));
+    h.parseEquals("-@foo", oper(MULTIPLY, dim(-1), var("@foo")));
+    h.parseEquals("3.14 * 3.14", oper(MULTIPLY, dim(3.14), dim(3.14)));
+    h.parseEquals("17 / 3", oper(DIVIDE, dim(17), dim(3)));
+    h.parseEquals("3 * 4 - 5", oper(SUBTRACT, oper(MULTIPLY, dim(3), dim(4)), dim(5)));
+    h.parseEquals("3 * (4 - 5)", oper(MULTIPLY, dim(3), oper(SUBTRACT, dim(4), dim(5))));
+    h.parseEquals("(((1 - 2)))", oper(SUBTRACT, dim(1), dim(2)));
+  }
   
   @Test
   public void testBadColorMath() throws LessException {
     String[] strings = new String[] {
-        "#000 + 1px",
-        "12em + #fff",
-        "2 / #010101",
-        "2 - #010101"
-    };
-    
+        "#000 + 1px", "12em + #fff", "2 / #010101", "2 - #010101"
+        };
+
     LessHarness h = new LessHarness(Parselets.ADDITION);
 
     // XXX: change to use evalFail
@@ -143,7 +156,7 @@ public class OperationTest extends LessTestBase {
         fail("Expected operation to raise an exception: " + str);
       } catch (LessException e) {
       }
-    }    
+    }
   }
   
   @Test

@@ -150,8 +150,8 @@ public class RGBColor extends BaseColor {
   
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof BaseColor) {
-      RGBColor other = ((BaseColor)obj).toRGB();
+    if (obj instanceof RGBColor) {
+      RGBColor other = (RGBColor)obj;
       return c0 == other.c0 
           && c1 == other.c1 
           && c2 == other.c2 
@@ -220,6 +220,9 @@ public class RGBColor extends BaseColor {
     typeRepr(buf);
     buf.append(' ').append(getColorspace().toString()).append(' ');
     buf.append(c0).append(' ').append(c1).append(' ').append(c2).append(' ').append(alpha);
+    if (keyword) {
+      buf.append(" [from keyword]");
+    }
   }
 
 

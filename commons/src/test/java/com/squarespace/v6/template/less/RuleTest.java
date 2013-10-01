@@ -1,6 +1,6 @@
 package com.squarespace.v6.template.less;
 
-import static com.squarespace.v6.template.less.parse.Parselets.STYLESHEET;
+import static com.squarespace.v6.template.less.model.Unit.PX;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -11,6 +11,7 @@ import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.model.Rule;
 import com.squarespace.v6.template.less.model.Stylesheet;
 import com.squarespace.v6.template.less.model.Unit;
+import com.squarespace.v6.template.less.parse.Parselets;
 
 
 public class RuleTest extends LessTestBase {
@@ -34,16 +35,25 @@ public class RuleTest extends LessTestBase {
   
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(STYLESHEET);
+    LessHarness h = new LessHarness(Parselets.RULE);
+    
+    h.parseEquals("foo  :   #123;", rule(prop("foo"), color("#123")));
+    h.parseEquals("foo: 12px", rule(prop("foo"), dim(12, Unit.PX)));
+    
+    h.parseEquals("foo \t : \t /* x */ 1 /* y */ 2", 
+        rule(prop("foo"), expn(comment(" x ", true), dim(1), comment(" y ", true), dim(2))));
+
+    h.parseEquals("font:italic bold 12px/30px Georgia, serif", rule(prop("font"), expnlist( 
+        expn(kwd("italic"), kwd("bold"), shorthand(dim(12, PX), dim(30, PX)), kwd("Georgia")), kwd("serif"))));
+    
+    h = new LessHarness(Parselets.STYLESHEET);
     
     Stylesheet exp = stylesheet();
-    exp.add(rule(prop("foo"), color("#123")));
-    h.parseEquals("foo  :   #123;", exp);
-
-    exp = stylesheet();
     exp.add(rule(prop("foo"), anon("")));
     exp.add(rule(prop("bar"), color("#123")));
     h.parseEquals("foo: ;\nbar: #123;", exp);
+
+    
   }
   
 }

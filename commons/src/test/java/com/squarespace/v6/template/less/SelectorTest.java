@@ -11,10 +11,9 @@ import org.testng.annotations.Test;
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.exec.ExecEnv;
-import com.squarespace.v6.template.less.model.GenericBlock;
-import com.squarespace.v6.template.less.model.Node;
+import com.squarespace.v6.template.less.model.Combinator;
 import com.squarespace.v6.template.less.model.Selector;
-import com.squarespace.v6.template.less.model.Unit;
+import com.squarespace.v6.template.less.parse.Parselets;
 
 
 public class SelectorTest extends LessTestBase {
@@ -37,29 +36,32 @@ public class SelectorTest extends LessTestBase {
   }
   
   @Test
-  public void testBasic() throws LessException {
-    Selector s0 = selector(element("li"), element(null, ".bar"), element(CHILD, "span"), element(null, ".foo"),
+  public void testRender() throws LessException {
+    Selector sel = selector(element("li"), element(null, ".bar"), element(CHILD, "span"), element(null, ".foo"),
           element(DESC, "baz"));
-    Selector s1 = selector(element("p"), element(null, ".para"), element(SIB_ADJ, "span"), element(null, ".word"),
+
+    assertEquals(render(false, sel), "li.bar > span.foo baz");
+    assertEquals(render(true, sel), "li.bar>span.foo baz"); 
+
+    sel = selector(element("p"), element(null, ".para"), element(SIB_ADJ, "span"), element(null, ".word"),
         element(DESC, "b"));
 
-    assertEquals(render(false, s0), "li.bar > span.foo baz");
-    assertEquals(render(true, s0), "li.bar>span.foo baz"); 
-
-    assertEquals(render(false, s1), "p.para + span.word b");
-    assertEquals(render(true, s1), "p.para+span.word b");
+    assertEquals(render(false, sel), "p.para + span.word b");
+    assertEquals(render(true, sel), "p.para+span.word b");
   }
   
   @Test
-  public void testAttribute() throws LessException {
-    GenericBlock defs = defs(def("@bar", dim(12, Unit.PX)));
-    Selector s0 = selector(element("p"), attr(null, "class", "~=", quoted('\'', "foo", var("@bar"))));
+  public void testParse() throws LessException {
+    LessHarness h = new LessHarness(Parselets.SELECTOR);
     
-    LessHarness h = new LessHarness(defs);
-    Node result = h.evaluate(s0);
-    System.out.println(result);
+    h.parseEquals("p", selector(element(DESC, "p")));
+    h.parseEquals("> p", selector(element(Combinator.CHILD, "p")));
+    h.parseEquals("+ p.class", selector(element(Combinator.SIB_ADJ, "p"), element(null, ".class")));
+    
+    Selector exp = selector(element("p"), attr(null, "class", "~=", quoted('"', "a")));
+    h.parseEquals("p[class~=\"a\"]", exp);
   }
-
+  
   private String render(boolean compress, Selector selector) throws LessException {
     Context ctx = new Context(new Options(compress));
     ExecEnv env = ctx.newEnv();

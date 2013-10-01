@@ -42,7 +42,7 @@ public class AdditionParselet implements Parselet {
       stm.seek1();
       return op;
     }
-    return op;
+    return null;
   }
   
 }

@@ -1,5 +1,6 @@
 package com.squarespace.v6.template.less;
 
+import static com.squarespace.v6.template.less.model.Combinator.CHILD;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -51,6 +52,9 @@ public class MixinCallTest extends LessTestBase {
     
     exp = mixincall(selector(element(null, ".x")), args(',', arg("@a", dim(1))));
     h.parseEquals(".x(@a: 1)", exp);
+    
+    exp = mixincall(selector(element(null, "#ns"), element(CHILD, ".mixin")));
+    h.parseEquals("#ns > .mixin", exp);
   }
   
 }

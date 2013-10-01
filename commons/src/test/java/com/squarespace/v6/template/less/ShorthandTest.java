@@ -32,7 +32,10 @@ public class ShorthandTest extends LessTestBase {
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(SHORTHAND);
     
+    h.parseEquals("small/12px", shorthand(kwd("small"), dim(12, Unit.PX)));
     h.parseEquals("15vm/23vm", shorthand(dim(15, Unit.VM), dim(23, Unit.VM)));
+    h.parseEquals("foo/3.14", shorthand(kwd("foo"), dim(3.14)));
+    h.parseEquals("@a/@b", shorthand(var("@a"), var("@b")));
   }
   
 }
