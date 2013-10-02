@@ -37,7 +37,11 @@ public class Guard extends BaseNode {
 
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof Guard) ? safeEquals(conditions, ((Guard)obj).conditions) : false;
+    if (obj instanceof Guard) {
+      Guard other = (Guard)obj;
+      return safeEquals(conditions, other.conditions);
+    }
+    return false;
   }
   
   @Override

@@ -13,7 +13,7 @@ import com.squarespace.v6.template.less.parse.Parselets;
 public class FunctionCallTest extends LessTestBase {
 
   @Test
-  public void testFunctionCall() throws LessException {
+  public void testParse() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
     
     h.parseEquals("rgb(1,2,3)", call("rgb", dim(1), dim(2), dim(3)));

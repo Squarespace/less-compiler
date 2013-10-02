@@ -41,10 +41,12 @@ public class Condition extends BaseNode {
   public boolean equals(Object obj) {
     if (obj instanceof Condition) {
       Condition other = (Condition)obj;
-      return operator == other.operator
+      boolean res = operator == other.operator
           && negate == other.negate
           && safeEquals(operand0, other.operand0)
           && safeEquals(operand1, other.operand1);
+      System.out.println("CONDITION: " + safeEquals(negate, other.negate));
+      return res;
     }
     return false;
   }
@@ -67,6 +69,9 @@ public class Condition extends BaseNode {
   
   @Override
   public void repr(Buffer buf) {
+    if (negate) {
+      buf.append("not ");
+    }
     buf.append('(');
     operand0.repr(buf);
     buf.append(' ').append(operator.toString()).append(' ');
@@ -78,6 +83,9 @@ public class Condition extends BaseNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     buf.append(' ').append(operator.toString());
+    if (negate) {
+      buf.append(" [negate]");
+    }
     buf.append('\n').incrIndent().indent();
     operand0.modelRepr(buf);
     buf.append('\n').indent();

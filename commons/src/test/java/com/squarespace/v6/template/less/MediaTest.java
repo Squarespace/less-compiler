@@ -98,7 +98,7 @@ public class MediaTest extends LessTestBase {
     media2.add(ruleset);
     media1.add(media2);
 
-    Stylesheet sheet = sheet();
+    Stylesheet sheet = stylesheet();
     sheet.add(media1);
     sheet.add(def("@foo", dim(12, Unit.PX)));
     

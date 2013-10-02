@@ -43,10 +43,10 @@ public class RuleParselet implements Parselet {
     Node value = null;
     stm.skipWs();
       
-    if (name.charAt(0) != Chars.AT_SIGN && stm.matchAnonRuleValue()) {
+/*    if (name.charAt(0) != Chars.AT_SIGN && stm.matchAnonRuleValue()) {
         value = new Anonymous(stm.token());
         
-    } else if (name.equals("font")) {
+    } else */ if (name.equals("font")) {
       value = stm.parse(FONT);
       
     } else {
@@ -59,9 +59,9 @@ public class RuleParselet implements Parselet {
         }
         
       // Before giving up, try to catch other opaque values.
-      }/* else if (name.charAt(0) != Chars.AT_SIGN && stm.matchAnonRuleValue()) {
+      } else if (name.charAt(0) != Chars.AT_SIGN && stm.matchAnonRuleValue()) {
         value = new Anonymous(stm.token());
-      }*/
+      }
     }
     
     stm.skipWs();

@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 
+// XXX: convert to execute the on-disk test suite.
 
 public class ImportTest extends LessTestBase {
 

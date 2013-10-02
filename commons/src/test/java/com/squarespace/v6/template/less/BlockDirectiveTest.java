@@ -5,9 +5,12 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
+import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.model.Block;
 import com.squarespace.v6.template.less.model.Rule;
+import com.squarespace.v6.template.less.model.Stylesheet;
+import com.squarespace.v6.template.less.parse.Parselets;
 
 
 public class BlockDirectiveTest extends LessTestBase {
@@ -30,4 +33,17 @@ public class BlockDirectiveTest extends LessTestBase {
     dir("x", block(rule(prop("x"), anon("y")))).toString();
   }
   
+  @Test
+  public void testBlockDirective() throws LessException {
+    LessHarness h = new LessHarness(Parselets.STYLESHEET);
+    
+    Stylesheet sheet = stylesheet();
+    sheet.add(dir("@page foo", block(rule(prop("a"), dim(1)))));
+    h.parseEquals("@page foo { a: 1; }", sheet);
+
+    sheet = stylesheet();
+    sheet.add(dir("@namespace", expn(kwd("foo"), kwd("bar"))));
+    h.parseEquals("@namespace foo bar;", sheet);
+  }
+
 }

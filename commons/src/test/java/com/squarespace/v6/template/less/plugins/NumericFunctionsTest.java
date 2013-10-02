@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less.plugins;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.INVALID_ARG;
-import static com.squarespace.v6.template.less.SyntaxErrorType.UNKNOWN_UNIT;
+import static com.squarespace.v6.template.less.ExecuteErrorType.FUNCTION_CALL;
 
 import org.testng.annotations.Test;
 
@@ -41,8 +40,8 @@ public class NumericFunctionsTest extends LessTestBase {
     // Unit changes
     h.evalEquals("unit(1, px)", dim(1, Unit.PX));
     h.evalEquals("unit(3em, pt)", dim(3, Unit.PT));
-    h.evalFails("unit('foo', px)", INVALID_ARG);
-    h.evalFails("unit(3em, quark)", UNKNOWN_UNIT);
+    h.evalFails("unit('foo', px)", FUNCTION_CALL);
+    h.evalFails("unit(3em, quark)", FUNCTION_CALL);
     
   }
 

@@ -1,6 +1,6 @@
 package com.squarespace.v6.template.less.plugins;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.INVALID_ARG;
+import static com.squarespace.v6.template.less.ExecuteErrorType.FUNCTION_CALL;
 
 import org.testng.annotations.Test;
 
@@ -52,12 +52,12 @@ public class ColorRGBFunctionsTest extends LessTestBase {
     // RGB
     h.evalEquals("rgb(@one, 2, @three)", color("#010203"));
     h.evalEquals("rgb(1000, 1000, 1000)", color("#fff"));
-    h.evalFails("rgb('foo', 2, 3)", INVALID_ARG);
+    h.evalFails("rgb('foo', 2, 3)", FUNCTION_CALL);
     
     // RGBA
     h.evalEquals("rgba(1, 2, 3, .5)", rgb(1, 2, 3, 0.5));
     h.evalEquals("rgba(@one, @one, @one, @one)", rgb(1, 1, 1, 1));
-    h.evalFails("rgba(1, 1, 1, 'foo')", INVALID_ARG);
+    h.evalFails("rgba(1, 1, 1, 'foo')", FUNCTION_CALL);
   }
 
 }

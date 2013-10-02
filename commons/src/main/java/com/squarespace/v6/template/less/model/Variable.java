@@ -50,7 +50,9 @@ public class Variable extends BaseNode {
   public boolean equals(Object obj) {
     if (obj instanceof Variable) {
       Variable other = (Variable)obj;
-      return indirect == other.indirect && curly == other.curly && safeEquals(name, other.name);
+      return indirect == other.indirect 
+          && curly == other.curly 
+          && safeEquals(name, other.name);
     }
     return false;
   }

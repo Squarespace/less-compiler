@@ -36,60 +36,60 @@ public class ParseletTest extends LessTestBase {
     }
   }
   
-  @Test
-  public void testAlpha() throws LessException {
-    String[] strings = new String[] {
-      "alpha(opacity=1)",
-      "alpha(opacity=@foo)",
-      "alpha(opacity=)"
-    };
-    for (String str : strings) {
-      LessStream p = new LessStream(str);
-      System.out.println(p.parse(Parselets.FUNCTION_CALL));
-    }
-  }
+//  @Test
+//  public void testAlpha() throws LessException {
+//    String[] strings = new String[] {
+//      "alpha(opacity=1)",
+//      "alpha(opacity=@foo)",
+//      "alpha(opacity=)"
+//    };
+//    for (String str : strings) {
+//      LessStream p = new LessStream(str);
+//      System.out.println(p.parse(Parselets.FUNCTION_CALL));
+//    }
+//  }
   
   
-  @Test
-  public void testBlockDirective() throws LessException {
-    String[] strings = new String[] {
-        "@page foo { @namespace foo bar; color: #000; font-size: 12px !important }",
-        "@page foo { .foo { @media bar and baz { @page bar { color: blue } } } }"
-    };
-    for (String str : strings) {
-      LessStream stm = new LessStream(str);
-      Stylesheet sheet = (Stylesheet) stm.parse(Parselets.STYLESHEET);
-//      CssRenderer cr = new CssRenderer(new Context(new Options(4)));
-//      System.out.println(cr.render(sheet));
-    }
-
-  }
+//  @Test
+//  public void testBlockDirective() throws LessException {
+//    String[] strings = new String[] {
+//        "@page foo { @namespace foo bar; color: #000; font-size: 12px !important }",
+//        "@page foo { .foo { @media bar and baz { @page bar { color: blue } } } }"
+//    };
+//    for (String str : strings) {
+//      LessStream stm = new LessStream(str);
+//      Stylesheet sheet = (Stylesheet) stm.parse(Parselets.STYLESHEET);
+////      CssRenderer cr = new CssRenderer(new Context(new Options(4)));
+////      System.out.println(cr.render(sheet));
+//    }
+//
+//  }
   
-  @Test
-  public void testColor() throws LessException {
-    String[] strings = new String[] {
-        "#fff",
-        "#123456",
-        "#aaaa",
-        "#xyz"
-    };
-    for (String s : strings) {
-      LessStream p = new LessStream(s);
-      System.out.println(p.parse(Parselets.COLOR));
-    }
-  }
+//  @Test
+//  public void testColor() throws LessException {
+//    String[] strings = new String[] {
+//        "#fff",
+//        "#123456",
+//        "#aaaa",
+//        "#xyz"
+//    };
+//    for (String s : strings) {
+//      LessStream p = new LessStream(s);
+//      System.out.println(p.parse(Parselets.COLOR));
+//    }
+//  }
   
-  @Test
-  public void testComment() throws LessException {
-    String[] strings = new String[] {
-      "/* foo */",
-      "// bar baz"
-    };
-    for (String s : strings) {
-      LessStream p = new LessStream(s);
-      System.out.println(p.parse(Parselets.COMMENT));
-    }
-  }
+//  @Test
+//  public void testComment() throws LessException {
+//    String[] strings = new String[] {
+//      "/* foo */",
+//      "// bar baz"
+//    };
+//    for (String s : strings) {
+//      LessStream p = new LessStream(s);
+//      System.out.println(p.parse(Parselets.COMMENT));
+//    }
+//  }
   
   
   @Test

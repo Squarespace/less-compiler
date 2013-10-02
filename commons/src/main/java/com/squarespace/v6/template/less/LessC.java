@@ -7,8 +7,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
@@ -22,9 +24,8 @@ public class LessC {
   @Parameter
   private List<String> args = new ArrayList<String>();
 
-// TODO: debug mode
-//  @Parameter(names = "-debug", description = "Debug mode")
-//  public boolean debug = false;
+  @Parameter(names = { "-D" }, description = "Debug mode (canonical, parse, expand)", converter = DebugModeConverter.class)
+  private DebugMode debugMode;
   
   @Parameter(names = { "-h", "--help" }, description = "Show usage", help = true)
   private boolean help;
@@ -38,17 +39,6 @@ public class LessC {
   @Parameter(names = { "-v", "-version" }, description = "Show version")
   public boolean version = false;
 
-  @Parameter(names = {"-C", "-canonicalize" }, description = "Output canonical representation of parse tree")
-  public boolean canonicalize = false;
-
-  @Parameter(names = {"-P", "-parse" }, description = "Parse only and dump parse tree")
-  public boolean parseOnly = false;
-
-  // TODO: future mode where we expand all mixins, imports and variables and then output the pre-render
-  // representation of the tree.
-  @Parameter(names = {"-E", "-expand" }, description = "Expand and dump the expanded less representation")
-  public boolean expandOnly = false;
-  
   @Parameter(names = {"-W", "-wait" }, description = "Wait before executing / exiting.")
   public boolean waitForUser = false;
   
@@ -59,16 +49,23 @@ public class LessC {
   
   private void buildOptions() {
     options.compress(compress);
-//    options.debug(debug);
     options.indent(indent);
+    // options.trace(true); // TBD
   }
   
   public static void main(String[] args) {
     LessC lessc = new LessC();
     JCommander cmd = new JCommander(lessc);
-    cmd.parse(args);
+    cmd.setProgramName("sqs_lessc");
+    try {
+      cmd.parse(args);
+    } catch (ParameterException e) {
+      System.err.println(e.getMessage());
+      System.exit(1);
+    }
     if (lessc.help) { 
       cmd.usage();
+      System.exit(0);
     }
     lessc.main();
   }
@@ -112,15 +109,15 @@ public class LessC {
     Context ctx = new Context(options);
     ctx.setCompiler(compiler);
     try {
-      if (canonicalize) {
+      if (debugMode == DebugMode.CANONICAL) {
         Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx);
         System.out.println(canonicalize(stylesheet));
       
-      } else if (parseOnly) {
+      } else if (debugMode == DebugMode.PARSE) {
         Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx);
         System.out.println(parseTree(stylesheet));
       
-      } else if (expandOnly) {
+      } else if (debugMode == DebugMode.EXPAND) {
         Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx);
         stylesheet = compiler.expand(stylesheet, ctx);
         System.out.println(canonicalize(stylesheet));
@@ -137,15 +134,62 @@ public class LessC {
   }
 
   private String canonicalize(Stylesheet stylesheet) {
-    Buffer buf = new Buffer(4);
+    Buffer buf = new Buffer(options.indent());
     stylesheet.repr(buf);
     return buf.toString();
   }
 
   private String parseTree(Stylesheet stylesheet) {
-    Buffer buf = new Buffer(4);
+    Buffer buf = new Buffer(options.indent());
     stylesheet.modelRepr(buf);
     return buf.toString();
   }
 
+  static enum DebugMode {
+    
+    CANONICAL,
+    PARSE,
+    EXPAND
+    ;
+    
+    public static DebugMode fromString(String str) {
+      switch (str) {
+        case "canonical":
+          return CANONICAL;
+        case "parse":
+          return PARSE;
+        case "expand":
+          return EXPAND;
+        default:
+          return null;
+      }
+    }
+    
+    public static String modes() {
+      StringBuilder buf = new StringBuilder();
+      DebugMode[] modes = values();
+      int size = modes.length;
+      for (int i = 0; i < size; i++) {
+        if (i > 0) {
+          buf.append(", ");
+        }
+        buf.append(modes[i].name().toLowerCase());
+      }
+      return buf.toString();
+    }
+
+  }
+  
+  public static class DebugModeConverter implements IStringConverter<DebugMode> {
+    @Override
+    public DebugMode convert(String value) {
+      DebugMode mode = DebugMode.fromString(value);
+      if (value == null) {
+        throw new ParameterException("Unknown debug mode '" + value + "'. "
+            + "Available values are: " + DebugMode.modes());
+      }
+      return mode;
+    }
+  }
+    
 }

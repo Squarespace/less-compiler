@@ -80,7 +80,6 @@ public class ArgSpec {
       try {
         validators.get(i).validate(i, args.get(i));
       } catch (LessException e) {
-        System.out.println("Calling " + func.name());
         throw e;
       }
     }
@@ -113,6 +112,7 @@ public class ArgSpec {
 
         case '.':
           variadic = true;
+          minArgs = i;
           break;
           
         default:

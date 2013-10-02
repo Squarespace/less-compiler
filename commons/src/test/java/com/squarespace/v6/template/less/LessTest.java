@@ -32,7 +32,7 @@ public class LessTest extends LessTestBase {
 
   @Test
   public void testBasic() throws LessException {
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     
     Ruleset r0 = ruleset(selector(element("foo")));
     r0.add(rule(prop("background"), color("#fff")));
@@ -116,7 +116,7 @@ public class LessTest extends LessTestBase {
     r0.add(rule(prop("background"), color("#222"), false));
     r0.add(m0);
     
-    Stylesheet s = sheet();
+    Stylesheet s = stylesheet();
     s.add(r0);
 
 //    CssRenderer w = new CssRenderer(new Context(opts));
@@ -132,7 +132,7 @@ public class LessTest extends LessTestBase {
     r1.add(rule(prop("background"), color("#fff"), false));
     r0.add(r1);
 
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     root.add(r0);
     
 //    CssRenderer cr = new CssRenderer(new Context());
@@ -141,7 +141,7 @@ public class LessTest extends LessTestBase {
 
   @Test
   public void testDescendant() throws LessException {
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     Ruleset r0 = ruleset(selector(element(".parent")));
     Ruleset r1 = ruleset(selector(element(DESC, ".child")));
     r1.add(rule(prop("color"), color("#000"), false));
@@ -169,7 +169,7 @@ public class LessTest extends LessTestBase {
     m0.add(r1);
     r0.add(m0);
     
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     root.add(r0);
     
 //    CssRenderer cr = new CssRenderer(new Context());
@@ -178,7 +178,7 @@ public class LessTest extends LessTestBase {
 
   @Test
   public void testMixin() throws LessException {
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     Ruleset r1 = ruleset(selector(element(".foo")));
     root.add(r1);
     
@@ -196,7 +196,7 @@ public class LessTest extends LessTestBase {
   
   @Test
   public void testMixinClosure() throws LessException {
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     root.add(def("@color", color("#010203")));
     
     Ruleset r0 = ruleset(selector(element(".one")));
@@ -232,7 +232,7 @@ public class LessTest extends LessTestBase {
     Ruleset r0 = ruleset(selector(element("h1"), element(null, ".class")));
     Ruleset r1 = ruleset(selector(element("p"), element("span")));
     r0.add(r1);
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     root.add(r0);
     
 //    CssRenderer cr = new CssRenderer(new Context());
@@ -270,7 +270,7 @@ public class LessTest extends LessTestBase {
 
   @Test
   public void testVarElement() throws LessException {
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     root.add(def("@foo", quoted(Chars.NULL, "span")));
     
     Selector s0 = selector(element(".bar"));
@@ -299,7 +299,7 @@ public class LessTest extends LessTestBase {
     r2.add(rule(prop("color"), color("red"), false));
     r0.add(r2);
 
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     root.add(r0);
     
 //    CssRenderer cr = new CssRenderer(new Context());
@@ -316,7 +316,7 @@ public class LessTest extends LessTestBase {
     r2.add(rule(prop("color"), color("red"), false));
     r0.add(r2);
 
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     root.add(r0);
     
 //    CssRenderer cr = new CssRenderer(new Context());
@@ -334,7 +334,7 @@ public class LessTest extends LessTestBase {
     r1.add(rule(prop("font-size"), dim(12, Unit.PX)));
     r0.add(r1);
 
-    Stylesheet root = sheet();
+    Stylesheet root = stylesheet();
     root.add(r0);
 
 //    CssRenderer cr = new CssRenderer(new Context());
@@ -351,7 +351,7 @@ public class LessTest extends LessTestBase {
     r2.add(rule(prop("color"), color("#a03")));
     r1.add(r2);
     
-    Stylesheet s = sheet();
+    Stylesheet s = stylesheet();
     s.add(r1);
     
 //    CssRenderer r = new CssRenderer(new Context(new Options(4)));

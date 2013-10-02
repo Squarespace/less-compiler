@@ -17,9 +17,7 @@ public class EncodeUtils {
   }
   
   private interface CharTest {
-
     public boolean member(char ch);
-  
   }
   
   private static final CharTest ENCODE_URI_TEST = new CharTest() {
@@ -57,13 +55,16 @@ public class EncodeUtils {
     return encodeChars(uri, ENCODE_URI_COMPONENT_TEST);
   }
 
+  /**
+   * Extends encodeURI with further character escapes.
+   */
   public static String escape(String uri) {
     return encodeChars(uri, ESCAPE_TEST);
   }
   
   /**
    * Emits UTF-8 hex escape sequences for all characters which are not members of
-   * the given character class. It ignores bad unicode sequences.
+   * the given character class. It ignores bad Unicode sequences.
    */
   private static String encodeChars(String uri, CharTest charTest) {
     StringBuilder buf = new StringBuilder();
@@ -87,7 +88,8 @@ public class EncodeUtils {
         continue;
 
       } else if (ch < 0xD800 || ch > 0xDBFF) {
-        // single
+        // Unicode single char
+        // Emit UTF-8 escape sequence
         int x = (ch >> 12) & 0xF;
         int y = (ch >> 6) & 0x3F;
         int z = ch & 0x3F;
@@ -103,7 +105,7 @@ public class EncodeUtils {
         continue;
       }
 
-      // pair
+      // Unicode surrogate pair
       i++;
       if (i == size) {
         break;
@@ -114,6 +116,7 @@ public class EncodeUtils {
         continue;
       }
       
+      // Emit UTF-8 escape sequence
       int u = ((ch >> 6) & 0xF) + 1;
       int w = (ch >> 2) & 0xF;
       int x = ch & 3;

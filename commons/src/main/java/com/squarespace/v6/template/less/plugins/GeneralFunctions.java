@@ -36,7 +36,6 @@ public class GeneralFunctions implements Registry<Function> {
   };
 
   public static final Function FORMAT = new Function("%", "s.") {
-    
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       // XXX: implement

@@ -52,7 +52,12 @@ public abstract class BlockNode extends BaseNode {
   
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof BlockNode) ? safeEquals(block, ((BlockNode)obj).block) : false;
+    if (obj instanceof BlockNode) {
+      BlockNode other = (BlockNode)obj;
+      return important == other.important
+          && safeEquals(block, ((BlockNode)obj).block);
+    }
+    return false;
   }
 
   @Override

@@ -80,6 +80,9 @@ public class Mixin extends BlockNode {
   public boolean equals(Object obj) {
     if (obj instanceof Mixin) {
       Mixin other = (Mixin)obj;
+      System.out.println("name = " + safeEquals(name, other.name));
+      System.out.println("params = " + safeEquals(params, other.params));
+      System.out.println("guard = " + safeEquals(guard, other.guard));
       return safeEquals(name, other.name)
           && safeEquals(params, other.params)
           && safeEquals(guard, other.guard);
@@ -103,7 +106,7 @@ public class Mixin extends BlockNode {
       buf.append(" when ");
       guard.repr(buf);
     }
-    buf.append("{\n");
+    buf.append(" {\n");
     buf.incrIndent();
     block.repr(buf);
     buf.decrIndent();

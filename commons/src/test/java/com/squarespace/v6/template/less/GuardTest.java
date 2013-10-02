@@ -13,27 +13,20 @@ import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.model.Condition;
 import com.squarespace.v6.template.less.model.Dimension;
-import com.squarespace.v6.template.less.model.GenericBlock;
 import com.squarespace.v6.template.less.parse.Parselets;
 
 
 public class GuardTest extends LessTestBase {
 
   @Test
-  public void testGuard() throws LessException {
+  public void testParse() throws LessException {
     Dimension one = dim(1);
     Dimension two = dim(2);
     Condition one_eq1 = cond(EQUAL, one, one);
     Condition two_eq2 = cond(EQUAL, two, two);
     Condition one_ne2 = cond(NOT_EQUAL, one, two);
     
-    GenericBlock defs = defs(
-        def("@two", dim(2)),
-        def("@true", TRUE),
-        def("@false", FALSE)
-        );
-    
-    LessHarness h = new LessHarness(Parselets.GUARD, defs);
+    LessHarness h = new LessHarness(Parselets.GUARD);
 
     h.parseEquals("when (1)",
         guard(cond(EQUAL, one, Constants.TRUE)));

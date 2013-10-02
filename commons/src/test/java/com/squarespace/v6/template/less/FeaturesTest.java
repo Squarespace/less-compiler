@@ -2,11 +2,11 @@ package com.squarespace.v6.template.less;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.model.Keyword;
 import com.squarespace.v6.template.less.model.Paren;
+import com.squarespace.v6.template.less.model.Unit;
 import com.squarespace.v6.template.less.model.Variable;
 import com.squarespace.v6.template.less.parse.Parselets;
 
@@ -34,6 +34,13 @@ public class FeaturesTest extends LessTestBase {
     h.parseEquals("(a: @b)", features(expn(rule_avb)));
     h.parseEquals("(a: @b) and b", features(expn(rule_avb, and, kb)));
     h.parseEquals("(a: b), (a: @b)", features(expn(rule_ab), expn(rule_avb)));
+
+    h.parseEquals("handheld", expn(kwd("handheld")));
+    h.parseEquals("(screen)", expn(paren(kwd("screen"))));
+    h.parseEquals("(min-width: @width)", 
+        expn(paren(rule(prop("min-width"), var("@width")))));
+    h.parseEquals("a and (b: 12px) and c",
+        expn(kwd("a"), kwd("and"), paren(rule(prop("b"), dim(12, Unit.PX))), kwd("and"), kwd("c")));
   }
   
 }

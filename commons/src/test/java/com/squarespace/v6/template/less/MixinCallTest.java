@@ -5,11 +5,12 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.model.MixinCallArgs;
+import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Selector;
+import com.squarespace.v6.template.less.parse.Parselets;
 
 
 public class MixinCallTest extends LessTestBase {
@@ -34,26 +35,22 @@ public class MixinCallTest extends LessTestBase {
   public void testModelReprSafety() {
     mixincall(selector(element(".x")), args(';', arg("@a", anon("b"))), true).toString();
   }
-  
-  @Test
-  public void testMixinCall() throws LessException {
-    LessHarness h = new LessHarness();
-    String raw = "@a: 12px;"
-        + ".x(@b: #123) { color: @b; font-size: @a }"
-        + ".x() { foo: bar; }"
-        + ".x { a: 1 }"
-        + ".y { .x(#456); }"
-        + ".z { .x() }";
-//        + ".q { .x(#456, #789); }";
-//    raw = "//.pre { #ns > .mixin; }\n #ns { @a: def-scope; .mixin () { a: @a; b: @b; } }  .post1 { @b: call-scope; #ns > .mixin; }";
-//    raw = ".mixin(@a) when (@a<=1) { a: @a } .x { .mixin(2); } .y { .mixin(1); } .z { .mixin(-1); }";
-//    raw = ".bg() { c: red; @media foo { c: green; } } .y { .bg(); }";
 
-    raw = ".mediaMixin(@fallback: 200px) { background: black;  @media handheld { background: white;  "
-        + "@media (max-width: @fallback) { background: red; } } }  .a { .mediaMixin(100px); }  .b { .mediaMixin(); }";
+  @Test
+  public void testParse() throws LessException {
+    LessHarness h = new LessHarness(Parselets.MIXIN_CALL);
+
+    Node exp = mixincall(selector(element(null, ".x")));
+    h.parseEquals(".x;", exp);
+
+    exp = mixincall(selector(element(null, ".x")), args(','));
+    h.parseEquals(".x();", exp);
     
-    String res = h.execute(raw);
-    System.out.println(res);
+    exp = mixincall(selector(element(null, ".mixin")), args(',', arg(var("@a")), arg(var("@b"))));
+    h.parseEquals(".mixin(@a, @b)", exp);
+    
+    exp = mixincall(selector(element(null, ".x")), args(',', arg("@a", dim(1))));
+    h.parseEquals(".x(@a: 1)", exp);
   }
   
 }

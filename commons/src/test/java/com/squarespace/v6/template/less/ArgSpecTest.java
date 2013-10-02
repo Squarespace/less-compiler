@@ -8,19 +8,19 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.exec.ArgSpec;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 import com.squarespace.v6.template.less.exec.Function;
 import com.squarespace.v6.template.less.model.Node;
+import com.squarespace.v6.template.less.model.Quoted;
 
 
 public class ArgSpecTest extends LessTestBase {
 
   @Test
   public void testValidate() throws LessException {
-    ArgSpec spec = argspec(DIMENSION);
+    ArgSpec spec = argspec("d");
     valid(spec, dim(1));
     
     invalid(spec);
@@ -28,13 +28,28 @@ public class ArgSpecTest extends LessTestBase {
     invalid(spec, dim(1), anon("x"));
     invalid(spec, anon("x"), dim(1));
 
-    spec = argspec(1, DIMENSION, DIMENSION);
+    spec = argspec("d:d");
     valid(spec, dim(1));
     valid(spec, dim(2), dim(3));
 
     invalid(spec);
     invalid(spec, dim(1), anon("x"));
     invalid(spec, dim(1), dim(2), dim(3));
+    
+    spec = argspec(".");
+    valid(spec);
+    valid(spec, dim(1), dim(2), (dim(3)));
+    
+    spec = argspec("*");
+    valid(spec, dim(1));
+    valid(spec, anon("foo"));
+    valid(spec, quoted('"', "foo"));
+
+    Quoted str = quoted('"', "a");
+    spec = argspec("ss");
+    valid(spec, str, str);
+    invalid(spec, str);
+    invalid(spec, str, str, str);
     
     try {
       argspec(2, DIMENSION);

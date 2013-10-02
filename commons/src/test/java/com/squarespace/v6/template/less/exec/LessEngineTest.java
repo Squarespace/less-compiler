@@ -43,10 +43,10 @@ public class LessEngineTest extends LessTestBase {
       );
 
   
-  @Test
+//  @Test
   public void testSpeed() throws LessException {
     int size = SCRIPTS.size();
-    for (int i = 1; i < 32; i *= 2) {
+    for (int i = 1; i < 8; i *= 2) {
       for (int j = 1; j <= size; j++) {
         System.out.println(j + " scripts");
         run(SCRIPTS.subList(0, j), 1000 * i);

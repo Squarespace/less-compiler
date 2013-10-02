@@ -1,6 +1,5 @@
 package com.squarespace.v6.template.less;
 
-import static com.squarespace.v6.template.less.parse.Parselets.RULE;
 import static com.squarespace.v6.template.less.parse.Parselets.STYLESHEET;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -35,28 +34,16 @@ public class RuleTest extends LessTestBase {
   
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(RULE);
-    
-  }
-  
-  @Test
-  public void testParse2() throws LessException {
-//    String input = "background: -webkit-gradient(linear, left top, left bottom, from(red), to(blue));";
     LessHarness h = new LessHarness(STYLESHEET);
-//    h.parseEquals(input, null);
     
-//    h.parseEquals("foo  :   #123;", rule(prop("foo"), color("#123")));
-    Stylesheet root = new Stylesheet();
-    root.add(rule(prop("foo"), anon("")));
-    root.add(rule(prop("bar"), color("#123")));
-//    System.out.println(exp);
-//    h.parseEquals("foo: ;\nbar: #123;", exp);
+    Stylesheet exp = stylesheet();
+    exp.add(rule(prop("foo"), color("#123")));
+    h.parseEquals("foo  :   #123;", exp);
 
-    Context ctx = h.context();
-//    CssRenderer cr = new CssRenderer(ctx);
-//    System.out.println(cr.render(root));
-//    System.out.println("-----------------------");
-//    System.out.println(cr.render((Stylesheet)h.parse("foo: ;\nbar: #123;")));
+    exp = stylesheet();
+    exp.add(rule(prop("foo"), anon("")));
+    exp.add(rule(prop("bar"), color("#123")));
+    h.parseEquals("foo: ;\nbar: #123;", exp);
   }
   
 }

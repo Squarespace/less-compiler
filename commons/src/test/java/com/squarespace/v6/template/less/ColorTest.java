@@ -17,7 +17,7 @@ public class ColorTest extends LessTestBase {
   @Test
   public void testColor() throws LessException {
     // Conversion of of certain keywords into colors during parse.
-    LessHarness h = new LessHarness(Parselets.KEYWORD);
+    LessHarness h = new LessHarness(Parselets.COLOR_KEYWORD);
     h.parseEquals("blue", rgb(0x00, 0x00, 0xff, 1.0, true));
     h.parseEquals("red", rgb(0xff, 0x00, 0x00, 1.0, true));
 

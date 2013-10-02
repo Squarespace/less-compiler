@@ -22,7 +22,7 @@ public class MixinResolverTest extends LessTestBase {
     MixinCall call = mixincall(selector(element("#ns"), element(".m1")));
     MixinMatcher matcher = new MixinMatcher(env, call);
 
-    Stylesheet sheet = sheet();
+    Stylesheet sheet = stylesheet();
     Ruleset r1 = ruleset(selector(element("#ns")));
     Ruleset r2 = ruleset(selector(element(".m1")));
     r2.add(rule(prop("color"), color("white")));

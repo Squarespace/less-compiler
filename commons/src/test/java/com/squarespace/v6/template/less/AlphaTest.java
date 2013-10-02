@@ -35,4 +35,13 @@ public class AlphaTest extends LessTestBase {
     h.parseEquals("alpha(opacity=)", alpha(""));
   }
 
+  @Test
+  public void testParse() throws LessException {
+    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+
+    h.parseEquals("alpha(opacity=)", alpha(anon("")));
+    h.parseEquals("alpha(opacity=1)", alpha(anon("1")));
+    h.parseEquals("alpha(opacity=@var)", alpha(var("@var")));
+  }
+
 }

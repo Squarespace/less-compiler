@@ -359,7 +359,7 @@ public class LessMaker {
     return selectors;
   }
 
-  public Stylesheet sheet() {
+  public Stylesheet stylesheet() {
     return new Stylesheet();
   }
   

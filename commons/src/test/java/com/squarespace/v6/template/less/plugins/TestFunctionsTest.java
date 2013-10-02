@@ -1,6 +1,6 @@
 package com.squarespace.v6.template.less.plugins;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.ARG_COUNT;
+import static com.squarespace.v6.template.less.ExecuteErrorType.FUNCTION_CALL;
 
 import org.testng.annotations.Test;
 
@@ -35,8 +35,8 @@ public class TestFunctionsTest extends LessTestBase {
     h.evalEquals("bar(name=\"bob\")", expected);
     
     // wrong arg counts
-    h.evalFails("dummy3(1, 2, 3, 4)", ARG_COUNT);
-    h.evalFails("dummy3()", ARG_COUNT);
+    h.evalFails("dummy3(1, 2, 3, 4)", FUNCTION_CALL);
+    h.evalFails("dummy3()", FUNCTION_CALL);
   }
   
 }

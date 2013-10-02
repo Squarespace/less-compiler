@@ -23,6 +23,7 @@ import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Stylesheet;
 import com.squarespace.v6.template.less.parse.Parselets;
 
+// XXX: convert to run on-disk test suite.
 
 public class LessSuiteTest extends LessTestBase {
 

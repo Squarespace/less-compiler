@@ -32,6 +32,7 @@ public class Stylesheet extends BlockNode {
   
   @Override
   public void repr(Buffer buf) {
+    System.out.println("HERE: " + block);
     block.repr(buf);
   }
   
@@ -39,12 +40,7 @@ public class Stylesheet extends BlockNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     buf.append('\n');
-    buf.incrIndent().indent();
-    Node charset = block().charset();
-    if (charset != null) {
-      charset.modelRepr(buf);
-      buf.append('\n');
-    }
+    buf.incrIndent();
     super.modelRepr(buf);
     buf.decrIndent();
   }

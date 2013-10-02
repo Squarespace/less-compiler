@@ -11,6 +11,7 @@ import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.model.Combinator;
 import com.squarespace.v6.template.less.model.Ruleset;
+import com.squarespace.v6.template.less.model.Unit;
 
 
 public class RulesetTest extends LessTestBase {
@@ -39,7 +40,7 @@ public class RulesetTest extends LessTestBase {
     LessHarness h = new LessHarness(RULESET);
     
     Ruleset exp = ruleset(selector(element(Combinator.CHILD, ".x")));
-    exp.add(rule(prop("a"), anon("#fff")));
+    exp.add(rule(prop("a"), color("#fff")));
     h.parseEquals("> .x { a: #fff; }", exp);
     
     h.parseEquals(".foo { }", ruleset(selector(element(".foo"))));
@@ -49,7 +50,7 @@ public class RulesetTest extends LessTestBase {
     
     // Unicode character in selector
     exp = ruleset(selector(element(".♫")));
-    exp.add(rule(prop("length"), anon("52s")));
+    exp.add(rule(prop("length"), dim(52, Unit.S)));
     h.parseEquals(".♫ { length: 52s; }", exp);
   }
   

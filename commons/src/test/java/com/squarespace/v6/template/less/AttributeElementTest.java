@@ -1,12 +1,16 @@
 package com.squarespace.v6.template.less;
 
+import static com.squarespace.v6.template.less.model.Combinator.CHILD;
 import static com.squarespace.v6.template.less.model.Combinator.DESC;
+import static com.squarespace.v6.template.less.model.Combinator.SIB_ADJ;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
+import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
+import com.squarespace.v6.template.less.parse.Parselets;
 
 
 public class AttributeElementTest extends LessTestBase {
@@ -26,4 +30,13 @@ public class AttributeElementTest extends LessTestBase {
     attr(null, "y").toString();
   }
 
+  @Test
+  public void testParse() throws LessException {
+    LessHarness h = new LessHarness(Parselets.ELEMENT);
+    
+    h.parseEquals(" [class]", attr(DESC, anon("class")));
+    h.parseEquals(">[foo=\"bar\"]", attr(CHILD, anon("foo"), anon("="), quoted('"', "bar")));
+    h.parseEquals("+[a=\"@{bar}\"]", attr(SIB_ADJ, anon("a"), anon("="), quoted('"', var("@bar", true))));
+  }
+  
 }
