@@ -20,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
+import com.squarespace.v6.template.less.core.LessUtils;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
 
@@ -104,9 +105,9 @@ public class LessBatchC {
       System.err.println("\nPARSING AND CACHING ..\n");
       Context ctx = new Context(options);
       LessCompiler compiler = new LessCompiler();
-      DirectoryStream<Path> dirStream = getMatchingFiles(rootPath, matcher);
+      DirectoryStream<Path> dirStream = LessUtils.getMatchingFiles(rootPath, matcher);
       for (Path path : dirStream) {
-        String data = compiler.readFile(path);
+        String data = LessUtils.readFile(path);
         Stylesheet stylesheet = null;
         try {
           System.err.print("Parsing " + path + " ");
@@ -122,7 +123,7 @@ public class LessBatchC {
       }
 
       System.err.println("\nCOMPILING ..\n");
-      dirStream = getMatchingFiles(rootPath, matcher);
+      dirStream = LessUtils.getMatchingFiles(rootPath, matcher);
       ctx = new Context(options, null, cache);
       ctx.setCompiler(compiler);
       for (Path path : dirStream) {
@@ -159,12 +160,4 @@ public class LessBatchC {
     }
   }
   
-  private static DirectoryStream<Path> getMatchingFiles(Path root, final PathMatcher matcher) throws IOException {
-    return Files.newDirectoryStream(root, new DirectoryStream.Filter<Path>() {
-      @Override
-      public boolean accept(Path entry) throws IOException {
-        return !Files.isDirectory(entry) && matcher.matches(entry.getFileName());
-      }
-    });
-  }
 }

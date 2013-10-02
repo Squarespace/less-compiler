@@ -1,5 +1,8 @@
 package com.squarespace.v6.template.less;
 
+import static com.squarespace.v6.template.less.ExecuteErrorType.IMPORT_ERROR;
+import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -15,13 +18,12 @@ public class FilesystemScriptLoader implements ScriptLoader {
     return readFile(path);
   }
 
-  private String readFile(Path path) {
+  private String readFile(Path path) throws LessException {
     try (InputStream input = Files.newInputStream(path)) {
       return IOUtils.toString(input);
       
     } catch (IOException e) {
-      String message = String.format("Failure to read from '%s'", path);
-      throw new RuntimeException(message + ": " + e.getMessage(), e);
+      throw new LessException(error(IMPORT_ERROR).name(path).arg0(e.getMessage()));
     }
   }
 

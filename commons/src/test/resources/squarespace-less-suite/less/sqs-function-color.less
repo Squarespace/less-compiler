@@ -1,6 +1,6 @@
 .function-color-rgb {
     a1: rgb(1, 2, 3);
-    a2: rgba(1, 2, 3, .5);
+    a2: rgba(1, 2, 3, 0.5);
 
     a3: red(#020406);
     a4: blue(#020406);
@@ -8,42 +8,42 @@
 
     a6: alpha(rgba(1, 2, 3, 0.5));
     a7: color(~'#123');
-    a8: argb(rgba(5, 6, 7, 0.25));
+    a8: argb(rgba(5, 6, 7, .25));
 }
 .function-color-hsl {
     b1: hsl(.1666666666666666, 1.0, .375) + #000;
 
-    b2: hsl(100, .5, .5);
-    b3: hsl(60, .5, .25) + #000;
-    b4: hsla(100, .5, .25, 0.5) + #000;
-    b5: hsla(1.0, .5, .5, .5);
+    b2: hsl(100, 0.5, 0.5);
+    b3: hsl(60, 0.5, .25) + #000;
+    b4: hsla(100, 0.5, .25, 0.5) + #000;
+    b5: hsla(1.0, 0.5, 0.5, 0.5);
     b6: hue(hsl(50, .4, .3));
     b7: saturation(hsl(20, .2, .2));
     b8: lightness(hsl(10, .1, .1));
-    b9: luma(hsl(.5, .4, .3));
+    b9: luma(hsl(0.5, .4, .3));
 }
 .function-color-hsv {
     c1: hsv(100%, 50%, 25%);
-    c2: hsv(1.0, .5, .25);
-    c3: hsva(100%, 50%, 25%, .5);
-    c4: hsva(360, .5, .25, .5);
+    c2: hsv(1.0, 0.5, .25);
+    c3: hsva(100%, 50%, 25%, 0.5);
+    c4: hsva(360, 0.5, .25, 0.5);
 }
 .function-color-adjustment {
     d1: luma(#abc);
-    d2: contrast(#abc, #111, #222, .5);
+    d2: contrast(#abc, #111, #222, 0.5);
     d3: contrast(#abc, #111, #222, 50%);
     d4: contrast(#abc, #111, #222, 80%);
 
     d5: darken(#888, 10%);
     d6: lighten(#888, 10%);
-    d7: desaturate(hsl(.75, .5, .5), 100%);
+    d7: desaturate(hsl(.75, 0.5, 0.5), 100%);
 
     d8: fade(rgb(50, 50, 50), 25%);
     d9: fadein(rgba(50, 50, 50, 0.5), 25%);
     d10: fadeout(rgba(50, 50, 50, 0.5), 25%);
 
-    d11: spin(hsla(180, .5, .5, .5), 10);
-    d12: spin(hsla(180, .5, .5, .5), 10%);
+    d11: spin(hsla(180, 0.5, 0.5, 0.5), 10);
+    d12: spin(hsla(180, 0.5, 0.5, 0.5), 10%);
 }
 .function-color-combination {
     e1: average(#222, #444);

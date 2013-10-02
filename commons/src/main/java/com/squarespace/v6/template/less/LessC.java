@@ -13,6 +13,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessUtils;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
 
@@ -121,26 +122,31 @@ public class LessC {
     Path path = Paths.get(args.get(0));
     Path rootPath = path.getParent();
     LessCompiler compiler = new LessCompiler();
-    String data = compiler.readFile(path);
+    String source = null;
+    try {
+      source = LessUtils.readFile(path);
+    } catch (IOException e) {
+      
+    }
     Context ctx = new Context(options);
     ctx.setCompiler(compiler);
     try {
       if (debugMode == DebugMode.CANONICAL) {
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx, rootPath);
+        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath);
         System.out.println(canonicalize(stylesheet));
       
       } else if (debugMode == DebugMode.PARSE) {
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx, rootPath);
+        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath);
         System.out.println(parseTree(stylesheet));
       
       } else if (debugMode == DebugMode.EXPAND) {
         // NOTE: This mode doesn't fully work yet.
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx, rootPath);
+        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath);
         stylesheet = compiler.expand(stylesheet, ctx);
         System.out.println(canonicalize(stylesheet));
 
       } else {
-        String result = compiler.compile(data, ctx, rootPath);
+        String result = compiler.compile(source, ctx, rootPath);
         System.out.print(result);
       }
       

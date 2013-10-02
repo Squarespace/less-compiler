@@ -1,10 +1,18 @@
 package com.squarespace.v6.template.less.core;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
 
 
 public class LessUtils {
@@ -33,5 +41,20 @@ public class LessUtils {
     }
     return map;
   }
-  
+
+  public static String readFile(Path path) throws IOException {
+    try (InputStream input = Files.newInputStream(path)) {
+      return IOUtils.toString(input);
+    }
+  }
+
+  public static DirectoryStream<Path> getMatchingFiles(Path root, final PathMatcher matcher) throws IOException {
+    return Files.newDirectoryStream(root, new DirectoryStream.Filter<Path>() {
+      @Override
+      public boolean accept(Path entry) throws IOException {
+        return !Files.isDirectory(entry) && matcher.matches(entry.getFileName());
+      }
+    });
+  }
+
 }

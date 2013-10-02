@@ -12,7 +12,7 @@ import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
 
-public class LessEngineTest extends LessTestBase {
+public class LessSpeedTest extends LessTestBase {
 
   List<String> SCRIPTS = Arrays.asList(
       ".m(@arg) { @a: @arg + 1; .foo { a: @arg + 1; } } .rule { @a: 3; .m(10); @a: 4; a: @a }",

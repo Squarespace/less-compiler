@@ -1,47 +1,33 @@
 package com.squarespace.v6.template.less.core;
 
-import java.util.Random;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
-
-import com.squarespace.v6.template.less.core.CharClass;
 
 
 public class CharClassTest {
 
   @Test
-  public void testBasic() {
-    for (int i = 0; i < 50; i++) {
-      testIt(10000, 0x80);
-    }
-  }
-
-  private void testIt(int iters, int limit) {
-    Random r = new Random();
-    char[] chars = new char[iters];
-    for (int i = 0; i < iters; i++) {
-      chars[i] = (char)r.nextInt(limit);
+  public void testClasses() {
+    for (int i = 0; i < 10; i++) {
+      char ch = (char)('0' + i);
+      assertTrue(CharClass.digit(ch));
+      assertFalse(CharClass.combinator(ch));
+      assertFalse(CharClass.uppercase(ch));
     }
     
-    long start, elapsed;
-    int x = 0;
+    for (int i = 0; i < 26; i++) {
+      char upper = (char)('A' + i);
+      assertTrue(CharClass.uppercase(upper));
 
-    start = System.nanoTime();
-    for (int i = 0; i < iters; i++) {
-      x += CharClass.whitespace(chars[i]) ? 1 : 0;
+      char lower = (char)('a' + i);
+      assertFalse(CharClass.uppercase(lower));
+      assertFalse(CharClass.digit(upper));
+      assertFalse(CharClass.digit(lower));
+      assertFalse(CharClass.combinator(lower));
+      assertFalse(CharClass.combinator(upper));
     }
-    elapsed = System.nanoTime() - start;
-    System.out.println(" table = " + elapsed);
-
-//    start = System.nanoTime();
-//    for (int i = 0; i < iters; i++) {
-//      x += Chars.whitespace(chars[i]) ? 1 : 0;
-//    }
-//    elapsed = System.nanoTime() - start;
-//    System.out.println("method = " + elapsed);
-
-    
-    System.out.println("\nx = " + x + "\n");
   }
 
 }

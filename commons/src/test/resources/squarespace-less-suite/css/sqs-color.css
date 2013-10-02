@@ -1,19 +1,19 @@
 .color-rgb {
-  a1: black;
-  a2: white;
+  a1: #000;
+  a2: #fff;
   a3: #aaa;
   a4: #123456;
 }
 .color-keywords {
-  b1: red yellow blue green;
+  b1: red #ff0 blue green;
 }
 .color-math {
   c1: #010101;
-  c2: black;
-  c3: white;
+  c2: #000;
+  c3: #fff;
   c4: #fefefe;
   c5: #7f0000;
-  c6: magenta;
+  c6: #f0f;
   c7: #ff7f00;
   c8: green, #018101;
   c9: #888;

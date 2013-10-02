@@ -96,7 +96,6 @@ public class Context {
     return result.copy();
   }
   
-  
   public LessStats stats() {
     return stats;
   }

@@ -3,12 +3,8 @@ package com.squarespace.v6.template.less;
 import static com.squarespace.v6.template.less.SyntaxErrorType.INCOMPLETE_PARSE;
 import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.squarespace.v6.template.less.exec.FunctionTable;
@@ -96,16 +92,7 @@ public class LessCompiler {
     stats.compileDone(started);
     return result;
   }
-  
-  public String readFile(Path path) {
-    try (InputStream input = Files.newInputStream(path)) {
-      return IOUtils.toString(input);
-    } catch (IOException e) {
-      String message = String.format("Failure to read from '%s'", path);
-      throw new RuntimeException(message + ": " + e.getMessage(), e);
-    }
-  }
-  
+
   /**
    * Build the core function table.  The functions are stateless so this table
    * can be shared among many instances of the compiler.  This method provides
