@@ -129,6 +129,7 @@ public class LessEngine {
    */
   private void evaluateRules(ExecEnv env, Block block, boolean forceImportant) throws LessException {
     FlexList<Node> rules = block.rules();
+
     for (int i = 0; i < rules.size(); i++) {
       Node node = rules.get(i);
       
@@ -157,7 +158,9 @@ public class LessEngine {
         case MIXIN:
           // Register the closure on the original MIXIN.
           Mixin mixin = (Mixin) ((Mixin)node).original();
-          mixin.closure(env);
+          if (mixin.closure() == null) {
+            mixin.closure(env);
+          }
           break;
         
         case MIXIN_CALL:
@@ -184,6 +187,7 @@ public class LessEngine {
           node = node.eval(env);
           break;
       }
+      
       rules.set(i, node);
     }
   }
@@ -351,7 +355,6 @@ public class LessEngine {
     // Push the argument bindings onto the closure stack and create the dual stack.
     // We can resolve variables against the closure + argument scope or the scope which
     // called the mixin.
-    
     env.push(bindings);
     
     // Evaluate the guard conditions. If FALSE, bail out.
@@ -374,6 +377,7 @@ public class LessEngine {
     env.push(mixin);
 
     Block block = mixin.block();
+    expandImports(env, block);
     expandMixins(env, block);
     evaluateRules(env, block, call.important());
     collector.append(block);

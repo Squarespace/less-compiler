@@ -89,6 +89,12 @@ public class Block extends BaseNode {
     return result;
   }
   
+  public String dumpDefs() {
+    Buffer buf = new Buffer(4);
+    dumpDefs(buf);
+    return buf.toString();
+  }
+  
   /**
    * Debug method - collects list of definitions inside this block.
    */

@@ -38,6 +38,10 @@ public class ExecEnv {
     return new ExecEnv(ctx, frames.copy(), rootPath.copy());
   }
 
+  public int depth() {
+    return frames.size();
+  }
+  
   public void append(FlexList<Block> other) {
     frames.append(other);
   }
