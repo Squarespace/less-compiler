@@ -72,6 +72,11 @@ public class LessCompiler {
     stats.parseDone(raw.length(), started);
     return sheet == null ? null : sheet.copy();
   }
+
+  public String render(Stylesheet stylesheet, Context ctx) throws LessException {
+    LessEngine engine = new LessEngine();
+    return engine.render(stylesheet, ctx);
+  }
   
   public Stylesheet expand(Stylesheet stylesheet, Context ctx) throws LessException {
     LessEngine engine = new LessEngine();

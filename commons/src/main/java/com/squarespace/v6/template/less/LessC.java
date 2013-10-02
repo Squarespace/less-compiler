@@ -30,26 +30,27 @@ public class LessC {
   @Parameter(names = { "-D" }, description = "Debug mode (canonical, parse, expand)", converter = DebugModeConverter.class)
   private DebugMode debugMode;
   
-  @Parameter(names = { "-h", "--help" }, description = "Show usage", help = true)
+  @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
 
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
-  public int indent = 2;
+  private int indent = 2;
 
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode" )
-  public boolean compress = false;
+  private boolean compress = false;
   
   @Parameter(names = { "-v", "-version" }, description = "Show version")
-  public boolean version = false;
+  private boolean version = false;
 
   @Parameter(names = { "-stats" }, description = "Output statistics")
-  public boolean stats = false;
+  private boolean stats = false;
   
   @Parameter(names = {"-W", "-wait" }, description = "Wait before executing / exiting.")
-  public boolean waitForUser = false;
-  
-  @Parameter(names = "-include-path", description = "Include path" )
-  public String includePath;
+  private boolean waitForUser = false;
+ 
+// TBD:
+//  @Parameter(names = "-include-path", description = "Include path" )
+//  public String includePath;
 
   private Options options = new Options();
   
@@ -82,7 +83,7 @@ public class LessC {
   
   private void main() {
     if (version) {
-      System.out.println();
+      System.out.println(version());
       System.exit(0);
     }
     buildOptions();

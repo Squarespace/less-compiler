@@ -87,7 +87,6 @@ public class Parameter extends BaseNode {
     } else if (variadic) {
       buf.append("...");
     }
-   
   }
   
   @Override

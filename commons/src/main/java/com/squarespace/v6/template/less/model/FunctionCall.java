@@ -22,16 +22,23 @@ public class FunctionCall extends BaseNode {
 
   private boolean evaluate;
   
+  private boolean noimpl;
+  
   public FunctionCall(String name) {
-    this(name, null);
+    this(name, null, false);
   }
   
   public FunctionCall(String name, List<Node> args) {
+    this(name, args, false);
+  }
+
+  public FunctionCall(String name, List<Node> args, boolean noimpl) {
     if (name == null) {
       throw new IllegalArgumentException("Serious error: name cannot be null");
     }
     this.name = name;
     this.args = args;
+    this.noimpl = noimpl;
   }
   
   public String name() {
@@ -50,11 +57,16 @@ public class FunctionCall extends BaseNode {
   
   @Override
   public boolean needsEval() {
-    return true;
+    return !noimpl || evaluate;
   }
   
   @Override
   public Node eval(ExecEnv env) throws LessException {
+    if (noimpl) {
+      return evaluate ? new FunctionCall(name, evalArgs(env), true) : this;
+    }
+    
+    // Check if this function is built-in.
     Function func = env.context().findFunction(name);
     if (func != null) {
       // Invoke built-in function
@@ -75,7 +87,7 @@ public class FunctionCall extends BaseNode {
     }
     
     // Function is not a built-in so render the function and its args.
-    return evaluate ? new FunctionCall(name, evalArgs(env)) : this;
+    return evaluate ? new FunctionCall(name, evalArgs(env), true) : this;
   }
   
   @Override
@@ -108,8 +120,11 @@ public class FunctionCall extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
-    buf.append(" name=").append(name).append('\n');
-    buf.incrIndent();
+    buf.append(" name=").append(name);
+    if (noimpl) {
+      buf.append(" [no implementation]");
+    }
+    buf.append('\n').incrIndent();
     ReprUtils.modelRepr(buf, "\n", true, args);
     buf.decrIndent();
   }

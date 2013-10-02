@@ -49,11 +49,15 @@ public class Context {
   }
   
   public Context(Options opts, ScriptLoader loader) {
+    this(opts, loader, null);
+  }
+  
+  public Context(Options opts, ScriptLoader loader, Map<Path, Stylesheet> cache) {
     this.opts = opts;
     this.renderer = new Renderer();
     this.mixinResolver = new MixinResolver();
     this.stats = new LessStats();
-    this.importCache = new HashMap<>();
+    this.importCache = cache == null ? new HashMap<Path, Stylesheet>() : cache;
     this.loader = loader == null ? new FilesystemScriptLoader() : loader;
   }
   
@@ -85,11 +89,11 @@ public class Context {
     Path path = rootPath.resolve(rawPath).normalize();
     Stylesheet result = importCache.get(path);
     if (result != null) {
-      return once ? null : result;
+      return once ? null : result.copy();
     }
     result = compiler.parse(loader.load(path), this, path.getParent());
     importCache.put(path, result);
-    return result;
+    return result.copy();
   }
   
   
