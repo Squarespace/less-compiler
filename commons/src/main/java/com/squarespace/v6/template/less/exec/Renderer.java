@@ -295,7 +295,7 @@ public class Renderer {
   /** Render a SHORTHAND node. */
   public void _render(Buffer buf, Shorthand shorthand) throws LessException {
     render(buf, shorthand.left());
-    buf.append(' ');
+    buf.append('/');
     render(buf, shorthand.right());
   }
   

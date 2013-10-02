@@ -78,6 +78,13 @@ public class RenderFrame {
   }
 
   /**
+   * Block directives act as a root scope, so prevent selector inheritance.
+   */
+  public void pushEmptySelectors() {
+    this.selectors = Constants.EMPTY_SELECTORS;
+  }
+  
+  /**
    * Combines this set of media features with its parent's.
    */
   public void mergeFeatures(Features current) {

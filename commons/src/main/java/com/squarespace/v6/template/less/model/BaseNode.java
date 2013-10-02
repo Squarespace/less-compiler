@@ -3,6 +3,8 @@ package com.squarespace.v6.template.less.model;
 import static com.squarespace.v6.template.less.ExecuteErrorType.INVALID_OPERATION2;
 import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 
+import java.math.BigDecimal;
+
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.exec.ExecEnv;
@@ -34,6 +36,17 @@ public abstract class BaseNode implements Node {
     buf.append(type().toString());
     if (lineOffset != 0 && charOffset != 0) {
       buf.append(" [").append(lineOffset).append(',').append(charOffset).append("]");
+    }
+  }
+  
+  public static void formatDouble(Buffer buf, double value) {
+    long lval = (long)value;
+    if (value == lval) {
+      buf.append(lval);
+    } else {
+      // Strip leading and trailing zeros and avoid scientific notation.
+      String repr = BigDecimal.valueOf(value).stripTrailingZeros().toPlainString();
+      buf.append((value >= 0 && value < 1.0) ? repr.substring(1) : repr);
     }
   }
 

@@ -183,8 +183,10 @@ public class CssModel {
     }
     
     public void add(CssNode node) {
-      nodes.add(node);
-      populated |= node.populated();
+      if (!nodes.contains(node)) {
+        nodes.add(node);
+        populated |= node.populated();
+      }
     }
 
     @Override

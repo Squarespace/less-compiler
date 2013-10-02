@@ -54,7 +54,7 @@ public class Shorthand extends BaseNode {
   @Override
   public void repr(Buffer buf) {
     left.repr(buf);
-    buf.append(' ');
+    buf.append('/');
     right.repr(buf);
   }
   

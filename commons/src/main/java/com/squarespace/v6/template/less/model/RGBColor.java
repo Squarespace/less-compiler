@@ -182,7 +182,8 @@ public class RGBColor extends BaseColor {
       buf.append("rgba(").append(c0).listSep();
       buf.append(c1).listSep();
       buf.append(c2).listSep();
-      buf.append(alpha).append(')');
+      formatDouble(buf, alpha);
+      buf.append(')');
 
     } else {
       char r0 = Chars.hexchar(c0 >> 4);
@@ -192,14 +193,16 @@ public class RGBColor extends BaseColor {
       char b0 = Chars.hexchar(c2 >> 4);
       char b1 = Chars.hexchar(c2 & 0x0F);
 
+      // Check if the color can be emitted as a 3-character hex sequence.
       boolean hex3 = (r0 == r1 && g0 == g1 && b0 == b1);
 
-      // Determine if an equivalent color keyword exists that is shorter
-      // than its hex string. Some examples: red < #f00 beige < #f5f5dc
+      // Check if an equivalent color keyword exists that is shorter
+      // than its hex string. Some examples: red < #f00 beige < #f5f5dc.
+      // If so, we output the keyword.
       String name = Colors.colorToName(this);
       if (name != null) {
         int len = name.length();
-        if ((hex3 && len <= 4) || len <= 7) {
+        if ((hex3 && len <= 4) || (!hex3 && len <= 7)) {
           buf.append(name);
           return;
         }
@@ -208,7 +211,6 @@ public class RGBColor extends BaseColor {
       buf.append('#');
       if (hex3) {
         buf.append(r0).append(g0).append(b0);
-
       } else {
         buf.append(r0).append(r1).append(g0).append(g1).append(b0).append(b1);
       }

@@ -5,8 +5,6 @@ import static com.squarespace.v6.template.less.ExecuteErrorType.PERCENT_MATH_ORD
 import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 import static com.squarespace.v6.template.less.model.Unit.PERCENTAGE;
 
-import java.math.BigDecimal;
-
 import com.squarespace.v6.template.less.ExecuteErrorType;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
@@ -58,13 +56,7 @@ public class Dimension extends BaseNode {
   
   @Override
   public void repr(Buffer buf) {
-    long lval = (long)value;
-    if (lval == value) {
-      buf.append(lval);
-
-    } else {
-      buf.append(BigDecimal.valueOf(value).stripTrailingZeros().toPlainString());
-    }
+    formatDouble(buf, value);
     if (unit != null) {
       buf.append(unit.repr());
     }

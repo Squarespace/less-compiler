@@ -41,7 +41,9 @@ public class FunctionCallParselet implements Parselet {
       // Fall through, assuming the built-in alpha function.
     }
   
-    FunctionCall call = new FunctionCall(name);
+    // Use the lowercase version of the name to match less.js. CSS is case-insensitive
+    // within the ASCII range.
+    FunctionCall call = new FunctionCall(nameLC);
     parseArgs(stm, call);
 
     stm.skipWs();

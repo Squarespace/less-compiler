@@ -59,8 +59,10 @@ public class RenderEnv {
     
     depth++;
     frame = new RenderFrame(frame, blockNode, depth);
-    
-    if (selectors != null) {
+
+    if (blockNode.is(NodeType.BLOCK_DIRECTIVE)) {
+      frame.pushEmptySelectors();
+    } else if (selectors != null) {
       frame.mergeSelectors(selectors);
     } else if (features != null) {
       frame.mergeFeatures(features);

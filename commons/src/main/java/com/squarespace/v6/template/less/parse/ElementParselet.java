@@ -118,7 +118,7 @@ public class ElementParselet implements Parselet {
       stm.seek1();
       return Combinator.fromChar(ch);
       
-    } else if (skipped > 0 || CharClass.whitespace(prev) || prev == Chars.EOF) {
+    } else if (skipped > 0 || CharClass.whitespace(prev) || prev == Chars.EOF || prev == Chars.COMMA) {
       return Combinator.DESC;
     }
     return null;
