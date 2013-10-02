@@ -3,6 +3,7 @@ package com.squarespace.v6.template.less;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,27 +113,29 @@ public class LessC {
       System.err.println("you must provide a .less file.");
       System.exit(1);
     }
-    String source = args.get(0);
+    Path path = Paths.get(args.get(0));
+    Path rootPath = path.getParent();
     LessCompiler compiler = new LessCompiler();
-    String data = compiler.readFile(Paths.get(source));
+    String data = compiler.readFile(path);
     Context ctx = new Context(options);
     ctx.setCompiler(compiler);
     try {
       if (debugMode == DebugMode.CANONICAL) {
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx);
+        Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx, rootPath);
         System.out.println(canonicalize(stylesheet));
       
       } else if (debugMode == DebugMode.PARSE) {
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx);
+        Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx, rootPath);
         System.out.println(parseTree(stylesheet));
       
       } else if (debugMode == DebugMode.EXPAND) {
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx);
+        // NOTE: This mode doesn't fully work yet.
+        Stylesheet stylesheet = (Stylesheet) compiler.parse(data, ctx, rootPath);
         stylesheet = compiler.expand(stylesheet, ctx);
         System.out.println(canonicalize(stylesheet));
 
       } else {
-        String result = compiler.compile(data, ctx);
+        String result = compiler.compile(data, ctx, rootPath);
         System.out.print(result);
       }
       

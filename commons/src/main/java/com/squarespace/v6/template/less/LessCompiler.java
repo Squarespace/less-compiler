@@ -57,7 +57,12 @@ public class LessCompiler {
     LessStats stats = ctx.stats();
     long started = stats.now();
     LessStream stm = new LessStream(raw, rootPath);
-    Stylesheet sheet = (Stylesheet) stm.parse(Parselets.STYLESHEET);
+    Stylesheet sheet = null;
+    try {
+      sheet = (Stylesheet) stm.parse(Parselets.STYLESHEET);
+    } catch (LessException e) {
+      System.err.println(stm.errorMessage(e));
+    }
     if (!stm.complete()) {
       String remainder = stm.remainder();
       if (!remainder.isEmpty()) {
@@ -65,7 +70,7 @@ public class LessCompiler {
       }
     }
     stats.parseDone(raw.length(), started);
-    return sheet.copy();
+    return sheet == null ? null : sheet.copy();
   }
   
   public Stylesheet expand(Stylesheet stylesheet, Context ctx) throws LessException {
@@ -74,7 +79,11 @@ public class LessCompiler {
   }
   
   public String compile(String raw, Context ctx) throws LessException {
-    Stylesheet sheet = parse(raw, ctx);
+    return compile(raw, ctx, null);
+  }
+  
+  public String compile(String raw, Context ctx, Path rootPath) throws LessException {
+    Stylesheet sheet = parse(raw, ctx, rootPath);
     LessStats stats = ctx.stats();
     long started = stats.now();
     LessEngine cm = new LessEngine();

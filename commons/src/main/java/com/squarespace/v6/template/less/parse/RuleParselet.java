@@ -26,10 +26,10 @@ public class RuleParselet implements Parselet {
       return null;
     }
     
-    Mark mark = stm.mark();
+    Mark ruleMark = stm.mark();
     Node key = parseKey(stm);
     if (key == null) {
-      stm.restore(mark);
+      stm.restore(ruleMark);
       return null;
     }
 
@@ -39,10 +39,10 @@ public class RuleParselet implements Parselet {
     } else {
       name = ((Variable)key).name();
     }
-    
     Node value = null;
     stm.skipWs();
       
+    Mark valueMark = stm.mark();
     if (name.equals("font")) {
       value = stm.parse(FONT);
       
@@ -54,15 +54,23 @@ public class RuleParselet implements Parselet {
         if (expn.size() == 1) {
           value = expn.expressions().get(0);
         }
-        
-      // Before giving up, try to catch all other opaque values as a plain string.
-      } else if (name.charAt(0) != Chars.AT_SIGN && stm.matchAnonRuleValue()) {
-        value = new Anonymous(stm.token());
       }
     }
     
     stm.skipWs();
     boolean important = important(stm);
+
+    // If we didn't read a full rule, back up and try to parse an opaque value.
+    if (!endPeek(stm)) {
+      stm.restore(valueMark);
+      if (name.charAt(0) != Chars.AT_SIGN && stm.matchAnonRuleValue()) {
+        value = new Anonymous(stm.token());
+      }
+    } else if (value == null) {
+      value = new Anonymous("");
+    }
+    
+    // Only emit a rule if we've parsed a value and found the rule ending.
     if (value != null && end(stm)) {
       if (key.is(NodeType.VARIABLE)) {
         // Note that !important is ingored for definitions.
@@ -73,7 +81,7 @@ public class RuleParselet implements Parselet {
       }
     }
     
-    stm.restore(mark);
+    stm.restore(ruleMark);
     return null;
   }
   
@@ -89,14 +97,20 @@ public class RuleParselet implements Parselet {
   private boolean important(LessStream stm) {
     return (stm.peek() == Chars.EXCLAMATION_MARK && stm.matchImportant());
   }
+
+  private boolean endPeek(LessStream stm) {
+    stm.skipWs();
+    char ch = stm.peek();
+    return ch == Chars.SEMICOLON || ch == Chars.RIGHT_CURLY_BRACKET || ch == Chars.EOF;
+  }
   
   private boolean end(LessStream stm) {
     stm.skipWs();
     switch (stm.peek()) {
       case Chars.SEMICOLON:
         stm.seek1();
-        // Fall through..
-
+        return true;
+        
       case Chars.EOF:
       case Chars.RIGHT_CURLY_BRACKET:
         return true;

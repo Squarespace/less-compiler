@@ -24,6 +24,7 @@ public class PrimaryParselet implements Parselet {
       block.append(node);
       skipEmpty(stm);
     }
+    skipEmpty(stm);
     return block;
   }
 
@@ -31,6 +32,6 @@ public class PrimaryParselet implements Parselet {
     while (CharClass.skippable(stm.peek())) {
       stm.seek1();
     }
-
   }
+
 }

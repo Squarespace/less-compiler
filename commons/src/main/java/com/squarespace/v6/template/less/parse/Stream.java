@@ -46,6 +46,10 @@ public class Stream {
           index, length, lineOffset, charOffset, esc);
   }
   
+  public String raw() {
+    return raw;
+  }
+  
   public int position() {
     return index;
   }

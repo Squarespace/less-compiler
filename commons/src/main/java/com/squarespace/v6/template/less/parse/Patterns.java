@@ -32,7 +32,7 @@ public class Patterns {
   
   public static final Pattern AND = pattern("and");
   
-  public static final Pattern ANON_RULE_VALUE = pattern("(?:[^;@+\\\\/'\"*`({}-]*);");
+  public static final Pattern ANON_RULE_VALUE = pattern("(?:[^;@+\\\\/'\\\"*`({}-]*);");
   
   public static final Pattern ATTRIBUTE_KEY = pattern("([\\w-]|\\\\.)+");
   

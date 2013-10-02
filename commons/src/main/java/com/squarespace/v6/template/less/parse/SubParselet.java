@@ -1,7 +1,5 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.EXPECTED_MISC;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION;
 
 import com.squarespace.v6.template.less.LessException;
@@ -13,6 +11,7 @@ public class SubParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
+    Mark mark = stm.mark();
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
       return null;
     }
@@ -20,7 +19,8 @@ public class SubParselet implements Parselet {
     Node node = stm.parse(EXPRESSION);
 
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      throw new LessException(error(EXPECTED_MISC).arg0(')').arg1(stm.remainder()));
+      stm.restore(mark);
+      return null;
     }
     return node;
   }

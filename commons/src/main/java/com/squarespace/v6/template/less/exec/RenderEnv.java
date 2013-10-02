@@ -60,8 +60,6 @@ public class RenderEnv {
     depth++;
     frame = new RenderFrame(frame, blockNode, depth);
     
-//    System.err.println(frame.toString());
-
     if (selectors != null) {
       frame.mergeSelectors(selectors);
     } else if (features != null) {

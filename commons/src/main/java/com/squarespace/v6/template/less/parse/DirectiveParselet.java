@@ -50,7 +50,7 @@ public class DirectiveParselet implements Parselet {
         return result;
       
       case "@media":
-        return parseMedia(stm);
+        return parseMedia(stm, mark);
 
       case "@font-face":
       case "@viewport":
@@ -91,6 +91,7 @@ public class DirectiveParselet implements Parselet {
     }
     
     if (hasBlock) {
+//      stm.push(name);
       Node block = stm.parse(Parselets.BLOCK);
       if (block != null) {
         return new BlockDirective(name, (Block)block);
@@ -107,15 +108,14 @@ public class DirectiveParselet implements Parselet {
     return null;
   }
 
-  private Node parseMedia(LessStream stm) throws LessException {
+  private Node parseMedia(LessStream stm, Mark pos) throws LessException {
     Features features = (Features) stm.parse(Parselets.FEATURES);
+//    stm.push(stm.raw().substring(pos.index, stm.position()));
     Node block = stm.parse(Parselets.BLOCK);
     if (block == null) {
       return null;
     }
-    Media media = new Media(features);
-    media.setBlock((Block)block);
-    return media;
+    return new Media(features, (Block)block);
   }
   
   private Node parseImport(LessStream stm, String name) throws LessException {

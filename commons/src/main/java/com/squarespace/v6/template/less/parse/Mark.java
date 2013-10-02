@@ -9,4 +9,9 @@ public class Mark {
   
   public int charOffset;
   
+  @Override
+  public String toString() {
+    return "at line " + (lineOffset + 1) + " character " + (charOffset + 1);
+  }
+  
 }

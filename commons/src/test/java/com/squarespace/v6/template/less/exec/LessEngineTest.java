@@ -8,7 +8,6 @@ import org.testng.annotations.Test;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
-import com.squarespace.v6.template.less.exec.LessEngine;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
@@ -39,7 +38,12 @@ public class LessEngineTest extends LessTestBase {
       ".rule { mix-weightless: mix(#ff0000, #ffff00); }",
       ".rule { softlight: softlight(#f60000, #ffffff); }",
       ".mixin(@index, @b: 2, @c: 3, @rest ...) when (@index >= 0) { "
-          + ".foo() { value: 1; } .foo; .mixin(@index - 1, @b, @c); } .rule { .mixin(50, 1, 2, 3, 4, 5); }"
+          + ".foo() { value: 1; } .foo; .mixin(@index - 1, @b, @c); } .rule { .mixin(50, 1, 2, 3, 4, 5); }",
+      "variable-names  { @var: 'hello'; @name: 'var'; name: @@name;}",
+      "@a: 2; a:nth-child(@a) { border: 1px; }",
+      "label:not(.shipping-option-label) { }",
+      "label { color: color: #111; }",
+      ".foo { margin: ; }"
       );
 
   
@@ -72,10 +76,6 @@ public class LessEngineTest extends LessTestBase {
 
   @Test
   public void testVerbose() throws LessException {
-    SCRIPTS = Arrays.asList(
-//        "variable-names  { @var: 'hello'; @name: 'var'; name: @@name;}"
-        "@a: 2; a:nth-child(@a) { border: 1px; }"
-        );
     for (String script : SCRIPTS) {
       try {
         runVerbose(script);

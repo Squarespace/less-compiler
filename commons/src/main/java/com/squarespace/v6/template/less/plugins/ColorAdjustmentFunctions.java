@@ -45,7 +45,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
       double value = number(args.get(1));
-      return new HSLColor(hsl.hue(), hsl.saturation(), hsl.lightness() - value, hsl.alpha());
+      return new HSLColor(hsl.hue() / 360.0, hsl.saturation(), hsl.lightness() - value, hsl.alpha());
     }
   };
   
@@ -54,7 +54,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
       double value = number(args.get(1));
-      return new HSLColor(hsl.hue(), hsl.saturation() - value, hsl.lightness(), hsl.alpha());
+      return new HSLColor(hsl.hue() / 360.0, hsl.saturation() - value, hsl.lightness(), hsl.alpha());
     }
   };
   
@@ -89,7 +89,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
-      return new HSLColor(hsl.hue(), 0, hsl.lightness(), hsl.alpha());
+      return new HSLColor(hsl.hue() / 360.0, 0, hsl.lightness(), hsl.alpha());
     }
   };
   
@@ -98,7 +98,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
       double value = number(args.get(1));
-      return new HSLColor(hsl.hue(), hsl.saturation(), hsl.lightness() + value, hsl.alpha());
+      return new HSLColor(hsl.hue() / 360.0, hsl.saturation(), hsl.lightness() + value, hsl.alpha());
     }
   };
   
@@ -107,7 +107,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
       double value = number(args.get(1));
-      return new HSLColor(hsl.hue(), hsl.saturation() + value, hsl.lightness(), hsl.alpha());
+      return new HSLColor(hsl.hue() / 360.0, hsl.saturation() + value, hsl.lightness(), hsl.alpha());
     }
   };
 

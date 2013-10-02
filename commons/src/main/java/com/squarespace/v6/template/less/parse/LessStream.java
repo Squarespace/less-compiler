@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.regex.Matcher;
 
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.core.FlexList;
 import com.squarespace.v6.template.less.model.Node;
 
 
@@ -75,7 +76,11 @@ public class LessStream extends Stream {
   private String token;
   
   private Path rootPath;
-
+  
+  private FlexList<String> headerStack;
+  
+  private Mark position = new Mark();
+  
   public LessStream(String raw) {
     this(raw, null);
   }
@@ -83,6 +88,7 @@ public class LessStream extends Stream {
   public LessStream(String raw, Path rootPath) {
     super(raw);
     this.rootPath = rootPath;
+    this.headerStack = new FlexList<>(64);
     this.match_AND = Patterns.AND.matcher(raw);
     this.match_ANON_RULE_VALUE = Patterns.ANON_RULE_VALUE.matcher(raw);
     this.match_ATTRIBUTE_KEY = Patterns.ATTRIBUTE_KEY.matcher(raw);
@@ -127,12 +133,25 @@ public class LessStream extends Stream {
     for (Parselet parselet : parselets) {
       result = parselet.parse(this);
       if (result != null) {
+        mark(position);
         break;
       }
     }
     return result;
   }
 
+  public String errorMessage(LessException exc) {
+    return ParseUtils.errorMessage(exc, position, raw, headerStack);
+  }
+  
+  protected void push(String header) {
+    headerStack.push(header);
+  }
+  
+  protected void pop() {
+    headerStack.pop();
+  }
+  
   protected String token() {
     return token;
   }
