@@ -6,11 +6,11 @@ import java.util.Set;
 
 public class Options {
 
-  private static final int DEFAULT_INDENT = 2;
+  public static final int DEFAULT_INDENT = 2;
 
-  private static final String DEFAULT_ROOT = ".";
+  public static final String DEFAULT_ROOT = ".";
   
-  private static final int DEFAULT_RECURSION_LIMIT = 64;
+  public static final int DEFAULT_RECURSION_LIMIT = 64;
   
   private final Set<Option> flags = EnumSet.noneOf(Option.class);
   

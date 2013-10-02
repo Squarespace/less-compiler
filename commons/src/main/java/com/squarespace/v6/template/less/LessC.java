@@ -30,11 +30,14 @@ public class LessC {
   @Parameter(names = { "-D" }, description = "Debug mode (canonical, parse, expand)", converter = DebugModeConverter.class)
   private DebugMode debugMode;
   
+  @Parameter(names = { "-R" }, description = "Recursion limit")
+  private int recursionLimit = Options.DEFAULT_RECURSION_LIMIT;
+  
   @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
 
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
-  private int indent = 2;
+  private int indent = Options.DEFAULT_INDENT;
 
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode" )
   private boolean compress = false;
@@ -57,6 +60,7 @@ public class LessC {
   private void buildOptions() {
     options.compress(compress);
     options.indent(indent);
+    options.recursionLimit(recursionLimit);
     // options.trace(true); // TBD
   }
   
