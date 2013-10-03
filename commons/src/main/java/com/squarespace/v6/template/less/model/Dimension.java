@@ -132,7 +132,7 @@ public class Dimension extends BaseNode {
       new_unit = (unit != null) ? unit : dim.unit;
     }
     double factor = UnitConversions.factor(dim.unit, unit);
-    if (factor == 0.0) {
+    if (factor == 0.0 && dim.unit != Unit.PERCENTAGE) {
       throw new LessException(error(INCOMPATIBLE_UNITS).arg0(unit).arg1(dim.unit));
     }
     double scaled = dim.value * factor;
