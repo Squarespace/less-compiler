@@ -90,8 +90,8 @@ public class LessBatchC {
       System.exit(0);
     }
     buildOptions();
-    if (args.isEmpty()) {
-      System.err.println("you must provide the path containing the .less files");
+    if (args == null || args.isEmpty()) {
+      System.err.println("you must provide the directory containing the .less files");
       System.exit(1);
     }
     Path parentPath = Paths.get(args.get(0));

@@ -115,7 +115,7 @@ public class LessC {
   }
   
   private void execute() {
-    if (args.isEmpty()) {
+    if (args == null || args.isEmpty()) {
       System.err.println("you must provide a .less file.");
       System.exit(1);
     }
