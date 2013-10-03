@@ -92,7 +92,7 @@ public class VariableTest extends LessTestBase {
         def("@num", dim(1, Unit.PX))
         );
     LessHarness h = new LessHarness(VARIABLE, defs);
-    h.renderEquals("@var", "white");
+    h.renderEquals("@var", "#fff");
     h.renderEquals("@color", "#123");
     h.renderEquals("@num", "1px");
   }

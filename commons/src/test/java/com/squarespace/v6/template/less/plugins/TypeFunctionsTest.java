@@ -46,6 +46,12 @@ public class TypeFunctionsTest extends LessTestBase {
     h.evalEquals("isnumber(@number)", TRUE);
     h.evalEquals("isnumber(@color)", FALSE);
     
+    // Ems
+    h.evalEquals("isem(12.3em)", TRUE);
+    h.evalEquals("isem(12.3)", FALSE);
+    h.evalEquals("isem(1dpi)", FALSE);
+    h.evalEquals("isem('foo')", FALSE);
+    
     // Pixels
     h.evalEquals("ispixel(1px)", TRUE);
     h.evalEquals("ispixel(3.14px)", TRUE);

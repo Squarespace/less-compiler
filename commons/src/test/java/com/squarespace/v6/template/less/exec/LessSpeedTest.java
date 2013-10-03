@@ -3,8 +3,6 @@ package com.squarespace.v6.template.less.exec;
 import java.util.Arrays;
 import java.util.List;
 
-import org.testng.annotations.Test;
-
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
@@ -47,7 +45,7 @@ public class LessSpeedTest extends LessTestBase {
       );
 
   
-//  @Test
+//  @Test  // enable for manual performance testing.
   public void testSpeed() throws LessException {
     int size = SCRIPTS.size();
     for (int i = 1; i < 8; i *= 2) {
@@ -74,7 +72,7 @@ public class LessSpeedTest extends LessTestBase {
     System.out.println(iters + " iterations - elapsed " + elapsed + " (" + per + ") ms/iter");
   }
 
-  @Test
+//  @Test  // enable for manual performance testing and profiling
   public void testVerbose() throws LessException {
     for (String script : SCRIPTS) {
       try {

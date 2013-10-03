@@ -1,0 +1,26 @@
+.parent .child-1 {
+  a: 1;
+}
+.parent .child-2,
+.parent .child-3 {
+  b: 2;
+}
+.child + .child,
+.child + .sibling,
+.sibling + .child,
+.sibling + .sibling {
+  c: 3;
+}
+.parent.class-1,
+.parent.class-2 {
+  d: 4;
+}
+.parent.class-3 {
+  e: 5;
+}
+.ruleset-mixin .child {
+  f: 6;
+}
+.mixin-parent .child {
+  f: 6;
+}

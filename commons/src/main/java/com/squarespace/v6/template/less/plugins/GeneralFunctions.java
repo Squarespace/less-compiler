@@ -14,9 +14,11 @@ import com.squarespace.v6.template.less.exec.Function;
 import com.squarespace.v6.template.less.exec.Registry;
 import com.squarespace.v6.template.less.exec.SymbolTable;
 import com.squarespace.v6.template.less.model.Anonymous;
+import com.squarespace.v6.template.less.model.BaseColor;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.NodeType;
 import com.squarespace.v6.template.less.model.Quoted;
+import com.squarespace.v6.template.less.model.RGBColor;
 
 
 public class GeneralFunctions implements Registry<Function> {
@@ -85,6 +87,12 @@ public class GeneralFunctions implements Registry<Function> {
         }
         
         Node arg = args.get(j);
+        if (arg.is(NodeType.COLOR)) {
+          // Force representation of this color to always be hex, not keyword.
+          RGBColor color = ((BaseColor)arg).toRGB().copy();
+          color.forceHex(true);
+          arg = color;
+        }
         boolean escape = (ch == 's' || ch == 'S');
         String value = asString(env, arg, escape);
         if (CharClass.uppercase(ch)) {

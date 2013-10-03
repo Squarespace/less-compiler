@@ -1,0 +1,91 @@
+// Importing variables
+.mixin-import-a() {
+    @a: #123;
+}
+.ruleset-1 {
+    a: @a;
+    .mixin-import-a();
+}
+
+
+// Parameter default values
+.mixin-defaults(@num: 1, @color: blue) {
+    num: @num;
+    color: @color;
+}
+
+.ruleset-defaults {
+    .seventeen {
+        .mixin-defaults(17);
+    }
+    .red {
+        .mixin-defaults(@color: red);
+    }
+}
+
+
+// Guards
+.mixin-guard(@a, @b: 0) when (@a > 3), (@b > 3) {
+    values: @a @b;
+}
+
+.ruleset-guard {
+    .parent-1 {
+        .mixin-guard(4);
+    }
+    .parent-2 {
+        .mixin-guard(0);
+    }
+    .parent-3 {
+        .mixin-guard(1, 4);
+    }
+}
+
+
+// Pattern matching
+.mixin-color(white, ...) {
+    color-white: @arguments;
+}
+.mixin-color(black, ...) {
+    color-black: @arguments;
+}
+.ruleset-color {
+    .parent-1 {
+        .mixin-color(white, 'parent-1');
+    }
+    .parent-2 {
+        .mixin-color(black, 'parent-2');
+    }
+}
+
+
+// Recursion
+.mixin-recurse(@arg) when (@arg > 0) {
+    .child {
+        arg: @arg;
+    }
+    .mixin-recurse(@arg - 1);
+}
+.ruleset-recurse {
+    .mixin-recurse(3);
+}
+
+
+// Mutual recursion
+.mixin-recurse-1(@arg) when (@arg > 0) {
+    .black {
+        arg: @arg;
+    }
+    .mixin-recurse-2(@arg - 1);
+}
+.mixin-recurse-2(@arg) when (@arg > 0) {
+    .red {
+        arg: @arg;
+    }
+    .mixin-recurse-1(@arg - 1);
+}
+
+.ruleset-mututal-recurse {
+    .mixin-recurse-1(4);
+}
+

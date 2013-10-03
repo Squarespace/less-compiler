@@ -56,7 +56,7 @@ public class ColorTest extends LessTestBase {
     hsl = rgb.toHSL();
     assertEquals(hsl.toRGB(), rgb);
     
-    hsl = new HSLColor(180, .5, .5);
+    hsl = new HSLColor(.5, .5, .5);
     assertEquals(hsl.toRGB(), new RGBColor(64, 191, 191));
   }
   

@@ -1,5 +1,7 @@
 package com.squarespace.v6.template.less;
 
+import static org.testng.Assert.assertTrue;
+
 import org.testng.annotations.Test;
 
 import com.squarespace.v6.template.less.core.LessTestBase;
@@ -31,14 +33,12 @@ public class MixinResolverTest extends LessTestBase {
 
     MixinResolver resolver = new MixinResolver();
     resolver.reset(matcher);
-
-    System.out.println(resolver.match(sheet.block()));
+    assertTrue(resolver.match(sheet.block()));
   }
   
-  @Test
+//  @Test  // enable for performance testing and profiling
   public void testBindSpeed() throws Exception {
     int N = 1000;
-    System.out.println("waiting..");
     Context ctx = new Context();
     ExecEnv env = ctx.newEnv();
     MixinCallArgs args = args(',', arg("a", dim(1)), arg("b", dim(2)), arg("c", dim(3)), arg(dim(17)));
@@ -47,12 +47,9 @@ public class MixinResolverTest extends LessTestBase {
     MixinParams params = params(param("a"), param("b"), param("c"), param("rest", true));
     MixinMatcher matcher = new MixinMatcher(env, call);
     
-//    Thread.sleep(15000);
-//    System.out.println("running..");
     for (int i = 0; i < N; i++) {
       matcher.bind(params);
     }
-//    System.out.println("done.");
   }
   
 }

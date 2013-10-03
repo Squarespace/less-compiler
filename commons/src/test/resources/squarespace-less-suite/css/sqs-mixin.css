@@ -1,0 +1,44 @@
+.ruleset-1 {
+  a: #123;
+}
+.ruleset-defaults .seventeen {
+  num: 17;
+  color: blue;
+}
+.ruleset-defaults .red {
+  num: 1;
+  color: red;
+}
+.ruleset-guard .parent-1 {
+  values: 4 0;
+}
+.ruleset-guard .parent-3 {
+  values: 1 4;
+}
+.ruleset-color .parent-1 {
+  color-white: 'parent-1';
+}
+.ruleset-color .parent-2 {
+  color-black: 'parent-2';
+}
+.ruleset-recurse .child {
+  arg: 3;
+}
+.ruleset-recurse .child {
+  arg: 2;
+}
+.ruleset-recurse .child {
+  arg: 1;
+}
+.ruleset-mututal-recurse .black {
+  arg: 4;
+}
+.ruleset-mututal-recurse .red {
+  arg: 3;
+}
+.ruleset-mututal-recurse .black {
+  arg: 2;
+}
+.ruleset-mututal-recurse .red {
+  arg: 1;
+}

@@ -50,7 +50,7 @@ public class EncodeUtilsTest {
   @Test
   public void testEscape() {
     
-    // encodeURI characters that this function escapes
+    // This function escapes some characters that encodeURI allows through
     assertEquals(escape("#():;="), "%23%28%29%3a%3b%3d");
   }
 

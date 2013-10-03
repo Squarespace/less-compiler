@@ -1,0 +1,15 @@
+@media a, b {
+  .parent .child {
+    a: 1;
+  }
+}
+@media a and c and d, b and c and d, a and e, b and e {
+  .parent-1 {
+    b: 2;
+  }
+}
+@media a and f and g, b and f and g {
+  .parent-2 {
+    c: 3;
+  }
+}

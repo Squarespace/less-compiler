@@ -17,6 +17,17 @@ public class NumericFunctionsTest extends LessTestBase {
   public void testFunctions() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
     
+    // Ceiling / floor
+    h.evalEquals("ceil(1.1)", dim(2));
+    h.evalEquals("ceil(1.9)", dim(2));
+    h.evalEquals("ceil(-1.1)", dim(-1));
+    h.evalEquals("ceil(-1.9)", dim(-1));
+    h.evalEquals("floor(1.1)", dim(1));
+    h.evalEquals("floor(1.9)", dim(1));
+    h.evalEquals("floor(-1.1)", dim(-2));
+    h.evalEquals("floor(-1.9)", dim(-2));
+    h.evalFails("floor('dim')", FUNCTION_CALL);
+    
     // Decimal to percentage
     h.evalEquals("percentage(1)", dim(100, Unit.PERCENTAGE));
     h.evalEquals("percentage(.25)", dim(25, Unit.PERCENTAGE));
@@ -40,6 +51,7 @@ public class NumericFunctionsTest extends LessTestBase {
     // Unit changes
     h.evalEquals("unit(1, px)", dim(1, Unit.PX));
     h.evalEquals("unit(3em, pt)", dim(3, Unit.PT));
+    h.evalEquals("unit(3em)", dim(3));
     h.evalFails("unit('foo', px)", FUNCTION_CALL);
     h.evalFails("unit(3em, quark)", FUNCTION_CALL);
     

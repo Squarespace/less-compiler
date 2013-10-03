@@ -27,6 +27,8 @@ public class RGBColor extends BaseColor {
   
   private boolean keyword;
   
+  private boolean forceHex;
+  
   public RGBColor(double c0, double c1, double c2) {
     this(c0, c1, c2, 1.0);
   }
@@ -55,6 +57,10 @@ public class RGBColor extends BaseColor {
     this.keyword = keyword;
   }
   
+  public RGBColor copy() {
+    return new RGBColor(c0, c1, c2, alpha, keyword);
+  }
+  
   public Colorspace getColorspace() {
     return Colorspace.RGB;
   }
@@ -81,6 +87,14 @@ public class RGBColor extends BaseColor {
   
   public boolean keyword() {
     return keyword && alpha == 1.0;
+  }
+  
+  public boolean forceHex() {
+    return forceHex && alpha == 1.0;
+  }
+  
+  public void forceHex(boolean flag) {
+    this.forceHex = flag;
   }
   
   @Override
@@ -164,20 +178,6 @@ public class RGBColor extends BaseColor {
   @Override
   public void repr(Buffer buf) {
 
-    // TODO: this is non-standard for less.js but could mimic what users expect. if
-    // a color originates as a keyword (e.g. 'red') and no operations are performed on it,
-    // emit it as a keyword. add a compiler option to enable this behavior.
-    //
-    // if (rgb.keyword()) {
-    // String name = Colors.colorToName(rgb);
-    // if (name != null) {
-    // buf.append(name);
-    // return;
-    // }
-    //
-    // // No name matched, so fall through..
-    // }
-
     if (alpha < 1.0) {
       buf.append("rgba(").append(c0).listSep();
       buf.append(c1).listSep();
@@ -200,7 +200,7 @@ public class RGBColor extends BaseColor {
       // than its hex string. Some examples: red < #f00 beige < #f5f5dc.
       // If so, we output the keyword.
       String name = Colors.colorToName(this);
-      if (name != null) {
+      if (!forceHex && name != null) {
         int len = name.length();
         if ((hex3 && len <= 4) || (!hex3 && len <= 7)) {
           buf.append(name);

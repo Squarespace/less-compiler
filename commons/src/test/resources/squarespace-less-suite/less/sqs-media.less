@@ -1,0 +1,22 @@
+// Nested rules and selectors
+.parent {
+    @media a, b {
+        .child {
+            a: 1;
+        }
+    }
+}
+
+// Cartesian product
+@media a, b {
+    @media c and d, e {
+        .parent-1 {
+            b: 2;
+        }
+    }
+    @media f and g {
+        .parent-2 {
+            c: 3;
+        }
+    }
+}
