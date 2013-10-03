@@ -1,0 +1,12 @@
+package com.squarespace.v6.template.less.parse;
+
+
+public class Mark {
+
+  public int index;
+  
+  public int lineOffset;
+  
+  public int charOffset;
+  
+}
