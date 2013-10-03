@@ -6,11 +6,18 @@ import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
-
 /**
- * A Mixin differs from a Ruleset in the following ways:
- *  - it can take zero or more arguments.
- *  - it is only rendered when called.
+ * A Mixin is a macro that has a few function-like properties.  When a mixin
+ * is called, the mixin is "unrolled" into the calling scope, similar
+ * to the way a macro would be expanded. 
+ * 
+ * A mixin is not a proper function, as the mixin body's local scope is
+ * intermingled with the caller's.  It can see variables in the caller's scope.
+ * The values of local variables depend heavily on the order of evaluation 
+ * inside the mixin body and can lead to confusing outcomes.
+ * 
+ * A spec is being written which will contain illustrations of how mixin
+ * evaluation works in less.js 1.3.3 - phensley.
  */
 public class Mixin extends BlockNode {
 

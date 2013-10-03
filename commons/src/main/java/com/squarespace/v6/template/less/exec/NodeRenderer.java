@@ -35,13 +35,13 @@ import com.squarespace.v6.template.less.model.ValueElement;
 /**
  * Renders Node instances into strings using a reusable buffer.
  */
-public class Renderer {
+public class NodeRenderer {
 
   private List<Buffer> bufferList = new ArrayList<>();
 
   private int index;
   
-  public Renderer() {
+  public NodeRenderer() {
   }
   
   public String render(Context ctx, Node node) throws LessException {
@@ -52,9 +52,7 @@ public class Renderer {
   }
 
   /**
-   * Acquire a reusable buffer to render nodes.  This kills the 
-   * @param env
-   * @return
+   * Acquire a reusable buffer to render nodes.
    */
   private Buffer acquireBuffer(Context ctx) {
     // Need to grow the list.

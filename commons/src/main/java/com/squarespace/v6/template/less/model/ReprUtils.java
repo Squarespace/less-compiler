@@ -9,6 +9,9 @@ import com.squarespace.v6.template.less.core.FlexList;
 
 
 public class ReprUtils {
+  
+  private ReprUtils() {
+  }
 
   public static void modelRepr(Buffer buf, Collection<? extends Node> nodes) {
     modelRepr(buf, null, false, nodes);

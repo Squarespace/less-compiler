@@ -37,7 +37,7 @@ public enum ExecuteErrorType implements ErrorType {
   ("An error occurred importing %(name)s: %(arg0)s"),
   
   INCOMPATIBLE_UNITS
-  ("No conversion is allowed from numbers of unit %(arg0)s to %(arg1)s"),
+  ("No conversion is allowed from %(arg0)s to %(arg1)s"),
   
   INVALID_ARG
   ("Argument %(arg0)s must be %(type)s"),

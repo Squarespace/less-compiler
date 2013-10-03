@@ -12,7 +12,7 @@ public class GenericBlock extends BlockNode {
   
   @Override
   public NodeType type() {
-    return NodeType.BINDINGS;
+    return NodeType.GENERIC_BLOCK;
   }
   
 }

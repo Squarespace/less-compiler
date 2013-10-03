@@ -8,7 +8,7 @@ import com.squarespace.v6.template.less.core.Chars;
 
 public class RGBColor extends BaseColor {
 
-  private static final int[][] HSV_PERM = new int[][] {
+  private static final int[][] HSV_PERMUTATIONS = new int[][] {
     new int[] { 0, 3, 1 },
     new int[] { 2, 0, 1 },
     new int[] { 1, 0, 3 },
@@ -156,9 +156,9 @@ public class RGBColor extends BaseColor {
         value * (1 - f * saturation),
         value * (1 - (1 - f) * saturation)
     };
-    double red = values[HSV_PERM[i][0]] * 255.0;
-    double green = values[HSV_PERM[i][1]] * 255.0;
-    double blue = values[HSV_PERM[i][2]] * 255.0;
+    double red = values[HSV_PERMUTATIONS[i][0]] * 255.0;
+    double green = values[HSV_PERMUTATIONS[i][1]] * 255.0;
+    double blue = values[HSV_PERMUTATIONS[i][2]] * 255.0;
     return new RGBColor(red, green, blue, alpha);
   }
   

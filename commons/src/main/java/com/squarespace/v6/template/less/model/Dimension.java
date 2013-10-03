@@ -1,5 +1,7 @@
 package com.squarespace.v6.template.less.model;
 
+import static com.squarespace.v6.template.less.ExecuteErrorType.EXPECTED_MATHOP;
+import static com.squarespace.v6.template.less.ExecuteErrorType.INCOMPATIBLE_UNITS;
 import static com.squarespace.v6.template.less.ExecuteErrorType.INVALID_OPERATION1;
 import static com.squarespace.v6.template.less.ExecuteErrorType.PERCENT_MATH_ORDER;
 import static com.squarespace.v6.template.less.core.ErrorUtils.error;
@@ -121,7 +123,7 @@ public class Dimension extends BaseNode {
           break;
           
         default:
-          throw new LessException(error(ExecuteErrorType.EXPECTED_MATHOP).arg0(op));
+          throw new LessException(error(EXPECTED_MATHOP).arg0(op));
       }
       return new Dimension(result, new_unit);
     }
@@ -130,6 +132,9 @@ public class Dimension extends BaseNode {
       new_unit = (unit != null) ? unit : dim.unit;
     }
     double factor = UnitConversions.factor(dim.unit, unit);
+    if (factor == 0.0) {
+      throw new LessException(error(INCOMPATIBLE_UNITS).arg0(unit).arg1(dim.unit));
+    }
     double scaled = dim.value * factor;
     switch (op) {
       

@@ -26,12 +26,6 @@ public class Import extends BaseNode {
     this.once = once;
   }
   
-  // XXX:
-  // 1. evaluate path
-  // 2. lookup path in cache to see if rules are already parsed
-  //    a. hit: return those rules
-  //    b. miss: parse rules and store in cache, then return.
-
   public Node path() {
     return path;
   }
@@ -62,9 +56,13 @@ public class Import extends BaseNode {
     Quoted quoted = null;
     String rendered = null;
     if (value.is(NodeType.QUOTED)) {
+      
       // Strip quote delimiters and render inner string. This technique allows
       // for variable substitution inside @import paths, which may or may not
       // be useful.
+      //
+      // Conversely, Less.js performs all importing during the parse phase, so
+      // it has to assume all paths are bare strings.
       quoted = ((Quoted)value).copy();
       quoted.setEscape(true);
       rendered = ctx.render(quoted);

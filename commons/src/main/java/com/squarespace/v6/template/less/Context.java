@@ -11,7 +11,7 @@ import com.squarespace.v6.template.less.exec.Function;
 import com.squarespace.v6.template.less.exec.FunctionTable;
 import com.squarespace.v6.template.less.exec.MixinResolver;
 import com.squarespace.v6.template.less.exec.RenderEnv;
-import com.squarespace.v6.template.less.exec.Renderer;
+import com.squarespace.v6.template.less.exec.NodeRenderer;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
@@ -28,7 +28,7 @@ public class Context {
 
   private LessCompiler compiler;
 
-  private Renderer renderer;
+  private NodeRenderer renderer;
 
   private FunctionTable functionTable;
 
@@ -54,7 +54,7 @@ public class Context {
   
   public Context(Options opts, ScriptLoader loader, Map<Path, Stylesheet> cache) {
     this.opts = opts;
-    this.renderer = new Renderer();
+    this.renderer = new NodeRenderer();
     this.mixinResolver = new MixinResolver();
     this.stats = new LessStats();
     this.importCache = cache == null ? new HashMap<Path, Stylesheet>() : cache;
@@ -124,7 +124,7 @@ public class Context {
     renderer.render(buf, node);
   }
   
-  public Renderer renderer() {
+  public NodeRenderer renderer() {
     return renderer;
   }
   
