@@ -28,7 +28,7 @@ import difflib.Patch;
 /**
  * Runs the on-disk test suite.
  */
-public class LessTestSuite {
+public class LessSuiteTest {
 
   @Test
   public void testSuite() throws IOException {
