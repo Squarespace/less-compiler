@@ -2,7 +2,6 @@ package com.squarespace.v6.template.less;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.model.Node;
@@ -19,7 +18,7 @@ public class FunctionCallTest extends LessTestBase {
     h.parseEquals("rgb(1,2,3)", call("rgb", dim(1), dim(2), dim(3)));
     h.parseEquals("foo-bar(@a)", call("foo-bar", var("@a")));
 
-    Node str = quoted('"', "x", var("@y", true), "z");
+    Node str = quoted('"', false, "x", var("@y", true), "z");
     h.parseEquals("name(\"x@{y}z\")", call("name", str));
 
     Node foo_1 = assign("foo", dim(1));

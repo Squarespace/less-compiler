@@ -11,7 +11,6 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.v6.template.less.core.Chars;
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.model.GenericBlock;
@@ -73,9 +72,9 @@ public class VariableTest extends LessTestBase {
   public void testIndirectReference() throws LessException {
     GenericBlock defs = defs(
         def("@value", dim(12, Unit.PX)),
-        def("@real", quoted('"', var("@value"))),
+        def("@real", quoted('"', false, var("@value"))),
         def("@one", kwd("real")),
-        def("@two", quoted(Chars.NULL, "real"))
+        def("@two", quoted('"', true, "real"))
         );
     LessHarness h = new LessHarness(VARIABLE, defs);
     h.renderEquals("@@one", "\"12px\"");
@@ -101,9 +100,9 @@ public class VariableTest extends LessTestBase {
   public void testEmbeddedReferences() throws LessException {
     GenericBlock defs = defs(
         def("@a", dim(1, Unit.EM)),
-        def("@b", quoted('"', anon("foo"))),
+        def("@b", quoted('"', false, anon("foo"))),
         def("@c", dim(2, Unit.PX)),
-        def("@d", quoted('"', anon("\"bar\""))),
+        def("@d", quoted('"', false, anon("\"bar\""))),
         def("@e", color("#123456"))
         );
     LessHarness h = new LessHarness(QUOTED, defs);

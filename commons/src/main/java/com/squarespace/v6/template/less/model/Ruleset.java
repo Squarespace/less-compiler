@@ -104,7 +104,6 @@ public class Ruleset extends BlockNode {
     buf.append('\n');
     buf.incrIndent().indent();
     selectors.modelRepr(buf);
-//    buf.append('\n').indent();
     buf.append('\n');
     super.modelRepr(buf);
     buf.decrIndent().append('\n');

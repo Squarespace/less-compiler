@@ -31,7 +31,7 @@ public class DefinitionTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.RULE);
 
     h.parseEquals("@foo: 12px", def("@foo", dim(12, Unit.PX)));
-    h.parseEquals("@foo: 'bar';", def("@foo", quoted('\'', "bar")));
+    h.parseEquals("@foo: 'bar';", def("@foo", quoted('\'', false, "bar")));
     h.parseEquals("@a: @b;", def("@a", var("@b")));
     h.parseEquals("@bpMedium: 1000px;", def("@bpMedium", dim(1000, Unit.PX)));
   }

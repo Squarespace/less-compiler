@@ -13,6 +13,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.ErrorUtils;
 import com.squarespace.v6.template.less.core.LessUtils;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
@@ -114,12 +115,19 @@ public class LessC {
     }
   }
   
+  private void fail(String message) {
+    System.err.println(message);
+    System.exit(1);
+  }
+  
   private void execute() {
     if (args == null || args.isEmpty()) {
-      System.err.println("you must provide a .less file.");
-      System.exit(1);
+      fail("you must provide a .less file.");
     }
     Path path = Paths.get(args.get(0));
+    if (!path.toFile().isFile()) {
+      fail("the path '" + path + "' cannot be read.");
+    }
     Path rootPath = path.getParent();
     LessCompiler compiler = new LessCompiler();
     String source = null;
@@ -151,7 +159,8 @@ public class LessC {
       }
       
     } catch (LessException e) {
-      System.out.println(e.errorInfo().getMessage());
+      String errorMessage = ErrorUtils.formatError(e);
+      System.out.println(errorMessage);
       System.exit(1);
     }
     if (stats) {
@@ -185,18 +194,18 @@ public class LessC {
   static enum DebugMode {
     
     CANONICAL,
-    PARSE,
-    EXPAND
+    EXPAND,
+    PARSE
     ;
     
     public static DebugMode fromString(String str) {
       switch (str) {
         case "canonical":
           return CANONICAL;
-        case "parse":
-          return PARSE;
         case "expand":
           return EXPAND;
+        case "parse":
+          return PARSE;
         default:
           return null;
       }

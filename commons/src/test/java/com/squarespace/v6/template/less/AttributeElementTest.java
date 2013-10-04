@@ -35,8 +35,8 @@ public class AttributeElementTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.ELEMENT);
     
     h.parseEquals(" [class]", attr(DESC, anon("class")));
-    h.parseEquals(">[foo=\"bar\"]", attr(CHILD, anon("foo"), anon("="), quoted('"', "bar")));
-    h.parseEquals("+[a=\"@{bar}\"]", attr(SIB_ADJ, anon("a"), anon("="), quoted('"', var("@bar", true))));
+    h.parseEquals(">[foo=\"bar\"]", attr(CHILD, anon("foo"), anon("="), quoted('"', false, "bar")));
+    h.parseEquals("+[a=\"@{bar}\"]", attr(SIB_ADJ, anon("a"), anon("="), quoted('"', false, var("@bar", true))));
   }
   
 }

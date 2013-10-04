@@ -85,9 +85,11 @@ public class Operation extends BaseNode {
 
   @Override
   public void repr(Buffer buf) {
+    buf.append('(');
     operand0.repr(buf);
     buf.append(' ').append(operator.toString()).append(' ');
     operand1.repr(buf);
+    buf.append(')');
   }
   
   @Override

@@ -21,9 +21,9 @@ public class GeneralFunctionsTest extends LessTestBase {
     h.evalEquals("escape(' (hi) ')", anon("%20%28hi%29%20"));
     
     // Format
-    h.evalEquals("%('%s, %s', 12px, 'foo')", quoted('\'', anon("12px, foo")));
-    h.evalEquals("%('%s %A', '()', #ff1133)", quoted('\'', anon("() %23f13")));
-    h.evalEquals("%('%s %A', '()', #f00)", quoted('\'', anon("() %23f00")));
+    h.evalEquals("%('%s, %s', 12px, 'foo')", quoted('\'', false, anon("12px, foo")));
+    h.evalEquals("%('%s %A', '()', #ff1133)", quoted('\'', false, anon("() %23f13")));
+    h.evalEquals("%('%s %A', '()', #f00)", quoted('\'', false, anon("() %23f00")));
   }
   
 }

@@ -15,8 +15,6 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.v6.template.less.LessException;
-import com.squarespace.v6.template.less.core.Chars;
 import com.squarespace.v6.template.less.core.Constants;
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
@@ -58,8 +56,8 @@ public class ConditionTest extends LessTestBase {
     Dimension twok_ms = dim(2000, Unit.MS);
     Dimension four_s = dim(4, Unit.S);
     Dimension two_px = dim(2, Unit.PX);
-    Quoted str_true = quoted('"', "true");
-    Quoted bare_true = quoted(Chars.NULL, "true");
+    Quoted str_true = quoted('"', false, "true");
+    Quoted bare_true = quoted('"', true, "true");
 
     // Booleans (only the string "true" counts)
     compare(true, cond(AND, TRUE, anon("true")));
@@ -145,7 +143,7 @@ public class ConditionTest extends LessTestBase {
     h.parseEquals("(@b=1px)", cond(EQUAL, var("@b"), dim(1, Unit.PX)));
     h.parseEquals("(@a=true)", cond(EQUAL, var("@a"), new True()));
     h.parseEquals("(1px!=2px)", cond(NOT_EQUAL, dim(1, Unit.PX), dim(2, Unit.PX)));
-    h.parseEquals("('foo'<='bar')", cond(LESS_THAN_OR_EQUAL, quoted('\'', "foo"), quoted('\'', "bar")));
+    h.parseEquals("('foo'<='bar')", cond(LESS_THAN_OR_EQUAL, quoted('\'', false, "foo"), quoted('\'', false, "bar")));
     h.parseEquals("(xyz<>abc)", cond(NOT_EQUAL, kwd("xyz"), kwd("abc")));
   }
   

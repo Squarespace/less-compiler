@@ -19,7 +19,7 @@ public class TypeFunctionsTest extends LessTestBase {
     GenericBlock defs = defs(
         def("@color", color("#aaa")),
         def("@number", dim(12)),
-        def("@string", quoted('"', "foo"))
+        def("@string", quoted('"', false, "foo"))
     );
 
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL, defs);

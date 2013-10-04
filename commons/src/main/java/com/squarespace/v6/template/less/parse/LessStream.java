@@ -73,6 +73,8 @@ public class LessStream extends Stream {
   
   private int matchEnd = -1;
   
+  private Mark tokenPosition = new Mark();
+  
   private String token;
   
   private Path rootPath;
@@ -130,10 +132,12 @@ public class LessStream extends Stream {
   public Node parse(Parselet ... parselets) throws LessException {
     skipWs();
     Node result = null;
+    Mark pos = mark();
     for (Parselet parselet : parselets) {
       result = parselet.parse(this);
       if (result != null) {
-        mark(position);
+        result.setLineOffset(pos.lineOffset);
+        result.setCharOffset(pos.charOffset);
         break;
       }
     }
@@ -144,45 +148,44 @@ public class LessStream extends Stream {
     return ParseUtils.errorMessage(exc, position, raw, headerStack);
   }
   
-  protected void push(String header) {
+  public void push(String header) {
     headerStack.push(header);
   }
   
-  protected void pop() {
+  public void pop() {
     headerStack.pop();
   }
   
-  protected String token() {
+  public String token() {
     return token;
   }
   
-  protected boolean matchAnd() {
+  public boolean matchAnd() {
     return finish(match(match_AND));
   }
   
-  protected boolean matchAnonRuleValue() {
+  public boolean matchAnonRuleValue() {
     if (!match(match_ANON_RULE_VALUE)) {
       return false;
     }
-    matchEnd--;
-    set(index, matchEnd);
+    set(index, matchEnd - 1);
     consume();
     return true;
   }
   
-  protected boolean matchAttributeKey() {
+  public boolean matchAttributeKey() {
     return finish(match(match_ATTRIBUTE_KEY));
   }
   
-  protected boolean matchAttributeOp() {
+  public boolean matchAttributeOp() {
     return finish(match(match_ATTRIBUTE_OP));
   }
   
-  protected boolean matchBoolOperator() {
+  public boolean matchBoolOperator() {
     return finish(match(match_BOOL_OPERATOR));
   }
   
-  protected boolean matchCallName() {
+  public boolean matchCallName() {
     if (!match(match_CALL_NAME)) {
       return false;
     }
@@ -192,95 +195,95 @@ public class LessStream extends Stream {
     return true;
   }
   
-  protected boolean matchDigits() {
+  public boolean matchDigits() {
     return finish(match(match_DIGITS));
   }
   
-  protected boolean matchDimensionUnit() {
+  public boolean matchDimensionUnit() {
     return finish(match(match_DIMENSION_UNIT));
   }
 
-  protected boolean matchDimensionValue() {
+  public boolean matchDimensionValue() {
     return finish(match(match_DIMENSION_VALUE));
   }
 
-  protected boolean matchDirective() {
+  public boolean matchDirective() {
     return finish(match(match_DIRECTIVE));
   }
   
-  protected boolean matchElement0() {
+  public boolean matchElement0() {
     return finish(match(match_ELEMENT0));
   }
 
-  protected boolean matchElement1() {
+  public boolean matchElement1() {
     return finish(match(match_ELEMENT1));
   }
 
-  protected boolean matchElement2() {
+  public boolean matchElement2() {
     return finish(match(match_ELEMENT2));
   }
 
-  protected boolean matchElement3() {
+  public boolean matchElement3() {
     return finish(match(match_ELEMENT3));
   }
 
-  protected boolean matchHexColor() {
+  public boolean matchHexColor() {
     return finish(match(match_HEXCOLOR));
   }
 
-  protected boolean matchIdentifier() {
+  public boolean matchIdentifier() {
     return finish(match(match_IDENTIFIER));
   }
   
-  protected boolean matchImportant() {
+  public boolean matchImportant() {
     return finish(match(match_IMPORTANT));
   }
   
-  protected boolean matchKeyword() {
+  public boolean matchKeyword() {
     return finish(match(match_KEYWORD));
   }
   
-  protected boolean matchMixinName() {
+  public boolean matchMixinName() {
     return finish(match(match_MIXIN_NAME));
   }
   
-  protected boolean matchNot() {
+  public boolean matchNot() {
     return finish(match(match_NOT));
   }
   
-  protected boolean matchOpacity() {
+  public boolean matchOpacity() {
     return finish(match(match_OPACITY));
   }
   
-  protected boolean matchProperty() {
+  public boolean matchProperty() {
     return finish(match(match_PROPERTY));
   }
   
-  protected boolean matchRatio() {
+  public boolean matchRatio() {
     return finish(match(match_RATIO));
   }
   
-  protected boolean matchUnicodeRange() {
+  public boolean matchUnicodeRange() {
     return finish(match(match_UNICODE_RANGE));
   }
   
-  protected boolean matchUrlStart() {
+  public boolean matchUrlStart() {
     return finish(match(match_URLSTART));
   }
   
-  protected boolean matchUrlEndBare() {
+  public boolean matchUrlEndBare() {
     return finish(match(match_URL_BARE));
   }
 
-  protected boolean matchWhen() {
+  public boolean matchWhen() {
     return finish(match(match_WHEN));
   }
 
-  protected boolean matchWord() {
+  public boolean matchWord() {
     return finish(match(match_WORD));
   }
 
-  protected boolean peekShorthand() {
+  public boolean peekShorthand() {
     return peek(match_SHORTHAND);
   }
   
@@ -311,6 +314,9 @@ public class LessStream extends Stream {
   }
   
   private void set(int start, int end) {
+    tokenPosition.index = start;
+    tokenPosition.lineOffset = lineOffset;
+    tokenPosition.charOffset = charOffset;
     token = raw.substring(start, end);
   }
 

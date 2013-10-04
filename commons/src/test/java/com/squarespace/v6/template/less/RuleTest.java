@@ -3,6 +3,7 @@ package com.squarespace.v6.template.less;
 import static com.squarespace.v6.template.less.model.Unit.PX;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
@@ -11,6 +12,7 @@ import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.model.Rule;
 import com.squarespace.v6.template.less.model.Stylesheet;
 import com.squarespace.v6.template.less.model.Unit;
+import com.squarespace.v6.template.less.parse.LessStream;
 import com.squarespace.v6.template.less.parse.Parselets;
 
 
@@ -43,6 +45,8 @@ public class RuleTest extends LessTestBase {
     h.parseEquals("foo \t : \t /* x */ 1 /* y */ 2", 
         rule(prop("foo"), expn(comment(" x ", true), dim(1), comment(" y ", true), dim(2))));
 
+    h.parseEquals("foo: foo: foo: 123   ;", rule(prop("foo"), anon("foo: foo: 123")));
+
     h.parseEquals("font:italic bold 12px/30px Georgia, serif", rule(prop("font"), expnlist( 
         expn(kwd("italic"), kwd("bold"), shorthand(dim(12, PX), dim(30, PX)), kwd("Georgia")), kwd("serif"))));
     
@@ -52,8 +56,17 @@ public class RuleTest extends LessTestBase {
     exp.add(rule(prop("foo"), anon("")));
     exp.add(rule(prop("bar"), color("#123")));
     h.parseEquals("foo: ;\nbar: #123;", exp);
-
-    
   }
+  
+  @Test
+  public void testAnonRuleValueParse() throws LessException {
+    LessStream stm = new LessStream("foo bar;");
+    assertTrue(stm.matchAnonRuleValue());
+    assertEquals(stm.token(), "foo bar");
+
+    stm = new LessStream("foo: foo: foo: 123 ;");
+    assertTrue(stm.matchAnonRuleValue());
+    assertEquals(stm.token(), "foo: foo: foo: 123 "); // token before trimming
+}
   
 }

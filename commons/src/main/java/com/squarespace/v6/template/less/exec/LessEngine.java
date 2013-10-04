@@ -133,59 +133,64 @@ public class LessEngine {
     for (int i = 0; i < rules.size(); i++) {
       Node node = rules.get(i);
       
-      switch (node.type()) {
-
-        case BLOCK_DIRECTIVE:
-          node = evaluateBlockDirective(env, (BlockDirective)node);
-          break;
-        
-        case DEFINITION:
-          Definition def = (Definition)node;
-          node = new Definition(def.name(), def.dereference(env));
-          break;
+      try {
+        switch (node.type()) {
+  
+          case BLOCK_DIRECTIVE:
+            node = evaluateBlockDirective(env, (BlockDirective)node);
+            break;
           
-        case DIRECTIVE:
-          Directive directive = (Directive)node;
-          if (directive.name().equals("@charset") && block.charset() == null) {
-            block.charset(directive);
-          }
-          break;
-
-        case MEDIA:
-          node = evaluateMedia(env, (Media)node);
-          break;
+          case DEFINITION:
+            Definition def = (Definition)node;
+            node = new Definition(def.name(), def.dereference(env));
+            break;
+            
+          case DIRECTIVE:
+            Directive directive = (Directive)node;
+            if (directive.name().equals("@charset") && block.charset() == null) {
+              block.charset(directive);
+            }
+            break;
+  
+          case MEDIA:
+            node = evaluateMedia(env, (Media)node);
+            break;
+            
+          case MIXIN:
+            // Register the closure on the original MIXIN.
+            Mixin mixin = (Mixin) ((Mixin)node).original();
+            if (mixin.closure() == null) {
+              mixin.closure(env);
+            }
+            break;
           
-        case MIXIN:
-          // Register the closure on the original MIXIN.
-          Mixin mixin = (Mixin) ((Mixin)node).original();
-          if (mixin.closure() == null) {
-            mixin.closure(env);
-          }
-          break;
-        
-        case MIXIN_CALL:
-          throw new RuntimeException("Serious error: all mixin calls should already have been evaluated.");
-          
-        case STYLESHEET:
-          node = evaluateStylesheet(env, (Stylesheet)node);
-          break;
-          
-        case RULESET:
-          node = evaluateRuleset(env, (Ruleset)node, forceImportant);
-          break;
-          
-        case RULE:
-          Rule rule = (Rule) node;
-          if (forceImportant && !rule.important()) {
-            node = new Rule(rule.property(), rule.value().eval(env), forceImportant);
-          } else {
-            node = rule.eval(env);
-          }
-          break;
-          
-        default:
-          node = node.eval(env);
-          break;
+          case MIXIN_CALL:
+            throw new RuntimeException("Serious error: all mixin calls should already have been evaluated.");
+            
+          case STYLESHEET:
+            node = evaluateStylesheet(env, (Stylesheet)node);
+            break;
+            
+          case RULESET:
+            node = evaluateRuleset(env, (Ruleset)node, forceImportant);
+            break;
+            
+          case RULE:
+            Rule rule = (Rule) node;
+            if (forceImportant && !rule.important()) {
+              node = new Rule(rule.property(), rule.value().eval(env), forceImportant);
+            } else {
+              node = rule.eval(env);
+            }
+            break;
+            
+          default:
+            node = node.eval(env);
+            break;
+        }
+      } catch (LessException e) {
+        e.push(node);
+        throw e;
       }
       
       rules.set(i, node);
@@ -229,22 +234,36 @@ public class LessEngine {
     }
     
     Context ctx = env.context();
-    Stylesheet stylesheet = ctx.parseImport(path, imp.rootPath(), imp.once());
+    Stylesheet stylesheet = null;
+    try {
+      stylesheet = ctx.parseImport(path, imp.rootPath(), imp.once());
+    } catch (LessException e) {
+      e.push(imp);
+      throw e;
+    }
+
     if (stylesheet == null) {
       return new Block(0);
     }
-    expandImports(env, stylesheet.block());
 
-    Features features = imp.features();
-    if (features == null || features.isEmpty()) {
-      return stylesheet.block();
+    try {
+      expandImports(env, stylesheet.block());
+  
+      Features features = imp.features();
+      if (features == null || features.isEmpty()) {
+        return stylesheet.block();
+      }
+      
+      // If the IMPORT has media features, wrap the block in a MEDIA.
+      features = (Features) features.eval(env);
+      Block block = new Block();
+      block.append(new Media(features, stylesheet.block()));
+      return block;
+
+    } catch (LessException e) {
+      e.push(imp);
+      throw e;
     }
-    
-    // If the IMPORT has media features, wrap the block in a MEDIA.
-    features = (Features) features.eval(env);
-    Block block = new Block();
-    block.append(new Media(features, stylesheet.block()));
-    return block;
   }
   
   /**
@@ -376,11 +395,21 @@ public class LessEngine {
     original.enter();
     env.push(mixin);
 
-    Block block = mixin.block();
-    expandImports(env, block);
-    expandMixins(env, block);
-    evaluateRules(env, block, call.important());
-    collector.append(block);
+    try {
+      Block block = mixin.block();
+      expandImports(env, block);
+      expandMixins(env, block);
+      evaluateRules(env, block, call.important());
+      collector.append(block);
+      
+    } catch (LessException e) {
+      // If any errors occur inside a mixin call, we want to show the actual
+      // arguments to the mixin call.
+      MixinCall actualCall = call.copy();
+      actualCall.args(matcher.mixinArgs());
+      e.push(actualCall);
+      throw e;
+    }
     original.exit();
     return true;
   }

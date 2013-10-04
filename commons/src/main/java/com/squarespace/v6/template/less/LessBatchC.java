@@ -118,7 +118,7 @@ public class LessBatchC {
           cache.put(path, stylesheet);
           
         } catch (LessException e) {
-          System.err.println(e.errorInfo().getMessage() + '\n');
+          System.err.println(e.primaryError().getMessage() + '\n');
         }
       }
 
@@ -142,7 +142,7 @@ public class LessBatchC {
           System.err.printf("  %.3fms\n", elapsed);
           
         } catch (LessException e) {
-          System.err.println("\n    " + e.errorInfo().getMessage() + '\n');
+          System.err.println("\n    " + e.primaryError().getMessage() + '\n');
         }
       }
       

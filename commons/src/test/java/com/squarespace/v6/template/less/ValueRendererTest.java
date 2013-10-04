@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.v6.template.less.core.Chars;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 import com.squarespace.v6.template.less.model.Node;
@@ -42,9 +41,9 @@ public class ValueRendererTest extends LessTestBase {
 
   @Test
   public void testQuoted() throws LessException {
-    assertEquals(render(quoted('"', "foo", "\"bar")), "\"foo\"bar\"");
-    assertEquals(render(quoted('\'', "bar")), "'bar'");
-    assertEquals(render(quoted(Chars.NULL, "bar", "foo")), "barfoo");
+    assertEquals(render(quoted('"', false, "foo", "\"bar")), "\"foo\"bar\"");
+    assertEquals(render(quoted('\'', false, "bar")), "'bar'");
+    assertEquals(render(quoted('"', true, "bar", "foo")), "barfoo");
   }
   
   @Test

@@ -64,7 +64,7 @@ public class RuleParselet implements Parselet {
     if (!endPeek(stm)) {
       stm.restore(valueMark);
       if (name.charAt(0) != Chars.AT_SIGN && stm.matchAnonRuleValue()) {
-        value = new Anonymous(stm.token());
+        value = new Anonymous(stm.token().trim());
       }
     } else if (value == null) {
       value = new Anonymous("");

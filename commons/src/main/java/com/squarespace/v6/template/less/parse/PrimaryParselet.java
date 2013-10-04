@@ -20,9 +20,16 @@ public class PrimaryParselet implements Parselet {
     Block block = new Block();
     Node node = null;
     skipEmpty(stm);
+    
+    // Save current stream position before parsing each primary rule type.
+    Mark position = stm.mark();
     while ((node = stm.parse(MIXIN, RULE, RULESET, COMMENT_RULE, MIXIN_CALL, DIRECTIVE)) != null) {
+      // Assign stream position to successfully-parsed rule.
+      node.setLineOffset(position.lineOffset);
+      node.setCharOffset(position.charOffset);
       block.append(node);
       skipEmpty(stm);
+      stm.mark(position);
     }
     skipEmpty(stm);
     return block;

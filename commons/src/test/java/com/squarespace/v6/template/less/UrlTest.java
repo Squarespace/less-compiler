@@ -14,16 +14,16 @@ public class UrlTest extends LessTestBase {
 
   @Test
   public void testEquals() {
-    assertEquals(url(quoted('"', "http://foo.com")), url(quoted('"', "http://foo.com")));
+    assertEquals(url(quoted('"', false, "http://foo.com")), url(quoted('"', false, "http://foo.com")));
 
-    assertNotEquals(url(quoted('"', "http://foo.com")), null);
-    assertNotEquals(url(quoted('"', "http://foo.com")), anon("http://foo.com"));
-    assertNotEquals(url(quoted('"', "http://foo.com")), url(quoted('"', "http://bar.com")));
+    assertNotEquals(url(quoted('"', false, "http://foo.com")), null);
+    assertNotEquals(url(quoted('"', false, "http://foo.com")), anon("http://foo.com"));
+    assertNotEquals(url(quoted('"', false, "http://foo.com")), url(quoted('"', false, "http://bar.com")));
   }
 
   @Test
   public void testModelReprSafety() {
-    url(quoted('"', "http://squarespace.com/@{page}")).toString();
+    url(quoted('"', false, "http://squarespace.com/@{page}")).toString();
   }
   
   @Test
@@ -31,7 +31,7 @@ public class UrlTest extends LessTestBase {
     LessHarness h = new LessHarness(FUNCTION_CALL);
 
     h.parseEquals("url('http://foo.com/@{bar}')", 
-        url(quoted('\'', anon("http://foo.com/"), var("@bar", true))));
+        url(quoted('\'', false, anon("http://foo.com/"), var("@bar", true))));
 
     h.parseEquals("url(http://glonk.com)",
         url(anon("http://glonk.com")));

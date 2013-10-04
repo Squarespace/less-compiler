@@ -25,6 +25,12 @@ public class MixinCall extends BaseNode {
     this.path = SelectorUtils.renderMixinSelector(selector);
   }
   
+  public MixinCall copy() {
+    MixinCall result = new MixinCall(selector, args, important);
+    copyPosition(this, result);
+    return result;
+  }
+  
   public Selector selector() {
     return selector;
   }
@@ -39,6 +45,10 @@ public class MixinCall extends BaseNode {
   
   public List<String> path() {
     return this.path;
+  }
+  
+  public void args(MixinCallArgs args) {
+    this.args = args;
   }
   
   @Override

@@ -295,8 +295,10 @@ public class LessMaker {
     return new Property(name);
   }
 
-  public Quoted quoted(char delim, Object ... elems) {
-    Quoted result = new Quoted(delim, delim == Chars.NULL);
+
+  
+  public Quoted quoted(char delim, boolean escape, Object ... elems) {
+    Quoted result = new Quoted(delim, escape);
     for (Object obj : elems) {
       if (obj instanceof Node) {
         result.append((Node)obj);

@@ -55,7 +55,7 @@ public class LessSuiteTest {
       try {
         lessCompiled = compiler.compile(source, ctx);
       } catch (LessException e) {
-        failures.append("\nCompile error " + lessPath.getFileName() + "\n" + e.errorInfo().getMessage());
+        failures.append("\nCompile error " + lessPath.getFileName() + "\n" + e.primaryError().getMessage());
         continue;
       }
       

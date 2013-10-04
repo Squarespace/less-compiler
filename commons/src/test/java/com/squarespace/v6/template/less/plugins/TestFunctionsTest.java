@@ -31,7 +31,7 @@ public class TestFunctionsTest extends LessTestBase {
     h.evalEquals("foo(2-@one)", expected);
     
     // Assignment args
-    expected = call("bar", assign("name", quoted('"', "bob")));
+    expected = call("bar", assign("name", quoted('"', false, "bob")));
     h.evalEquals("bar(name=\"bob\")", expected);
     
     // wrong arg counts

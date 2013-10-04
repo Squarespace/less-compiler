@@ -72,7 +72,7 @@ public class Selectors extends BaseNode {
     int size1 = selectors.size();
     for (int i = 0; i < size1; i++) {
       if (i > 0) {
-        buf.append(",\n");
+        buf.append(",\n").indent();
       }
       reprSelector(buf, selectors.get(i));
     }
@@ -103,9 +103,9 @@ public class Selectors extends BaseNode {
           buf.append(ch);
         }
       }
-    }
-    if (!element.isWildcard() && !CharClass.whitespace(buf.prevChar())) {
-      buf.append(' ');
+      if (!element.isWildcard() && !CharClass.whitespace(buf.prevChar())) {
+        buf.append(' ');
+      }
     }
     element.repr(buf);
   }

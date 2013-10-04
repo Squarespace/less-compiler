@@ -16,6 +16,11 @@ public abstract class BaseNode implements Node {
   
   protected int charOffset;
   
+  protected void copyPosition(BaseNode from, BaseNode to) {
+    to.setLineOffset(from.lineOffset);
+    to.setCharOffset(from.charOffset);
+  }
+  
   public int lineOffset() {
     return lineOffset;
   }
@@ -34,9 +39,7 @@ public abstract class BaseNode implements Node {
   
   public void typeRepr(Buffer buf) {
     buf.append(type().toString());
-    if (lineOffset != 0 && charOffset != 0) {
-      buf.append(" [").append(lineOffset).append(',').append(charOffset).append("]");
-    }
+    buf.append(" [").append(lineOffset).append(',').append(charOffset).append("]");
   }
   
   public static void formatDouble(Buffer buf, double value) {

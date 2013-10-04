@@ -51,7 +51,7 @@ public class ArgumentsTest extends LessTestBase {
         args(',', arg("@b", dim(12, Unit.PX))));
     
     h.parseEquals("('@{x} y @{z}')",
-        args(',', arg(null, quoted('\'', var("@x", true), anon(" y "), var("@z", true)))));
+        args(',', arg(null, quoted('\'', false, var("@x", true), anon(" y "), var("@z", true)))));
     
     h.parseEquals("(@a @b, @c)",
         args(',', arg(null, expn(var("@a"), var("@b"))), arg(null, var("@c"))));

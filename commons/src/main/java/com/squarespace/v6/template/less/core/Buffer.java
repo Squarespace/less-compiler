@@ -67,6 +67,11 @@ public class Buffer {
     return this;
   }
   
+  public Buffer resetIndent() {
+    this.indentCurr = 0;
+    return this;
+  }
+  
   public boolean inEscape() {
     return delim != Chars.EOF;
   }

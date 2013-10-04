@@ -9,6 +9,10 @@ public interface Node {
 
   public NodeType type();
 
+  public int lineOffset();
+
+  public int charOffset();
+  
   /**
    * Outputs the original LESS representation of this node.
    */

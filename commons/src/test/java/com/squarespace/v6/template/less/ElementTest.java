@@ -29,7 +29,7 @@ public class ElementTest extends LessTestBase {
     
     // Attribute
     h.parseEquals("[foo]", attr(DESC, anon("foo")));
-    h.parseEquals("[foo~=\"bar\"]", attr(DESC, anon("foo"), anon("~="), quoted('"', "bar")));
+    h.parseEquals("[foo~=\"bar\"]", attr(DESC, anon("foo"), anon("~="), quoted('"', false, "bar")));
     
     // Variable
     h.parseEquals("@{a}", varelem(DESC, var("@a", true)));

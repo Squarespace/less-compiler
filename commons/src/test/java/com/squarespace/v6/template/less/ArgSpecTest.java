@@ -43,9 +43,9 @@ public class ArgSpecTest extends LessTestBase {
     spec = argspec("*");
     valid(spec, dim(1));
     valid(spec, anon("foo"));
-    valid(spec, quoted('"', "foo"));
+    valid(spec, quoted('"', false, "foo"));
 
-    Quoted str = quoted('"', "a");
+    Quoted str = quoted('"', false, "a");
     spec = argspec("ss");
     valid(spec, str, str);
     invalid(spec, str);

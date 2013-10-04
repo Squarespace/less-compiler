@@ -1,6 +1,6 @@
 package com.squarespace.v6.template.less.exec;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.ARG_NAMED_NOTFOUND;
+import static com.squarespace.v6.template.less.core.ErrorMaker.argNamedNotFound;
 import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 
 import java.util.ArrayDeque;
@@ -107,7 +107,7 @@ public class MixinMatcher {
         continue;
       }
       if (!names.contains(argName)) {
-        throw new LessException(error(ARG_NAMED_NOTFOUND).name(argName));
+        throw new LessException(argNamedNotFound(argName));
       }
       boundValues.put(argName, arg.value());
       names.remove(argName);

@@ -14,34 +14,37 @@ public class QuotedTest extends LessTestBase {
 
   @Test
   public void testEquals() {
-    assertEquals(quoted('"', "foo", "bar"), quoted('"', "foo", "bar"));
-    assertEquals(quoted('"', var("@foo"), "bar"), quoted('"', var("@foo"), "bar"));
+    assertEquals(quoted('"', false, "foo", "bar"), quoted('"', false, "foo", "bar"));
+    assertEquals(quoted('"', false, var("@foo"), "bar"), quoted('"', false, var("@foo"), "bar"));
 
-    assertNotEquals(quoted('"', "foo", "bar"), null);
-    assertNotEquals(quoted('"', "foo", "bar"), anon("foobar"));
-    assertNotEquals(quoted('"', "foo", "bar"), quoted('\'', "foo", "bar"));
-    assertNotEquals(quoted('"', "foo", "bar"), quoted('"', "bar"));
+    assertNotEquals(quoted('"', false, "foo", "bar"), null);
+    assertNotEquals(quoted('"', false, "foo", "bar"), anon("foobar"));
+    assertNotEquals(quoted('"', false, "foo", "bar"), quoted('\'', false, "foo", "bar"));
+    assertNotEquals(quoted('"', false, "foo", "bar"), quoted('"', false, "bar"));
   }
   
   @Test
   public void testModelReprSafety() {
-    quoted('"', "foo").toString();
+    quoted('"', false, "foo").toString();
   }
   
   @Test
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(Parselets.QUOTED);
     
-    h.parseEquals("'single'", quoted('\'', "single"));
-    h.parseEquals("\"double\"", quoted('"', "double"));
-    h.parseEquals("\"'foo'\"", quoted('"', "'foo'"));
-    h.parseEquals("'\"foo\"'", quoted('\'', "\"foo\""));
-    h.parseEquals("'\\\\'", quoted('\'', "\\\\"));
+    h.parseEquals("'single'", quoted('\'', false, "single"));
+    h.parseEquals("\"double\"", quoted('"', false, "double"));
+    h.parseEquals("\"'foo'\"", quoted('"', false, "'foo'"));
+    h.parseEquals("'\"foo\"'", quoted('\'', false, "\"foo\""));
+    h.parseEquals("'\\\\'", quoted('\'', false, "\\\\"));
     
-    h.parseEquals("'@{a} . @{b}'", quoted('\'', var("@a", true), " . ", var("@b", true)));
-    h.parseEquals("'@ {a}'", quoted('\'', "@ {a}"));
-    h.parseEquals("\"@{ x }\"", quoted('"', "@{ x }"));
-    h.parseEquals("\" @{\"", quoted('"', " @{"));
+    h.parseEquals("'@{a} . @{b}'", quoted('\'', false, var("@a", true), " . ", var("@b", true)));
+    h.parseEquals("'@ {a}'", quoted('\'', false, "@ {a}"));
+    h.parseEquals("\"@{ x }\"", quoted('"', false, "@{ x }"));
+    h.parseEquals("\" @{\"", quoted('"', false, " @{"));
+    
+    h.parseEquals("~'foo'", quoted('\'', true, anon("foo")));
+    h.parseEquals("~\"@@{var}\"", quoted('"', true, var("@@var", true)));
   }
   
 }

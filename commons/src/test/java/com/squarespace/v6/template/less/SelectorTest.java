@@ -58,7 +58,7 @@ public class SelectorTest extends LessTestBase {
     h.parseEquals("> p", selector(element(Combinator.CHILD, "p")));
     h.parseEquals("+ p.class", selector(element(Combinator.SIB_ADJ, "p"), element(null, ".class")));
     
-    Selector exp = selector(element("p"), attr(null, "class", "~=", quoted('"', "a")));
+    Selector exp = selector(element("p"), attr(null, "class", "~=", quoted('"', false, "a")));
     h.parseEquals("p[class~=\"a\"]", exp);
   }
   

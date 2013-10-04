@@ -2,6 +2,7 @@ package com.squarespace.v6.template.less.exec;
 
 import static com.squarespace.v6.template.less.ExecuteErrorType.ARG_COUNT;
 import static com.squarespace.v6.template.less.ExecuteErrorType.INVALID_ARG;
+import static com.squarespace.v6.template.less.core.ErrorMaker.argCount;
 import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.core.ErrorMaker;
 import com.squarespace.v6.template.less.model.Dimension;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.NodeType;
@@ -71,7 +73,7 @@ public class ArgSpec {
   public boolean validate(Function func, List<Node> args) throws LessException {
     int size = args.size();
     if (size < minArgs || (size > validators.size() && !variadic)) {
-      throw new LessException(error(ARG_COUNT).name(func.name()).arg0(minArgs).arg1(size));
+      throw new LessException(argCount(func.name(), minArgs, size));
     }
     if (variadic) {
       size = validators.size();

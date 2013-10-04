@@ -85,7 +85,7 @@ public class LessHarness {
       execute(raw);
       fail("Expected LessException of type " + expected);
     } catch (LessException e) {
-      assertEquals(e.errorInfo().type(), expected);
+      assertEquals(e.primaryError().type(), expected);
     }
   }
   
@@ -103,7 +103,7 @@ public class LessHarness {
       parse(raw);
       fail("Expected LessException of type " + expected);
     } catch (LessException e) {
-      assertEquals(e.errorInfo().type(), expected);
+      assertEquals(e.primaryError().type(), expected);
     }
   }
   
@@ -123,7 +123,7 @@ public class LessHarness {
       evaluate(raw, parselet, define(defs));
       fail("Expected LessException of type " + expected);
     } catch (LessException e) {
-      assertEquals(e.errorInfo().type(), expected);
+      assertEquals(e.primaryError().type(), expected);
     }
   }
 

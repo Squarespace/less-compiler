@@ -174,7 +174,7 @@ public class ArgumentBinderTest extends LessTestBase {
       bind(params, args);
       fail("Expected LessException of type " + errorType);
     } catch (LessException e) {
-      assertEquals(e.errorInfo().type(), errorType);
+      assertEquals(e.primaryError().type(), errorType);
     }
   }
   

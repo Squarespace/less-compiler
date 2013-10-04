@@ -136,16 +136,8 @@ public class Block extends BaseNode {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node rule = rules.get(i);
-      switch (rule.type()) {
-        case MIXIN:
-        case MIXIN_CALL:
-          continue;
-
-        default:
-          buf.indent();
-          rule.repr(buf);
-          break;
-      }
+      buf.indent();
+      rule.repr(buf);
     }
   }
   
