@@ -27,6 +27,7 @@ public enum NodeType {
   FALSE,
   FEATURES,
   IMPORT,
+  IMPORT_MARKER,
   KEYWORD,
   MEDIA,
   MIXIN,

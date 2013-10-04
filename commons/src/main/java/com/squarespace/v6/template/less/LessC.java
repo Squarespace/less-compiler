@@ -13,7 +13,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.squarespace.v6.template.less.core.Buffer;
-import com.squarespace.v6.template.less.core.ErrorUtils;
+import com.squarespace.v6.template.less.core.ErrorFormatter;
 import com.squarespace.v6.template.less.core.LessUtils;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
@@ -159,8 +159,8 @@ public class LessC {
       }
       
     } catch (LessException e) {
-      String errorMessage = ErrorUtils.formatError(e);
-      System.out.println(errorMessage);
+      ErrorFormatter fmt = new ErrorFormatter(path, e, 4, 5);
+      System.out.println(fmt.format());
       System.exit(1);
     }
     if (stats) {

@@ -21,6 +21,7 @@ import com.squarespace.v6.template.less.model.Features;
 import com.squarespace.v6.template.less.model.GenericBlock;
 import com.squarespace.v6.template.less.model.Guard;
 import com.squarespace.v6.template.less.model.Import;
+import com.squarespace.v6.template.less.model.ImportMarker;
 import com.squarespace.v6.template.less.model.Media;
 import com.squarespace.v6.template.less.model.Mixin;
 import com.squarespace.v6.template.less.model.MixinCall;
@@ -130,6 +131,7 @@ public class LessEngine {
   private void evaluateRules(ExecEnv env, Block block, boolean forceImportant) throws LessException {
     FlexList<Node> rules = block.rules();
 
+    Import currentImport = null;
     for (int i = 0; i < rules.size(); i++) {
       Node node = rules.get(i);
       
@@ -152,6 +154,11 @@ public class LessEngine {
             }
             break;
   
+          case IMPORT_MARKER:
+            ImportMarker impMarker = (ImportMarker) node;
+            currentImport = impMarker.importStatement();
+            break;
+            
           case MEDIA:
             node = evaluateMedia(env, (Media)node);
             break;
@@ -190,6 +197,9 @@ public class LessEngine {
         }
       } catch (LessException e) {
         e.push(node);
+        if (currentImport != null) {
+          e.push(currentImport);
+        }
         throw e;
       }
       
@@ -233,6 +243,8 @@ public class LessEngine {
       return null;
     }
     
+    imp.setFileName(path);
+    
     Context ctx = env.context();
     Stylesheet stylesheet = null;
     try {
@@ -246,24 +258,26 @@ public class LessEngine {
       return new Block(0);
     }
 
-    try {
-      expandImports(env, stylesheet.block());
-  
-      Features features = imp.features();
-      if (features == null || features.isEmpty()) {
-        return stylesheet.block();
-      }
-      
-      // If the IMPORT has media features, wrap the block in a MEDIA.
-      features = (Features) features.eval(env);
-      Block block = new Block();
-      block.append(new Media(features, stylesheet.block()));
-      return block;
+    // the parseImport method will have already returned a copy, so we're
+    // free to modify this block;
+    Block block = stylesheet.block();
+    expandImports(env, block);
 
-    } catch (LessException e) {
-      e.push(imp);
-      throw e;
+    Features features = imp.features();
+    if (features != null && !features.isEmpty()) {
+      // If the import has features, we need to wrap its entire imported block
+      // in a @media block.
+      features = (Features) features.eval(env);
+      Media media = new Media(features, block);
+      block = new Block();
+      block.appendNode(media);
     }
+
+    // Indicate where the import begins and ends.
+    block.prependNode(new ImportMarker(imp));
+    block.appendNode(new ImportMarker(null));
+    return block;
+    
   }
   
   /**
@@ -306,7 +320,9 @@ public class LessEngine {
     env.resolveMixins(resolver);
     List<MixinMatch> matches = resolver.matches();
     if (matches.isEmpty()) {
-      throw new LessException(error(MIXIN_UNDEFINED).arg0(env.context().render(call.selector())));
+      LessException exc = new LessException(error(MIXIN_UNDEFINED).arg0(env.context().render(call.selector())));
+      exc.push(call);
+      throw exc;
     }
 
     Block results = new Block();
@@ -400,7 +416,7 @@ public class LessEngine {
       expandImports(env, block);
       expandMixins(env, block);
       evaluateRules(env, block, call.important());
-      collector.append(block);
+      collector.appendBlock(block);
       
     } catch (LessException e) {
       // If any errors occur inside a mixin call, we want to show the actual
@@ -422,7 +438,7 @@ public class LessEngine {
     MixinCall call = matcher.mixinCall();
     Ruleset ruleset = (Ruleset)match.mixin();
     Ruleset result = evaluateRuleset(env, ruleset, call.important());
-    collector.append(result.block());
+    collector.appendBlock(result.block());
     return true;
   }
   

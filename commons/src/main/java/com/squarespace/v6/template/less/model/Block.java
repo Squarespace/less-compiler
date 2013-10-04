@@ -42,12 +42,16 @@ public class Block extends BaseNode {
     return charset;
   }
   
-  public void append(Block block) {
-    rules.splice(rules.size(), 0, block.rules);
+  public void prependNode(Node node) {
+    rules.splice(0, 0, new Node[] { node });
   }
-  
-  public void append(Node node) {
+
+  public void appendNode(Node node) {
     rules.append(node);
+  }
+
+  public void appendBlock(Block block) {
+    rules.append(block.rules);
   }
 
   public FlexList<Node> rules() {

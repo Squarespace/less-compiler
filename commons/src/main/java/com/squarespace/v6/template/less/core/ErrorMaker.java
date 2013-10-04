@@ -10,7 +10,7 @@ import com.squarespace.v6.template.less.ExecuteErrorType;
 public class ErrorMaker {
 
 
-  public ErrorMaker() {
+  private ErrorMaker() {
   }
   
   public static ErrorInfo argCount(String name, int expected, int actual) {

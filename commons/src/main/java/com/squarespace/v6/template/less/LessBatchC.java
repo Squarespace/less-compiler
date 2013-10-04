@@ -20,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
+import com.squarespace.v6.template.less.core.ErrorFormatter;
 import com.squarespace.v6.template.less.core.LessUtils;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
@@ -37,6 +38,9 @@ public class LessBatchC {
   private static final String IMPLNAME = "(LESS Batch Compiler) [Java, Squarespace]";
   
   private static final String VERSION = "1.3.3";
+  
+  private static final String SEPARATOR = 
+      "\n==============================================================================\n";
   
   @Parameter
   private List<String> args;
@@ -142,7 +146,8 @@ public class LessBatchC {
           System.err.printf("  %.3fms\n", elapsed);
           
         } catch (LessException e) {
-          System.err.println("\n    " + e.primaryError().getMessage() + '\n');
+          ErrorFormatter fmt = new ErrorFormatter(path, e, 4, 5);
+          System.err.println(SEPARATOR + fmt.format() + SEPARATOR + "\n");
         }
       }
       

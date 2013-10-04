@@ -52,7 +52,7 @@ public class ErrorInfo {
   public String getMessage() {
     Map<String, Object> params = builder.get();
     StringBuilder buf = new StringBuilder();
-    buf.append(type.prefix(params)).append(": ").append(type.message(params));
+    buf.append(type.prefix(params)).append(type.message(params));
     return buf.toString();
   }
 

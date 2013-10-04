@@ -155,18 +155,18 @@ public class MixinMatcher {
     Block bindings = new Block(boundValues.size());
     for (Map.Entry<String, Node> entry : boundValues.entrySet()) {
       Node value = entry.getValue();
-      bindings.append(new Definition(entry.getKey(), value));
+      bindings.appendNode(new Definition(entry.getKey(), value));
       arguments.add(value);
     }
     if (variadicName != null) {
-      bindings.append(new Definition(variadicName, variadic));
+      bindings.appendNode(new Definition(variadicName, variadic));
     }
     if (variadic != null) {
       for (Node value : variadic.values()) {
         arguments.add(value);
       }
     }
-    bindings.append(new Definition("@arguments", arguments));
+    bindings.appendNode(new Definition("@arguments", arguments));
     return new GenericBlock(bindings);
   }
   

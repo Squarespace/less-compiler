@@ -27,7 +27,7 @@ public class PrimaryParselet implements Parselet {
       // Assign stream position to successfully-parsed rule.
       node.setLineOffset(position.lineOffset);
       node.setCharOffset(position.charOffset);
-      block.append(node);
+      block.appendNode(node);
       skipEmpty(stm);
       stm.mark(position);
     }

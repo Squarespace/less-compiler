@@ -122,7 +122,7 @@ public class LessMaker {
   public Block block(Node ... nodes) {
     Block block = new Block();
     for (Node node : nodes) {
-      block.append(node);
+      block.appendNode(node);
     }
     return block;
   }
@@ -158,7 +158,7 @@ public class LessMaker {
   public GenericBlock defs(Definition ... defs) {
     Block block = new Block();
     for (Definition def : defs) {
-      block.append(def);
+      block.appendNode(def);
     }
     return new GenericBlock(block);
   }

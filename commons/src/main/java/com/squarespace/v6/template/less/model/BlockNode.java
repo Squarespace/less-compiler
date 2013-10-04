@@ -43,7 +43,7 @@ public abstract class BlockNode extends BaseNode {
   }
   
   public void add(Node node) {
-    block.append(node);
+    block.appendNode(node);
   }
   
   public void setBlock(Block block) {
