@@ -1,5 +1,7 @@
 package com.squarespace.v6.template.less.model;
 
+import java.nio.file.Path;
+
 
 /**
  * A dummy node which is placed into a block to indicate where a MIXIN
@@ -8,6 +10,8 @@ package com.squarespace.v6.template.less.model;
 public class MixinMarker extends BaseNode {
 
   private MixinCall call;
+  
+  private Path fileName;
   
   private boolean beginning;
   
@@ -19,9 +23,17 @@ public class MixinMarker extends BaseNode {
   public MixinCall mixinCall() {
     return call;
   }
+  
+  public Path fileName() {
+    return fileName;
+  }
 
   public boolean beginning() {
     return beginning;
+  }
+
+  public void fileName(Path path) {
+    this.fileName = path;
   }
   
   @Override

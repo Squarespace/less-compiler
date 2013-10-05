@@ -13,6 +13,7 @@ import com.squarespace.v6.template.less.model.Features;
 import com.squarespace.v6.template.less.model.Import;
 import com.squarespace.v6.template.less.model.ImportMarker;
 import com.squarespace.v6.template.less.model.Media;
+import com.squarespace.v6.template.less.model.MixinCall;
 import com.squarespace.v6.template.less.model.MixinMarker;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.NodeType;
@@ -193,20 +194,23 @@ public class LessRenderer {
   }
   
   private void renderImportMarker(ImportMarker marker) throws LessException {
-    String repr = marker.importStatement().repr().trim();
+    Import imp = marker.importStatement();
+    String repr = imp.repr().trim();
     if (marker.beginning()) {
-      model.comment("/* BEGIN " + repr + " */\n");
+      model.comment("/* BEGIN " + repr + "  */\n");
     } else {
-      model.comment("/*   END " + repr + " */\n");
+      model.comment("/*   END " + repr + "  */\n");
     }
   }
   
   private void renderMixinMarker(MixinMarker marker) throws LessException {
-    String repr = marker.mixinCall().repr().trim();
+    MixinCall call = marker.mixinCall();
+    int line = call.lineOffset() + 1;
+    String repr = call.repr().trim();
     if (marker.beginning()) {
-      model.comment("/* BEGIN mixin call " + repr + " */\n");
+      model.comment("/* BEGIN mixin call " + repr + "  line " + line + " */\n");
     } else {
-      model.comment("/*   END mixin call " + repr + " */\n");
+      model.comment("/*   END mixin call " + repr + "  line " + line + " */\n");
     }
   }
   
