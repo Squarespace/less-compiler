@@ -9,12 +9,19 @@ public class ImportMarker extends BaseNode {
 
   private Import importStatement;
   
-  public ImportMarker(Import imp) {
+  private boolean beginning;
+  
+  public ImportMarker(Import imp, boolean begin) {
     this.importStatement = imp;
+    this.beginning = begin;
   }
   
   public Import importStatement() {
     return importStatement;
+  }
+
+  public boolean beginning() {
+    return beginning;
   }
   
   @Override

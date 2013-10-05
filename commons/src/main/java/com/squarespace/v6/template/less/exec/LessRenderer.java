@@ -11,7 +11,9 @@ import com.squarespace.v6.template.less.model.Comment;
 import com.squarespace.v6.template.less.model.Directive;
 import com.squarespace.v6.template.less.model.Features;
 import com.squarespace.v6.template.less.model.Import;
+import com.squarespace.v6.template.less.model.ImportMarker;
 import com.squarespace.v6.template.less.model.Media;
+import com.squarespace.v6.template.less.model.MixinMarker;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.NodeType;
 import com.squarespace.v6.template.less.model.Rule;
@@ -150,11 +152,23 @@ public class LessRenderer {
             renderImport((Import)node);
           }
           break;
+          
+        case IMPORT_MARKER:
+          // In debug mode, write out an indicator showing where the imported
+          // blocks begin and end. Otherwise, skip.
+          if (opts.importMarkers()) {
+            renderImportMarker((ImportMarker)node);
+          }
+          break;
 
         case MEDIA:
           renderMedia((Media)node);
           break;
 
+        case MIXIN_MARKER:
+          renderMixinMarker((MixinMarker)node);
+          break;
+          
         case RULE:
           renderRule((Rule)node);
           break;
@@ -176,6 +190,24 @@ public class LessRenderer {
       value += " " + env.render(features);
     }
     model.value(value);
+  }
+  
+  private void renderImportMarker(ImportMarker marker) throws LessException {
+    String repr = marker.importStatement().repr().trim();
+    if (marker.beginning()) {
+      model.comment("/* BEGIN " + repr + " */\n");
+    } else {
+      model.comment("/*   END " + repr + " */\n");
+    }
+  }
+  
+  private void renderMixinMarker(MixinMarker marker) throws LessException {
+    String repr = marker.mixinCall().repr().trim();
+    if (marker.beginning()) {
+      model.comment("/* BEGIN mixin call " + repr + " */\n");
+    } else {
+      model.comment("/*   END mixin call " + repr + " */\n");
+    }
   }
   
   /**

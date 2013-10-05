@@ -44,8 +44,16 @@ public class Options {
     return indent;
   }
   
+  public boolean importMarkers() {
+    return flags.contains(Option.IMPORT_MARKERS);
+  }
+  
   public String importRoot() {
     return importRoot;
+  }
+  
+  public boolean mixinMarkers() {
+    return flags.contains(Option.MIXIN_MARKERS);
   }
   
   public int recursionLimit() {
@@ -68,8 +76,16 @@ public class Options {
     this.indent = size;
   }
   
+  public void importMarkers(boolean flag) {
+    set(flag, Option.IMPORT_MARKERS);
+  }
+  
   public void importRoot(String root) {
     this.importRoot = root;
+  }
+
+  public void mixinMarkers(boolean flag) {
+    set(flag, Option.MIXIN_MARKERS);
   }
   
   public void recursionLimit(int limit) {
@@ -91,6 +107,8 @@ public class Options {
   private static enum Option {
     COMPRESS,
     DEBUG,
+    IMPORT_MARKERS,
+    MIXIN_MARKERS,
     TABS
   }
 

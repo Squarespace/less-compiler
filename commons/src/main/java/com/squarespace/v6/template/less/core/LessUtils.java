@@ -57,4 +57,19 @@ public class LessUtils {
     });
   }
 
+  public static <T extends Enum<T>> String enumValueList(Class<T> enumType, boolean lowercase) {
+    StringBuilder buf = new StringBuilder();
+    T[] constants = enumType.getEnumConstants();
+    int size = constants.length;
+    for (int i = 0; i < size; i++) {
+      if (i > 0) {
+        buf.append(", ");
+      }
+      String name = constants[i].name();
+      buf.append(lowercase ? name.toLowerCase() : name);
+    }
+    
+    return buf.toString();
+  }
+
 }

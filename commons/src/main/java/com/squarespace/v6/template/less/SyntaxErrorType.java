@@ -16,7 +16,7 @@ public enum SyntaxErrorType implements ErrorType {
   ("%(arg0)s"),
   
   INCOMPLETE_PARSE
-  ("Unable to complete parse. Ran out of chars, or ran into unexpected sequence."),
+  ("Unable to complete parse."),
   
   JAVASCRIPT_DISABLED
   ("This version of LESS lacks Javascript support."),

@@ -33,6 +33,7 @@ public enum NodeType {
   MIXIN,
   MIXIN_ARGS,
   MIXIN_CALL,
+  MIXIN_MARKER,
   MIXIN_PARAMS,
   OPERATION,
   PARAMETER,

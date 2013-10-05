@@ -41,6 +41,9 @@ public class LessC {
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
   private int indent = Options.DEFAULT_INDENT;
 
+  @Parameter(names = { "-o" }, description = "Compiler option", converter = CompilerOptionConverter.class)
+  private List<CompilerOption> compilerOptions;
+  
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode" )
   private boolean compress = false;
   
@@ -63,6 +66,21 @@ public class LessC {
     options.compress(compress);
     options.indent(indent);
     options.recursionLimit(recursionLimit);
+    
+    if (compilerOptions != null) {
+      for (CompilerOption opt : compilerOptions) {
+        switch (opt) {
+          
+          case IMPORT_MARKERS:
+            options.importMarkers(true);
+            break;
+
+          case MIXIN_MARKERS:
+            options.mixinMarkers(true);
+            break;
+        }
+      }
+    }
     // options.trace(true); // TBD
   }
   
@@ -191,51 +209,30 @@ public class LessC {
     return buf.toString();
   }
   
-  static enum DebugMode {
-    
-    CANONICAL,
-    EXPAND,
-    PARSE
-    ;
-    
-    public static DebugMode fromString(String str) {
-      switch (str) {
-        case "canonical":
-          return CANONICAL;
-        case "expand":
-          return EXPAND;
-        case "parse":
-          return PARSE;
-        default:
-          return null;
-      }
-    }
-    
-    public static String modes() {
-      StringBuilder buf = new StringBuilder();
-      DebugMode[] modes = values();
-      int size = modes.length;
-      for (int i = 0; i < size; i++) {
-        if (i > 0) {
-          buf.append(", ");
-        }
-        buf.append(modes[i].name().toLowerCase());
-      }
-      return buf.toString();
-    }
-
-  }
-  
   public static class DebugModeConverter implements IStringConverter<DebugMode> {
     @Override
     public DebugMode convert(String value) {
-      DebugMode mode = DebugMode.fromString(value);
-      if (value == null) {
+      try {
+        return DebugMode.fromString(value);
+
+      } catch (IllegalArgumentException e) {
         throw new ParameterException("Unknown debug mode '" + value + "'. "
-            + "Available values are: " + DebugMode.modes());
+            + "Available modes are: " + DebugMode.modes());
       }
-      return mode;
     }
   }
-    
+  
+  public static class CompilerOptionConverter implements IStringConverter<CompilerOption> {
+    @Override
+    public CompilerOption convert(String value) {
+      try {
+        return CompilerOption.fromString(value);
+
+      } catch (IllegalArgumentException e) {
+        throw new ParameterException("Unknown compiler option '" + value + "'. "
+            + "Available options are: " + CompilerOption.options());
+      }
+    }
+  }
+  
 }

@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.squarespace.v6.template.less.ErrorInfo;
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.model.BlockDirective;
 import com.squarespace.v6.template.less.model.Import;
 import com.squarespace.v6.template.less.model.Media;
 import com.squarespace.v6.template.less.model.MixinCall;
@@ -133,14 +134,16 @@ public class ErrorFormatter {
     }
     switch (node.type()) {
       
+      case BLOCK_DIRECTIVE:
+        buf.indent().append(((BlockDirective)node).name()).append(" {");
+        break;
+
+      case DIRECTIVE:
+        break;
+        
       case FEATURES:
         buf.append(' ');
         append(reprLines(node), "\n", false);
-        break;
-        
-      case IMPORT:
-        buf.indent();
-        ((Import)node).repr(buf);
         break;
         
       case MEDIA:
