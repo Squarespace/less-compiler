@@ -37,6 +37,7 @@ public enum NodeType {
   OPERATION,
   PARAMETER,
   PAREN,
+  PARSE_ERROR,
   PROPERTY,
   QUOTED,
   RATIO,

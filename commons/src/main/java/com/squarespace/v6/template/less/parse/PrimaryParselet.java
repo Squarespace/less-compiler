@@ -8,7 +8,6 @@ import static com.squarespace.v6.template.less.parse.Parselets.RULE;
 import static com.squarespace.v6.template.less.parse.Parselets.RULESET;
 
 import com.squarespace.v6.template.less.LessException;
-import com.squarespace.v6.template.less.core.CharClass;
 import com.squarespace.v6.template.less.model.Block;
 import com.squarespace.v6.template.less.model.Node;
 
@@ -19,7 +18,7 @@ public class PrimaryParselet implements Parselet {
   public Node parse(LessStream stm) throws LessException {
     Block block = new Block();
     Node node = null;
-    skipEmpty(stm);
+    stm.skipEmpty();
     
     // Save current stream position before parsing each primary rule type.
     Mark position = stm.mark();
@@ -28,17 +27,11 @@ public class PrimaryParselet implements Parselet {
       node.setLineOffset(position.lineOffset);
       node.setCharOffset(position.charOffset);
       block.appendNode(node);
-      skipEmpty(stm);
+      stm.skipEmpty();
       stm.mark(position);
     }
-    skipEmpty(stm);
+    stm.skipEmpty();
     return block;
-  }
-
-  private void skipEmpty(LessStream stm) {
-    while (CharClass.skippable(stm.peek())) {
-      stm.seek1();
-    }
   }
 
 }

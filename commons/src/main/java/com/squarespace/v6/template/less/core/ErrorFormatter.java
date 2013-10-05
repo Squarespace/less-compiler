@@ -15,6 +15,7 @@ import com.squarespace.v6.template.less.model.MixinCall;
 import com.squarespace.v6.template.less.model.MixinCallArgs;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.NodeType;
+import com.squarespace.v6.template.less.model.ParseError;
 import com.squarespace.v6.template.less.model.Ruleset;
 import com.squarespace.v6.template.less.model.Selectors;
 
@@ -22,8 +23,6 @@ import com.squarespace.v6.template.less.model.Selectors;
 public class ErrorFormatter {
 
   private ErrorInfo primaryError;
-  
-  private Node primaryNode;
   
   private Deque<Node> context;
 
@@ -40,13 +39,12 @@ public class ErrorFormatter {
   public ErrorFormatter(Path mainPath, LessException exc, int indent, int frameWindow) {
     this.mainPath = mainPath;
     this.primaryError = exc.primaryError();
-    this.primaryNode = exc.primaryNode();
     this.context = exc.errorContext();
     this.buf = new Buffer(indent);
     this.frameWindow = frameWindow;
 
     // Calculate the width of the line number column
-    int pos = (context != null && !context.isEmpty()) ? context.getLast().lineOffset() : primaryNode.lineOffset();
+    int pos = context != null && !context.isEmpty() ? context.getLast().lineOffset() : 1;
     posColWidth = Integer.toString(pos + 2).length();
     posColWidth = posColWidth < 6 ? 6 : posColWidth;
   }
@@ -55,7 +53,7 @@ public class ErrorFormatter {
     buf.reset();
     buf.append("An error occurred in '" + mainPath + "':\n\n");
     buf.append("Line  Statement\n");
-    buf.append("---------------\n");
+    buf.append("----  ---------\n");
     formatStack(context);
     buf.append(primaryError.getMessage());
     return buf.toString();
@@ -95,12 +93,19 @@ public class ErrorFormatter {
   }
 
   private void format(Node node) {
+    if (node.is(NodeType.PARSE_ERROR)) {
+      ParseError error = (ParseError)node;
+      buf.append(error.errorMessage());
+      return;
+    }
+    
     position(node);
     render(node);
     buf.incrIndent();
     if (node.is(NodeType.IMPORT)) {
       currentPath = ((Import)node).fileName();
       buf.append("\n.. in '").append(currentPath.toString()).append("':\n");
+      buf.resetIndent();
     }
   }
 
@@ -109,18 +114,25 @@ public class ErrorFormatter {
   }
   
   private int position(Node node) {
-    String pos = Integer.toString(node.lineOffset() + 1);
-    int width = posColWidth - pos.length() - 2;
+    return position(node.lineOffset() + 1);
+  }
+  
+  private int position(int line) {
+    String pos = Integer.toString(line);
+    int width = posColWidth - pos.length() - 3;
     for (int i = 0; i < width; i++) {
       buf.append(' ');
     }
-    buf.append(pos).append("  "); 
+    buf.append(pos).append("   "); 
     return pos.length();
   }
 
   private void render(Node node) {
+    if (node == null) {
+      return;
+    }
     switch (node.type()) {
-
+      
       case FEATURES:
         buf.append(' ');
         append(reprLines(node), "\n", false);

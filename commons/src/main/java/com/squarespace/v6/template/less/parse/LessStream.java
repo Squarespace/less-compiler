@@ -138,6 +138,7 @@ public class LessStream extends Stream {
       if (result != null) {
         result.setLineOffset(pos.lineOffset);
         result.setCharOffset(pos.charOffset);
+        mark(position);
         break;
       }
     }

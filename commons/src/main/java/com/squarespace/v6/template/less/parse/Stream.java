@@ -118,7 +118,7 @@ public class Stream {
     furthest = Math.max(index, furthest);
     return peek();
   }
-  
+
   /**
    * Seek ahead until 'ch' is found. Increments the stream pointer, leaving it pointing at
    * the character just after 'ch', or the end of the string if not matched.
@@ -161,7 +161,21 @@ public class Stream {
       consume(curr);
       index++;
     }
-    furthest = Math.max(index, furthest);
+    // Important not to update 'furthest' pointer when skipping whitespace
+    return index - start;
+  }
+  
+  public int skipEmpty() {
+    int start = index;
+    while (index < length) {
+      char curr = raw.charAt(index);
+      if (!CharClass.skippable(curr)) {
+        break;
+      }
+      consume(curr);
+      index++;
+    }
+    // Important not to update 'furthest' pointer when skipping 'empty' chars.
     return index - start;
   }
   
@@ -214,6 +228,18 @@ public class Stream {
     } else {
       charOffset++;
     }
+  }
+
+  /**
+   * Useful for debugging the parser.
+   */
+  private void stack() {
+    StackTraceElement[] elems = Thread.currentThread().getStackTrace();
+    for (int i = 1; i < 5; i++) {
+      System.out.println(elems[i].getLineNumber() + " " + elems[i].getFileName() + 
+          " " + elems[i].getMethodName());
+    }
+    System.out.println();
   }
 
 }

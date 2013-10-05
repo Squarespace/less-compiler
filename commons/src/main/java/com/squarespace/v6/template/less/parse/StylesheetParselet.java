@@ -1,11 +1,10 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.INCOMPLETE_PARSE;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 import static com.squarespace.v6.template.less.parse.Parselets.PRIMARY;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Chars;
+import com.squarespace.v6.template.less.core.ErrorMaker;
 import com.squarespace.v6.template.less.model.Block;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Stylesheet;
@@ -21,10 +20,9 @@ public class StylesheetParselet implements Parselet {
     // Any input left?  We should have a complete parse
     stm.skipWs();
     if (stm.peek() != Chars.EOF) {
-      // XXX: generalize error handling
-      String raw = stm.furthest();
-      int limit = Math.min(80, raw.length());
-      throw new LessException(error(INCOMPLETE_PARSE).arg0(raw.substring(0, limit)));
+      LessException exc = new LessException(ErrorMaker.incompleteParse());
+      ParseUtils.parseError(exc, stm.raw, stm.furthest);
+      throw exc;
     }
     return sheet;
   }

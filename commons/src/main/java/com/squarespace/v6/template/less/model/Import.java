@@ -113,6 +113,8 @@ public class Import extends BaseNode {
     buf.append("@import");
     if (once) {
       buf.append("-once ");
+    } else {
+      buf.append(' ');
     }
     path.repr(buf);
     if (features != null) {

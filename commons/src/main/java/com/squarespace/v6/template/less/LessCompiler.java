@@ -1,11 +1,6 @@
 package com.squarespace.v6.template.less;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.INCOMPLETE_PARSE;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
-
 import java.nio.file.Path;
-
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.squarespace.v6.template.less.exec.FunctionTable;
 import com.squarespace.v6.template.less.exec.LessEngine;
@@ -54,19 +49,9 @@ public class LessCompiler {
     long started = stats.now();
     LessStream stm = new LessStream(raw, rootPath);
     Stylesheet sheet = null;
-    try {
-      sheet = (Stylesheet) stm.parse(Parselets.STYLESHEET);
-    } catch (LessException e) {
-      System.err.println(stm.errorMessage(e));
-    }
-    if (!stm.complete()) {
-      String remainder = stm.remainder();
-      if (!remainder.isEmpty()) {
-        throw new LessException(error(INCOMPLETE_PARSE).arg0(StringEscapeUtils.escapeJava(remainder)));
-      }
-    }
+    sheet = (Stylesheet) stm.parse(Parselets.STYLESHEET);
     stats.parseDone(raw.length(), started);
-    return sheet == null ? null : sheet.copy();
+    return sheet == null ? null : sheet;
   }
 
   public String render(Stylesheet stylesheet, Context ctx) throws LessException {

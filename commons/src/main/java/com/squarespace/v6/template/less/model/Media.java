@@ -24,7 +24,8 @@ public class Media extends BlockNode {
   }
   
   public Media copy(ExecEnv env) throws LessException {
-    return new Media((Features)features.eval(env), block.copy());
+    Features temp = features == null ? null : (Features) features.eval(env);
+    return new Media(temp, block.copy());
   }
   
   public Features features() {
