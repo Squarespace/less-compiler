@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less.plugins;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.GENERAL;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.formatFunctionArgs;
 
 import java.util.List;
 
@@ -63,6 +62,8 @@ public class GeneralFunctions implements Registry<Function> {
       int size = format.length();
       int i = 0; // character index
       int j = 1; // argument index
+      int formatters = 0;
+      boolean error = false;
       while (i < size) {
         char ch = format.charAt(i);
         if (ch != '%') {
@@ -81,11 +82,13 @@ public class GeneralFunctions implements Registry<Function> {
           i++;
           continue;
         }
-        
+        formatters++;
         if (j >= args.size()) {
-          throw new LessException(error(GENERAL).arg0("Not enough arguments for the format params."));
+          i++;
+          error = true;
+          continue;
         }
-        
+
         Node arg = args.get(j);
         if (arg.is(NodeType.COLOR)) {
           // Force representation of this color to always be hex, not keyword.
@@ -101,6 +104,9 @@ public class GeneralFunctions implements Registry<Function> {
         buf.append(value);
         i++;
         j++;
+      }
+      if (error) {
+        throw new LessException(formatFunctionArgs(formatters, args.size() - 1));
       }
       Quoted result = new Quoted(orig.delimiter(), orig.escaped());
       result.append(new Anonymous(buf.toString()));

@@ -1,9 +1,8 @@
 package com.squarespace.v6.template.less.exec;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.MIXIN_RECURSE;
-import static com.squarespace.v6.template.less.ExecuteErrorType.MIXIN_UNDEFINED;
 import static com.squarespace.v6.template.less.core.Constants.FALSE;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.mixinRecurse;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.mixinUndefined;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -320,7 +319,7 @@ public class LessEngine {
     env.resolveMixins(resolver);
     List<MixinMatch> matches = resolver.matches();
     if (matches.isEmpty()) {
-      LessException exc = new LessException(error(MIXIN_UNDEFINED).arg0(env.context().render(call.selector())));
+      LessException exc = new LessException(mixinUndefined(env.context().render(call.selector())));
       exc.push(call);
       throw exc;
     }
@@ -349,7 +348,9 @@ public class LessEngine {
     }
     
     if (calls == 0) {
-      throw new LessException(error(MIXIN_UNDEFINED).arg0(env.context().render(call.selector())));
+      LessException exc = new LessException(mixinUndefined(env.context().render(call.selector())));
+      exc.push(call);
+      throw exc;
     }
     return results;
   }
@@ -404,7 +405,7 @@ public class LessEngine {
     // Caps the number of recursions through this mixin.
     Options opts = env.context().options();
     if (original.entryCount() >= opts.recursionLimit()) {
-      throw new LessException(error(MIXIN_RECURSE).name(call.path()).arg0(opts.recursionLimit()));
+      throw new LessException(mixinRecurse(call.path(), opts.recursionLimit()));
     }
 
     // Enter the mixin body and execute it.

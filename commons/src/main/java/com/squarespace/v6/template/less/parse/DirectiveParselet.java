@@ -91,7 +91,6 @@ public class DirectiveParselet implements Parselet {
     }
     
     if (hasBlock) {
-//      stm.push(name);
       Node block = stm.parse(Parselets.BLOCK);
       if (block != null) {
         return new BlockDirective(name, (Block)block);
@@ -110,7 +109,6 @@ public class DirectiveParselet implements Parselet {
 
   private Node parseMedia(LessStream stm, Mark pos) throws LessException {
     Features features = (Features) stm.parse(Parselets.FEATURES);
-//    stm.push(stm.raw().substring(pos.index, stm.position()));
     Node block = stm.parse(Parselets.BLOCK);
     if (block == null) {
       return null;

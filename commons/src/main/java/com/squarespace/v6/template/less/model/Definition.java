@@ -2,10 +2,9 @@ package com.squarespace.v6.template.less.model;
 
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
-import com.squarespace.v6.template.less.ExecuteErrorType;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
-import com.squarespace.v6.template.less.core.ErrorUtils;
+import com.squarespace.v6.template.less.core.ExecuteErrorMaker;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
@@ -46,7 +45,7 @@ public class Definition extends BaseNode {
    */
   public Node dereference(ExecEnv env) throws LessException {
     if (evaluating) {
-      throw new LessException(ErrorUtils.error(ExecuteErrorType.VAR_CIRCULAR_REFERENCE).name(name));
+      throw new LessException(ExecuteErrorMaker.varCircularRef(env));
     }
     evaluating = true;
     Node result = value.eval(env);

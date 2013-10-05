@@ -1,8 +1,7 @@
 package com.squarespace.v6.template.less.model;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.INCOMPATIBLE_UNITS;
-import static com.squarespace.v6.template.less.ExecuteErrorType.INVALID_OPERATION1;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.incompatibleUnits;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.invalidOperation;
 import static com.squarespace.v6.template.less.model.NodeType.COLOR;
 
 import com.squarespace.v6.template.less.LessException;
@@ -51,16 +50,16 @@ public abstract class BaseColor extends BaseNode {
     } else if (arg.is(NodeType.DIMENSION)) {
       Dimension dim = (Dimension)arg;
       if (dim.unit() != null) {
-        throw new LessException(error(INCOMPATIBLE_UNITS).arg0(dim.unit()).arg1(NodeType.COLOR));
+        throw new LessException(incompatibleUnits(dim.unit(), NodeType.COLOR));
       }
       return operate(op, this, fromDimension((Dimension)arg));
 
     } else {
-      throw new LessException(error(INVALID_OPERATION1).type(op).arg0(type()));
+      throw new LessException(invalidOperation(op, type()));
     }
   }
   
-  private BaseColor operate(Operator op, BaseColor arg0, BaseColor arg1) {
+  private BaseColor operate(Operator op, BaseColor arg0, BaseColor arg1) throws LessException {
     RGBColor c0 = arg0.toRGB();
     RGBColor c1 = arg1.toRGB();
     int r = c0.red();
@@ -81,7 +80,7 @@ public abstract class BaseColor extends BaseNode {
         return new RGBColor(r - c1.red(), g - c1.green(), b - c1.blue(), a);
 
       default:
-        throw new UnsupportedOperationException("Unsupported operation " + op + " on color");
+        throw new LessException(invalidOperation(op, NodeType.COLOR));
     }
   }
 

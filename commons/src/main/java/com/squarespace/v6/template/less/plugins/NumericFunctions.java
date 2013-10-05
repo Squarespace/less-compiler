@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less.plugins;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.UNKNOWN_UNIT;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.unknownUnit;
 
 import java.util.List;
 
@@ -65,7 +64,7 @@ public class NumericFunctions implements Registry<Function> {
         Keyword word = (Keyword)args.get(1);
         unit = Unit.get(word.value());
         if (unit == null) {
-          throw new LessException(error(UNKNOWN_UNIT).arg0(word));
+          throw new LessException(unknownUnit(word));
         }
       }
       return new Dimension(dim.value(), unit);

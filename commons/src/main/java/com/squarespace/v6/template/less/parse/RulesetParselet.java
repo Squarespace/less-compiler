@@ -20,7 +20,6 @@ public class RulesetParselet implements Parselet {
       return null;
     }
     
-//    stm.push(stm.raw().substring(mark.index, stm.position()));
     Node block = stm.parse(BLOCK);
     if (block == null) {
       stm.restore(mark);

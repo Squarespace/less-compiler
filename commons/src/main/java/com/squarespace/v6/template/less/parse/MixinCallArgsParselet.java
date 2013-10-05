@@ -1,8 +1,7 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.EXPECTED_MISC;
-import static com.squarespace.v6.template.less.SyntaxErrorType.MIXED_DELIMITERS;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.expected;
+import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.mixedDelimiters;
 import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION;
 
 import com.squarespace.v6.template.less.LessException;
@@ -48,7 +47,7 @@ public class MixinCallArgsParselet implements Parselet {
         if (temp != null) {
           if (expressions.size() > 0) {
             if (delimSemicolon) {
-              throw new LessException(error(MIXED_DELIMITERS));
+              throw new LessException(mixedDelimiters());
             }
             containsNamed = true;
           }
@@ -75,7 +74,7 @@ public class MixinCallArgsParselet implements Parselet {
       
       // Handle semicolon-delimited arguments.
       if (containsNamed) {
-        throw new LessException(error(MIXED_DELIMITERS));
+        throw new LessException(mixedDelimiters());
       }
       if (expressions.size() > 1) {
         value = expressions;
@@ -89,7 +88,7 @@ public class MixinCallArgsParselet implements Parselet {
     
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      throw new LessException(error(EXPECTED_MISC).arg0(')').arg1(stm.remainder()));
+      throw new LessException(expected("right parenthesis ')'"));
     }
 
     return delimSemicolon ? argsSemicolon : argsComma;
@@ -101,7 +100,7 @@ public class MixinCallArgsParselet implements Parselet {
     }
     Node value = stm.parse(EXPRESSION);
     if (value == null) {
-      throw new LessException(error(EXPECTED_MISC).arg0("expression").arg1(stm.remainder()));
+      throw new LessException(expected("expression"));
     }
     return value;
   }

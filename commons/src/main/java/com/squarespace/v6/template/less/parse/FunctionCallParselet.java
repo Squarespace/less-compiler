@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.EXPECTED_MISC;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.expected;
 import static com.squarespace.v6.template.less.parse.Parselets.ALPHA;
 import static com.squarespace.v6.template.less.parse.Parselets.ASSIGNMENT;
 import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION;
@@ -77,8 +76,7 @@ public class FunctionCallParselet implements Parselet {
     }
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      // XXX: use error handler.
-      throw new LessException(error(EXPECTED_MISC).arg0(')').arg1(stm.remainder()));
+      throw new LessException(expected("right parenthesis ')'"));
     }
     return new Url(value);
   }

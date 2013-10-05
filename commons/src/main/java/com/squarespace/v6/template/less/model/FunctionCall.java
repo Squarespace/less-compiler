@@ -1,7 +1,5 @@
 package com.squarespace.v6.template.less.model;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.FUNCTION_CALL;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
 import java.util.ArrayList;
@@ -72,12 +70,8 @@ public class FunctionCall extends BaseNode {
       // Invoke built-in function
       List<Node> values = evalArgs(env);
       Node result = null;
-      try {
-        func.spec().validate(func, values);
-        result = func.invoke(env, values);
-      } catch (LessException e) {
-        throw new LessException(error(FUNCTION_CALL).name(name).arg0(e.getMessage()));
-      }
+      func.spec().validate(func, values);
+      result = func.invoke(env, values);
       if (result != null) {
         return result;
       }

@@ -61,7 +61,7 @@ public class Patterns {
   
   public static final Pattern HEXCOLOR = pattern("#(" + _HEXCHAR + "{6}|" + _HEXCHAR + "{3})");
   
-  // XXX: less allows identifiers starting with a digit, perhaps we should restrict it to [a-zA-Z][\\w-]+
+  // TODO: less allows identifiers starting with a digit, perhaps we should restrict it to [a-zA-Z][\\w-]+
   public static final Pattern IDENTIFIER = pattern("[\\w][\\w-]*", true);
   
   public static final Pattern IMPORTANT = pattern("! *important");

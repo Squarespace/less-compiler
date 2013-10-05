@@ -6,7 +6,6 @@ import java.util.List;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.core.Chars;
-import com.squarespace.v6.template.less.core.FlexList;
 import com.squarespace.v6.template.less.model.ParseError;
 
 
@@ -16,7 +15,7 @@ public class ParseUtils {
    * Build a user-readable parser error message, showing the exact context for
    * the error. We append this to the given exception inside a ParseError node.
    */
-  public static void parseError(LessException exc, String raw, int index) {
+  public static LessException parseError(LessException exc, String raw, int index) {
     Stream stm = new Stream(raw);
     List<int[]> offsets = new ArrayList<>();
 
@@ -28,13 +27,14 @@ public class ParseUtils {
       stm.seekTo(Chars.LINE_FEED);
       int end = stm.position();
       offsets.add(new int[] { start, end });
+      // Stop when we've found the line that contains the index.
       if (end > index) {
         break;
       }
     }
 
+    // Select the last N lines we collected.
     Buffer buf = new Buffer(6);
-    // Select the last N lines.
     int size = offsets.size();
     int start = Math.max(0, size - 5);
     for (int i = start; i < size; i++) {
@@ -53,6 +53,7 @@ public class ParseUtils {
     ParseError error = new ParseError();
     error.errorMessage(buf.toString());
     exc.push(error);
+    return exc;
   }
   
   private static void indent(Buffer buf, int width) {
@@ -70,22 +71,6 @@ public class ParseUtils {
     }
     buf.append(pos).append("   "); 
     return pos.length();
-  }
-
-  
-  public static String errorMessage(LessException exc, Mark pos, String raw, FlexList<String> stack) {
-    String message = exc.getMessage() + " " + pos;
-//    int index = pos.index;
-//    String window = StringEscapeUtils.escapeJava(raw.substring(index, Math.min(raw.length(), index + 40)));
-
-    // Traverse the stack, rendering the header of each parsed block we entered.
-    Buffer buf = new Buffer(4);
-    int size = stack.size();
-    for (int i = 0; i < size; i++) {
-      buf.indent().append(stack.get(i)).append(" {\n");
-      buf.incrIndent();
-    }
-    return message + "\n" + buf.toString();
   }
   
 }

@@ -1,16 +1,13 @@
 package com.squarespace.v6.template.less.model;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.EXPECTED_MATHOP;
-import static com.squarespace.v6.template.less.ExecuteErrorType.INCOMPATIBLE_UNITS;
-import static com.squarespace.v6.template.less.ExecuteErrorType.INVALID_OPERATION1;
-import static com.squarespace.v6.template.less.ExecuteErrorType.PERCENT_MATH_ORDER;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.expectedMathOp;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.incompatibleUnits;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.invalidOperation;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.percentMathOrder;
 import static com.squarespace.v6.template.less.model.Unit.PERCENTAGE;
 
-import com.squarespace.v6.template.less.ExecuteErrorType;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
-import com.squarespace.v6.template.less.core.ErrorUtils;
 
 
 /**
@@ -79,7 +76,7 @@ public class Dimension extends BaseNode {
   @Override
   public Node operate(Operator op, Node node) throws LessException {
     if (!node.is(NodeType.DIMENSION)) {
-      throw new LessException(ErrorUtils.error(INVALID_OPERATION1).type(op).arg0(type()));
+      throw new LessException(invalidOperation(op, type()));
     }
 
     Dimension dim = (Dimension)node;
@@ -89,7 +86,7 @@ public class Dimension extends BaseNode {
     // Special case when the left-hand is a percentage.
     if (unit == PERCENTAGE) {
       if (dim.unit != PERCENTAGE && dim.unit != null && op != Operator.MULTIPLY) {
-        throw new LessException(error(PERCENT_MATH_ORDER).arg0(dim));
+        throw new LessException(percentMathOrder(dim));
       }
       switch (op) {
         
@@ -123,7 +120,7 @@ public class Dimension extends BaseNode {
           break;
           
         default:
-          throw new LessException(error(EXPECTED_MATHOP).arg0(op));
+          throw new LessException(expectedMathOp(op));
       }
       return new Dimension(result, new_unit);
     }
@@ -133,7 +130,7 @@ public class Dimension extends BaseNode {
     }
     double factor = UnitConversions.factor(dim.unit, unit);
     if (factor == 0.0 && dim.unit != Unit.PERCENTAGE) {
-      throw new LessException(error(INCOMPATIBLE_UNITS).arg0(unit).arg1(dim.unit));
+      throw new LessException(incompatibleUnits(unit, dim.unit));
     }
     double scaled = dim.value * factor;
     switch (op) {
@@ -171,7 +168,7 @@ public class Dimension extends BaseNode {
         break;
         
       default:
-        throw new LessException(error(ExecuteErrorType.EXPECTED_MATHOP).arg0(op));
+        throw new LessException(expectedMathOp(op));
     }
 
     return new Dimension(result, new_unit);

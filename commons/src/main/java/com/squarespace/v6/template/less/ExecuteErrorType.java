@@ -19,13 +19,16 @@ public enum ExecuteErrorType implements ErrorType {
   ("Named arg %(name)s not found"),
   
   BAD_COLOR_MATH
-  ("Cannot subtract or divide a color by a number"),
+  ("A color cannot %(arg0)s %(arg1)s"),
   
   EXPECTED_BOOLOP
   ("Expected a boolean operator but found %(arg0)s"),
   
   EXPECTED_MATHOP
   ("Expected a math operator but found %(arg0)s"),
+  
+  FORMAT_FUNCTION_ARGS
+  ("Not enough args for format string. Format expects %(arg0)s arguments, but only found %(arg1)s"),
   
   FUNCTION_CALL
   ("Encountered an error calling function %(name)s: %(arg0)s"),
@@ -40,10 +43,10 @@ public enum ExecuteErrorType implements ErrorType {
   ("No conversion is allowed from %(arg0)s to %(arg1)s"),
   
   INVALID_ARG
-  ("Argument %(arg0)s must be %(type)s"),
+  ("Argument %(arg0)s must be %(arg1)s. Found %(arg2)s"),
 
   INVALID_OPERATION1
-  ("Operation %(type)s cannot be applied to %(arg0)s"),
+  ("Operation %(arg0)s cannot be applied to %(arg1)s"),
   
   INVALID_OPERATION2
   ("Operation %(type)s cannot be applied to %(arg0)s and %(arg1)s"),
@@ -63,6 +66,9 @@ public enum ExecuteErrorType implements ErrorType {
   UNCOMPARABLE_TYPE
   ("Unable to compare instances of %(type)s"),
   
+  UNKNOWN_UNIT
+  ("Unknown unit %(arg0)s"),
+
   VAR_UNDEFINED
   ("Failed to locate a definition for the variable %(name)s in current scope"),
   

@@ -1,12 +1,10 @@
 package com.squarespace.v6.template.less.model;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.INVALID_OPERATION2;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
-
 import java.math.BigDecimal;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.ExecuteErrorMaker;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
@@ -61,7 +59,7 @@ public abstract class BaseNode implements Node {
   @Override
   public Node operate(Operator op, Node arg) throws LessException {
     NodeType argType = (arg == null) ? null : arg.type();
-    throw new LessException(error(INVALID_OPERATION2).type(op).arg0(type()).arg1(argType));
+    throw new LessException(ExecuteErrorMaker.invalidOperation(op, type(), argType));
   }
   
   @Override
@@ -86,6 +84,13 @@ public abstract class BaseNode implements Node {
     return buf.toString();
   }
 
+  @Override
+  public String repr() {
+    Buffer buf = new Buffer(0);
+    repr(buf);
+    return buf.toString();
+  }
+  
   @Override
   public void repr(Buffer buf) {
     buf.append("<no repr for " + type().toString() + ">");

@@ -214,10 +214,10 @@ public class ErrorFormatter {
   private static List<String> reprLines(Node node, int limit) {
     Buffer buf = new Buffer(0);
     node.repr(buf);
-    return lines(buf.toString(), limit);
+    return splitLines(buf.toString(), limit);
   }
   
-  private static List<String> lines(String raw, int limit) {
+  private static List<String> splitLines(String raw, int limit) {
     String[] lines = raw.split("\n");
     List<String> result = new ArrayList<>();
     int count = 0;

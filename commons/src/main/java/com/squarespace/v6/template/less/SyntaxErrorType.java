@@ -9,8 +9,8 @@ import com.squarespace.v6.template.jsont.MapFormat;
 
 public enum SyntaxErrorType implements ErrorType {
 
-  EXPECTED_MISC
-  ("Expected %(arg0)s at %(arg1)s"),
+  EXPECTED
+  ("Expected %(arg0)s"),
 
   GENERAL
   ("%(arg0)s"),
@@ -28,10 +28,7 @@ public enum SyntaxErrorType implements ErrorType {
   ("Quoted string contains a bare line feed"),
   
   REMAINDER
-  ("Parse error at: %(arg0)s"),
- 
-  UNKNOWN_UNIT
-  ("Unknown unit %(arg0)s")
+  ("Parse error at: %(arg0)s")
 
   ;
   

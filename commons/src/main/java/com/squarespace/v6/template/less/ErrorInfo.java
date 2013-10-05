@@ -11,6 +11,8 @@ public class ErrorInfo {
 
   private static final String ARG1 = "arg1";
   
+  private static final String ARG2 = "arg2";
+  
   private static final String CODE = "code";
   
   private static final String NAME = "name";
@@ -35,6 +37,10 @@ public class ErrorInfo {
  
   public ErrorInfo arg1(Object arg) {
     return put(ARG1, arg);
+  }
+  
+  public ErrorInfo arg2(Object arg) {
+    return put(ARG2, arg);
   }
 
   public ErrorInfo name(Object name) {

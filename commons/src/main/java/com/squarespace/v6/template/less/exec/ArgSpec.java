@@ -1,16 +1,13 @@
 package com.squarespace.v6.template.less.exec;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.ARG_COUNT;
-import static com.squarespace.v6.template.less.ExecuteErrorType.INVALID_ARG;
-import static com.squarespace.v6.template.less.core.ErrorMaker.argCount;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.argCount;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.invalidArg;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.squarespace.v6.template.less.LessException;
-import com.squarespace.v6.template.less.core.ErrorMaker;
 import com.squarespace.v6.template.less.model.Dimension;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.NodeType;
@@ -156,7 +153,7 @@ public class ArgSpec {
     @Override
     public void validate(int index, Node arg) throws LessException {
       if (!arg.is(type)) {
-        throw new LessException(error(INVALID_ARG).arg0(index).type(type));
+        throw new LessException(invalidArg(index + 1, type, arg.type()));
       }
     }
 
@@ -173,13 +170,13 @@ public class ArgSpec {
     @Override
     public void validate(int index, Node arg) throws LessException {
       if (!arg.is(NodeType.DIMENSION)) {
-        throw new LessException(error(INVALID_ARG).arg0(index).type(NodeType.DIMENSION));
+        throw new LessException(invalidArg(index + 1, NodeType.DIMENSION, arg.type()));
       }
       Dimension dim = (Dimension)arg;
       if (dim.unit() == null) {
         return;
       }
-      throw new LessException (error(INVALID_ARG).arg0(index).type("a unit-less number"));
+      throw new LessException(invalidArg(index, "a unit-less number", arg.type()));
     }
   };
   
@@ -187,13 +184,13 @@ public class ArgSpec {
     @Override
     public void validate(int index, Node arg) throws LessException {
       if (!arg.is(NodeType.DIMENSION)) {
-        throw new LessException(error(INVALID_ARG).arg0(index).type(NodeType.DIMENSION));
+        throw new LessException(invalidArg(index + 1, NodeType.DIMENSION, arg.type()));
       }
       Dimension dim = (Dimension)arg;
       if (dim.unit() == null || dim.unit() == Unit.PERCENTAGE) {
         return;
       }
-      throw new LessException(error(INVALID_ARG).arg0(index).type("a unit-less number or a percentage"));
+      throw new LessException(invalidArg(index + 1, "a unit-less number or a percentage", arg.type()));
     }
   };
   

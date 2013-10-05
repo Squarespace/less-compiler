@@ -1,10 +1,12 @@
 package com.squarespace.v6.template.less.parse;
 
+import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.incompleteParse;
+
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 
 import com.squarespace.v6.template.less.LessException;
-import com.squarespace.v6.template.less.core.FlexList;
+import com.squarespace.v6.template.less.core.Chars;
 import com.squarespace.v6.template.less.model.Node;
 
 
@@ -79,8 +81,6 @@ public class LessStream extends Stream {
   
   private Path rootPath;
   
-  private FlexList<String> headerStack;
-  
   private Mark position = new Mark();
   
   public LessStream(String raw) {
@@ -90,7 +90,6 @@ public class LessStream extends Stream {
   public LessStream(String raw, Path rootPath) {
     super(raw);
     this.rootPath = rootPath;
-    this.headerStack = new FlexList<>(64);
     this.match_AND = Patterns.AND.matcher(raw);
     this.match_ANON_RULE_VALUE = Patterns.ANON_RULE_VALUE.matcher(raw);
     this.match_ATTRIBUTE_KEY = Patterns.ATTRIBUTE_KEY.matcher(raw);
@@ -122,8 +121,22 @@ public class LessStream extends Stream {
     this.match_WORD = Patterns.WORD.matcher(raw);
   }
 
+  public LessException parseError(LessException exc) {
+    return ParseUtils.parseError(exc, raw, furthest);
+  }
+  
   public Path rootPath() {
     return rootPath;
+  }
+  
+  /**
+   * Make sure the stream was fully read; otherwise, throw an exception.
+   */
+  public void checkComplete() throws LessException {
+    skipWs();
+    if (peek() != Chars.EOF) {
+      throw parseError(new LessException(incompleteParse()));
+    }
   }
   
   /**
@@ -145,18 +158,6 @@ public class LessStream extends Stream {
     return result;
   }
 
-  public String errorMessage(LessException exc) {
-    return ParseUtils.errorMessage(exc, position, raw, headerStack);
-  }
-  
-  public void push(String header) {
-    headerStack.push(header);
-  }
-  
-  public void pop() {
-    headerStack.pop();
-  }
-  
   public String token() {
     return token;
   }

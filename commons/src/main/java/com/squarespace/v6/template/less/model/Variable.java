@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less.model;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.VAR_UNDEFINED;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.varUndefined;
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 import static com.squarespace.v6.template.less.model.NodeType.VARIABLE;
 
@@ -66,7 +65,7 @@ public class Variable extends BaseNode {
   public Node eval(ExecEnv env) throws LessException {
     Definition def = (Definition) env.resolveDefinition(name);
     if (def == null) {
-      throw new LessException(error(VAR_UNDEFINED).name(name));
+      throw new LessException(varUndefined(name));
     }
 
     Node result = def.dereference(env);

@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.EXPECTED_MISC;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.expected;
 import static com.squarespace.v6.template.less.model.Operator.AND;
 import static com.squarespace.v6.template.less.model.Operator.EQUAL;
 import static com.squarespace.v6.template.less.parse.Parselets.ADDITION;
@@ -37,12 +36,12 @@ public class ConditionParselet implements Parselet {
     Condition res = null;
     stm.skipWs();
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
-      throw new LessException(error(EXPECTED_MISC).arg0('(').arg1(stm.remainder()));
+      throw new LessException(expected("left parenthesis '('"));
     }
     
     Node left = parseValue(stm);
     if (left == null) {
-      throw new LessException(error(EXPECTED_MISC).arg0("condition value").arg1(stm.remainder()));
+      throw new LessException(expected("condition value"));
     }
     
     stm.skipWs();
@@ -53,7 +52,7 @@ public class ConditionParselet implements Parselet {
         res = new Condition(op, left, right, negate);
 
       } else {
-        throw new LessException(error(EXPECTED_MISC).arg0("expression").arg1(stm.remainder()));
+        throw new LessException(expected("expression"));
       }
     } else {
       res = new Condition(EQUAL, left, Constants.TRUE, negate);
@@ -61,7 +60,7 @@ public class ConditionParselet implements Parselet {
 
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      throw new LessException(error(EXPECTED_MISC).arg0(')').arg1(stm.remainder()));
+      throw new LessException(expected("right parenthesis ')'"));
     }
     return res;
   }

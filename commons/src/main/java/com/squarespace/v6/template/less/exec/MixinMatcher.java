@@ -1,7 +1,7 @@
 package com.squarespace.v6.template.less.exec;
 
-import static com.squarespace.v6.template.less.core.ErrorMaker.argNamedNotFound;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.argNamedNotFound;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.argTooMany;
 
 import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Queue;
 
 import com.squarespace.v6.template.less.Context;
-import com.squarespace.v6.template.less.ExecuteErrorType;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.model.Argument;
 import com.squarespace.v6.template.less.model.Block;
@@ -146,7 +145,7 @@ public class MixinMatcher {
       } else {
         // No names left and no variadic exists to collect overflow
         // We should never reach this point since patternMatch() would have also failed.
-        throw new LessException(error(ExecuteErrorType.ARG_TOO_MANY));
+        throw new LessException(argTooMany());
       }
     }
     

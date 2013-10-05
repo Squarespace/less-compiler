@@ -3,24 +3,31 @@ package com.squarespace.v6.template.less.model;
 
 public enum Operator {
 
-  ADD ("+"),
-  AND ("and"),
-  DIVIDE ("/"),
-  EQUAL ("=="),
-  GREATER_THAN (">"),
-  GREATER_THAN_OR_EQUAL (">="),
-  LESS_THAN ("<"),
-  LESS_THAN_OR_EQUAL ("<="),
-  MULTIPLY ("*"),
-  NOT_EQUAL ("<>"),
-  OR ("or"),
-  SUBTRACT ("-")
+  ADD ("+", "add"),
+  AND ("and", "and"),
+  DIVIDE ("/", "divide"),
+  EQUAL ("==", "equal to"),
+  GREATER_THAN (">", "greater than"),
+  GREATER_THAN_OR_EQUAL (">=", "greater than or equal to"),
+  LESS_THAN ("<", "less than"),
+  LESS_THAN_OR_EQUAL ("<=", "less than or equal to"),
+  MULTIPLY ("*", "multiply"),
+  NOT_EQUAL ("<>", "not equal to"),
+  OR ("or", "or"),
+  SUBTRACT ("-", "subtract")
   ;
 
   private String repr;
   
-  private Operator(String repr) {
+  private String humanRepr;
+  
+  private Operator(String repr, String humanRepr) {
     this.repr = repr;
+    this.humanRepr = humanRepr;
+  }
+  
+  public String humanRepr() {
+    return humanRepr;
   }
   
   public String toString() {

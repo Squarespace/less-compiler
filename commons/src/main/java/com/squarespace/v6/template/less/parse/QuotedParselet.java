@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.QUOTED_BARE_LF;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.quotedBareLF;
 import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE_CURLY;
 
 import java.util.ArrayList;
@@ -64,9 +63,8 @@ public class QuotedParselet implements Parselet {
         break;
       }
       
-      // TODO: String contains a bare line feed. Emit an error.
       if (ch == Chars.LINE_FEED) {
-        throw new LessException(error(QUOTED_BARE_LF));
+        throw new LessException(quotedBareLF());
       }
       
       // We care about backslash only to avoid prematurely terminating the string. All
@@ -77,9 +75,6 @@ public class QuotedParselet implements Parselet {
         continue;
       }
 
-      // XXX: decode all escapes. important for final output, which can change delimiter
-      // or generate a bare string.
-      
       // Collect the entire \" or \' sequence.
       buf.append(ch);
       ch = stm.peek();

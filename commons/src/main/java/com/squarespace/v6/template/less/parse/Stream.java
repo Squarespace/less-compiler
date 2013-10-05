@@ -233,6 +233,7 @@ public class Stream {
   /**
    * Useful for debugging the parser.
    */
+  @SuppressWarnings("unused")
   private void stack() {
     StackTraceElement[] elems = Thread.currentThread().getStackTrace();
     for (int i = 1; i < 5; i++) {

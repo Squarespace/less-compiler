@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.EXPECTED_MISC;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.expected;
 import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE;
 
 import com.squarespace.v6.template.less.LessException;
@@ -30,8 +29,7 @@ public class AlphaParselet implements Parselet {
 
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      // XXX: fixme
-      throw new LessException(error(EXPECTED_MISC).arg0(')').arg1(stm.remainder()));
+      throw new LessException(expected("right parenthesis ')'"));
     }
     return new Alpha(value == null ? new Anonymous("") : value);
   }

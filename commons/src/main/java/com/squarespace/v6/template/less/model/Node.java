@@ -18,6 +18,8 @@ public interface Node {
    */
   public void repr(Buffer buf);
 
+  public String repr();
+  
   /**
    * Outputs a human-readable representation of the model node.
    */

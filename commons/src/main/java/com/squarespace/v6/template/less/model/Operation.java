@@ -1,8 +1,7 @@
 package com.squarespace.v6.template.less.model;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.BAD_COLOR_MATH;
-import static com.squarespace.v6.template.less.ExecuteErrorType.INCOMPATIBLE_UNITS;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.badColorMath;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.incompatibleUnits;
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
 import com.squarespace.v6.template.less.LessException;
@@ -68,8 +67,7 @@ public class Operation extends BaseNode {
         op1 = temp;
         
       } else {
-        // XXX: throw proper error
-        throw new LessException(error(BAD_COLOR_MATH));
+        throw new LessException(badColorMath(operator, op0));
       }
     }
 
@@ -77,7 +75,7 @@ public class Operation extends BaseNode {
     if (op0.is(NodeType.COLOR) && op1.is(NodeType.DIMENSION)) {
       Dimension dim = (Dimension)op1;
       if (dim.unit() != null) {
-        throw new LessException(error(INCOMPATIBLE_UNITS).arg0(dim.unit()).arg1(NodeType.COLOR));
+        throw new LessException(incompatibleUnits(dim.unit(), "a color"));
       }
     }
     return op0.operate(operator, op1);

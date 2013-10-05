@@ -1,11 +1,7 @@
 package com.squarespace.v6.template.less.core;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.INCOMPLETE_PARSE;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
-
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.ErrorType;
@@ -150,10 +146,7 @@ public class LessHarness {
   private Node parse(String raw, Parselet parselet) throws LessException {
     LessStream stm = new LessStream(raw);
     Node res = stm.parse(parselet);
-    String remainder = stm.remainder();
-    if (!remainder.equals("")) {
-      throw new LessException(error(INCOMPLETE_PARSE).arg0(StringEscapeUtils.escapeJava(remainder)));
-    }
+    stm.checkComplete();
     return res;
   }
 

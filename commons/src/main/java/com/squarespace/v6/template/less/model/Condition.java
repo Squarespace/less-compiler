@@ -1,8 +1,5 @@
 package com.squarespace.v6.template.less.model;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.EXPECTED_BOOLOP;
-import static com.squarespace.v6.template.less.ExecuteErrorType.UNCOMPARABLE_TYPE;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 import static com.squarespace.v6.template.less.model.Operator.EQUAL;
 import static com.squarespace.v6.template.less.model.Operator.GREATER_THAN;
@@ -14,6 +11,7 @@ import static com.squarespace.v6.template.less.model.Operator.NOT_EQUAL;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.core.Constants;
+import com.squarespace.v6.template.less.core.ExecuteErrorMaker;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
@@ -101,7 +99,7 @@ public class Condition extends BaseNode {
       case DIVIDE:
       case MULTIPLY:
       case SUBTRACT:
-        throw new LessException(error(EXPECTED_BOOLOP).arg0(operator));
+        throw new LessException(ExecuteErrorMaker.expectedBoolOp(operator));
         
       case AND:
         return conjunction(env, left, right);
@@ -139,7 +137,7 @@ public class Condition extends BaseNode {
         break;
         
       default:
-        throw new LessException(error(UNCOMPARABLE_TYPE).type(type));
+        throw new LessException(ExecuteErrorMaker.uncomparableType(type));
     }
 
     switch (result) {

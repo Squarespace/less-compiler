@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.SyntaxErrorType.JAVASCRIPT_DISABLED;
-import static com.squarespace.v6.template.less.core.ErrorUtils.error;
+import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.javascriptDisabled;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Chars;
@@ -20,7 +19,7 @@ public class JavascriptParselet implements Parselet {
       pos++;
     }
     if (stm.peek(pos) == Chars.GRAVE_ACCENT) {
-      throw new LessException(error(JAVASCRIPT_DISABLED));
+      throw new LessException(javascriptDisabled());
     }
     return null;
   }
