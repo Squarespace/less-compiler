@@ -104,7 +104,7 @@ public class LessBatchC {
   
   private void processAll(Path rootPath) {
     PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.less");
-    Map<Path, Stylesheet> cache = new HashMap<>();
+    Map<Path, Stylesheet> preCache = new HashMap<>();
     try {
       System.err.println("\nPARSING AND CACHING ..\n");
       Context ctx = new Context(options);
@@ -119,7 +119,7 @@ public class LessBatchC {
           stylesheet = (Stylesheet) compiler.parse(data, ctx, path.getParent(), path.getFileName());
           double elapsed = (System.nanoTime() - start) / 1000000.0;
           System.err.printf("  %.3fms\n", elapsed);
-          cache.put(path, stylesheet);
+          preCache.put(path, stylesheet);
           
         } catch (LessException e) {
           ErrorFormatter fmt = new ErrorFormatter(path, e, 4, 5);
@@ -129,10 +129,10 @@ public class LessBatchC {
 
       System.err.println("\nCOMPILING ..\n");
       dirStream = LessUtils.getMatchingFiles(rootPath, matcher);
-      ctx = new Context(options, null, cache);
+      ctx = new Context(options, null, preCache);
       ctx.setCompiler(compiler);
       for (Path path : dirStream) {
-        Stylesheet stylesheet = cache.get(path);
+        Stylesheet stylesheet = preCache.get(path);
         if (stylesheet == null) {
           continue;
         }

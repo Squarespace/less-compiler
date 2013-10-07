@@ -10,6 +10,7 @@ import com.squarespace.v6.template.less.exec.BufferStack;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 import com.squarespace.v6.template.less.exec.Function;
 import com.squarespace.v6.template.less.exec.FunctionTable;
+import com.squarespace.v6.template.less.exec.ImportRecord;
 import com.squarespace.v6.template.less.exec.MixinResolver;
 import com.squarespace.v6.template.less.exec.NodeRenderer;
 import com.squarespace.v6.template.less.exec.RenderEnv;
@@ -39,8 +40,10 @@ public class Context {
   
   private LessStats stats;
   
-  private Map<Path, Stylesheet> importCache;
+  private Map<Path, ImportRecord> importCache;
 
+  private Map<Path, Stylesheet> preCache;
+  
   private ScriptLoader loader;
   
   public Context() {
@@ -55,13 +58,14 @@ public class Context {
     this(opts, loader, null);
   }
   
-  public Context(Options opts, ScriptLoader loader, Map<Path, Stylesheet> cache) {
+  public Context(Options opts, ScriptLoader loader, Map<Path, Stylesheet> preCache) {
     this.opts = opts;
     this.bufferStack = new BufferStack(this);
     this.renderer = new NodeRenderer();
     this.mixinResolver = new MixinResolver();
     this.stats = new LessStats();
-    this.importCache = cache == null ? new HashMap<Path, Stylesheet>() : cache;
+    this.importCache = new HashMap<>();
+    this.preCache = preCache == null ? new HashMap<Path, Stylesheet>() : preCache;
     this.loader = loader == null ? new FilesystemScriptLoader() : loader;
   }
   
@@ -91,12 +95,27 @@ public class Context {
       rootPath = FileSystems.getDefault().getPath(opts.importRoot());
     }
     Path path = rootPath.resolve(rawPath).normalize();
-    Stylesheet result = importCache.get(path);
-    if (result != null) {
-      return once ? null : result.copy();
+    ImportRecord record = importCache.get(path);
+    
+    // If the stylesheet has been imported and the 'onlyOnce' flag is not set, return it.
+    // Otherwise return null, indicating to the caller that it has already been imported
+    // once and the flag is enforced.
+    if (record != null) {
+      return record.onlyOnce() ? null : record.stylesheeet().copy();
     }
-    result = compiler.parse(loader.load(path), this, path.getParent(), path.getFileName());
-    importCache.put(path, result);
+
+    // If a pre-populated parsed stylesheet cache has been provided, use it.
+    Stylesheet result = null;
+    if (preCache != null) {
+      result = preCache.get(path);
+    }
+    
+    if (result == null) {
+      result = compiler.parse(loader.load(path), this, path.getParent(), path.getFileName());
+    }
+    if (!importCache.containsKey(path)) {
+      importCache.put(path, new ImportRecord(result, once));
+    }
     return result.copy();
   }
   
