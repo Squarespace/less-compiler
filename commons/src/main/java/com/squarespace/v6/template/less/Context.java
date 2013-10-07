@@ -90,7 +90,10 @@ public class Context {
     return (functionTable != null) ? functionTable.get(symbol) : null;
   }
   
-  public Stylesheet parseImport(String rawPath, Path rootPath, boolean once) throws LessException {
+  /**
+   * Retrieves an external stylesheet. If not already cached, parse it and cache it.
+   */
+  public Stylesheet importStylesheet(String rawPath, Path rootPath, boolean once) throws LessException {
     if (rootPath == null) {
       rootPath = FileSystems.getDefault().getPath(opts.importRoot());
     }

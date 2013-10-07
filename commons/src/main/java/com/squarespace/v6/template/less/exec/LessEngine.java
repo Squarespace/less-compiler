@@ -252,7 +252,7 @@ public class LessEngine {
     
     Stylesheet stylesheet = null;
     try {
-      stylesheet = ctx.parseImport(path, imp.rootPath(), imp.once());
+      stylesheet = ctx.importStylesheet(path, imp.rootPath(), imp.once());
     } catch (LessException e) {
       e.push(imp);
       throw e;

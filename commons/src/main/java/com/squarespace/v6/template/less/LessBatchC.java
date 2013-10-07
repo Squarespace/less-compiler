@@ -20,7 +20,7 @@ import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
-import com.squarespace.v6.template.less.core.ErrorFormatter;
+import com.squarespace.v6.template.less.core.ErrorUtils;
 import com.squarespace.v6.template.less.core.LessUtils;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
@@ -122,8 +122,7 @@ public class LessBatchC {
           preCache.put(path, stylesheet);
           
         } catch (LessException e) {
-          ErrorFormatter fmt = new ErrorFormatter(path, e, 4, 5);
-          System.err.println(fmt.format() + "\n");
+          System.err.println(ErrorUtils.formatError(ctx, path, e, 4) + "\n");
         }
       }
 
@@ -147,8 +146,7 @@ public class LessBatchC {
           System.err.printf("  %.3fms\n", elapsed);
           
         } catch (LessException e) {
-          ErrorFormatter fmt = new ErrorFormatter(path, e, 4, 5);
-          System.err.println(SEPARATOR + fmt.format() + SEPARATOR + "\n");
+          System.err.println(SEPARATOR + ErrorUtils.formatError(ctx, path, e, 4) + SEPARATOR + "\n");
         }
       }
       
