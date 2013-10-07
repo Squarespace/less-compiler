@@ -63,8 +63,8 @@ public class LessSpeedTest extends LessTestBase {
       for (String script : scripts) {
         LessHarness h = new LessHarness();
         Node node = h.parse(script);
-        LessEngine machine = new LessEngine();
-        machine.render((Stylesheet)node, h.context());
+        LessEngine machine = new LessEngine(h.context());
+        machine.render((Stylesheet)node);
       }
     }
     double elapsed = (System.nanoTime() - start) / 1000000.0;
@@ -88,8 +88,8 @@ public class LessSpeedTest extends LessTestBase {
     LessHarness h = new LessHarness();
     Node node = h.parse(script);
   
-    LessEngine machine = new LessEngine();
-    String result = machine.render((Stylesheet)node, h.context());
+    LessEngine machine = new LessEngine(h.context());
+    String result = machine.render((Stylesheet)node);
     System.out.println(result);
     System.out.println("===========================================");
   }

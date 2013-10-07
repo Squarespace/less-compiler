@@ -2,6 +2,8 @@ package com.squarespace.v6.template.less.model;
 
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
+import java.nio.file.Path;
+
 import com.squarespace.v6.template.less.core.Buffer;
 
 
@@ -10,6 +12,8 @@ public class Directive extends BaseNode {
   private final String name;
   
   private final Node value;
+  
+  private Path fileName;
   
   public Directive(String name, Node value) {
     if (name == null || value == null) {
@@ -25,6 +29,14 @@ public class Directive extends BaseNode {
   
   public Node value() {
     return this.value;
+  }
+  
+  public Path fileName() {
+    return fileName;
+  }
+  
+  public void fileName(Path path) {
+    this.fileName = path;
   }
   
   @Override

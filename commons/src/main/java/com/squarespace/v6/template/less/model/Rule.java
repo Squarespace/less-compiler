@@ -3,6 +3,8 @@ package com.squarespace.v6.template.less.model;
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 import static com.squarespace.v6.template.less.model.NodeType.RULE;
 
+import java.nio.file.Path;
+
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.exec.ExecEnv;
@@ -15,6 +17,8 @@ public class Rule extends BaseNode {
   private Node value;
   
   private boolean important;
+  
+  private Path fileName;
   
   public Rule(Node property, Node value) {
     this(property, value, false);
@@ -42,8 +46,18 @@ public class Rule extends BaseNode {
     this.important = flag;
   }
   
+  public Path fileName() {
+    return fileName;
+  }
+  
+  public void fileName(Path path) {
+    this.fileName = path;
+  }
+  
   public Rule copy() {
-    return new Rule(property, value, important);
+    Rule rule = new Rule(property, value, important);
+    rule.fileName = fileName;
+    return rule;
   }
 
   @Override

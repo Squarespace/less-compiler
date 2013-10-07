@@ -36,6 +36,7 @@ public class Ruleset extends BlockNode {
   public Ruleset copy(ExecEnv env) throws LessException {
     Ruleset result = new Ruleset((Selectors) selectors.eval(env), block.copy());
     result.mixinPaths = mixinPaths;
+    result.fileName = fileName;
     if (originalBlockNode != null) {
       result.originalBlockNode = originalBlockNode;
     }

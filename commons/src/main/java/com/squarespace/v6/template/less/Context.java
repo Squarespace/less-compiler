@@ -6,12 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.exec.BufferStack;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 import com.squarespace.v6.template.less.exec.Function;
 import com.squarespace.v6.template.less.exec.FunctionTable;
 import com.squarespace.v6.template.less.exec.MixinResolver;
-import com.squarespace.v6.template.less.exec.RenderEnv;
 import com.squarespace.v6.template.less.exec.NodeRenderer;
+import com.squarespace.v6.template.less.exec.RenderEnv;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
@@ -28,6 +29,8 @@ public class Context {
 
   private LessCompiler compiler;
 
+  private BufferStack bufferStack;
+  
   private NodeRenderer renderer;
 
   private FunctionTable functionTable;
@@ -54,6 +57,7 @@ public class Context {
   
   public Context(Options opts, ScriptLoader loader, Map<Path, Stylesheet> cache) {
     this.opts = opts;
+    this.bufferStack = new BufferStack(this);
     this.renderer = new NodeRenderer();
     this.mixinResolver = new MixinResolver();
     this.stats = new LessStats();
@@ -91,7 +95,7 @@ public class Context {
     if (result != null) {
       return once ? null : result.copy();
     }
-    result = compiler.parse(loader.load(path), this, path.getParent());
+    result = compiler.parse(loader.load(path), this, path.getParent(), path.getFileName());
     importCache.put(path, result);
     return result.copy();
   }
@@ -100,6 +104,14 @@ public class Context {
     return stats;
   }
 
+  public Buffer acquireBuffer() {
+    return bufferStack.acquireBuffer();
+  }
+  
+  public void returnBuffer() {
+    bufferStack.returnBuffer();
+  }
+  
   public Buffer newBuffer() {
     return new Buffer(opts);
   }

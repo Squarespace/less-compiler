@@ -14,9 +14,9 @@ public abstract class BaseNode implements Node {
   
   protected int charOffset;
   
-  protected void copyPosition(BaseNode from, BaseNode to) {
-    to.setLineOffset(from.lineOffset);
-    to.setCharOffset(from.charOffset);
+  public void copyPosition(BaseNode from) {
+    setLineOffset(from.lineOffset);
+    setCharOffset(from.charOffset);
   }
   
   public int lineOffset() {

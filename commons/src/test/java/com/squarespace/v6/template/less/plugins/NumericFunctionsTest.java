@@ -1,6 +1,7 @@
 package com.squarespace.v6.template.less.plugins;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.FUNCTION_CALL;
+import static com.squarespace.v6.template.less.ExecuteErrorType.INVALID_ARG;
+import static com.squarespace.v6.template.less.ExecuteErrorType.UNKNOWN_UNIT;
 
 import org.testng.annotations.Test;
 
@@ -26,7 +27,7 @@ public class NumericFunctionsTest extends LessTestBase {
     h.evalEquals("floor(1.9)", dim(1));
     h.evalEquals("floor(-1.1)", dim(-2));
     h.evalEquals("floor(-1.9)", dim(-2));
-    h.evalFails("floor('dim')", FUNCTION_CALL);
+    h.evalFails("floor('dim')", INVALID_ARG);
     
     // Decimal to percentage
     h.evalEquals("percentage(1)", dim(100, Unit.PERCENTAGE));
@@ -52,8 +53,8 @@ public class NumericFunctionsTest extends LessTestBase {
     h.evalEquals("unit(1, px)", dim(1, Unit.PX));
     h.evalEquals("unit(3em, pt)", dim(3, Unit.PT));
     h.evalEquals("unit(3em)", dim(3));
-    h.evalFails("unit('foo', px)", FUNCTION_CALL);
-    h.evalFails("unit(3em, quark)", FUNCTION_CALL);
+    h.evalFails("unit('foo', px)", INVALID_ARG);
+    h.evalFails("unit(3em, quark)", UNKNOWN_UNIT);
     
   }
 

@@ -1,5 +1,6 @@
 package com.squarespace.v6.template.less.parse;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class ParseUtils {
    * Build a user-readable parser error message, showing the exact context for
    * the error. We append this to the given exception inside a ParseError node.
    */
-  public static LessException parseError(LessException exc, String raw, int index) {
+  public static LessException parseError(LessException exc, Path filePath, String raw, int index) {
     Stream stm = new Stream(raw);
     List<int[]> offsets = new ArrayList<>();
 
@@ -51,6 +52,7 @@ public class ParseUtils {
     buf.append("^\n");
     
     ParseError error = new ParseError();
+    error.filePath(filePath);
     error.errorMessage(buf.toString());
     exc.push(error);
     return exc;

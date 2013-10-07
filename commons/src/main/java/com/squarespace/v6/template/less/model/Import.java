@@ -49,12 +49,12 @@ public class Import extends BaseNode {
     return fileName;
   }
   
-  public void setRootPath(Path rootPath) {
+  public void rootPath(Path rootPath) {
     this.rootPath = rootPath;
   }
   
-  public void setFileName(String fileName) {
-    this.fileName = rootPath == null ? Paths.get(fileName) : rootPath.resolve(fileName);
+  public void fileName(Path fileName) {
+    this.fileName = fileName;
   }
   
   public String renderPath(ExecEnv env) throws LessException {
@@ -95,7 +95,10 @@ public class Import extends BaseNode {
     if (!needsEval()) {
       return this;
     }
-    return new Import(path.eval(env), features == null ? null : (Features)features.eval(env), once);
+    Import result = new Import(path.eval(env), features == null ? null : (Features)features.eval(env), once);
+    result.rootPath(rootPath);
+    result.fileName(fileName);
+    return result;
   }
   
   @Override

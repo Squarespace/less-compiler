@@ -1,5 +1,7 @@
 package com.squarespace.v6.template.less.exec;
 
+import java.nio.file.Path;
+
 import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.Options;
@@ -8,6 +10,7 @@ import com.squarespace.v6.template.less.core.FlexList;
 import com.squarespace.v6.template.less.model.Block;
 import com.squarespace.v6.template.less.model.BlockDirective;
 import com.squarespace.v6.template.less.model.Comment;
+import com.squarespace.v6.template.less.model.Definition;
 import com.squarespace.v6.template.less.model.Directive;
 import com.squarespace.v6.template.less.model.Features;
 import com.squarespace.v6.template.less.model.Import;
@@ -29,8 +32,10 @@ import com.squarespace.v6.template.less.model.Stylesheet;
  */
 public class LessRenderer {
 
+  private Context ctx;
+
   private RenderEnv env;
-  
+
   private Options opts;
   
   private CssModel model;
@@ -39,6 +44,7 @@ public class LessRenderer {
   }
   
   public String render(Context context, Stylesheet sheet) throws LessException {
+    this.ctx = context;
     this.env = context.newRenderEnv();
     this.opts = context.options();
     this.model = new CssModel(context);
@@ -63,14 +69,15 @@ public class LessRenderer {
     Selectors selectors = env.frame().selectors();
     if (!selectors.isEmpty()) {
       // Selectors are indented and delimited by the model.
-      Buffer buf = env.context().newBuffer();
+      Buffer buf = ctx.acquireBuffer();
       for (Selector selector : selectors.selectors()) {
         env.render(buf, selector);
         model.header(buf.toString());
         buf.reset();
       }
+      ctx.returnBuffer();
     }
-    
+
     renderBlock(ruleset.block(), true);
     model.pop();
     env.pop();
@@ -125,11 +132,6 @@ public class LessRenderer {
       Node node = rules.get(i);
       switch (node.type()) {
 
-        case DEFINITION:
-        case MIXIN:
-          // Ignore in render phase.
-          break;
-
         case BLOCK_DIRECTIVE:
           renderBlockDirective((BlockDirective)node);
           break;
@@ -141,6 +143,10 @@ public class LessRenderer {
           }
           break;
 
+        case DEFINITION:
+          renderDefinition((Definition)node);
+          break;
+          
         case DIRECTIVE:
           Directive directive = (Directive)node;
           if (!directive.name().equals("@charset")) {
@@ -155,15 +161,15 @@ public class LessRenderer {
           break;
           
         case IMPORT_MARKER:
-          // In debug mode, write out an indicator showing where the imported
-          // blocks begin and end. Otherwise, skip.
-          if (opts.importMarkers()) {
-            renderImportMarker((ImportMarker)node);
-          }
+          renderImportMarker((ImportMarker)node);
           break;
 
         case MEDIA:
           renderMedia((Media)node);
+          break;
+
+        case MIXIN:
+          // Ignore in render phase.
           break;
 
         case MIXIN_MARKER:
@@ -184,33 +190,54 @@ public class LessRenderer {
     }
   }
   
+  private void renderDefinition(Definition def) throws LessException {
+    if (opts.tracing()) {
+      Path fileName = def.fileName();
+      Buffer buf = ctx.acquireBuffer();
+      buf.append("/* ");
+      buf.append(def.repr().trim());
+      if (fileName != null) {
+        buf.append("    ").append(def.fileName().toString());
+      }
+      buf.append(':').append(def.lineOffset() + 1).append("  */\n");
+      model.comment(buf.toString());
+      ctx.returnBuffer();
+    }
+  }
+  
   private void renderImport(Import imp) throws LessException {
-    String value = "@import " + env.render(imp.path());
+    Buffer buf = new Buffer(0);
+    buf.append("@import ");
+    env.render(buf, imp.path());
     Features features = imp.features();
     if (features != null && !features.isEmpty()) {
-      value += " " + env.render(features);
+      buf.append(' ');
+      env.render(buf, features);
     }
-    model.value(value);
+    model.value(buf.toString());
   }
   
   private void renderImportMarker(ImportMarker marker) throws LessException {
     Import imp = marker.importStatement();
     String repr = imp.repr().trim();
+    Path fileName = imp.fileName();
+    String line = (fileName != null ? fileName.toString() : "") + ":" + (imp.lineOffset() + 1);
     if (marker.beginning()) {
-      model.comment("/* BEGIN " + repr + "  */\n");
+      model.comment("\n/* TRACE enter  " + repr + "    " + line + "  */\n");
     } else {
-      model.comment("/*   END " + repr + "  */\n");
+      model.comment("/* TRACE  exit  " + repr + "    " + line + "  */\n\n");
     }
   }
   
   private void renderMixinMarker(MixinMarker marker) throws LessException {
     MixinCall call = marker.mixinCall();
-    int line = call.lineOffset() + 1;
     String repr = call.repr().trim();
+    Path fileName = call.fileName();
+    String line = (fileName != null ? fileName.toString() : "") + ":" + (call.lineOffset() + 1);
     if (marker.beginning()) {
-      model.comment("/* BEGIN mixin call " + repr + "  line " + line + " */\n");
+      model.comment("/* TRACE enter  " + repr + "    " + line + "  */\n");
     } else {
-      model.comment("/*   END mixin call " + repr + "  line " + line + " */\n");
+      model.comment("/* TRACE  exit  " + repr + "    " + line + "  */\n");
     }
   }
   
@@ -218,7 +245,7 @@ public class LessRenderer {
    * Render a rule, consisting of a property, value and optional "!important" modifier.
    */
   private void renderRule(Rule rule) throws LessException {
-    Buffer buf = env.context().newBuffer();
+    Buffer buf = ctx.acquireBuffer();
     env.render(buf, rule.property());
     buf.ruleSep();
     env.render(buf, rule.value());
@@ -226,6 +253,7 @@ public class LessRenderer {
       buf.append(" !important");
     }
     model.value(buf.toString());
+    ctx.returnBuffer();
   }
 
 }

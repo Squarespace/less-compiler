@@ -19,7 +19,9 @@ public class BlockDirective extends BlockNode {
   }
   
   public BlockDirective copy() {
-    return new BlockDirective(name, block.copy());
+    BlockDirective result = new BlockDirective(name, block.copy());
+    result.fileName = fileName;
+    return result;
   }
   
   @Override

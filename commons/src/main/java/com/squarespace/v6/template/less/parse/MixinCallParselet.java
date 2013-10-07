@@ -4,9 +4,9 @@ import static com.squarespace.v6.template.less.parse.Parselets.MIXIN_CALL_ARGS;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Chars;
-import com.squarespace.v6.template.less.model.MixinCallArgs;
 import com.squarespace.v6.template.less.model.Combinator;
 import com.squarespace.v6.template.less.model.MixinCall;
+import com.squarespace.v6.template.less.model.MixinCallArgs;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Selector;
 import com.squarespace.v6.template.less.model.TextElement;
@@ -50,12 +50,18 @@ public class MixinCallParselet implements Parselet {
     
     stm.skipWs();
     ch = stm.peek();
+    
+    MixinCall call = null;
     if (ch == Chars.SEMICOLON) {
       stm.seek1();
-      return new MixinCall(selector, args, important);
+      call = new MixinCall(selector, args, important);
 
     } else if (ch == Chars.RIGHT_CURLY_BRACKET || ch == Chars.EOF) {
-      return new MixinCall(selector, args, important);
+      call = new MixinCall(selector, args, important);
+    }
+    if (call != null) {
+      call.fileName(stm.fileName());
+      return call;
     }
     
     stm.restore(mark);

@@ -2,6 +2,8 @@ package com.squarespace.v6.template.less.model;
 
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
+import java.nio.file.Path;
+
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.core.ExecuteErrorMaker;
@@ -20,6 +22,8 @@ public class Definition extends BaseNode {
   // Flag to detect late-binding circular references and raise an error.
   private boolean evaluating;
 
+  private Path fileName;
+  
   public Definition(Variable variable, Node value) {
     this(variable.name(), value);
   }
@@ -38,6 +42,14 @@ public class Definition extends BaseNode {
   
   public Node value() {
     return value;
+  }
+  
+  public Path fileName() {
+    return fileName;
+  }
+  
+  public void fileName(Path path) {
+    this.fileName = path;
   }
 
   /**

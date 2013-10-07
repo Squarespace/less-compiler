@@ -81,15 +81,18 @@ public class LessStream extends Stream {
   
   private Path rootPath;
   
+  private Path fileName;
+  
   private Mark position = new Mark();
   
   public LessStream(String raw) {
-    this(raw, null);
+    this(raw, null, null);
   }
   
-  public LessStream(String raw, Path rootPath) {
+  public LessStream(String raw, Path rootPath, Path fileName) {
     super(raw);
     this.rootPath = rootPath;
+    this.fileName = fileName;
     this.match_AND = Patterns.AND.matcher(raw);
     this.match_ANON_RULE_VALUE = Patterns.ANON_RULE_VALUE.matcher(raw);
     this.match_ATTRIBUTE_KEY = Patterns.ATTRIBUTE_KEY.matcher(raw);
@@ -122,11 +125,15 @@ public class LessStream extends Stream {
   }
 
   public LessException parseError(LessException exc) {
-    return ParseUtils.parseError(exc, raw, furthest);
+    return ParseUtils.parseError(exc, fileName, raw, furthest);
   }
   
   public Path rootPath() {
     return rootPath;
+  }
+  
+  public Path fileName() {
+    return fileName;
   }
   
   /**

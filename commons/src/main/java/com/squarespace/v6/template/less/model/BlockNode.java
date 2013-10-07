@@ -2,6 +2,8 @@ package com.squarespace.v6.template.less.model;
 
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
+import java.nio.file.Path;
+
 import com.squarespace.v6.template.less.core.Buffer;
 
 
@@ -12,6 +14,8 @@ public abstract class BlockNode extends BaseNode {
   protected BlockNode originalBlockNode;
 
   protected boolean important;
+  
+  protected Path fileName;
   
   public BlockNode() {
     this(new Block());
@@ -48,6 +52,14 @@ public abstract class BlockNode extends BaseNode {
   
   public void setBlock(Block block) {
     this.block = block;
+  }
+  
+  public Path fileName() {
+    return fileName;
+  }
+  
+  public void fileName(Path fileName) {
+    this.fileName = fileName;
   }
   
   @Override

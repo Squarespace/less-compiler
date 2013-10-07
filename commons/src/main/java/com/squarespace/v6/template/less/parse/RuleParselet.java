@@ -74,10 +74,14 @@ public class RuleParselet implements Parselet {
     if (value != null && end(stm)) {
       if (key.is(NodeType.VARIABLE)) {
         // Note that !important is ingored for definitions.
-        return new Definition(name, value);
+        Definition def = new Definition(name, value);
+        def.fileName(stm.fileName());
+        return def;
         
       } else {
-        return new Rule((Property)key, value, important);
+        Rule rule = new Rule((Property)key, value, important);
+        rule.fileName(stm.fileName());
+        return rule;
       }
     }
     

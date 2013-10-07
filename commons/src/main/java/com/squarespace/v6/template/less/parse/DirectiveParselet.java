@@ -93,7 +93,9 @@ public class DirectiveParselet implements Parselet {
     if (hasBlock) {
       Node block = stm.parse(Parselets.BLOCK);
       if (block != null) {
-        return new BlockDirective(name, (Block)block);
+        BlockDirective directive = new BlockDirective(name, (Block)block);
+        directive.fileName(stm.fileName());
+        return directive;
       }
       
     } else {
@@ -113,7 +115,9 @@ public class DirectiveParselet implements Parselet {
     if (block == null) {
       return null;
     }
-    return new Media(features, (Block)block);
+    Media media = new Media(features, (Block)block);
+    media.fileName(stm.fileName());
+    return media;
   }
   
   private Node parseImport(LessStream stm, String name) throws LessException {
@@ -131,7 +135,8 @@ public class DirectiveParselet implements Parselet {
     stm.skipWs();
     if (stm.seekIf(Chars.SEMICOLON)) {
       Import result = new Import(path, features, once);
-      result.setRootPath(stm.rootPath());
+      result.rootPath(stm.rootPath());
+      result.fileName(stm.fileName());
       return result;
     }
     return null;

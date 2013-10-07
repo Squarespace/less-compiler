@@ -31,32 +31,36 @@ public class LessC {
 
   @Parameter(names = { "-D" }, description = "Debug mode (canonical, parse, expand)", converter = DebugModeConverter.class)
   private DebugMode debugMode;
-  
+
+// TODO: low priority
+//  @Parameter(names = { "-L", "-lines" }, description = "Line number")
+//  private boolean lineNumbers;
+
   @Parameter(names = { "-R" }, description = "Recursion limit")
   private int recursionLimit = Options.DEFAULT_RECURSION_LIMIT;
-  
+
+  @Parameter(names = { "-S", "-stats" }, description = "Output statistics")
+  private boolean stats = false;
+
+  @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
+  private boolean tracing = false;
+
   @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
 
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
   private int indent = Options.DEFAULT_INDENT;
 
-  @Parameter(names = { "-o" }, description = "Compiler option", converter = CompilerOptionConverter.class)
-  private List<CompilerOption> compilerOptions;
-  
-  @Parameter(names = { "-x", "-compress" }, description = "Compress mode" )
-  private boolean compress = false;
-  
   @Parameter(names = { "-v", "-version" }, description = "Show version")
   private boolean version = false;
 
-  @Parameter(names = { "-stats" }, description = "Output statistics")
-  private boolean stats = false;
+  @Parameter(names = { "-x", "-compress" }, description = "Compress mode" )
+  private boolean compress = false;
   
   @Parameter(names = {"-W", "-wait" }, description = "Wait before executing / exiting.")
   private boolean waitForUser = false;
  
-// TBD:
+// TODO: later, non-standard feature
 //  @Parameter(names = "-include-path", description = "Include path" )
 //  public String includePath;
 
@@ -65,23 +69,10 @@ public class LessC {
   private void buildOptions() {
     options.compress(compress);
     options.indent(indent);
+// TODO:
+//    options.lineNumbers(lineNumbers);
     options.recursionLimit(recursionLimit);
-    
-    if (compilerOptions != null) {
-      for (CompilerOption opt : compilerOptions) {
-        switch (opt) {
-          
-          case IMPORT_MARKERS:
-            options.importMarkers(true);
-            break;
-
-          case MIXIN_MARKERS:
-            options.mixinMarkers(true);
-            break;
-        }
-      }
-    }
-    // options.trace(true); // TBD
+    options.tracing(tracing);
   }
   
   public static String version() {
@@ -122,7 +113,8 @@ public class LessC {
   }
   
   /**
-   * Wait for a newline before executing / exiting.
+   * Wait for a newline at the prompt before executing / exiting. Assists with 
+   * debugging / profiling at the command line.
    */
   private void waitForUser() {
     BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
@@ -147,6 +139,7 @@ public class LessC {
       fail("the path '" + path + "' cannot be read.");
     }
     Path rootPath = path.getParent();
+    Path fileName = path.getFileName();
     LessCompiler compiler = new LessCompiler();
     String source = null;
     try {
@@ -158,21 +151,21 @@ public class LessC {
     ctx.setCompiler(compiler);
     try {
       if (debugMode == DebugMode.CANONICAL) {
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath);
+        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath, fileName);
         System.out.println(canonicalize(stylesheet));
       
       } else if (debugMode == DebugMode.PARSE) {
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath);
+        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath, fileName);
         System.out.println(parseTree(stylesheet));
       
       } else if (debugMode == DebugMode.EXPAND) {
         // NOTE: This mode doesn't fully work yet.
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath);
+        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath, fileName);
         stylesheet = compiler.expand(stylesheet, ctx);
         System.out.println(canonicalize(stylesheet));
 
       } else {
-        String result = compiler.compile(source, ctx, rootPath);
+        String result = compiler.compile(source, ctx, rootPath, fileName);
         System.out.print(result);
       }
       
@@ -218,19 +211,6 @@ public class LessC {
       } catch (IllegalArgumentException e) {
         throw new ParameterException("Unknown debug mode '" + value + "'. "
             + "Available modes are: " + DebugMode.modes());
-      }
-    }
-  }
-  
-  public static class CompilerOptionConverter implements IStringConverter<CompilerOption> {
-    @Override
-    public CompilerOption convert(String value) {
-      try {
-        return CompilerOption.fromString(value);
-
-      } catch (IllegalArgumentException e) {
-        throw new ParameterException("Unknown compiler option '" + value + "'. "
-            + "Available options are: " + CompilerOption.options());
       }
     }
   }

@@ -71,9 +71,9 @@ public class LessHarness {
   public String execute(String raw, Options opts) throws LessException {
     Context ctx = context(opts);
     ctx.setCompiler(new LessCompiler());
-    LessEngine engine = new LessEngine();
+    LessEngine engine = new LessEngine(ctx);
     Node res = parse(raw, parselet);
-    return engine.render((Stylesheet)res, ctx);
+    return engine.render((Stylesheet)res);
   }
   
   public void executeFails(String raw, ErrorType expected) {

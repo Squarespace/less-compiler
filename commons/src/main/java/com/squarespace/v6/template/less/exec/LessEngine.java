@@ -41,19 +41,25 @@ public class LessEngine {
   
   private static final Pattern IMPORT_CSS = Pattern.compile(".*css([\\?;].*)?$");
   
-  public LessEngine() {
+  private Context ctx;
+  
+  private Options opts;
+  
+  public LessEngine(Context ctx) {
+    this.ctx = ctx;
+    this.opts = ctx.options();
   }
   
   /**
    * Evaluate and render a LESS stylesheet, using the given context.
    */
-  public String render(Stylesheet sheet, Context context) throws LessException {
-    sheet = evaluateStylesheet(context.newEnv(), sheet);
-    return new LessRenderer().render(context, sheet);
+  public String render(Stylesheet sheet) throws LessException {
+    sheet = evaluateStylesheet(ctx.newEnv(), sheet);
+    return new LessRenderer().render(ctx, sheet);
   }
 
-  public Stylesheet expand(Stylesheet sheet, Context context) throws LessException {
-    return evaluateStylesheet(context.newEnv(), sheet);
+  public Stylesheet expand(Stylesheet sheet) throws LessException {
+    return evaluateStylesheet(ctx.newEnv(), sheet);
   }
   
   
@@ -68,6 +74,7 @@ public class LessEngine {
     expandImports(env, block);
     expandMixins(env, block);
     evaluateRules(env, block, false);
+
     env.pop();
     return directive;
   }
@@ -83,7 +90,7 @@ public class LessEngine {
     expandImports(env, block);
     expandMixins(env, block);
     evaluateRules(env, block, false);
-    
+
     env.pop();
     return media;
   }
@@ -94,7 +101,7 @@ public class LessEngine {
   private Ruleset evaluateRuleset(ExecEnv env, Ruleset input, boolean forceImportant) throws LessException {
     Ruleset original = (Ruleset)input.original();
     Ruleset ruleset = input.copy(env);
-
+    
     env.push(ruleset);
     original.enter();
     
@@ -102,7 +109,7 @@ public class LessEngine {
     expandImports(env, block);
     expandMixins(env, block);
     evaluateRules(env, block, forceImportant);
-    
+
     original.exit();
     env.pop();
     return ruleset;
@@ -114,7 +121,7 @@ public class LessEngine {
   private Stylesheet evaluateStylesheet(ExecEnv env, Stylesheet original) throws LessException {
     Stylesheet stylesheet = original.copy();
     env.push(stylesheet);
-
+    
     Block block = stylesheet.block();
     expandImports(env, block);
     expandMixins(env, block);
@@ -144,7 +151,10 @@ public class LessEngine {
           
           case DEFINITION:
             Definition def = (Definition)node;
-            node = new Definition(def.name(), def.dereference(env));
+            Definition newDef = new Definition(def.name(), def.dereference(env));
+            newDef.copyPosition(def);
+            newDef.fileName(def.fileName());
+            node = newDef;
             break;
             
           case DIRECTIVE:
@@ -174,10 +184,6 @@ public class LessEngine {
           case MIXIN_CALL:
             throw new RuntimeException("Serious error: all mixin calls should already have been evaluated.");
             
-          case STYLESHEET:
-            node = evaluateStylesheet(env, (Stylesheet)node);
-            break;
-            
           case RULESET:
             node = evaluateRuleset(env, (Ruleset)node, forceImportant);
             break;
@@ -195,6 +201,7 @@ public class LessEngine {
             node = node.eval(env);
             break;
         }
+        
       } catch (LessException e) {
         e.push(node);
         if (currentImport != null) {
@@ -243,9 +250,6 @@ public class LessEngine {
       return null;
     }
     
-    imp.setFileName(path);
-    
-    Context ctx = env.context();
     Stylesheet stylesheet = null;
     try {
       stylesheet = ctx.parseImport(path, imp.rootPath(), imp.once());
@@ -274,8 +278,10 @@ public class LessEngine {
     }
 
     // Indicate where the import begins and ends.
-    block.prependNode(new ImportMarker(imp, true));
-    block.appendNode(new ImportMarker(imp, false));
+    if (opts.tracing()) {
+      block.prependNode(new ImportMarker(imp, true));
+      block.appendNode(new ImportMarker(imp, false));
+    }
     return block;
     
   }
@@ -315,12 +321,12 @@ public class LessEngine {
    */
   private Block executeMixinCall(ExecEnv env, MixinCall call) throws LessException {
     MixinMatcher matcher = new MixinMatcher(env, call);
-    MixinResolver resolver = env.context().mixinResolver();
+    MixinResolver resolver = ctx.mixinResolver();
     resolver.reset(matcher);
     env.resolveMixins(resolver);
     List<MixinMatch> matches = resolver.matches();
     if (matches.isEmpty()) {
-      LessException exc = new LessException(mixinUndefined(env.context().render(call.selector())));
+      LessException exc = new LessException(mixinUndefined(ctx.render(call.selector())));
       exc.push(call);
       throw exc;
     }
@@ -349,7 +355,7 @@ public class LessEngine {
     }
     
     if (calls == 0) {
-      LessException exc = new LessException(mixinUndefined(env.context().render(call.selector())));
+      LessException exc = new LessException(mixinUndefined(ctx.render(call.selector())));
       exc.push(call);
       throw exc;
     }
@@ -404,7 +410,6 @@ public class LessEngine {
     }
     
     // Caps the number of recursions through this mixin.
-    Options opts = env.context().options();
     if (original.entryCount() >= opts.recursionLimit()) {
       throw new LessException(mixinRecurse(call.path(), opts.recursionLimit()));
     }
@@ -419,7 +424,7 @@ public class LessEngine {
       expandMixins(env, block);
 
       // Wrap the final rules generated by this mixin call.
-      if (opts.mixinMarkers()) {
+      if (opts.tracing()) {
         MixinCall actualCall = call.copy();
         actualCall.args(matcher.mixinArgs());
         block.prependNode(new MixinMarker(actualCall, true));
@@ -447,9 +452,18 @@ public class LessEngine {
   private boolean executeRulesetMixin(ExecEnv env, Block collector, MixinMatcher matcher, MixinMatch match) 
       throws LessException {
     MixinCall call = matcher.mixinCall();
+
     Ruleset ruleset = (Ruleset)match.mixin();
     Ruleset result = evaluateRuleset(env, ruleset, call.important());
-    collector.appendBlock(result.block());
+    
+    Block block = result.block();
+
+    if (opts.tracing()) {
+      block.prependNode(new MixinMarker(call, true));
+      block.appendNode(new MixinMarker(call, false));
+    }
+
+    collector.appendBlock(block);
     return true;
   }
   

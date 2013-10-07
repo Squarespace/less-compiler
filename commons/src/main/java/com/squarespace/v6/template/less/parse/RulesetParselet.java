@@ -26,7 +26,9 @@ public class RulesetParselet implements Parselet {
       return null;
     }
     
-    return new Ruleset(group, (Block)block);
+    Ruleset ruleset = new Ruleset(group, (Block)block);
+    ruleset.fileName(stm.fileName());
+    return ruleset;
   }
   
 }

@@ -41,13 +41,13 @@ public class LessCompiler {
   }
   
   public Stylesheet parse(String raw, Context ctx) throws LessException {
-    return parse(raw, ctx, null);
+    return parse(raw, ctx, null, null);
   }
   
-  public Stylesheet parse(String raw, Context ctx, Path rootPath) throws LessException {
+  public Stylesheet parse(String raw, Context ctx, Path rootPath, Path fileName) throws LessException {
     LessStats stats = ctx.stats();
     long started = stats.now();
-    LessStream stm = new LessStream(raw, rootPath);
+    LessStream stm = new LessStream(raw, rootPath, fileName);
     Stylesheet sheet = null;
     sheet = (Stylesheet) stm.parse(Parselets.STYLESHEET);
     stats.parseDone(raw.length(), started);
@@ -55,25 +55,25 @@ public class LessCompiler {
   }
 
   public String render(Stylesheet stylesheet, Context ctx) throws LessException {
-    LessEngine engine = new LessEngine();
-    return engine.render(stylesheet, ctx);
+    LessEngine engine = new LessEngine(ctx);
+    return engine.render(stylesheet);
   }
   
   public Stylesheet expand(Stylesheet stylesheet, Context ctx) throws LessException {
-    LessEngine engine = new LessEngine();
-    return engine.expand(stylesheet, ctx);
+    LessEngine engine = new LessEngine(ctx);
+    return engine.expand(stylesheet);
   }
   
   public String compile(String raw, Context ctx) throws LessException {
-    return compile(raw, ctx, null);
+    return compile(raw, ctx, null, null);
   }
   
-  public String compile(String raw, Context ctx, Path rootPath) throws LessException {
-    Stylesheet sheet = parse(raw, ctx, rootPath);
+  public String compile(String raw, Context ctx, Path rootPath, Path fileName) throws LessException {
+    Stylesheet sheet = parse(raw, ctx, rootPath, fileName);
     LessStats stats = ctx.stats();
     long started = stats.now();
-    LessEngine cm = new LessEngine();
-    String result = cm.render(sheet, ctx);
+    LessEngine cm = new LessEngine(ctx);
+    String result = cm.render(sheet);
     stats.compileDone(started);
     return result;
   }

@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.squarespace.v6.template.less.ErrorInfo;
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.exec.ReprUtils;
 import com.squarespace.v6.template.less.model.BlockDirective;
 import com.squarespace.v6.template.less.model.Import;
 import com.squarespace.v6.template.less.model.Media;
@@ -53,9 +54,9 @@ public class ErrorFormatter {
   public String format() {
     buf.reset();
     buf.append("An error occurred in '" + mainPath + "':\n\n");
-    buf.append("Line  Statement\n");
-    buf.append("----  ---------\n");
-    formatStack(context);
+//    formatStack(context);
+    StackFormatter fmt = new StackFormatter(context, 4, frameWindow);
+    buf.append(fmt.format()).append('\n');
     buf.append(primaryError.getMessage());
     return buf.toString();
   }
@@ -70,6 +71,8 @@ public class ErrorFormatter {
       buf.append('\n');
       return;
     }
+    
+    List<Entry> entries = new ArrayList<>();
 
     // We need to skip some frames..
     int i = 0;
@@ -92,7 +95,7 @@ public class ErrorFormatter {
     }
     buf.append('\n');
   }
-
+  
   private void format(Node node) {
     if (node.is(NodeType.PARSE_ERROR)) {
       ParseError error = (ParseError)node;
@@ -143,7 +146,7 @@ public class ErrorFormatter {
         
       case FEATURES:
         buf.append(' ');
-        append(reprLines(node), "\n", false);
+        append(ReprUtils.reprLines(node), "\n", false);
         break;
         
       case MEDIA:
@@ -157,7 +160,8 @@ public class ErrorFormatter {
         MixinCallArgs args = call.args();
         Selectors selectors = new Selectors(Arrays.asList(call.selector()));
         buf.indent();
-        append(reprLines(selectors, 1), " ", false);
+        buf.append(call.fileName().toString()).append(' ');
+        append(ReprUtils.reprLines(selectors, 1), " ", false);
         if (args != null) {
           args.repr(buf);
         }
@@ -169,18 +173,18 @@ public class ErrorFormatter {
         break;
 
       case SELECTOR:
-        append(reprLines(node, 1), " ", true);
+        append(ReprUtils.reprLines(node, 1), " ", true);
         break;
         
       case SELECTORS:
         buf.indent();
-        append(reprLines(node, 3), "\n", true);
+        append(ReprUtils.reprLines(node, 3), "\n", true);
         buf.append(" {\n");
         break;
 
       default:
         buf.indent();
-        append(reprLines(node, 1));
+        append(ReprUtils.reprLines(node, 1));
         buf.append('\n');
         break;
     }
@@ -210,31 +214,17 @@ public class ErrorFormatter {
     }
   }
   
-  private static List<String> reprLines(Node node) {
-    return reprLines(node, -1);
-  }
-  
-  private static List<String> reprLines(Node node, int limit) {
-    Buffer buf = new Buffer(0);
-    node.repr(buf);
-    return splitLines(buf.toString(), limit);
-  }
-  
-  private static List<String> splitLines(String raw, int limit) {
-    String[] lines = raw.split("\n");
-    List<String> result = new ArrayList<>();
-    int count = 0;
-    for (String line : lines) {
-      line = line.trim();
-      if (!line.isEmpty()) {
-        if (count > 0 && count == limit) {
-          break;
-        }
-        result.add(line);
-        count++;
-      }
+  static class Entry {
+    public String fileName;
+    public int lineNo;
+    public String repr;
+
+    public Entry(String fileName, int lineNo, String repr) {
+      this.fileName = fileName;
+      this.lineNo = lineNo;
+      this.repr = repr;
     }
-    return result;
+
   }
   
 }  

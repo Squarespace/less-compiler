@@ -44,16 +44,12 @@ public class Options {
     return indent;
   }
   
-  public boolean importMarkers() {
-    return flags.contains(Option.IMPORT_MARKERS);
-  }
-  
   public String importRoot() {
     return importRoot;
   }
-  
-  public boolean mixinMarkers() {
-    return flags.contains(Option.MIXIN_MARKERS);
+
+  public boolean lineNumbers() {
+    return flags.contains(Option.LINE_NUMBERS);
   }
   
   public int recursionLimit() {
@@ -62,6 +58,10 @@ public class Options {
   
   public boolean tabs() {
     return flags.contains(Option.TABS);
+  }
+  
+  public boolean tracing() {
+    return flags.contains(Option.TRACING);
   }
   
   public void compress(boolean flag) {
@@ -76,16 +76,12 @@ public class Options {
     this.indent = size;
   }
   
-  public void importMarkers(boolean flag) {
-    set(flag, Option.IMPORT_MARKERS);
-  }
-  
   public void importRoot(String root) {
     this.importRoot = root;
   }
 
-  public void mixinMarkers(boolean flag) {
-    set(flag, Option.MIXIN_MARKERS);
+  public void lineNumbers(boolean flag) {
+    set(flag, Option.LINE_NUMBERS);
   }
   
   public void recursionLimit(int limit) {
@@ -94,6 +90,10 @@ public class Options {
   
   public void tabs(boolean flag) {
     set(flag, Option.TABS);
+  }
+  
+  public void tracing(boolean flag) {
+    set(flag, Option.TRACING);
   }
   
   private void set(boolean flag, Option opt) {
@@ -107,9 +107,9 @@ public class Options {
   private static enum Option {
     COMPRESS,
     DEBUG,
-    IMPORT_MARKERS,
-    MIXIN_MARKERS,
-    TABS
+    LINE_NUMBERS,
+    TABS,
+    TRACING
   }
 
 }

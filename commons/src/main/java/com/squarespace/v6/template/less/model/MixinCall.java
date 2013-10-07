@@ -2,6 +2,7 @@ package com.squarespace.v6.template.less.model;
 
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import com.squarespace.v6.template.less.core.Buffer;
@@ -18,6 +19,8 @@ public class MixinCall extends BaseNode {
 
   private List<String> path;
   
+  private Path fileName;
+  
   public MixinCall(Selector selector, MixinCallArgs args, boolean important) {
     this.selector = selector;
     this.args = args;
@@ -27,7 +30,8 @@ public class MixinCall extends BaseNode {
   
   public MixinCall copy() {
     MixinCall result = new MixinCall(selector, args, important);
-    copyPosition(this, result);
+    result.copyPosition(this);
+    result.fileName = fileName;
     return result;
   }
   
@@ -47,8 +51,16 @@ public class MixinCall extends BaseNode {
     return this.path;
   }
   
+  public Path fileName() {
+    return fileName;
+  }
+  
   public void args(MixinCallArgs args) {
     this.args = args;
+  }
+  
+  public void fileName(Path fileName) {
+    this.fileName = fileName;
   }
   
   @Override

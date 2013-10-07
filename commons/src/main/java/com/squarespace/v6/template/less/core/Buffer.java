@@ -49,6 +49,10 @@ public class Buffer {
     return compress;
   }
   
+  public int length() {
+    return buf.length();
+  }
+  
   public void reset() {
     if (buf.length() != 0) {
       buf.setLength(0);

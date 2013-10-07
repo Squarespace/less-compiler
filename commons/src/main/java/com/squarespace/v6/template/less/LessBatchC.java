@@ -116,13 +116,14 @@ public class LessBatchC {
         try {
           System.err.print("Parsing " + path + " ");
           long start = System.nanoTime();
-          stylesheet = (Stylesheet) compiler.parse(data, ctx, path.getParent());
+          stylesheet = (Stylesheet) compiler.parse(data, ctx, path.getParent(), path.getFileName());
           double elapsed = (System.nanoTime() - start) / 1000000.0;
           System.err.printf("  %.3fms\n", elapsed);
           cache.put(path, stylesheet);
           
         } catch (LessException e) {
-          System.err.println(e.primaryError().getMessage() + '\n');
+          ErrorFormatter fmt = new ErrorFormatter(path, e, 4, 5);
+          System.err.println(fmt.format() + "\n");
         }
       }
 

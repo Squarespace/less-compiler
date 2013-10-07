@@ -1,6 +1,5 @@
 package com.squarespace.v6.template.less.exec;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.squarespace.v6.template.less.Context;
@@ -37,44 +36,13 @@ import com.squarespace.v6.template.less.model.ValueElement;
  */
 public class NodeRenderer {
 
-  private List<Buffer> bufferList = new ArrayList<>();
-
-  private int index;
-  
-  public NodeRenderer() {
-  }
-  
   public String render(Context ctx, Node node) throws LessException {
-    Buffer buf = acquireBuffer(ctx);
+    Buffer buf = ctx.acquireBuffer();
     render(buf, node);
-    returnBuffer();
+    ctx.returnBuffer();
     return buf.toString();
   }
 
-  /**
-   * Acquire a reusable buffer to render nodes.
-   */
-  private Buffer acquireBuffer(Context ctx) {
-    // Need to grow the list.
-    Buffer buf = null;
-    if (index == bufferList.size()) {
-      buf = ctx.newBuffer();
-      bufferList.add(buf);
-
-    } else {
-      // Reuse a pre-allocated buffer in the list
-      buf = bufferList.get(index);
-      buf.reset();
-    }
-
-    index++;
-    return buf;
-  }
-  
-  public void returnBuffer() {
-    index--;
-  }
-  
   public void render(Buffer buf, Node node) throws LessException {
     if (node == null) {
       return;
