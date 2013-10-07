@@ -2,7 +2,9 @@ package com.squarespace.v6.template.less.core;
 
 
 /**
- * Custom character classifications for CSS/LESS.
+ * Custom character classifications for CSS/LESS. Builds an internal table which
+ * contains flags for each character from 0x00 through 0x80. Used in place of 
+ * a switch() or if/else block for each character class.
  */
 public class CharClass {
 

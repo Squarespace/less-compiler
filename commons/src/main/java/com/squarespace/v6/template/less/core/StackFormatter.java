@@ -23,6 +23,10 @@ import com.squarespace.v6.template.less.model.Ruleset;
 import com.squarespace.v6.template.less.model.Selectors;
 
 
+/**
+ * Given a stack trace built by a LessException, it filters and formats the representation
+ * of the stack to be used in an error message.
+ */
 public class StackFormatter {
   
   private Deque<Node> stack;

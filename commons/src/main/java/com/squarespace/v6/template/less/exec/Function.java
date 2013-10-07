@@ -11,6 +11,10 @@ import com.squarespace.v6.template.less.model.RGBColor;
 import com.squarespace.v6.template.less.model.Unit;
 
 
+/**
+ * Base class for plug-in function implementations. Provides some methods to 
+ * assist in parsing arguments.
+ */
 public abstract class Function {
 
   protected String name;

@@ -15,7 +15,7 @@ import com.squarespace.v6.template.less.model.Unit;
 
 
 /**
- * Defines a function's minimum number of arguments and their types.
+ * Defines a function's signature.
  */
 public class ArgSpec {
 

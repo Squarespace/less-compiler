@@ -19,8 +19,13 @@ import com.squarespace.v6.template.less.model.Stylesheet;
 
 
 /** 
- * Context for a single LESS parse/compile operation.  Useful for accessing
- * compiler-wide state.
+ * Context for a single LESS parse/compile operation.  Used by implementation classes
+ * to obtain access to compiler-wide state:
+ *  - compile options
+ *  - node renderer
+ *  - reusable compiler
+ *  - reusable buffer stack
+ *  etc.
  */
 public class Context {
 
@@ -44,7 +49,7 @@ public class Context {
 
   private Map<Path, Stylesheet> preCache;
   
-  private ScriptLoader loader;
+  private LessLoader loader;
   
   public Context() {
     this(DEFAULT_OPTS);
@@ -54,11 +59,11 @@ public class Context {
     this(opts, null);
   }
   
-  public Context(Options opts, ScriptLoader loader) {
+  public Context(Options opts, LessLoader loader) {
     this(opts, loader, null);
   }
   
-  public Context(Options opts, ScriptLoader loader, Map<Path, Stylesheet> preCache) {
+  public Context(Options opts, LessLoader loader, Map<Path, Stylesheet> preCache) {
     this.opts = opts;
     this.bufferStack = new BufferStack(this);
     this.renderer = new NodeRenderer();
@@ -66,7 +71,7 @@ public class Context {
     this.stats = new LessStats();
     this.importCache = new HashMap<>();
     this.preCache = preCache == null ? new HashMap<Path, Stylesheet>() : preCache;
-    this.loader = loader == null ? new FilesystemScriptLoader() : loader;
+    this.loader = loader == null ? new FilesystemLessLoader() : loader;
   }
   
   public Options options() {
@@ -75,6 +80,10 @@ public class Context {
   
   public MixinResolver mixinResolver() {
     return mixinResolver;
+  }
+  
+  public void sanityCheck() {
+    bufferStack.sanityCheck();
   }
   
   public void setCompiler(LessCompiler compiler) {
@@ -97,6 +106,7 @@ public class Context {
     if (rootPath == null) {
       rootPath = FileSystems.getDefault().getPath(opts.importRoot());
     }
+    
     Path path = rootPath.resolve(rawPath).normalize();
     ImportRecord record = importCache.get(path);
     
@@ -104,6 +114,9 @@ public class Context {
     // Otherwise return null, indicating to the caller that it has already been imported
     // once and the flag is enforced.
     if (record != null) {
+      if (!record.onlyOnce()) {
+        stats.importDone(true);
+      }
       return record.onlyOnce() ? null : record.stylesheeet().copy();
     }
 
@@ -112,13 +125,14 @@ public class Context {
     if (preCache != null) {
       result = preCache.get(path);
     }
-    
+
     if (result == null) {
       result = compiler.parse(loader.load(path), this, path.getParent(), path.getFileName());
     }
     if (!importCache.containsKey(path)) {
       importCache.put(path, new ImportRecord(result, once));
     }
+    stats.importDone(false);
     return result.copy();
   }
   

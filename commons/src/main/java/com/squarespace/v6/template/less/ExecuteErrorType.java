@@ -7,6 +7,9 @@ import java.util.Map;
 import com.squarespace.v6.template.jsont.MapFormat;
 
 
+/**
+ * Errors thrown in the execute phase of the compile are execute errors.
+ */
 public enum ExecuteErrorType implements ErrorType {
 
   ARG_COUNT

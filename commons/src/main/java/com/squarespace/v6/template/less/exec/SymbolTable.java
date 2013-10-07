@@ -8,6 +8,10 @@ import java.util.Map;
 import com.squarespace.v6.template.less.core.TypeRef;
 
 
+/**
+ * Generic table mapping symbol strings to values. Raises an error when an attempt
+ * is made to register a symbol more than once.
+ */
 public abstract class SymbolTable<V> {
 
   private Map<String, V> table;

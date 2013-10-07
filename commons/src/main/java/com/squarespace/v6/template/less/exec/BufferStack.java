@@ -7,6 +7,10 @@ import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.core.Buffer;
 
 
+/**
+ * Holds a list of reusable buffer instances. Callers must acquire and
+ * then return a buffer.
+ */
 public class BufferStack {
 
   private Context ctx;
@@ -41,6 +45,12 @@ public class BufferStack {
   
   public void returnBuffer() {
     index--;
+  }
+  
+  public void sanityCheck() {
+    if (index != 0) {
+      throw new RuntimeException("Serious error: buffer stack was not returned to zero: " + index);
+    }
   }
 
 }

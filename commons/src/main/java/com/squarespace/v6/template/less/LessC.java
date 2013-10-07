@@ -29,6 +29,8 @@ public class LessC {
   @Parameter
   private List<String> args = new ArrayList<String>();
 
+
+  // TODO: emit DebugMode.description() in usage
   @Parameter(names = { "-D" }, description = "Debug mode (canonical, parse, expand)", converter = DebugModeConverter.class)
   private DebugMode debugMode;
 
@@ -175,6 +177,11 @@ public class LessC {
     }
     if (stats) {
       System.err.println(formatStats(ctx.stats()));
+    }
+    
+    // In trace mode, check for buffer leaks.
+    if (options.tracing()) {
+      ctx.sanityCheck();
     }
   }
 

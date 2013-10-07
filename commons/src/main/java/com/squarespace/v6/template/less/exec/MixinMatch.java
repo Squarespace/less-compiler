@@ -4,6 +4,9 @@ import com.squarespace.v6.template.less.model.MixinParams;
 import com.squarespace.v6.template.less.model.Node;
 
 
+/**
+ * Represents a single match found during mixin resolution.
+ */
 public class MixinMatch {
 
   private Node mixin;

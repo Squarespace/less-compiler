@@ -8,7 +8,8 @@ import com.squarespace.v6.template.less.model.Operator;
 
 
 /**
- * Builds error messages for parse and execute phases.
+ * Builds error messages for execute phase of the compile, implemented as 
+ * static methods to reduce code clutter somewhat.
  */
 public class ExecuteErrorMaker {
 

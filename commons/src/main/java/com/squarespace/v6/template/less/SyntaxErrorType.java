@@ -7,6 +7,9 @@ import java.util.Map;
 import com.squarespace.v6.template.jsont.MapFormat;
 
 
+/**
+ * Errors thrown during the parse phase of the compile are syntax errors.
+ */
 public enum SyntaxErrorType implements ErrorType {
 
   EXPECTED

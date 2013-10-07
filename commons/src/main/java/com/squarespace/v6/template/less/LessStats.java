@@ -70,7 +70,8 @@ public class LessStats {
     diskWaitTimeMs += deltaMs(started);
   }
 
-  /** Indicate that an import is complete, with a flag to indicate whether
+  /** 
+   * Indicate that an import is complete, with a flag to indicate whether
    * the tree was cached or not.
    */
   public void importDone(boolean cached) {

@@ -12,6 +12,9 @@ import com.squarespace.v6.template.less.model.Ruleset;
 import com.squarespace.v6.template.less.model.Selectors;
 
 
+/**
+ * Manages an implicit stack of RenderFrame instances, used during LESS rendering.
+ */
 public class RenderEnv {
 
   private Context ctx;

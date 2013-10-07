@@ -10,7 +10,10 @@ import java.nio.file.Path;
 import org.apache.commons.io.IOUtils;
 
 
-public class FilesystemScriptLoader implements ScriptLoader {
+/**
+ * Loads the raw data for a given path, using the filesystem.
+ */
+public class FilesystemLessLoader implements LessLoader {
 
   @Override
   public String load(Path path) throws LessException {

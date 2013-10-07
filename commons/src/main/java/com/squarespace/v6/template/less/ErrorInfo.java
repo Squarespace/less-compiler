@@ -5,6 +5,9 @@ import java.util.Map;
 import com.squarespace.v6.template.jsont.MapBuilder;
 
 
+/**
+ * Captures type and message formatting arguments for error messages.
+ */
 public class ErrorInfo {
 
   private static final String ARG0 = "arg0";

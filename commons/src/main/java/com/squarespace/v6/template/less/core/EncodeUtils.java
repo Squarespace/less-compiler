@@ -7,6 +7,13 @@ import static com.squarespace.v6.template.less.core.CharClass.ENCODE_URI_COMPONE
 import static com.squarespace.v6.template.less.core.CharClass.UPPERCASE;
 
 
+/**
+ * Implements the encodeURI and encodeURIComponent functions, which are available 
+ * as built-ins for JavaScript, but which no efficient version could be found for
+ * Java.  Simple, straightforward implementation following the V8 engine, with
+ * one exception: this avoids raising an error for invalid Unicode chars, choosing
+ * instead to ignore them.
+ */
 public class EncodeUtils {
 
   private static final int ENCODE_URI_CLASS = ENCODE_URI | LOWERCASE | UPPERCASE | DIGIT;

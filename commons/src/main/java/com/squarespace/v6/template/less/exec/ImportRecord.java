@@ -3,6 +3,9 @@ package com.squarespace.v6.template.less.exec;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
 
+/**
+ * Associates an imported stylesheet with the 'onlyOnce' flag value set when it was imported.
+ */
 public class ImportRecord {
 
   private Stylesheet stylesheet;

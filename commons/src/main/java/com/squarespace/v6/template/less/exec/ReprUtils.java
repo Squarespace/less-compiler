@@ -6,6 +6,9 @@ import java.util.List;
 import com.squarespace.v6.template.less.model.Node;
 
 
+/**
+ * Utility methods to help in generating and selecting lines from a Node instances repr() value.
+ */
 public class ReprUtils {
 
   private ReprUtils() {

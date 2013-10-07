@@ -14,6 +14,10 @@ import com.squarespace.v6.template.less.model.NodeType;
 import com.squarespace.v6.template.less.model.Ruleset;
 
 
+/**
+ * Searches the node tree, looking for any MIXIN or RULESET nodes which match
+ * the given MIXIN_CALL's selector and arguments, if any.
+ */
 public class MixinResolver {
 
   private List<MixinMatch> results;

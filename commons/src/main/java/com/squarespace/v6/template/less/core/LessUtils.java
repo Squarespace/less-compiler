@@ -15,6 +15,9 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 
 
+/**
+ * Generic utility methods.
+ */
 public class LessUtils {
 
   private LessUtils() {

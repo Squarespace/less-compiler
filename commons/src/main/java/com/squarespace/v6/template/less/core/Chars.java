@@ -2,7 +2,7 @@ package com.squarespace.v6.template.less.core;
 
 
 /**
- * Character definitions.
+ * Character definitions. Useful when you want a readable character name in code.
  */
 public class Chars {
   

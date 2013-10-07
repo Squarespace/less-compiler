@@ -4,7 +4,7 @@ import com.squarespace.v6.template.less.Options;
 
 
 /**
- * General-purpose buffer.
+ * General-purpose buffer. Wraps a StringBuilder with some custom LESS-related output methods.
  */
 public class Buffer {
 

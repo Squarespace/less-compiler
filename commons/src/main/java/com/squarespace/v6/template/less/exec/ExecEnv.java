@@ -9,8 +9,7 @@ import com.squarespace.v6.template.less.model.Definition;
 
 
 /**
- * Represents the current execution state. It also holds a reference to the
- * compile-wide context.
+ * Represents the current execution environment.
  */
 public class ExecEnv {
   

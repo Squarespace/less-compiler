@@ -32,7 +32,7 @@ import com.squarespace.v6.template.less.model.ValueElement;
 
 
 /**
- * Renders Node instances into strings using a reusable buffer.
+ * Renders Node instances into strings using reusable buffers.
  */
 public class NodeRenderer {
 

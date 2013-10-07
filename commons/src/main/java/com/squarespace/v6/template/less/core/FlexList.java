@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
  * A stripped down ArrayList supporting a splice() method, allowing for editing
  * the list in place.  You can insert a list of elements, selectively overwriting
  * some of the existing members. Iteration over the elements in the list is
- * currently done manually, as the list size is designed to fluctuate mid-iteration.
+ * currently done manually, as the list contents and size can change mid-iteration.
  */
 public class FlexList<E> {
 

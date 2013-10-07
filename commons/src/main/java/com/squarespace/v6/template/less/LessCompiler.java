@@ -16,6 +16,9 @@ import com.squarespace.v6.template.less.plugins.NumericFunctions;
 import com.squarespace.v6.template.less.plugins.TypeFunctions;
 
 
+/**
+ * Singleton and main entry point for parse, compile and render capabilities.
+ */
 public class LessCompiler {
   
   private static final FunctionTable DEFAULT_FUNCTIONS = buildFunctionTable();

@@ -4,6 +4,9 @@ import java.util.EnumSet;
 import java.util.Set;
 
 
+/**
+ * Represents all basic options for the compiler.
+ */
 public class Options {
 
   public static final int DEFAULT_INDENT = 2;
