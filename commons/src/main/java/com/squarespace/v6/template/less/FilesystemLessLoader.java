@@ -5,6 +5,7 @@ import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.importErro
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 import org.apache.commons.io.IOUtils;
@@ -24,7 +25,11 @@ public class FilesystemLessLoader implements LessLoader {
     try (InputStream input = Files.newInputStream(path)) {
       return IOUtils.toString(input);
       
+    } catch (NoSuchFileException e) {
+      throw new LessException(importError(path, "File cannot be found"));
+      
     } catch (IOException e) {
+      e.printStackTrace();
       throw new LessException(importError(path, e.getMessage()));
     }
   }

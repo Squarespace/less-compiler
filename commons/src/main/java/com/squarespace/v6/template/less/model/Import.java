@@ -3,7 +3,6 @@ package com.squarespace.v6.template.less.model;
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.LessException;
@@ -81,7 +80,6 @@ public class Import extends BaseNode {
     } else {
       rendered = ctx.render(value);
     }
-    fileName = rootPath != null ? rootPath.resolve(rendered) : Paths.get(rendered);
     return rendered;
   }
   
@@ -98,6 +96,7 @@ public class Import extends BaseNode {
     Import result = new Import(path.eval(env), features == null ? null : (Features)features.eval(env), once);
     result.rootPath(rootPath);
     result.fileName(fileName);
+    result.copyPosition(this);
     return result;
   }
   

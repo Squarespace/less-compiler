@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.squarespace.v6.template.less.exec.ReprUtils;
 import com.squarespace.v6.template.less.model.BlockDirective;
+import com.squarespace.v6.template.less.model.Definition;
 import com.squarespace.v6.template.less.model.Directive;
 import com.squarespace.v6.template.less.model.Features;
 import com.squarespace.v6.template.less.model.Import;
@@ -158,6 +159,13 @@ public class StackFormatter {
         buf.append(blockDir.name()).append(" {");
         return new Entry(blockDir.fileName(), blockDir.lineOffset() + 1, buf.toString());
 
+      case DEFINITION:
+        Definition def = (Definition)node;
+        buf.reset();
+        indent();
+        def.repr(buf);
+        return new Entry(def.fileName(), def.lineOffset() + 1, buf.toString());
+        
       case DIRECTIVE:
         Directive directive = (Directive)node;
         buf.reset();
@@ -179,6 +187,7 @@ public class StackFormatter {
         indent();
         buf.append("@media");
         if (features != null) {
+          buf.append(' ');
           features.repr(buf);
         }
         buf.append(" {");
