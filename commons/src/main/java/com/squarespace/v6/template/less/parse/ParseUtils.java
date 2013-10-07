@@ -45,6 +45,9 @@ public class ParseUtils {
     }
     
     // Position an arrow at the offending character position
+    if (buf.prevChar() != '\n') {
+      buf.append('\n');
+    }
     indent(buf, 7);
     for (int i = 0; i < charPos; i++) {
       buf.append('.');
