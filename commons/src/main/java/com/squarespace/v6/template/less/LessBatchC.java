@@ -1,6 +1,7 @@
 package com.squarespace.v6.template.less;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +34,10 @@ public class LessBatchC extends BaseCommand {
   @Parameter(description = "LESS_DIR [OUTPUT_DIR]")
   private List<String> args;
 
+  @Parameter(names = { "-C", "-compile" }, variableArity = true, description = "Only write final CSS for the "
+      + "listed files. The rest of the files in the LESS_DIR will be parsed and treated as includes.")
+  private List<String> compileOnly;
+  
   @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
   private boolean tracing = false;
 
@@ -102,19 +107,26 @@ public class LessBatchC extends BaseCommand {
     processAll(inputPath, outputPath);
   }
   
+  private PrintStream log(String msg) {
+    System.err.print(PROGRAM_NAME);
+    System.err.print(": ");
+    System.err.print(msg);
+    return System.err;
+  }
+  
   private void processAll(Path inputPath, Path outputPath) {
     List<Path> lessPaths = null;
     Map<Path, Stylesheet> preCache = new HashMap<>();
     try {
-      System.err.println("\nPARSING AND CACHING ..\n");
+      log("beginning parse and pre-cache:\n");
       Context ctx = new Context(options);
       LessCompiler compiler = new LessCompiler();
-      lessPaths = getMatchingFiles(inputPath, GLOB_LESS);
+      lessPaths = getMatchingFiles(inputPath, GLOB_LESS, true);
       for (Path path : lessPaths) {
         String data = LessUtils.readFile(path);
         Stylesheet stylesheet = null;
         try {
-          System.err.print("Parsing " + path + " ");
+          log("parsing " + path + " ");
           long start = System.nanoTime();
           stylesheet = (Stylesheet) compiler.parse(data, ctx, path.getParent(), path.getFileName());
           double elapsed = (System.nanoTime() - start) / 1000000.0;
@@ -126,17 +138,26 @@ public class LessBatchC extends BaseCommand {
         }
       }
 
-      System.err.println("\nCOMPILING ..\n");
+      // If the compile filter has been set, only compile the files mentioned in the list.
+      if (compileOnly != null && !compileOnly.isEmpty()) {
+        lessPaths.clear();
+        for (String name : compileOnly) {
+          lessPaths.add(inputPath.resolve(name));
+        }
+      }
+
+      log("beginning compile:\n");
       for (Path path : lessPaths) {
         Stylesheet stylesheet = preCache.get(path);
         if (stylesheet == null) {
-          System.err.println("Skipping " + path);
-          continue;
+          log("error: '" + path.toString() + "' was not pre-cached. exiting.\n");
+          System.exit(1);
         }
+
         try {
           String[] fileParts = path.getFileName().toString().split("\\.(?=[^\\.]+$)");
           Path cssPath = outputPath.resolve(fileParts[0] + ".css").normalize();
-          System.err.print("Compiling to " + cssPath + " ");
+          log("compiling to " + cssPath);
           long start = System.nanoTime();
           ctx = new Context(options, null, preCache);
           ctx.setCompiler(compiler);
@@ -151,10 +172,10 @@ public class LessBatchC extends BaseCommand {
       }
       
     } catch (NoSuchFileException e) {
-      System.err.println("Cannot locate path " + e.getMessage());
+      log("cannot locate path " + e.getMessage());
 
     } catch (IOException ioe) {
-      System.err.println(ioe);
+      log(ioe.getMessage());
     }
   }
   
@@ -162,7 +183,6 @@ public class LessBatchC extends BaseCommand {
     try {
       LessUtils.writeFile(outPath, data);
     } catch (IOException e) {
-      e.printStackTrace();
       System.err.println("\n    " + e.getMessage());
     }
   }
