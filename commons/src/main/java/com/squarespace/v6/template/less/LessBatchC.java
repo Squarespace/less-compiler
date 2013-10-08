@@ -1,21 +1,12 @@
 package com.squarespace.v6.template.less;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -31,16 +22,11 @@ import com.squarespace.v6.template.less.model.Stylesheet;
  * are parsed, it proceeds to compile them, only writing .css files 
  * for which no errors were thrown.
  */
-public class LessBatchC {
+public class LessBatchC extends BaseCommand {
 
   private static final String PROGRAM_NAME = "sqs_batch_lessc";
   
   private static final String IMPLNAME = "(LESS Batch Compiler) [Java, Squarespace]";
-  
-  private static final String VERSION = "1.3.3";
-  
-  private static final String SEPARATOR = 
-      "\n==============================================================================\n";
   
   @Parameter
   private List<String> args;
@@ -50,6 +36,9 @@ public class LessBatchC {
   
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
   private int indent = 2;
+  
+  @Parameter(names = { "-import-once" }, description = "Imports are only processed once")
+  private boolean importOnce;
   
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode")
   private boolean compress;
@@ -61,6 +50,7 @@ public class LessBatchC {
   
   private void buildOptions() {
     options.compress(compress);
+    options.importOnce(importOnce);
     options.indent(indent);
   }
   
@@ -69,8 +59,8 @@ public class LessBatchC {
   }
   
   public static void main(String[] args) {
-    LessBatchC rollups = new LessBatchC();
-    JCommander cmd = new JCommander(rollups);
+    LessBatchC batcher = new LessBatchC();
+    JCommander cmd = new JCommander(batcher);
     cmd.setProgramName(PROGRAM_NAME);
     try {
       cmd.parse(args);
@@ -78,12 +68,12 @@ public class LessBatchC {
       System.err.println(e.getMessage());
       System.exit(1);
     }
-    if (rollups.help) { 
+    if (batcher.help) { 
       cmd.usage();
       System.exit(0);
     }
     long start = System.nanoTime();
-    rollups.main();
+    batcher.main();
     double elapsed = (System.nanoTime() - start) / 1000000.0;
     System.err.printf("\nCompleted in %.3fms\n", elapsed);
   }
@@ -103,14 +93,14 @@ public class LessBatchC {
   }
   
   private void processAll(Path rootPath) {
-    PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.less");
+    List<Path> lessPaths = null;
     Map<Path, Stylesheet> preCache = new HashMap<>();
     try {
       System.err.println("\nPARSING AND CACHING ..\n");
       Context ctx = new Context(options);
       LessCompiler compiler = new LessCompiler();
-      DirectoryStream<Path> dirStream = LessUtils.getMatchingFiles(rootPath, matcher);
-      for (Path path : dirStream) {
+      lessPaths = getMatchingFiles(rootPath, GLOB_LESS);
+      for (Path path : lessPaths) {
         String data = LessUtils.readFile(path);
         Stylesheet stylesheet = null;
         try {
@@ -127,12 +117,10 @@ public class LessBatchC {
       }
 
       System.err.println("\nCOMPILING ..\n");
-      dirStream = LessUtils.getMatchingFiles(rootPath, matcher);
-      ctx = new Context(options, null, preCache);
-      ctx.setCompiler(compiler);
-      for (Path path : dirStream) {
+      for (Path path : lessPaths) {
         Stylesheet stylesheet = preCache.get(path);
         if (stylesheet == null) {
+          System.err.println("Skipping " + path);
           continue;
         }
         try {
@@ -140,24 +128,29 @@ public class LessBatchC {
           Path cssPath = Paths.get(parts[0] + ".css").normalize();
           System.err.print("Compiling to " + cssPath + " ");
           long start = System.nanoTime();
+          ctx = new Context(options, null, preCache);
+          ctx.setCompiler(compiler);
           String cssData = compiler.render(stylesheet.copy(), ctx);
           writeFile(cssPath, cssData);
           double elapsed = (System.nanoTime() - start) / 1000000.0;
           System.err.printf("  %.3fms\n", elapsed);
           
         } catch (LessException e) {
-          System.err.println(SEPARATOR + ErrorUtils.formatError(ctx, path, e, 4) + SEPARATOR + "\n");
+          System.err.println("\n\n" + ErrorUtils.formatError(ctx, path, e, 4) + SEPARATOR + "\n");
         }
       }
       
+    } catch (NoSuchFileException e) {
+      System.err.println("Cannot locate path " + e.getMessage());
+
     } catch (IOException ioe) {
-      System.out.println(ioe.getMessage());
+      System.err.println(ioe);
     }
   }
   
   private static void writeFile(Path outPath, String data) {
-    try (OutputStream output = Files.newOutputStream(outPath, CREATE, TRUNCATE_EXISTING)) {
-      IOUtils.write(data, output);
+    try {
+      LessUtils.writeFile(outPath, data);
     } catch (IOException e) {
       e.printStackTrace();
       System.err.println("\n    " + e.getMessage());

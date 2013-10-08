@@ -1,7 +1,11 @@
 package com.squarespace.v6.template.less.core;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,6 +52,12 @@ public class LessUtils {
   public static String readFile(Path path) throws IOException {
     try (InputStream input = Files.newInputStream(path)) {
       return IOUtils.toString(input);
+    }
+  }
+  
+  public static void writeFile(Path outPath, String data) throws IOException {
+    try (OutputStream output = Files.newOutputStream(outPath, CREATE, TRUNCATE_EXISTING)) {
+      IOUtils.write(data, output);
     }
   }
 

@@ -114,6 +114,12 @@ public class Context {
     // Otherwise return null, indicating to the caller that it has already been imported
     // once and the flag is enforced.
     if (record != null) {
+      
+      // Global "import once" flag. All imports are processed only once.
+      if (opts.importOnce()) {
+        return null;
+      }
+      
       if (!record.onlyOnce()) {
         stats.importDone(true);
       }

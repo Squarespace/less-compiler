@@ -194,7 +194,7 @@ public class LessRenderer {
     if (opts.tracing()) {
       Path fileName = def.fileName();
       Buffer buf = ctx.acquireBuffer();
-      buf.append("/* ");
+      buf.append("/* TRACE   define   ");
       buf.append(def.repr().trim());
       if (fileName != null) {
         buf.append("    ").append(def.fileName().toString());
@@ -223,9 +223,9 @@ public class LessRenderer {
     Path fileName = imp.fileName();
     String line = (fileName != null ? fileName.toString() : "") + ":" + (imp.lineOffset() + 1);
     if (marker.beginning()) {
-      model.comment("\n/* TRACE enter  " + repr + "    " + line + "  */\n");
+      model.comment("\n/* TRACE    start   " + repr + "    " + line + "  */\n");
     } else {
-      model.comment("/* TRACE  exit  " + repr + "    " + line + "  */\n\n");
+      model.comment("/* TRACE      end   " + repr + "    " + line + "  */\n");
     }
   }
   
@@ -235,9 +235,9 @@ public class LessRenderer {
     Path fileName = call.fileName();
     String line = (fileName != null ? fileName.toString() : "") + ":" + (call.lineOffset() + 1);
     if (marker.beginning()) {
-      model.comment("/* TRACE enter  " + repr + "    " + line + "  */\n");
+      model.comment("/* TRACE    start   " + repr + "    " + line + "  */\n");
     } else {
-      model.comment("/* TRACE  exit  " + repr + "    " + line + "  */\n");
+      model.comment("/* TRACE      end   " + repr + "    " + line + "  */\n");
     }
   }
   

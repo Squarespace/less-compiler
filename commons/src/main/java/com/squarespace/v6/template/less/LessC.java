@@ -53,6 +53,9 @@ public class LessC {
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
   private int indent = Options.DEFAULT_INDENT;
 
+  @Parameter(names = { "-import-once" }, description = "Imports are only processed once")
+  private boolean importOnce;
+  
   @Parameter(names = { "-v", "-version" }, description = "Show version")
   private boolean version = false;
 
@@ -70,6 +73,7 @@ public class LessC {
   
   private void buildOptions() {
     options.compress(compress);
+    options.importOnce(importOnce);
     options.indent(indent);
 // TODO:
 //    options.lineNumbers(lineNumbers);
@@ -168,7 +172,15 @@ public class LessC {
 
       } else {
         String result = compiler.compile(source, ctx, rootPath, fileName);
-        System.out.print(result);
+        if (args.size() >= 2) {
+          try {
+            LessUtils.writeFile(Paths.get(args.get(1)), result);
+          } catch (IOException e) {
+            System.err.println("\n    " + e.getMessage());
+          }
+        } else {
+          System.out.print(result);
+        }
       }
       
     } catch (LessException e) {

@@ -46,6 +46,10 @@ public class Options {
   public int indent() {
     return indent;
   }
+
+  public boolean importOnce() {
+    return flags.contains(Option.IMPORT_ONCE);
+  }
   
   public String importRoot() {
     return importRoot;
@@ -77,6 +81,10 @@ public class Options {
 
   public void indent(int size) {
     this.indent = size;
+  }
+
+  public void importOnce(boolean flag) {
+    set(flag, Option.IMPORT_ONCE);
   }
   
   public void importRoot(String root) {
@@ -110,6 +118,7 @@ public class Options {
   private static enum Option {
     COMPRESS,
     DEBUG,
+    IMPORT_ONCE,
     LINE_NUMBERS,
     TABS,
     TRACING
