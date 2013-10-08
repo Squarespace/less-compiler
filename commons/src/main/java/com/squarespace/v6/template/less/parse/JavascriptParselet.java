@@ -19,7 +19,7 @@ public class JavascriptParselet implements Parselet {
       pos++;
     }
     if (stm.peek(pos) == Chars.GRAVE_ACCENT) {
-      throw new LessException(javascriptDisabled());
+      throw stm.parseError(new LessException(javascriptDisabled()));
     }
     return null;
   }

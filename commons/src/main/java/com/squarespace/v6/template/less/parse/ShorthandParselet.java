@@ -22,7 +22,7 @@ public class ShorthandParselet implements Parselet {
     stm.seekIf(Chars.SLASH);
     Node right = stm.parse(ENTITY);
     if (left == null || right == null) {
-      throw new LessException(general(PARSE_ERROR));
+      throw stm.parseError(new LessException(general(PARSE_ERROR)));
     }
     return new Shorthand(left, right);
   }

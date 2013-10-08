@@ -47,7 +47,7 @@ public class MixinCallArgsParselet implements Parselet {
         if (temp != null) {
           if (expressions.size() > 0) {
             if (delimSemicolon) {
-              throw new LessException(mixedDelimiters());
+              throw stm.parseError(new LessException(mixedDelimiters()));
             }
             containsNamed = true;
           }
@@ -74,7 +74,7 @@ public class MixinCallArgsParselet implements Parselet {
       
       // Handle semicolon-delimited arguments.
       if (containsNamed) {
-        throw new LessException(mixedDelimiters());
+        throw stm.parseError(new LessException(mixedDelimiters()));
       }
       if (expressions.size() > 1) {
         value = expressions;
@@ -88,7 +88,7 @@ public class MixinCallArgsParselet implements Parselet {
     
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      throw new LessException(expected("right parenthesis ')'"));
+      throw stm.parseError(new LessException(expected("right parenthesis ')' to end mixin call arguments")));
     }
 
     return delimSemicolon ? argsSemicolon : argsComma;
@@ -100,7 +100,7 @@ public class MixinCallArgsParselet implements Parselet {
     }
     Node value = stm.parse(EXPRESSION);
     if (value == null) {
-      throw new LessException(expected("expression"));
+      throw stm.parseError(new LessException(expected("expression for named argument")));
     }
     return value;
   }

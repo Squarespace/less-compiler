@@ -76,7 +76,7 @@ public class FunctionCallParselet implements Parselet {
     }
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      throw new LessException(expected("right parenthesis ')'"));
+      throw stm.parseError(new LessException(expected("right parenthesis ')' to end url")));
     }
     return new Url(value);
   }

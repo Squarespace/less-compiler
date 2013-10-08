@@ -64,7 +64,7 @@ public class QuotedParselet implements Parselet {
       }
       
       if (ch == Chars.LINE_FEED) {
-        throw new LessException(quotedBareLF());
+        throw stm.parseError(new LessException(quotedBareLF()));
       }
       
       // We care about backslash only to avoid prematurely terminating the string. All

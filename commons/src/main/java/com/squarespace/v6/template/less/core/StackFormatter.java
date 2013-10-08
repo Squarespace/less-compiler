@@ -129,10 +129,13 @@ public class StackFormatter {
   private void render(Node node) {
     if (node.is(NodeType.PARSE_ERROR)) {
       ParseError error = (ParseError)node;
-      Entry entry = new Entry(null, null, "In '" + error.filePath() + "':");
-      entry.indent = false;
-      result.add(entry);
-      entry = new Entry(null, null, error.errorMessage());
+      Path filePath = error.filePath();
+      if (filePath != null) {
+        Entry entry = new Entry(null, null, "In '" + filePath + "':");
+        entry.indent = false;
+        result.add(entry);
+      }
+      Entry entry = new Entry(null, null, error.errorMessage());
       entry.indent = false;
       result.add(entry);
       return;

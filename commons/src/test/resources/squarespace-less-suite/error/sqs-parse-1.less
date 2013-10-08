@@ -4,12 +4,13 @@
     @media {
 
 
-//:SyntaxErrorType.INCOMPLETE_PARSE   important is mispelled
+//:SyntaxErrorType.INCOMPLETE_PARSE   important is misspelled
 
 .ruleset {
     @var: 12px;
     color: white @var !imporatant;
 }
+
 
 //:SyntaxErrorType.INCOMPLETE_PARSE   bad selector
 
@@ -18,3 +19,60 @@
 		color: white;
 	}
 }
+
+
+//:SyntaxErrorType.EXPECTED   expected left '('
+
+.mixin(@arg) when @arg > 1 { }
+
+
+//:SyntaxErrorType.EXPECTED   expected an expression
+
+.mixin(@arg: ) { }
+
+
+//:SyntaxErrorType.EXPECTED   expected right ')'
+
+.ruleset {
+	rule: alpha(opacity=xyz);
+}
+
+
+//:SyntaxErrorType.EXPECTED   expected right ')'
+
+.ruleset {
+	rule: url(foo;
+}
+
+
+//:SyntaxErrorType.JAVASCRIPT_DISABLED  javascript is disabled
+
+.ruleset {
+	rule: `window.document.title`;
+}
+
+
+//:SyntaxErrorType.QUOTED_BARE_LF    bare line feed in quoted string
+
+.ruleset {
+	rule: 'foo
+	';
+}
+
+
+//:SyntaxErrorType.MIXED_DELIMITERS   mixin comma and semicolon to delimit arguments
+
+.ruleset {
+	.mixin(1, 2, @a: 3, 4; 5);
+}
+
+
+//:SyntaxErrorType.EXPECTED    condition value
+
+.mixin(@arg) when ({) { }
+
+
+//:SyntaxErrorType.EXPECTED    expression
+
+.mixin(@arg) when (@var < {) { }
+

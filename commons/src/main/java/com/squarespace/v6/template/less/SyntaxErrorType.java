@@ -28,10 +28,7 @@ public enum SyntaxErrorType implements ErrorType {
   ("Cannot mix semicolon and comma as delimiters"),
   
   QUOTED_BARE_LF
-  ("Quoted string contains a bare line feed"),
-  
-  REMAINDER
-  ("Parse error at: %(arg0)s")
+  ("Quoted string contains a bare line feed")
 
   ;
   

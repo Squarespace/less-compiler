@@ -36,12 +36,12 @@ public class ConditionParselet implements Parselet {
     Condition res = null;
     stm.skipWs();
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
-      throw new LessException(expected("left parenthesis '('"));
+      throw stm.parseError(new LessException(expected("left parenthesis '(' to start guard condition")));
     }
     
     Node left = parseValue(stm);
     if (left == null) {
-      throw new LessException(expected("condition value"));
+      throw stm.parseError(new LessException(expected("condition value")));
     }
     
     stm.skipWs();
@@ -52,7 +52,7 @@ public class ConditionParselet implements Parselet {
         res = new Condition(op, left, right, negate);
 
       } else {
-        throw new LessException(expected("expression"));
+        throw stm.parseError(new LessException(expected("expression")));
       }
     } else {
       res = new Condition(EQUAL, left, Constants.TRUE, negate);
@@ -60,7 +60,7 @@ public class ConditionParselet implements Parselet {
 
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      throw new LessException(expected("right parenthesis ')'"));
+      throw stm.parseError(new LessException(expected("right parenthesis ')' to end guard condition")));
     }
     return res;
   }

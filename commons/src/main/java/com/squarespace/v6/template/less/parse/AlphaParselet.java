@@ -29,7 +29,7 @@ public class AlphaParselet implements Parselet {
 
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      throw new LessException(expected("right parenthesis ')'"));
+      throw stm.parseError(new LessException(expected("right parenthesis ')' to end alpha")));
     }
     return new Alpha(value == null ? new Anonymous("") : value);
   }
