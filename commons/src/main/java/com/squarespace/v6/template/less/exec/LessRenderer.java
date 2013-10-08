@@ -223,7 +223,7 @@ public class LessRenderer {
     Path fileName = imp.fileName();
     String line = (fileName != null ? fileName.toString() : "") + ":" + (imp.lineOffset() + 1);
     if (marker.beginning()) {
-      model.comment("\n/* TRACE    start   " + repr + "    " + line + "  */\n");
+      model.comment("/* TRACE    start   " + repr + "    " + line + "  */\n");
     } else {
       model.comment("/* TRACE      end   " + repr + "    " + line + "  */\n");
     }
