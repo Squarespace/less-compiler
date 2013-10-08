@@ -21,6 +21,8 @@ import com.squarespace.v6.template.less.model.Stylesheet;
  * parses them and caches the parsed trees in a hashmap. Once all files
  * are parsed, it proceeds to compile them, only writing .css files 
  * for which no errors were thrown.
+ * 
+ * TODO:  merge this in as a subcommand of LessC ("batch" mode).
  */
 public class LessBatchC extends BaseCommand {
 
