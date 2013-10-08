@@ -2,6 +2,7 @@ package com.squarespace.v6.template.less;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -123,15 +124,16 @@ public class LessBatchC extends BaseCommand {
       LessCompiler compiler = new LessCompiler();
       lessPaths = getMatchingFiles(inputPath, GLOB_LESS, true);
       for (Path path : lessPaths) {
-        String data = LessUtils.readFile(path);
+        Path realPath = inputPath.resolve(path).normalize();
+        String data = LessUtils.readFile(realPath);
         Stylesheet stylesheet = null;
         try {
           log("parsing " + path + " ");
           long start = System.nanoTime();
-          stylesheet = (Stylesheet) compiler.parse(data, ctx, path.getParent(), path.getFileName());
+          stylesheet = (Stylesheet) compiler.parse(data, ctx, realPath.getParent(), realPath.getFileName());
           double elapsed = (System.nanoTime() - start) / 1000000.0;
           System.err.printf("  %.3fms\n", elapsed);
-          preCache.put(path, stylesheet);
+          preCache.put(realPath, stylesheet);
           
         } catch (LessException e) {
           System.err.println(ErrorUtils.formatError(ctx, path, e, 4) + "\n");
@@ -142,13 +144,15 @@ public class LessBatchC extends BaseCommand {
       if (compileOnly != null && !compileOnly.isEmpty()) {
         lessPaths.clear();
         for (String name : compileOnly) {
-          lessPaths.add(inputPath.resolve(name));
+          lessPaths.add(Paths.get(name));
         }
       }
 
       log("beginning compile:\n");
+      Files.createDirectories(outputPath);
       for (Path path : lessPaths) {
-        Stylesheet stylesheet = preCache.get(path);
+        Path realPath = inputPath.resolve(path).normalize();
+        Stylesheet stylesheet = preCache.get(realPath);
         if (stylesheet == null) {
           log("error: '" + path.toString() + "' was not pre-cached. exiting.\n");
           System.exit(1);
@@ -156,7 +160,16 @@ public class LessBatchC extends BaseCommand {
 
         try {
           String[] fileParts = path.getFileName().toString().split("\\.(?=[^\\.]+$)");
-          Path cssPath = outputPath.resolve(fileParts[0] + ".css").normalize();
+          Path parentPath = path.getParent();
+          if (parentPath != null) {
+            // We have an intermediate subdir in the output path. Create it.
+            realPath = outputPath.resolve(parentPath);
+            Files.createDirectories(realPath);
+          } else {
+            realPath = outputPath;
+          }
+          
+          Path cssPath = realPath.resolve(fileParts[0] + ".css").normalize();
           log("compiling to " + cssPath);
           long start = System.nanoTime();
           ctx = new Context(options, null, preCache);
@@ -172,10 +185,10 @@ public class LessBatchC extends BaseCommand {
       }
       
     } catch (NoSuchFileException e) {
-      log("cannot locate path " + e.getMessage());
+      log("ERROR: cannot locate path " + e.getMessage());
 
     } catch (IOException ioe) {
-      log(ioe.getMessage());
+      log("ERROR: " + ioe.getMessage());
     }
   }
   

@@ -39,7 +39,7 @@ public abstract class BaseCommand {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attribs) {
           if (matcher.matches(file.getFileName())) {
-            result.add(file);
+            result.add(rootPath.relativize(file));
           }
           return FileVisitResult.CONTINUE;
         }
