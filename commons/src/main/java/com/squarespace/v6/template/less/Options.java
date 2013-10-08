@@ -1,6 +1,10 @@
 package com.squarespace.v6.template.less;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -19,7 +23,7 @@ public class Options {
   
   private int indent = DEFAULT_INDENT;
 
-  private String importRoot = DEFAULT_ROOT;
+  private List<Path> importPaths = new ArrayList<>();
   
   private int recursionLimit = DEFAULT_RECURSION_LIMIT;
   
@@ -51,8 +55,8 @@ public class Options {
     return flags.contains(Option.IMPORT_ONCE);
   }
   
-  public String importRoot() {
-    return importRoot;
+  public List<Path> importPaths() {
+    return importPaths;
   }
 
   public boolean lineNumbers() {
@@ -87,10 +91,16 @@ public class Options {
     set(flag, Option.IMPORT_ONCE);
   }
   
-  public void importRoot(String root) {
-    this.importRoot = root;
+  public void addImportPath(String path) {
+    this.importPaths.add(Paths.get(path));
   }
 
+  public void importPaths(List<String> paths) {
+    for (String path : paths) {
+      this.importPaths.add(Paths.get(path));
+    }
+  }
+  
   public void lineNumbers(boolean flag) {
     set(flag, Option.LINE_NUMBERS);
   }

@@ -111,7 +111,7 @@ public class LessSuiteTest {
   private String compile(String source, Path importRoot) throws LessException {
     // Setup the compiler
     Options opts = new Options();
-    opts.importRoot(importRoot.toString());
+    opts.addImportPath(importRoot.toString());
     
     Context ctx = new Context(opts);
     LessCompiler compiler = new LessCompiler();

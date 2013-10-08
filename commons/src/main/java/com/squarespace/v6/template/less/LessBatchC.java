@@ -39,6 +39,9 @@ public class LessBatchC extends BaseCommand {
       + "listed files. The rest of the files in the LESS_DIR will be parsed and treated as includes.")
   private List<String> compileOnly;
   
+  @Parameter(names = { "-I", "-import-path" }, description = "Add path to the list of import paths" )
+  public List<String> importPaths;
+
   @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
   private boolean tracing = false;
 
@@ -64,6 +67,9 @@ public class LessBatchC extends BaseCommand {
     options.importOnce(importOnce);
     options.indent(indent);
     options.tracing(tracing);
+    if (importPaths != null) {
+      options.importPaths(importPaths);
+    }
   }
   
   public static String version() {

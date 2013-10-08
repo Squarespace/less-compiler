@@ -37,6 +37,9 @@ public class LessC {
 //  @Parameter(names = { "-L", "-lines" }, description = "Line number")
 //  private boolean lineNumbers;
 
+  @Parameter(names = { "-I", "-import-path" }, description = "Add path to the list of import paths" )
+  public List<String> importPaths;
+
   @Parameter(names = { "-R" }, description = "Recursion limit")
   private int recursionLimit = Options.DEFAULT_RECURSION_LIMIT;
 
@@ -45,6 +48,9 @@ public class LessC {
 
   @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
   private boolean tracing = false;
+
+  @Parameter(names = { "-W", "-wait" }, description = "Wait before executing / exiting.")
+  private boolean waitForUser = false;
 
   @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
@@ -61,13 +67,6 @@ public class LessC {
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode" )
   private boolean compress = false;
   
-  @Parameter(names = {"-W", "-wait" }, description = "Wait before executing / exiting.")
-  private boolean waitForUser = false;
- 
-// TODO: later, non-standard feature
-//  @Parameter(names = "-include-path", description = "Include path" )
-//  public String includePath;
-
   private Options options = new Options();
   
   private void buildOptions() {
@@ -78,6 +77,9 @@ public class LessC {
 //    options.lineNumbers(lineNumbers);
     options.recursionLimit(recursionLimit);
     options.tracing(tracing);
+    if (importPaths != null) {
+      options.importPaths(importPaths);
+    }
   }
   
   public static String version() {

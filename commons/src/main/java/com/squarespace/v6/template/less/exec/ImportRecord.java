@@ -1,5 +1,7 @@
 package com.squarespace.v6.template.less.exec;
 
+import java.nio.file.Path;
+
 import com.squarespace.v6.template.less.model.Stylesheet;
 
 
@@ -8,13 +10,20 @@ import com.squarespace.v6.template.less.model.Stylesheet;
  */
 public class ImportRecord {
 
+  private Path exactPath;
+  
   private Stylesheet stylesheet;
   
   private boolean onlyOnce;
   
-  public ImportRecord(Stylesheet stylesheet, boolean onlyOnce) {
+  public ImportRecord(Path exactPath, Stylesheet stylesheet, boolean onlyOnce) {
+    this.exactPath = exactPath;
     this.stylesheet = stylesheet;
     this.onlyOnce = onlyOnce;
+  }
+  
+  public Path exactPath() {
+    return exactPath;
   }
   
   public Stylesheet stylesheeet() {

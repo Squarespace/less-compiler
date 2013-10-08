@@ -1,8 +1,10 @@
 package com.squarespace.v6.template.less;
 
-import java.nio.file.FileSystems;
+import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.importError;
+
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.squarespace.v6.template.less.core.Buffer;
@@ -103,12 +105,26 @@ public class Context {
    * Retrieves an external stylesheet. If not already cached, parse it and cache it.
    */
   public Stylesheet importStylesheet(String rawPath, Path rootPath, boolean once) throws LessException {
-    if (rootPath == null) {
-      rootPath = FileSystems.getDefault().getPath(opts.importRoot());
+
+    List<Path> importPaths = opts.importPaths();
+    ImportRecord record = null;
+    Path path = null;
+
+    if (rootPath != null) {
+      path = rootPath.resolve(rawPath).normalize();
+      record = importCache.get(path);
     }
-    
-    Path path = rootPath.resolve(rawPath).normalize();
-    ImportRecord record = importCache.get(path);
+
+    // If not found relative to the sibling dir, search the import path.
+    if (record == null && importPaths != null && !importPaths.isEmpty()) {
+      for (Path importPath : importPaths) {
+        path = importPath.resolve(rawPath).normalize();
+        record = importCache.get(path);
+        if (record != null) {
+          break;
+        }
+      }
+    }
     
     // If the stylesheet has been imported and the 'onlyOnce' flag is not set, return it.
     // Otherwise return null, indicating to the caller that it has already been imported
@@ -129,17 +145,60 @@ public class Context {
     // If a pre-populated parsed stylesheet cache has been provided, use it.
     Stylesheet result = null;
     if (preCache != null) {
-      result = preCache.get(path);
+      if (rootPath != null) {
+        path = rootPath.resolve(rawPath).normalize();
+        result = preCache.get(path);
+      }
+      if (result == null && importPaths != null && !importPaths.isEmpty()) {
+        for (Path importPath : importPaths) {
+          path = importPath.resolve(rawPath).normalize();
+          result = preCache.get(path);
+          if (result != null) {
+            break;
+          }
+        }
+      }
     }
 
+    // Else, ask the loader if the file exists and parse it.
     if (result == null) {
+      path = resolvePath(rootPath, rawPath);
+      if (path == null) {
+        throw new LessException(importError(path, "File cannot be found"));
+      }
       result = compiler.parse(loader.load(path), this, path.getParent(), path.getFileName());
     }
+
+    // Stick it in the cache if not already present.
     if (!importCache.containsKey(path)) {
-      importCache.put(path, new ImportRecord(result, once));
+      importCache.put(path, new ImportRecord(path, result, once));
     }
     stats.importDone(false);
     return result.copy();
+  }
+
+  /**
+   * Search the rootPath and the importPaths if any, looking for a file that exists.
+   */
+  private Path resolvePath(Path rootPath, String rawPath) {
+    Path path = null;
+    if (rootPath != null) {
+      path = rootPath.resolve(rawPath).normalize();
+      if (loader.exists(path)) {
+        return path;
+      }
+    }
+    List<Path> importPaths = opts.importPaths();
+    if (importPaths == null || importPaths.isEmpty()) {
+      return null;
+    }
+    for (Path importPath : importPaths) {
+      path = importPath.resolve(rawPath).normalize();
+      if (loader.exists(path)) {
+        return path;
+      }
+    }
+    return null;
   }
   
   public LessStats stats() {

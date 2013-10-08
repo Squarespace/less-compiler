@@ -17,6 +17,11 @@ import org.apache.commons.io.IOUtils;
 public class FilesystemLessLoader implements LessLoader {
 
   @Override
+  public boolean exists(Path path) {
+    return Files.exists(path);
+  }
+  
+  @Override
   public String load(Path path) throws LessException {
     return readFile(path);
   }
