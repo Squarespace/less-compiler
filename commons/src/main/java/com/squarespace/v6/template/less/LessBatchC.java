@@ -31,6 +31,9 @@ public class LessBatchC extends BaseCommand {
   @Parameter
   private List<String> args;
 
+  @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
+  private boolean tracing = false;
+
   @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
   
@@ -52,6 +55,7 @@ public class LessBatchC extends BaseCommand {
     options.compress(compress);
     options.importOnce(importOnce);
     options.indent(indent);
+    options.tracing(tracing);
   }
   
   public static String version() {
