@@ -26,9 +26,8 @@ public class LessC {
   
   private static final String VERSION = "1.3.3";
   
-  @Parameter
+  @Parameter(description = "LESS_FILE [OUTPUT_FILE]")
   private List<String> args = new ArrayList<String>();
-
 
   // TODO: emit DebugMode.description() in usage
   @Parameter(names = { "-D" }, description = "Debug mode (canonical, parse, expand)", converter = DebugModeConverter.class)

@@ -1,0 +1,9 @@
+//:ExecuteErrorType.ARG_COUNT   argument count
+
+rule: round(10, 10, 10);
+
+//:ExecuteErrorType.ARG_NAMED_NOTFOUND named arg not found
+
+.mixin(@a, @b) { }
+.mixin(@a: 1, @c: 2);
+

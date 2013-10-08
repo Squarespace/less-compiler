@@ -86,7 +86,10 @@ public class Rule extends BaseNode {
     if (!needsEval()) {
       return this;
     }
-    return new Rule(property, value.eval(env), important);
+    Rule result = new Rule(property, value.eval(env), important);
+    result.fileName(fileName);
+    result.copyPosition(this);
+    return result;
   }
 
   @Override

@@ -28,7 +28,7 @@ public class LessBatchC extends BaseCommand {
   
   private static final String IMPLNAME = "(LESS Batch Compiler) [Java, Squarespace]";
   
-  @Parameter
+  @Parameter(description = "LESS_DIR [OUTPUT_DIR]")
   private List<String> args;
 
   @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
@@ -92,18 +92,22 @@ public class LessBatchC extends BaseCommand {
       System.err.println("you must provide the directory containing the .less files");
       System.exit(1);
     }
-    Path parentPath = Paths.get(args.get(0));
-    processAll(parentPath);
+    Path inputPath = Paths.get(args.get(0));
+    Path outputPath = inputPath;
+    if (args.size() >= 2) {
+      outputPath = Paths.get(args.get(1));
+    }
+    processAll(inputPath, outputPath);
   }
   
-  private void processAll(Path rootPath) {
+  private void processAll(Path inputPath, Path outputPath) {
     List<Path> lessPaths = null;
     Map<Path, Stylesheet> preCache = new HashMap<>();
     try {
       System.err.println("\nPARSING AND CACHING ..\n");
       Context ctx = new Context(options);
       LessCompiler compiler = new LessCompiler();
-      lessPaths = getMatchingFiles(rootPath, GLOB_LESS);
+      lessPaths = getMatchingFiles(inputPath, GLOB_LESS);
       for (Path path : lessPaths) {
         String data = LessUtils.readFile(path);
         Stylesheet stylesheet = null;
@@ -128,8 +132,8 @@ public class LessBatchC extends BaseCommand {
           continue;
         }
         try {
-          String[] parts = path.toString().split("\\.(?=[^\\.]+$)");
-          Path cssPath = Paths.get(parts[0] + ".css").normalize();
+          String[] fileParts = path.getFileName().toString().split("\\.(?=[^\\.]+$)");
+          Path cssPath = outputPath.resolve(fileParts[0] + ".css").normalize();
           System.err.print("Compiling to " + cssPath + " ");
           long start = System.nanoTime();
           ctx = new Context(options, null, preCache);

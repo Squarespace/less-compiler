@@ -191,7 +191,11 @@ public class LessEngine {
           case RULE:
             Rule rule = (Rule) node;
             if (forceImportant && !rule.important()) {
-              node = new Rule(rule.property(), rule.value().eval(env), forceImportant);
+              Rule newRule = new Rule(rule.property(), rule.value().eval(env), forceImportant);
+              newRule.copyPosition(rule);
+              newRule.fileName(rule.fileName());
+              node = newRule;
+
             } else {
               node = rule.eval(env);
             }

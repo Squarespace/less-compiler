@@ -106,7 +106,9 @@ public class MixinMatcher {
         continue;
       }
       if (!names.contains(argName)) {
-        throw new LessException(argNamedNotFound(argName));
+        LessException exc = new LessException(argNamedNotFound(argName));
+        exc.push(mixinCall);
+        throw exc;
       }
       boundValues.put(argName, arg.value());
       names.remove(argName);
