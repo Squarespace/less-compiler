@@ -33,9 +33,9 @@ import com.squarespace.v6.template.less.model.Stylesheet;
 
 
 /**
- * Given a parse tree, executes it.
+ * Given a parse tree, evaluates it, producing a tree that is ready to be rendered.
  */
-public class LessEngine {
+public class LessEvaluator {
 
   private static final Pattern IMPORT_EXT = Pattern.compile(".*(\\.[a-z]*$)|([\\?;].*)$");
   
@@ -45,7 +45,7 @@ public class LessEngine {
   
   private Options opts;
   
-  public LessEngine(Context ctx) {
+  public LessEvaluator(Context ctx) {
     this.ctx = ctx;
     this.opts = ctx.options();
   }

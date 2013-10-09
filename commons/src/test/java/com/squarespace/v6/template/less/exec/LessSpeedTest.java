@@ -63,7 +63,7 @@ public class LessSpeedTest extends LessTestBase {
       for (String script : scripts) {
         LessHarness h = new LessHarness();
         Node node = h.parse(script);
-        LessEngine machine = new LessEngine(h.context());
+        LessEvaluator machine = new LessEvaluator(h.context());
         machine.render((Stylesheet)node);
       }
     }
@@ -88,7 +88,7 @@ public class LessSpeedTest extends LessTestBase {
     LessHarness h = new LessHarness();
     Node node = h.parse(script);
   
-    LessEngine machine = new LessEngine(h.context());
+    LessEvaluator machine = new LessEvaluator(h.context());
     String result = machine.render((Stylesheet)node);
     System.out.println(result);
     System.out.println("===========================================");

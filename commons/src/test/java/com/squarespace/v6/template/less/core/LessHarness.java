@@ -10,7 +10,7 @@ import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.Options;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 import com.squarespace.v6.template.less.exec.FunctionTable;
-import com.squarespace.v6.template.less.exec.LessEngine;
+import com.squarespace.v6.template.less.exec.LessEvaluator;
 import com.squarespace.v6.template.less.model.GenericBlock;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Stylesheet;
@@ -71,7 +71,7 @@ public class LessHarness {
   public String execute(String raw, Options opts) throws LessException {
     Context ctx = context(opts);
     ctx.setCompiler(new LessCompiler());
-    LessEngine engine = new LessEngine(ctx);
+    LessEvaluator engine = new LessEvaluator(ctx);
     Node res = parse(raw, parselet);
     return engine.render((Stylesheet)res);
   }

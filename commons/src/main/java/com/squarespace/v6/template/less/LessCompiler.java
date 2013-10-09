@@ -3,7 +3,7 @@ package com.squarespace.v6.template.less;
 import java.nio.file.Path;
 
 import com.squarespace.v6.template.less.exec.FunctionTable;
-import com.squarespace.v6.template.less.exec.LessEngine;
+import com.squarespace.v6.template.less.exec.LessEvaluator;
 import com.squarespace.v6.template.less.model.Stylesheet;
 import com.squarespace.v6.template.less.parse.LessStream;
 import com.squarespace.v6.template.less.parse.Parselets;
@@ -58,12 +58,12 @@ public class LessCompiler {
   }
 
   public String render(Stylesheet stylesheet, Context ctx) throws LessException {
-    LessEngine engine = new LessEngine(ctx);
+    LessEvaluator engine = new LessEvaluator(ctx);
     return engine.render(stylesheet);
   }
   
   public Stylesheet expand(Stylesheet stylesheet, Context ctx) throws LessException {
-    LessEngine engine = new LessEngine(ctx);
+    LessEvaluator engine = new LessEvaluator(ctx);
     return engine.expand(stylesheet);
   }
   
@@ -75,7 +75,7 @@ public class LessCompiler {
     Stylesheet sheet = parse(raw, ctx, rootPath, fileName);
     LessStats stats = ctx.stats();
     long started = stats.now();
-    LessEngine cm = new LessEngine(ctx);
+    LessEvaluator cm = new LessEvaluator(ctx);
     String result = cm.render(sheet);
     stats.compileDone(started);
     return result;
