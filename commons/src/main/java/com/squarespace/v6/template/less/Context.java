@@ -105,20 +105,19 @@ public class Context {
    * Retrieves an external stylesheet. If not already cached, parse it and cache it.
    */
   public Stylesheet importStylesheet(String rawPath, Path rootPath, boolean once) throws LessException {
-
     List<Path> importPaths = opts.importPaths();
     ImportRecord record = null;
     Path path = null;
 
     if (rootPath != null) {
-      path = rootPath.resolve(rawPath).normalize();
+      path = rootPath.resolve(rawPath).toAbsolutePath().normalize();
       record = importCache.get(path);
     }
 
     // If not found relative to the sibling dir, search the import path.
     if (record == null && importPaths != null && !importPaths.isEmpty()) {
       for (Path importPath : importPaths) {
-        path = importPath.resolve(rawPath).normalize();
+        path = importPath.resolve(rawPath).toAbsolutePath().normalize();
         record = importCache.get(path);
         if (record != null) {
           break;
@@ -146,12 +145,12 @@ public class Context {
     Stylesheet result = null;
     if (preCache != null) {
       if (rootPath != null) {
-        path = rootPath.resolve(rawPath).normalize();
+        path = rootPath.resolve(rawPath).toAbsolutePath().normalize();
         result = preCache.get(path);
       }
       if (result == null && importPaths != null && !importPaths.isEmpty()) {
         for (Path importPath : importPaths) {
-          path = importPath.resolve(rawPath).normalize();
+          path = importPath.resolve(rawPath).toAbsolutePath().normalize();
           result = preCache.get(path);
           if (result != null) {
             break;
@@ -183,7 +182,7 @@ public class Context {
   private Path resolvePath(Path rootPath, String rawPath) {
     Path path = null;
     if (rootPath != null) {
-      path = rootPath.resolve(rawPath).normalize();
+      path = rootPath.resolve(rawPath).toAbsolutePath().normalize();
       if (loader.exists(path)) {
         return path;
       }
@@ -193,7 +192,7 @@ public class Context {
       return null;
     }
     for (Path importPath : importPaths) {
-      path = importPath.resolve(rawPath).normalize();
+      path = importPath.resolve(rawPath).toAbsolutePath().normalize();
       if (loader.exists(path)) {
         return path;
       }

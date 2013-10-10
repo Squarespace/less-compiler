@@ -124,13 +124,14 @@ public class LessBatchC extends BaseCommand {
   private void processAll(Path inputPath, Path outputPath) {
     List<Path> lessPaths = null;
     Map<Path, Stylesheet> preCache = new HashMap<>();
+    boolean error = false;
     try {
       log("beginning parse and pre-cache:\n");
       Context ctx = new Context(options);
       LessCompiler compiler = new LessCompiler();
       lessPaths = LessUtils.getMatchingFiles(inputPath, GLOB_LESS, true);
       for (Path path : lessPaths) {
-        Path realPath = inputPath.resolve(path).normalize();
+        Path realPath = inputPath.resolve(path).toAbsolutePath().normalize();
         String data = LessUtils.readFile(realPath);
         Stylesheet stylesheet = null;
         try {
@@ -143,6 +144,7 @@ public class LessBatchC extends BaseCommand {
           
         } catch (LessException e) {
           System.err.println(ErrorUtils.formatError(ctx, path, e, 4) + "\n");
+          error = true;
         }
       }
 
@@ -157,7 +159,7 @@ public class LessBatchC extends BaseCommand {
       log("beginning compile:\n");
       Files.createDirectories(outputPath);
       for (Path path : lessPaths) {
-        Path realPath = inputPath.resolve(path).normalize();
+        Path realPath = inputPath.resolve(path).toAbsolutePath().normalize();
         Stylesheet stylesheet = preCache.get(realPath);
         if (stylesheet == null) {
           log("error: '" + path.toString() + "' was not pre-cached. exiting.\n");
@@ -187,14 +189,21 @@ public class LessBatchC extends BaseCommand {
           
         } catch (LessException e) {
           System.err.println("\n\n" + ErrorUtils.formatError(ctx, path, e, 4) + SEPARATOR + "\n");
+          error = true;
         }
       }
       
     } catch (NoSuchFileException e) {
       log("ERROR: cannot locate path " + e.getMessage());
+      error = true;
 
     } catch (IOException ioe) {
       log("ERROR: " + ioe.getMessage());
+      error = true;
+    }
+    
+    if (error) {
+      System.exit(1);
     }
   }
   

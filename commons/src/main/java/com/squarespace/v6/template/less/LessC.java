@@ -145,7 +145,7 @@ public class LessC {
     if (!path.toFile().isFile()) {
       fail("the path '" + path + "' cannot be read.");
     }
-    Path rootPath = path.getParent();
+    Path rootPath = path.toAbsolutePath().getParent();
     Path fileName = path.getFileName();
     LessCompiler compiler = new LessCompiler();
     String source = null;
@@ -154,6 +154,7 @@ public class LessC {
     } catch (IOException e) {
       
     }
+    
     Context ctx = new Context(options);
     ctx.setCompiler(compiler);
     try {
