@@ -164,7 +164,7 @@ public class Context {
     if (result == null) {
       path = resolvePath(rootPath, rawPath);
       if (path == null) {
-        throw new LessException(importError(path, "File cannot be found"));
+        throw new LessException(importError(rawPath, "File cannot be found"));
       }
       result = compiler.parse(loader.load(path), this, path.getParent(), path.getFileName());
     }

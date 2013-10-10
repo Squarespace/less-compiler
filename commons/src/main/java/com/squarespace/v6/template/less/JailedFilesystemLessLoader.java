@@ -6,8 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-// TODO: pre-load all .less files recursively and place their contents into a map.
-
 /**
  * Forces all imports to be resolved against a jailed root. No import
  * will be allowed to read files above this path. It also restricts the

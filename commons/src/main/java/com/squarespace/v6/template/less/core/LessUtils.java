@@ -7,9 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,6 +64,30 @@ public class LessUtils {
     try (OutputStream output = Files.newOutputStream(outPath, CREATE, TRUNCATE_EXISTING)) {
       IOUtils.write(data, output);
     }
+  }
+
+  public static List<Path> getMatchingFiles(final Path rootPath, String globPattern, boolean recursive) throws IOException {
+    final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(globPattern);
+    final List<Path> result = new ArrayList<>();
+    if (!recursive) {
+      DirectoryStream<Path> dirStream = getMatchingFiles(rootPath, matcher);
+      for (Path path : dirStream) {
+        result.add(path);
+      }
+
+    } else {
+      FileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attribs) {
+          if (matcher.matches(file.getFileName())) {
+            result.add(rootPath.relativize(file));
+          }
+          return FileVisitResult.CONTINUE;
+        }
+      };
+      Files.walkFileTree(rootPath, visitor);
+    }
+    return result;
   }
 
   public static DirectoryStream<Path> getMatchingFiles(Path root, final PathMatcher matcher) throws IOException {

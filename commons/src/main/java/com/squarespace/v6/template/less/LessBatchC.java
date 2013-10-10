@@ -128,7 +128,7 @@ public class LessBatchC extends BaseCommand {
       log("beginning parse and pre-cache:\n");
       Context ctx = new Context(options);
       LessCompiler compiler = new LessCompiler();
-      lessPaths = getMatchingFiles(inputPath, GLOB_LESS, true);
+      lessPaths = LessUtils.getMatchingFiles(inputPath, GLOB_LESS, true);
       for (Path path : lessPaths) {
         Path realPath = inputPath.resolve(path).normalize();
         String data = LessUtils.readFile(realPath);
