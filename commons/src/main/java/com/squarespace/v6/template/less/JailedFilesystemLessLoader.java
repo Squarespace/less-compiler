@@ -17,7 +17,7 @@ public class JailedFilesystemLessLoader extends FilesystemLessLoader {
   private Path jailRoot;
   
   public JailedFilesystemLessLoader(Path jailRoot) {
-    this.jailRoot = jailRoot;
+    this.jailRoot = jailRoot.toAbsolutePath().normalize();
   }
   
   @Override
@@ -26,7 +26,7 @@ public class JailedFilesystemLessLoader extends FilesystemLessLoader {
     if (!matcher.matches()) {
       return false;
     }
-    Path tempPath = jailRoot.resolve(path).normalize();
+    Path tempPath = jailRoot.resolve(path).toAbsolutePath().normalize();
     if (!tempPath.startsWith(jailRoot)) {
       return false;
     }
