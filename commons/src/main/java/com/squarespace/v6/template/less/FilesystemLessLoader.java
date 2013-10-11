@@ -10,6 +10,8 @@ import java.nio.file.Path;
 
 import org.apache.commons.io.IOUtils;
 
+import com.squarespace.v6.template.less.core.Constants;
+
 
 /**
  * Loads the raw data for a given path, using the filesystem.
@@ -28,7 +30,7 @@ public class FilesystemLessLoader implements LessLoader {
 
   private String readFile(Path path) throws LessException {
     try (InputStream input = Files.newInputStream(path)) {
-      return IOUtils.toString(input);
+      return IOUtils.toString(input, Constants.UTF8);
       
     } catch (NoSuchFileException e) {
       throw new LessException(importError(path, "File cannot be found"));

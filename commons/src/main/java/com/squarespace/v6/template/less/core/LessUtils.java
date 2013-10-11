@@ -56,13 +56,13 @@ public class LessUtils {
 
   public static String readFile(Path path) throws IOException {
     try (InputStream input = Files.newInputStream(path)) {
-      return IOUtils.toString(input);
+      return IOUtils.toString(input, Constants.UTF8);
     }
   }
   
   public static void writeFile(Path outPath, String data) throws IOException {
     try (OutputStream output = Files.newOutputStream(outPath, CREATE, TRUNCATE_EXISTING)) {
-      IOUtils.write(data, output);
+      IOUtils.write(data, output, Constants.UTF8);
     }
   }
 

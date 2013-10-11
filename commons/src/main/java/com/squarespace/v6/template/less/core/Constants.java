@@ -1,5 +1,7 @@
 package com.squarespace.v6.template.less.core;
 
+import java.nio.charset.Charset;
+
 import com.squarespace.v6.template.less.model.False;
 import com.squarespace.v6.template.less.model.Features;
 import com.squarespace.v6.template.less.model.Selectors;
@@ -17,5 +19,8 @@ public class Constants {
   public static final Features EMPTY_FEATURES = new Features();
   
   public static final Selectors EMPTY_SELECTORS = new Selectors();
+  
+  // Placed here to avoid pulling in any classes which have slf4j loggers.
+  public static final Charset UTF8 = Charset.forName("UTF-8");
   
 }
