@@ -28,22 +28,32 @@
     c3: hsva(100%, 50%, 25%, 0.5);
     c4: hsva(360, 0.5, .25, 0.5);
 }
+.function-color-contrast {
+    d1: contrast(123);  // non-color as 1st arg, emit a contrast function call
+    d2: contrast(#abc);
+    d3: contrast(#abc, #111);
+    d4: contrast(#abc, #111, #222);
+    d5: contrast(#abc, #111, #222, 0.5);
+    d6: contrast(#abc, #111, #222, 50%);
+    d7: contrast(#abc, #111, #222, 80%);
+}
 .function-color-adjustment {
     d1: luma(#abc);
-    d2: contrast(#abc, #111, #222, 0.5);
-    d3: contrast(#abc, #111, #222, 50%);
-    d4: contrast(#abc, #111, #222, 80%);
 
-    d5: darken(#888, 10%);
-    d6: lighten(#888, 10%);
-    d7: desaturate(hsl(.75, 0.5, 0.5), 100%);
+    d2: darken(#888, 10%);
+    d3: lighten(#888, 10%);
+    d4: desaturate(hsl(.75, 0.5, 0.5), 100%);
 
-    d8: fade(rgb(50, 50, 50), 25%);
-    d9: fadein(rgba(50, 50, 50, 0.5), 25%);
-    d10: fadeout(rgba(50, 50, 50, 0.5), 25%);
+    d5: fade(rgb(50, 50, 50), 25%);
+    d6: fadein(rgba(50, 50, 50, 0.5), 25%);
+    d7: fadeout(rgba(50, 50, 50, 0.5), 25%);
 
-    d11: spin(hsla(180, 0.5, 0.5, 0.5), 10);
-    d12: spin(hsla(180, 0.5, 0.5, 0.5), 10%);
+    d8: spin(hsla(180, 0.5, 0.5, 0.5), 10);
+    d9: spin(hsla(180, 0.5, 0.5, 0.5), 10%);
+
+    d10: greyscale(#123);
+    d11: greyscale(#456);
+    d12: saturate(#555, 10%);
 }
 .function-color-combination {
     e1: average(#222, #444);
@@ -65,13 +75,14 @@
 
     e14: overlay(#111, #222);
     e15: overlay(#123, #789);
+    e16: overlay(#987, #aaa);
 
-    e16: screen(#111, #222);
-    e17: screen(#123, #789);
+    e17: screen(#111, #222);
+    e18: screen(#123, #789);
 
-    e18: shade(#888, 50%);
-    e19: softlight(#123, #789);
-    e20: tint(#123, 1);
-    e21: tint(#111, 1);
+    e19: shade(#888, 50%);
+    e20: softlight(#123, #789);
+    e21: tint(#123, 1);
+    e22: tint(#111, 1);
 }
 

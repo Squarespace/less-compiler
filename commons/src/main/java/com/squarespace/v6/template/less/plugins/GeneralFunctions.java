@@ -74,6 +74,7 @@ public class GeneralFunctions implements Registry<Function> {
         
         i++;
         if (i == size) {
+          buf.append('%');
           break;
         }
         ch = format.charAt(i);

@@ -3,6 +3,9 @@
   a2: 'repetitions: 3 file: %22directory%2ffile.less%22';
   a3: "repetitions: 3 file: directory/file.less";
   a4: 'repetitions: 3 file: directory%2ffile.less';
+  a5: 'the value is 20%';
+  a6: 'values: 1 2 3';
+  a7: 'foo 1 %';
 }
 .function-general-escape {
   b1: foo;

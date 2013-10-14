@@ -1,0 +1,16 @@
+.ruleset-url-plain {
+  a1: url(http://squarespace.com);
+  a2: url(foo);
+}
+.ruleset-url-quoted {
+  a1: url('foo');
+  a2: url("foo");
+}
+.ruleset-url-escaped {
+  a1: url(foo);
+  a2: url(foo);
+  a3: url(//glonk.com/foo.css);
+}
+.ruleset-url-vars {
+  a1: url('http://glonk.com/site.css');
+}

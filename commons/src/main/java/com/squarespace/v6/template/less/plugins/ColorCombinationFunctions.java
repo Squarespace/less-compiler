@@ -139,7 +139,6 @@ public class ColorCombinationFunctions implements Registry<Function> {
       double blue = overlay(c1.blue(), c2.blue());
       return new RGBColor(red, green, blue);
     }
-
   };
 
   private static double overlay(double c1, double c2) {

@@ -1,0 +1,20 @@
+//:ExecuteErrorType.MIXIN_UNDEFINED   recursive ruleset
+
+.ruleset-0 {
+    .ruleset-1;
+}
+
+.ruleset-1 {
+    .ruleset-0;
+}
+
+//:ExecuteErrorType.MIXIN_RECURSE    excessive recursion through mixin
+
+.mixin(@arg) when (@arg > 0) {
+    .mixin(@arg - 1);
+}
+
+.ruleset {
+    .mixin(10000);
+}
+

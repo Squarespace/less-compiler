@@ -3,6 +3,13 @@
     a2: %('repetitions: %A file: %D', 1 + 2, "directory/file.less");
     a3: %("repetitions: %s file: %s", 1 + 2, "directory/file.less");
     a4: %('repetitions: %S file: %S', 1 + 2, "directory/file.less");
+    a5: %('the value is %s%%', 20);
+
+    // ignore extra args
+    a6: %('values: %s %s %s', 1, 2, 3, 4, 5, 6, 7);
+
+    // % at very end of format string, just output '%'
+    a7: %('foo %s %', 1);
 }
 .function-general-escape {
     b1: e("foo");

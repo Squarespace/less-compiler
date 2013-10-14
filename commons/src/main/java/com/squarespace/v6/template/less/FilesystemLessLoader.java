@@ -36,7 +36,6 @@ public class FilesystemLessLoader implements LessLoader {
       throw new LessException(importError(path, "File cannot be found"));
       
     } catch (IOException e) {
-      e.printStackTrace();
       throw new LessException(importError(path, e.getMessage()));
     }
   }
