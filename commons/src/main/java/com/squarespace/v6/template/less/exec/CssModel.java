@@ -183,10 +183,12 @@ public class CssModel {
     }
     
     public void add(CssNode node) {
-      if (!nodes.contains(node)) {
-        nodes.add(node);
-        populated |= node.populated();
+      // Ensure that the last unique rule (key + value) wins.
+      if (nodes.contains(node)) {
+        nodes.remove(node);
       }
+      nodes.add(node);
+      populated |= node.populated();
     }
 
     @Override
