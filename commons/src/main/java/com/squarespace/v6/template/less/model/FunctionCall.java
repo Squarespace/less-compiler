@@ -104,12 +104,14 @@ public class FunctionCall extends BaseNode {
   @Override
   public void repr(Buffer buf) {
     buf.append(name).append('(');
-    int size = args.size();
-    for (int i = 0; i < size; i++) {
-      if (i > 0) {
-        buf.append(", ");
+    if (args != null) {
+      int size = args.size();
+      for (int i = 0; i < size; i++) {
+        if (i > 0) {
+          buf.append(", ");
+        }
+        args.get(i).repr(buf);
       }
-      args.get(i).repr(buf);
     }
     buf.append(')');
   }
