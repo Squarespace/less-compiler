@@ -53,6 +53,7 @@ public class LessSuiteTest {
     DirectoryStream<Path> dirStream = LessUtils.getMatchingFiles(lessRoot, matcher);
     StringBuilder failures = new StringBuilder();
     for (Path lessPath : dirStream) {
+      System.out.println("Executing test case 'less/" + lessPath.getFileName() + "'");
 
       // Read and compile the .less source
       String source = LessUtils.readFile(lessPath);
@@ -89,6 +90,8 @@ public class LessSuiteTest {
     DirectoryStream<Path> dirStream = LessUtils.getMatchingFiles(errorRoot, matcher);
     Context ctx = new Context();
     for (Path lessPath : dirStream) {
+      System.out.println("Executing test case 'error/" + lessPath.getFileName() + "'");
+
       String source = LessUtils.readFile(lessPath);
       List<ErrorCase> errorCases = parseErrorCases(source);
       for (ErrorCase errorCase : errorCases) {
