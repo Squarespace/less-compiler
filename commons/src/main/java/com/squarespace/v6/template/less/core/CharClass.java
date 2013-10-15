@@ -83,7 +83,17 @@ public class CharClass {
   }
   
   public static boolean whitespace(char ch) {
-    return isMember(ch, WHITESPACE);
+    return isMember(ch, WHITESPACE)
+        // v8 JavaScript engine's whitespace ranges follow
+        || (ch == '\u00a1') 
+        || (ch == '\u1680') 
+        || (ch == '\u180e')
+        || (ch >= '\u2000' && ch <= '\u200a')
+        || (ch >= '\u2028' && ch <= '\u202a')
+        || (ch >= '\u202f' && ch <= '\u202f')
+        || (ch == '\u205f')
+        || (ch == '\u3000')
+        || (ch == '\ufeff');
   }
   
   public static boolean isMember(char ch, int cls) {
