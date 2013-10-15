@@ -15,13 +15,13 @@ public class CharClass {
   public static final int DIMENSION_START = 0x10;
   public static final int NONASCII = 0x20;
   public static final int NONPRINTABLE = 0x40;
-  public static final int WHITESPACE = 0x80;
+  // 0x80
   public static final int CALL_START = 0x100;
   public static final int COMBINATOR = 0x200;
   public static final int SELECTOR_END = 0x400;
   public static final int PROPERTY_START = 0x800;
   public static final int VARIABLE_START = 0x1000;
-  public static final int SKIPPABLE = 0x2000;
+  // 0x2000
   public static final int ENCODE_URI = 0x4000;
   public static final int ENCODE_URI_COMPONENT = 0x8000;
   public static final int ESCAPE = 0x10000;
@@ -75,7 +75,7 @@ public class CharClass {
   }
   
   public static boolean skippable(char ch) {
-    return isMember(ch, SKIPPABLE);
+    return ch == ';' || whitespace(ch);
   }
   
   public static boolean uppercase(char ch) {
@@ -83,14 +83,15 @@ public class CharClass {
   }
   
   public static boolean whitespace(char ch) {
-    return isMember(ch, WHITESPACE)
+    return (ch >= '\t' && ch <= '\r')
+        || (ch == ' ')
         // v8 JavaScript engine's whitespace ranges follow
         || (ch == '\u00a1') 
         || (ch == '\u1680') 
         || (ch == '\u180e')
         || (ch >= '\u2000' && ch <= '\u200a')
-        || (ch >= '\u2028' && ch <= '\u202a')
-        || (ch >= '\u202f' && ch <= '\u202f')
+        || (ch >= '\u2028' && ch <= '\u2029')
+        || (ch == '\u202f')
         || (ch == '\u205f')
         || (ch == '\u3000')
         || (ch == '\ufeff');
@@ -117,13 +118,6 @@ public class CharClass {
       case '\u0008':
         return NONPRINTABLE;
         
-      case '\t':      // 0x09
-      case '\n':      // 0x0A
-      case '\u000B':
-      case '\f':      // 0x0C
-      case '\r':      // 0x0D
-        return WHITESPACE | SKIPPABLE;
-        
       case '\u000E':
       case '\u000F':
       case '\u0010':
@@ -143,9 +137,6 @@ public class CharClass {
       case '\u001E':
       case '\u001F':
         return NONPRINTABLE;
-        
-      case ' ':
-        return WHITESPACE | SKIPPABLE;
         
       case '!':
         return ENCODE_URI | ENCODE_URI_COMPONENT;
@@ -205,7 +196,7 @@ public class CharClass {
         return ENCODE_URI | ESCAPE;
         
       case ';':
-        return SELECTOR_END | SKIPPABLE | ENCODE_URI | ESCAPE;
+        return SELECTOR_END | ENCODE_URI | ESCAPE;
 
       case '=':
         return ENCODE_URI | ESCAPE;
