@@ -1,0 +1,15 @@
+.media-features {
+    @media   foo  and (  width  :  12px  ) { 
+        dummy: rule;
+    }
+    @media  ( a : 1 ) , ( b : 2 ) and (  c : 3 ) {
+        dummy: rule;
+    }
+}
+.mixin-guard {
+    .mixin-0( @a  :  12px  ) { 
+        dummy: rule;
+    }
+    .mixin-0(   );
+}
+

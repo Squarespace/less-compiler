@@ -1,0 +1,13 @@
+@media foo and (width: 12px) {
+  .media-features {
+    dummy: rule;
+  }
+}
+@media (a: 1), (b: 2) and (c: 3) {
+  .media-features {
+    dummy: rule;
+  }
+}
+.mixin-guard {
+  dummy: rule;
+}

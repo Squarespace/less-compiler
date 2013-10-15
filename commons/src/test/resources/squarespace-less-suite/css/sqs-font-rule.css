@@ -7,3 +7,12 @@
 .ruleset-font-3 {
   font: italic small-caps bold 1em/140% Helvetica, sans-serif;
 }
+.ruleset-font-4 {
+  font: italic small-caps;
+}
+.ruleset-font-5 {
+  font: italic, sans-serif, small-caps, bold;
+}
+.ruleset-font-6 {
+  font: italic;
+}

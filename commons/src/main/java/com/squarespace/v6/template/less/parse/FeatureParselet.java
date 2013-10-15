@@ -42,7 +42,7 @@ public class FeatureParselet implements Parselet {
     } else if (stm.seekIf(Chars.LEFT_PARENTHESIS)) {
       Node prop = parseProperty(stm);
       node = stm.parse(ENTITY);
-
+      stm.skipWs();
       if (stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
         if (prop != null && node != null) {
           return new Paren(new Rule(prop, node));
