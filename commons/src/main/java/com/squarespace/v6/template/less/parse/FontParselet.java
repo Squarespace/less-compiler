@@ -14,6 +14,9 @@ import com.squarespace.v6.template.less.model.ExpressionList;
 import com.squarespace.v6.template.less.model.Node;
 
 
+/**
+ * Parse a special value for a 'font' rule.
+ */
 public class FontParselet implements Parselet {
 
   @Override

@@ -79,13 +79,13 @@ public class UnitConversions {
   }
   
   /**
-   * Obtain the multiplication factor to convert between units.
-   * For example, factor(IN, PX) means "convert from inches to pixels" and
-   * would return 96.
+   * Obtain the multiplication factor to convert between units. For example, factor(IN, PX)
+   * means "convert from inches to pixels" and would return 96.
    * 
-   * TODO: incompatible conversions should return 0.0, letting the caller
-   * throw an appropriate error.  upstream less.js doesn't perform conversion
-   * and will drop the units from the right-hand side of the operation.
+   * Incompatible conversions return 0.0, letting the caller throw an appropriate error.
+   * Upstream less.js doesn't perform conversion and will drop the units from the
+   * right-hand side of the operation.
+   * 
    * For example, in upstream less.js:
    * 
    *   font-size: 12px + 3in - 4s + 24%;

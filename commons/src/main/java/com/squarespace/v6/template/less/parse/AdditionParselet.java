@@ -16,6 +16,7 @@ public class AdditionParselet implements Parselet {
       return null;
     }
 
+    // If no operator can be parsed, we return the operand as the result.
     Node operation = operand0;
     while (true) {
       Operator op = parseOperator(stm);
@@ -31,8 +32,11 @@ public class AdditionParselet implements Parselet {
     return operation;
   }
 
+  /**
+   * Parse a single-character operator, avoiding treating bare positive/negative
+   * numbers as an operation.
+   */
   private Operator parseOperator(LessStream stm) {
-    // Logic to avoid counting bare positive/negative numbers as an operation.
     stm.skipWs();
     Operator op = Operator.fromChar(stm.peek());
     if (op != Operator.ADD && op != Operator.SUBTRACT) {

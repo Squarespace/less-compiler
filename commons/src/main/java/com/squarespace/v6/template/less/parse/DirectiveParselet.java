@@ -18,6 +18,9 @@ import com.squarespace.v6.template.less.model.Media;
 import com.squarespace.v6.template.less.model.Node;
 
 
+/**
+ * Main parser for all directives of the form '@' NAME.
+ */
 public class DirectiveParselet implements Parselet {
 
   @Override

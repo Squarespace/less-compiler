@@ -11,6 +11,9 @@ import com.squarespace.v6.template.less.model.ExpressionList;
 import com.squarespace.v6.template.less.model.Node;
 
 
+/**
+ * Parse a comma-delimited list of expressions.
+ */
 public class ExpressionListParselet implements Parselet {
 
   @Override

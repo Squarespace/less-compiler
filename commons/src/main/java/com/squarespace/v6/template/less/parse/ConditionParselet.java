@@ -15,6 +15,9 @@ import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Operator;
 
 
+/**
+ * Parse one or more conditions that make up a guard clause.
+ */
 public class ConditionParselet implements Parselet {
 
   @Override

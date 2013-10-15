@@ -6,6 +6,9 @@ import com.squarespace.v6.template.less.model.Comment;
 import com.squarespace.v6.template.less.model.Node;
 
 
+/**
+ * Parse both single line '//' and block '/*' comments.
+ */
 public class CommentParselet implements Parselet {
 
   @Override

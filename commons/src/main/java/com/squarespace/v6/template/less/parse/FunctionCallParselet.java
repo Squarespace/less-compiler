@@ -16,6 +16,9 @@ import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Url;
 
 
+/**
+ * Parse all forms which look like function calls.
+ */
 public class FunctionCallParselet implements Parselet {
 
   @Override

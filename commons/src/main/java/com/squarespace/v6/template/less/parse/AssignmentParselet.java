@@ -8,6 +8,9 @@ import com.squarespace.v6.template.less.model.Assignment;
 import com.squarespace.v6.template.less.model.Node;
 
 
+/**
+ * Parses a NAME '=' ENTITY sequence.
+ */
 public class AssignmentParselet implements Parselet {
 
   @Override

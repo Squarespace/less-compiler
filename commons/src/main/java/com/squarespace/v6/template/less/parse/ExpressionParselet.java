@@ -12,6 +12,9 @@ import com.squarespace.v6.template.less.model.Expression;
 import com.squarespace.v6.template.less.model.Node;
 
 
+/**
+ * Parse a space-delimited list of entities.
+ */
 public class ExpressionParselet implements Parselet {
 
   @Override

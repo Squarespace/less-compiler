@@ -9,6 +9,9 @@ import com.squarespace.v6.template.less.model.Features;
 import com.squarespace.v6.template.less.model.Node;
 
 
+/**
+ * Parse a comma-delimited list of features which are part of a MEDIA or IMPORT node.
+ */
 public class FeaturesParselet implements Parselet {
 
   @Override

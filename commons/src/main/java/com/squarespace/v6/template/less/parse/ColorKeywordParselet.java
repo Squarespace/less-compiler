@@ -7,6 +7,9 @@ import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.NodeType;
 
 
+/**
+ * Only parses keywords which map to color values.
+ */
 public class ColorKeywordParselet implements Parselet {
 
   @Override

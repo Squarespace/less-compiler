@@ -8,6 +8,9 @@ import com.squarespace.v6.template.less.model.Block;
 import com.squarespace.v6.template.less.model.Node;
 
 
+/**
+ * Handles parsing of '{' PRIMARY '}' sequence for all block types (ruleset, media, etc).
+ */
 public class BlockParselet implements Parselet {
 
   @Override

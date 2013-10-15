@@ -6,6 +6,9 @@ import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Unit;
 
 
+/**
+ * Parse numbers with optional units.
+ */
 public class DimensionParselet implements Parselet {
 
   @Override

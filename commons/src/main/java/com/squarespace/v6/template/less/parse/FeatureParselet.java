@@ -13,6 +13,9 @@ import com.squarespace.v6.template.less.model.Property;
 import com.squarespace.v6.template.less.model.Rule;
 
 
+/**
+ * Parse a list of expressions which are part of a MEDIA or IMPORT node's features clause.
+ */
 public class FeatureParselet implements Parselet {
 
   @Override
