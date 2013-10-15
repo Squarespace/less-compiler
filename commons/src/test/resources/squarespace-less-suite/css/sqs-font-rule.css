@@ -1,0 +1,9 @@
+.ruleset-font-1 {
+  font: 14px Helvetica, sans-serif;
+}
+.ruleset-font-2 {
+  font: bold 14px/1.5 Helvetica, sans-serif;
+}
+.ruleset-font-3 {
+  font: italic small-caps bold 1em/140% Helvetica, sans-serif;
+}

@@ -1,0 +1,11 @@
+@-webkit-keyframes frames {
+  0% {
+    border: 1px;
+  }
+}
+@font-face {
+  font-family: Helvetica;
+}
+.ruleset-namespace {
+  @namespace sqs url('http://squarespace.com');
+}
