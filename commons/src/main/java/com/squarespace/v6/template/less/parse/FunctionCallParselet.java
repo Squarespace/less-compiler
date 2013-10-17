@@ -7,10 +7,14 @@ import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION;
 import static com.squarespace.v6.template.less.parse.Parselets.QUOTED;
 import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.CharClass;
 import com.squarespace.v6.template.less.core.Chars;
 import com.squarespace.v6.template.less.model.Anonymous;
+import com.squarespace.v6.template.less.model.ExpressionList;
 import com.squarespace.v6.template.less.model.FunctionCall;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Url;
@@ -32,22 +36,29 @@ public class FunctionCallParselet implements Parselet {
     String nameLC = name.toLowerCase();
     if (nameLC.equals("url")) {
       return parseUrl(stm);
-    }
     
-    // Special handling for IE's alpha function.
-    if (nameLC.equals("alpha")) {
+    } else if (nameLC.equals("alpha")) {
+      // Special handling for IE's alpha function.
       Node result = stm.parse(ALPHA);
       if (result != null) {
         return result;
       }
       // Fall through, assuming the built-in alpha function.
+
     }
   
     // Use the lowercase version of the name to match less.js. CSS is case-insensitive
     // within the ASCII range.
     FunctionCall call = new FunctionCall(nameLC);
-    parseArgs(stm, call);
-
+    ExpressionList args = parseArgs(stm);
+    if (nameLC.equals("calc")) {
+      call.add(new Anonymous(args.repr()));
+    } else {
+      for (Node arg : args.expressions()) {
+        call.add(arg);
+      }
+    }
+      
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
       stm.restore(position);
@@ -57,11 +68,12 @@ public class FunctionCallParselet implements Parselet {
   }
   
 
-  private void parseArgs(LessStream stm, FunctionCall call) throws LessException {
+  private ExpressionList parseArgs(LessStream stm) throws LessException {
+    ExpressionList args = new ExpressionList();
     while (true) {
       Node value = stm.parse(ASSIGNMENT, EXPRESSION);
       if (value != null) {
-        call.add(value);
+        args.add(value);
       }
       
       stm.skipWs();
@@ -69,6 +81,7 @@ public class FunctionCallParselet implements Parselet {
         break;
       }
     }
+    return args;
   }
 
   public static Node parseUrl(LessStream stm) throws LessException {
@@ -83,4 +96,5 @@ public class FunctionCallParselet implements Parselet {
     }
     return new Url(value);
   }
+  
 }

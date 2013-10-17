@@ -1,0 +1,3 @@
+.calc-function {
+  width: calc((100% + 12px));
+}

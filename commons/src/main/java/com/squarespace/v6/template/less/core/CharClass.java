@@ -86,7 +86,7 @@ public class CharClass {
     return (ch >= '\t' && ch <= '\r')
         || (ch == ' ')
         // v8 JavaScript engine's whitespace ranges follow
-        || (ch == '\u00a1') 
+        || (ch == '\u00a0') 
         || (ch == '\u1680') 
         || (ch == '\u180e')
         || (ch >= '\u2000' && ch <= '\u200a')
