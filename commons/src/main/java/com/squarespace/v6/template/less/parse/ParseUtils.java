@@ -12,6 +12,8 @@ import com.squarespace.v6.template.less.model.ParseError;
 
 public class ParseUtils {
 
+  private static final int WINDOW_SIZE = 74;
+  
   /**
    * Build a user-readable parser error message, showing the exact context for
    * the error. We append this to the given exception inside a ParseError node.
@@ -41,7 +43,26 @@ public class ParseUtils {
     for (int i = start; i < size; i++) {
       int[] pos = offsets.get(i);
       position(buf, i + 1, 4);
-      buf.append(raw.substring(pos[0], pos[1]));
+      
+      // Last line has special handling. We want to position the error in the middle
+      // of the line, so for extremely long lines we need to shift things over.
+      if (i + 1 == size) {
+        int len = pos[1] - pos[0];
+        if (len > WINDOW_SIZE) {
+          int errpos = pos[0] + charPos;
+          int skip = (int)Math.floor(WINDOW_SIZE / 2.0);
+          int leftpos = Math.max(errpos - skip, pos[0]);
+          charPos -= leftpos - pos[0] - 4;
+          buf.append("... ");
+          buf.append(raw.substring(leftpos, Math.min(leftpos + WINDOW_SIZE, pos[1])));
+
+        } else {
+          buf.append(compressString(raw.substring(pos[0], pos[1])));
+        }
+        
+      } else {
+        buf.append(compressString(raw.substring(pos[0], pos[1])));
+      }
     }
     
     // Position an arrow at the offending character position
@@ -49,7 +70,7 @@ public class ParseUtils {
       buf.append('\n');
     }
     indent(buf, 7);
-    for (int i = 0; i < charPos; i++) {
+    for (int i = 0; i < charPos + 1; i++) {
       buf.append('.');
     }
     buf.append("^\n");
@@ -76,6 +97,25 @@ public class ParseUtils {
     }
     buf.append(pos).append("   "); 
     return pos.length();
+  }
+  
+  public static String compressString(String value) {
+    int len = value.length();
+    if (len <= WINDOW_SIZE) {
+      return value;
+    }
+
+    /* Calculate the number of visible characters and maximum segment size then:
+     *  (a) if the segment size is <= 10 chars, place the ellipses at the end
+     *  (b) otherwise, place the ellipses in the middle
+   . */
+    StringBuilder buf = new StringBuilder(WINDOW_SIZE);
+    int visible = WINDOW_SIZE - 4;
+    int segSize = (int)Math.floor(visible / 2.0);
+    return buf.append(value.substring(0, visible - segSize))
+        .append(" ... ")
+        .append(value.substring(len - segSize, len))
+        .toString();
   }
   
 }
