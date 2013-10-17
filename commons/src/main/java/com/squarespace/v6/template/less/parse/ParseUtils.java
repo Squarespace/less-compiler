@@ -57,7 +57,7 @@ public class ParseUtils {
           buf.append(raw.substring(leftpos, Math.min(leftpos + WINDOW_SIZE, pos[1])));
 
         } else {
-          buf.append(compressString(raw.substring(pos[0], pos[1])));
+          buf.append(raw.substring(pos[0], pos[1]));
         }
         
       } else {
@@ -70,7 +70,7 @@ public class ParseUtils {
       buf.append('\n');
     }
     indent(buf, 7);
-    for (int i = 0; i < charPos + 1; i++) {
+    for (int i = 0; i < charPos; i++) {
       buf.append('.');
     }
     buf.append("^\n");
