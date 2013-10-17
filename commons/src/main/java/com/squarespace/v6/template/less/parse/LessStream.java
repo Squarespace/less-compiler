@@ -177,7 +177,8 @@ public class LessStream extends Stream {
     if (!match(match_ANON_RULE_VALUE)) {
       return false;
     }
-    set(index, matchEnd - 1);
+    matchEnd--;
+    set(index, matchEnd);
     consume();
     return true;
   }
