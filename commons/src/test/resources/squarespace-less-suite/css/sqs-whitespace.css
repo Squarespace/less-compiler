@@ -11,3 +11,6 @@
 .mixin-guard {
   dummy: rule;
 }
+.ruleset {
+  ignore: me;
+}

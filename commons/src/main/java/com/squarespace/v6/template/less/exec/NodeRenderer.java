@@ -283,6 +283,11 @@ public class NodeRenderer {
     Combinator combinator = element.combinator();
     if (combinator != null) {
       boolean isDescendant = combinator == Combinator.DESC;
+      if (isDescendant && element.isWildcard()) {
+        // This combination just emits useless whitespace. Ignore.
+        return;
+      }
+      
       char ch = combinator.getChar();
       
       if (isFirst) {

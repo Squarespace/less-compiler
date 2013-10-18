@@ -24,3 +24,7 @@
 .mixin-parent .child {
   f: 6;
 }
+.complex-combinators > h1 + p:other:hover,
+> .complex-combinators > h1 + p:other {
+  g: 7;
+}

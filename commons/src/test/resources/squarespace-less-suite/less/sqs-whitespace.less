@@ -12,4 +12,8 @@
     }
     .mixin-0(   );
 }
+// Wildcards which match nothing should not create additional space.
+.ruleset & & & & {
+    ignore: me;
+}
 

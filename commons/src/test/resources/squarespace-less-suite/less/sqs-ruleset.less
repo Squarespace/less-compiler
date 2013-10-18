@@ -34,3 +34,10 @@
 .mixin-parent {
     .ruleset-mixin;
 }
+.complex-combinators {
+    >h1 +p:other {
+        &:hover, >& {
+            g: 7;
+        }
+    }
+}
