@@ -27,7 +27,7 @@ public class OperandParselet implements Parselet {
       stm.seek1();
     }
     Node node = stm.parse(SUB, DIMENSION, FUNCTION_CALL, COLOR_KEYWORD, COLOR, VARIABLE);
-    return negate ? new Operation(Operator.MULTIPLY, new Dimension(-1, null), node) : node;
+    return negate ? new Operation(Operator.MULTIPLY, node, new Dimension(-1, null)) : node;
   }
 
 }
