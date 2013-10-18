@@ -18,8 +18,12 @@ public class ShorthandParselet implements Parselet {
     if (!stm.peekShorthand()) {
       return null;
     }
+    Mark position = stm.mark();
     Node left = stm.parse(ENTITY);
-    stm.seekIf(Chars.SLASH);
+    if (!stm.seekIf(Chars.SLASH)) {
+      stm.restore(position);
+      return null;
+    }
     Node right = stm.parse(ENTITY);
     if (left == null || right == null) {
       throw stm.parseError(new LessException(general(PARSE_ERROR)));

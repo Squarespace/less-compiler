@@ -24,8 +24,6 @@ public class Patterns {
 
   private static final String _HEXWILD = "[A-Fa-f0-9?]";
   
-  private static final String _SHORTHAND_SEG = "[@\\w.%-]+";
-  
   // Regular expressions.
   
   public static final Pattern ALPHA_START = pattern("alpha\\s*\\(");
@@ -82,7 +80,7 @@ public class Patterns {
   
   public static final Pattern RATIO = pattern("\\d+\\/\\d+");
   
-  public static final Pattern SHORTHAND = pattern(_SHORTHAND_SEG + "\\/" + _SHORTHAND_SEG);
+  public static final Pattern SHORTHAND = pattern("[@\\w.%-]+" + "\\/" + "[@\\w.-]+");
   
   public static final Pattern UNICODE_DESCRIPTOR = pattern("U\\+" + _HEXWILD + "+(\\-" + _HEXWILD + "+)?");
   
