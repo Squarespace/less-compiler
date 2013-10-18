@@ -4,7 +4,9 @@ import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.badColorMa
 import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.incompatibleUnits;
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
+import com.squarespace.v6.template.less.ErrorInfo;
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.Options;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
@@ -53,13 +55,14 @@ public class Operation extends BaseNode {
   
   @Override
   public Node eval(ExecEnv env) throws LessException {
-    Node op0 = (operand0.needsEval()) ? operand0.eval(env) : operand0;
-    Node op1 = (operand1.needsEval()) ? operand1.eval(env) : operand1;
+    Node op0 = operand0.needsEval() ? operand0.eval(env) : operand0;
+    Node op1 = operand1.needsEval() ? operand1.eval(env) : operand1;
 
     // Check if we can cast the node to a friendlier type.
     op0 = cast(op0);
     op1 = cast(op1);
     
+    Options opts = env.context().options();
     if (op0.is(NodeType.DIMENSION) && op1.is(NodeType.COLOR)) {
       if (operator == Operator.MULTIPLY || operator == Operator.ADD) {
         Node temp = op0;
@@ -67,7 +70,13 @@ public class Operation extends BaseNode {
         op1 = temp;
         
       } else {
-        throw new LessException(badColorMath(operator, op0));
+        ErrorInfo info = badColorMath(operator, op0);
+        if (opts.strict()) {
+          throw new LessException(info);
+        } else if (!opts.hideWarnings()) {
+          env.addWarning(info.getMessage() + ".. ignoring right-hand operand.");
+        }
+        return op0;
       }
     }
 
@@ -75,10 +84,16 @@ public class Operation extends BaseNode {
     if (op0.is(NodeType.COLOR) && op1.is(NodeType.DIMENSION)) {
       Dimension dim = (Dimension)op1;
       if (dim.unit() != null) {
-        throw new LessException(incompatibleUnits(dim.unit(), "a color"));
+        ErrorInfo info = incompatibleUnits(dim.unit(), "a color");
+        if (opts.strict()) {
+          throw new LessException(info);
+        } else if (!opts.hideWarnings()) {
+          env.addWarning(info.getMessage() + ".. stripping unit.");
+        }
+        op1 = new Dimension(dim.value());
       }
     }
-    return op0.operate(operator, op1);
+    return op0.operate(env, operator, op1);
   }
 
   @Override

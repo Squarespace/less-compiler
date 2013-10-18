@@ -190,15 +190,17 @@ public class LessEvaluator {
             
           case RULE:
             Rule rule = (Rule) node;
+            Rule newRule = null;
             if (forceImportant && !rule.important()) {
-              Rule newRule = new Rule(rule.property(), rule.value().eval(env), forceImportant);
+              newRule = new Rule(rule.property(), rule.value().eval(env), forceImportant);
               newRule.copyPosition(rule);
               newRule.fileName(rule.fileName());
-              node = newRule;
 
             } else {
-              node = rule.eval(env);
+              newRule = (Rule)rule.eval(env);
             }
+            newRule.warnings(env.warnings());
+            node = newRule;
             break;
             
           default:

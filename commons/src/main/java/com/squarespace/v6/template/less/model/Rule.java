@@ -20,6 +20,8 @@ public class Rule extends BaseNode {
   
   private Path fileName;
   
+  private String warnings;
+  
   public Rule(Node property, Node value) {
     this(property, value, false);
   }
@@ -52,6 +54,14 @@ public class Rule extends BaseNode {
   
   public void fileName(Path path) {
     this.fileName = path;
+  }
+  
+  public String warnings() {
+    return warnings;
+  }
+  
+  public void warnings(String warnings) {
+    this.warnings = warnings;
   }
   
   public Rule copy() {

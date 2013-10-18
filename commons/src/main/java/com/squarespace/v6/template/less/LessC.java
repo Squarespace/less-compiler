@@ -60,6 +60,10 @@ public class LessC {
 
   @Parameter(names = { "-import-once" }, description = "Imports are only processed once")
   private boolean importOnce;
+
+  @Parameter(names = { "-strict" }, description = "Strict mode, throws exceptions when some invalid rules are "
+      + "evaluated instead of embedding warnings.")
+  private boolean strictMode;
   
   @Parameter(names = { "-v", "-version" }, description = "Show version")
   private boolean version = false;
@@ -76,6 +80,8 @@ public class LessC {
 // TODO:
 //    options.lineNumbers(lineNumbers);
     options.recursionLimit(recursionLimit);
+    options.strict(strictMode);
+    options.hideWarnings(false);
     options.tracing(tracing);
     if (importPaths != null) {
       options.importPaths(importPaths);

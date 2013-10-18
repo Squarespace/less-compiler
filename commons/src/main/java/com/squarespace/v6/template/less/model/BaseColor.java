@@ -4,7 +4,10 @@ import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.incompatib
 import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.invalidOperation;
 import static com.squarespace.v6.template.less.model.NodeType.COLOR;
 
+import com.squarespace.v6.template.less.ErrorInfo;
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.Options;
+import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
 public abstract class BaseColor extends BaseNode {
@@ -43,19 +46,32 @@ public abstract class BaseColor extends BaseNode {
   }
   
   @Override
-  public Node operate(Operator op, Node arg) throws LessException {
+  public Node operate(ExecEnv env, Operator op, Node arg) throws LessException {
+    Options opts = env.context().options();
     if (arg.is(NodeType.COLOR)) {
       return operate(op, this, (BaseColor)arg);
     
     } else if (arg.is(NodeType.DIMENSION)) {
       Dimension dim = (Dimension)arg;
       if (dim.unit() != null) {
-        throw new LessException(incompatibleUnits(dim.unit(), NodeType.COLOR));
+        ErrorInfo info = incompatibleUnits(dim.unit(), NodeType.COLOR);
+        if (opts.strict()) {
+          throw new LessException(info);
+        }
+        env.addWarning(info.getMessage() + ".. stripping unit.");
+        dim = new Dimension(dim.value());
       }
       return operate(op, this, fromDimension((Dimension)arg));
 
     } else {
-      throw new LessException(invalidOperation(op, type()));
+      ErrorInfo info = invalidOperation(op, type());
+      if (opts.strict()) {
+        throw new LessException(info);
+      }
+      if (!opts.hideWarnings()) {
+        env.addWarning(info.getMessage() + ".. ignoring the right-hand operand.");
+      }
+      return this;
     }
   }
   

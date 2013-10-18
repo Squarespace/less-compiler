@@ -54,6 +54,10 @@ public class LessBatchC extends BaseCommand {
   @Parameter(names = { "-import-once" }, description = "Imports are only processed once")
   private boolean importOnce;
   
+  @Parameter(names = { "-strict" }, description = "Strict mode, throws exceptions when some invalid rules are "
+      + "evaluated instead of embedding warnings.")
+  private boolean strictMode;
+
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode")
   private boolean compress;
   
@@ -67,6 +71,8 @@ public class LessBatchC extends BaseCommand {
     options.importOnce(importOnce);
     options.indent(indent);
     options.tracing(tracing);
+    options.strict(strictMode);
+    options.hideWarnings(false);
     if (importPaths != null) {
       options.importPaths(importPaths);
     }

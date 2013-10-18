@@ -57,7 +57,7 @@ public abstract class BaseNode implements Node {
   }
   
   @Override
-  public Node operate(Operator op, Node arg) throws LessException {
+  public Node operate(ExecEnv env, Operator op, Node arg) throws LessException {
     NodeType argType = (arg == null) ? null : arg.type();
     throw new LessException(ExecuteErrorMaker.invalidOperation(op, type(), argType));
   }

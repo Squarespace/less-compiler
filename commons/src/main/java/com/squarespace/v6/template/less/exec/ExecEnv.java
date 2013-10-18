@@ -17,13 +17,20 @@ public class ExecEnv {
 
   private FlexList<Block> frames;
   
+  private FlexList<String> warnings;
+  
   public ExecEnv(Context ctx) {
-    this(ctx, new FlexList<Block>(64));
+    this(ctx, new FlexList<Block>(64), null);
   }
   
   public ExecEnv(Context ctx, FlexList<Block> initialStack) {
+    this(ctx, initialStack, null);
+  }
+  
+  public ExecEnv(Context ctx, FlexList<Block> initialStack, FlexList<String> warnings) {
     this.ctx = ctx;
     this.frames = initialStack;
+    this.warnings = warnings;
   }
   
   public Context context() {
@@ -31,7 +38,7 @@ public class ExecEnv {
   }
   
   public ExecEnv copy() {
-    return new ExecEnv(ctx, frames.copy());
+    return new ExecEnv(ctx, frames.copy(), warnings);
   }
 
   public int depth() {
@@ -40,6 +47,29 @@ public class ExecEnv {
   
   public void append(FlexList<Block> other) {
     frames.append(other);
+  }
+  
+  public void addWarning(String warning) {
+    if (warnings == null) {
+      warnings = new FlexList<>();
+    }
+    warnings.append(warning);
+  }
+  
+  public String warnings() {
+    if (warnings == null || warnings.isEmpty()) {
+      return null;
+    }
+    StringBuilder buf = new StringBuilder();
+    int size = warnings.size();
+    for (int i = 0; i < size; i++) {
+      if (i > 0) {
+        buf.append(", ");
+      }
+      buf.append(warnings.get(i));
+    }
+    warnings.clear();
+    return buf.toString();
   }
   
   public FlexList<Block> frames() {

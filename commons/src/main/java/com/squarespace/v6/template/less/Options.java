@@ -19,7 +19,7 @@ public class Options {
   
   public static final int DEFAULT_RECURSION_LIMIT = 64;
   
-  private final Set<Option> flags = EnumSet.noneOf(Option.class);
+  private final Set<Option> flags = EnumSet.of(Option.STRICT);
   
   private int indent = DEFAULT_INDENT;
 
@@ -47,6 +47,10 @@ public class Options {
     return flags.contains(Option.DEBUG);
   }
 
+  public boolean hideWarnings() {
+    return flags.contains(Option.HIDE_WARNINGS);
+  }
+  
   public int indent() {
     return indent;
   }
@@ -65,6 +69,10 @@ public class Options {
   
   public int recursionLimit() {
     return recursionLimit;
+  }
+  
+  public boolean strict() {
+    return flags.contains(Option.STRICT);
   }
   
   public boolean tabs() {
@@ -95,6 +103,10 @@ public class Options {
     this.importPaths.add(Paths.get(path));
   }
 
+  public void hideWarnings(boolean flag) {
+    set(flag, Option.HIDE_WARNINGS);
+  }
+  
   public void importPaths(List<String> paths) {
     for (String path : paths) {
       this.importPaths.add(Paths.get(path));
@@ -107,6 +119,10 @@ public class Options {
   
   public void recursionLimit(int limit) {
     this.recursionLimit = limit;
+  }
+  
+  public void strict(boolean flag) {
+    set(flag, Option.STRICT);
   }
   
   public void tabs(boolean flag) {
@@ -128,8 +144,10 @@ public class Options {
   private static enum Option {
     COMPRESS,
     DEBUG,
+    HIDE_WARNINGS,
     IMPORT_ONCE,
     LINE_NUMBERS,
+    STRICT,
     TABS,
     TRACING
   }

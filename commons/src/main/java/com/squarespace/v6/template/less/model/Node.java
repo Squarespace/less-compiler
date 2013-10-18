@@ -51,7 +51,7 @@ public interface Node {
   /**
    * Called when a node participates on an operation.
    */
-  public Node operate(Operator op, Node arg) throws LessException;
+  public Node operate(ExecEnv env, Operator op, Node arg) throws LessException;
 
   public void setLineOffset(int offset);
   

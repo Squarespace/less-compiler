@@ -40,6 +40,8 @@ public class LessRenderer {
   
   private CssModel model;
   
+  private int warningId;
+  
   public LessRenderer() {
   }
   
@@ -252,8 +254,17 @@ public class LessRenderer {
     if (rule.important()) {
       buf.append(" !important");
     }
+    emitWarnings(rule.warnings());
     model.value(buf.toString());
     ctx.returnBuffer();
+  }
+
+  private void emitWarnings(String warnings) {
+    if (warnings != null) {
+      // Build a comment containing all of the warnings.
+      int id = ++warningId;
+      model.comment("/* WARNING " + id + " raised by next rule: "+ warnings + " */\n");
+    }
   }
 
 }

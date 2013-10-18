@@ -6,8 +6,11 @@ import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.invalidOpe
 import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.percentMathOrder;
 import static com.squarespace.v6.template.less.model.Unit.PERCENTAGE;
 
+import com.squarespace.v6.template.less.ErrorInfo;
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.Options;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
 /**
@@ -74,11 +77,12 @@ public class Dimension extends BaseNode {
    * All math operations between Dimension instances happen here.
    */
   @Override
-  public Node operate(Operator op, Node node) throws LessException {
+  public Node operate(ExecEnv env, Operator op, Node node) throws LessException {
     if (!node.is(NodeType.DIMENSION)) {
       throw new LessException(invalidOperation(op, type()));
     }
 
+    Options opts = env.context().options();
     Dimension dim = (Dimension)node;
     Unit new_unit = unit;
     double result = 0.0;
@@ -86,7 +90,13 @@ public class Dimension extends BaseNode {
     // Special case when the left-hand is a percentage.
     if (unit == PERCENTAGE) {
       if (dim.unit != PERCENTAGE && dim.unit != null && op != Operator.MULTIPLY) {
-        throw new LessException(percentMathOrder(dim));
+        ErrorInfo info = percentMathOrder(dim);
+        if (opts.strict()) {
+          throw new LessException(info);
+        } else if (!opts.hideWarnings()) {
+          env.addWarning(info.getMessage() + ".. stripping unit.");
+        }
+        dim = new Dimension(dim.value());
       }
       switch (op) {
         
@@ -130,7 +140,14 @@ public class Dimension extends BaseNode {
     }
     double factor = UnitConversions.factor(dim.unit, unit);
     if (factor == 0.0 && dim.unit != Unit.PERCENTAGE) {
-      throw new LessException(incompatibleUnits(unit, dim.unit));
+      ErrorInfo info = incompatibleUnits(unit, dim.unit);
+      if (opts.strict()) {
+        throw new LessException(info);
+      } else if (!opts.hideWarnings()) {
+        env.addWarning(info.getMessage() + ".. stripping unit.");
+      }
+      factor = 1.0;
+      dim = new Dimension(dim.value());
     }
     double scaled = dim.value * factor;
     switch (op) {
