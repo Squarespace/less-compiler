@@ -133,7 +133,7 @@ public class OperationTest extends LessTestBase {
     
     h.parseEquals("1 + -2", oper(ADD, dim(1), dim(-2)));
     h.parseEquals("1 - -2", oper(SUBTRACT, dim(1), dim(-2)));
-    h.parseEquals("-@foo", oper(MULTIPLY, dim(-1), var("@foo")));
+    h.parseEquals("-@foo", oper(MULTIPLY, var("@foo"), dim(-1)));
     h.parseEquals("3.14 * 3.14", oper(MULTIPLY, dim(3.14), dim(3.14)));
     h.parseEquals("17 / 3", oper(DIVIDE, dim(17), dim(3)));
     h.parseEquals("3 * 4 - 5", oper(SUBTRACT, oper(MULTIPLY, dim(3), dim(4)), dim(5)));
