@@ -193,6 +193,11 @@ public class LessRenderer {
   }
   
   private void renderDefinition(Definition def) throws LessException {
+    String warnings = def.warnings();
+    if (warnings != null) {
+      String repr = "definition '" + def.name() + "'";
+      emitWarnings(repr, def.warnings());
+    }
     if (opts.tracing()) {
       Path fileName = def.fileName();
       Buffer buf = ctx.acquireBuffer();
@@ -254,16 +259,16 @@ public class LessRenderer {
     if (rule.important()) {
       buf.append(" !important");
     }
-    emitWarnings(rule.warnings());
+    emitWarnings("next rule", rule.warnings());
     model.value(buf.toString());
     ctx.returnBuffer();
   }
 
-  private void emitWarnings(String warnings) {
+  private void emitWarnings(String what, String warnings) {
     if (warnings != null) {
       // Build a comment containing all of the warnings.
       int id = ++warningId;
-      model.comment("/* WARNING " + id + " raised by next rule: "+ warnings + " */\n");
+      model.comment("/* WARNING " + id + " raised evaluating " + what + ": "+ warnings + " */\n");
     }
   }
 

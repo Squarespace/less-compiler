@@ -154,6 +154,7 @@ public class LessEvaluator {
             Definition newDef = new Definition(def.name(), def.dereference(env));
             newDef.copyPosition(def);
             newDef.fileName(def.fileName());
+            newDef.warnings(env.warnings());
             node = newDef;
             break;
             

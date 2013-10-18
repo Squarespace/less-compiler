@@ -24,6 +24,8 @@ public class Definition extends BaseNode {
 
   private Path fileName;
   
+  private String warnings;
+  
   public Definition(Variable variable, Node value) {
     this(variable.name(), value);
   }
@@ -52,6 +54,14 @@ public class Definition extends BaseNode {
     this.fileName = path;
   }
 
+  public String warnings() {
+    return warnings;
+  }
+  
+  public void warnings(String warnings) {
+    this.warnings = warnings;
+  }
+  
   /**
    * Resolve the value for this definition.
    */
