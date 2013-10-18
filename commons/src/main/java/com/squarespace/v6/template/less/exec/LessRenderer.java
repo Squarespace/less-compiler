@@ -40,6 +40,8 @@ public class LessRenderer {
   
   private CssModel model;
   
+  private int traceId;
+  
   private int warningId;
   
   public LessRenderer() {
@@ -201,13 +203,14 @@ public class LessRenderer {
     if (opts.tracing()) {
       Path fileName = def.fileName();
       Buffer buf = ctx.acquireBuffer();
-      buf.append("/* TRACE   define   ");
+      
+      buf.append("  define   ");
       buf.append(def.repr().trim());
       if (fileName != null) {
         buf.append("    ").append(def.fileName().toString());
       }
-      buf.append(':').append(def.lineOffset() + 1).append("  */\n");
-      model.comment(buf.toString());
+      buf.append(':').append(def.lineOffset() + 1).append(' ');
+      emitTrace(buf.toString());
       ctx.returnBuffer();
     }
   }
@@ -230,9 +233,9 @@ public class LessRenderer {
     Path fileName = imp.fileName();
     String line = (fileName != null ? fileName.toString() : "") + ":" + (imp.lineOffset() + 1);
     if (marker.beginning()) {
-      model.comment("/* TRACE    start   " + repr + "    " + line + "  */\n");
+      emitTrace("    start   " + repr + "    " + line + " ");
     } else {
-      model.comment("/* TRACE      end   " + repr + "    " + line + "  */\n");
+      emitTrace("      end   " + repr + "    " + line + " ");
     }
   }
   
@@ -242,9 +245,9 @@ public class LessRenderer {
     Path fileName = call.fileName();
     String line = (fileName != null ? fileName.toString() : "") + ":" + (call.lineOffset() + 1);
     if (marker.beginning()) {
-      model.comment("/* TRACE    start   " + repr + "    " + line + "  */\n");
+      emitTrace("    start   " + repr + "    " + line + " ");
     } else {
-      model.comment("/* TRACE      end   " + repr + "    " + line + "  */\n");
+      emitTrace("      end   " + repr + "    " + line + " ");
     }
   }
   
@@ -252,6 +255,12 @@ public class LessRenderer {
    * Render a rule, consisting of a property, value and optional "!important" modifier.
    */
   private void renderRule(Rule rule) throws LessException {
+    emitWarnings("next rule", rule.warnings());
+    if (opts.tracing()) {
+      Path fileName = rule.fileName();
+      String line = (fileName != null ? fileName.toString() : "") + ":" + (rule.lineOffset() + 1);
+      emitTrace("next rule defined at '" + line + "'");
+    }
     Buffer buf = ctx.acquireBuffer();
     env.render(buf, rule.property());
     buf.ruleSep();
@@ -259,16 +268,18 @@ public class LessRenderer {
     if (rule.important()) {
       buf.append(" !important");
     }
-    emitWarnings("next rule", rule.warnings());
     model.value(buf.toString());
     ctx.returnBuffer();
   }
 
+  private void emitTrace(String what) {
+    model.comment("/* TRACE[" + (++traceId) + "]: " + what + " */\n");
+  }
+  
   private void emitWarnings(String what, String warnings) {
     if (warnings != null) {
       // Build a comment containing all of the warnings.
-      int id = ++warningId;
-      model.comment("/* WARNING " + id + " raised evaluating " + what + ": "+ warnings + " */\n");
+      model.comment("/* WARNING[" + (++warningId) + "] raised evaluating " + what + ": "+ warnings + " */\n");
     }
   }
 
