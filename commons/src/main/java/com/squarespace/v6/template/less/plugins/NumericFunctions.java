@@ -12,6 +12,8 @@ import com.squarespace.v6.template.less.exec.SymbolTable;
 import com.squarespace.v6.template.less.model.Dimension;
 import com.squarespace.v6.template.less.model.Keyword;
 import com.squarespace.v6.template.less.model.Node;
+import com.squarespace.v6.template.less.model.NodeType;
+import com.squarespace.v6.template.less.model.Quoted;
 import com.squarespace.v6.template.less.model.Unit;
 
 
@@ -55,16 +57,26 @@ public class NumericFunctions implements Registry<Function> {
     }
   };
 
-  public static final Function UNIT = new Function("unit", "d:k") {
+  public static final Function UNIT = new Function("unit", "d:*") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Dimension dim = (Dimension)args.get(0);
       Unit unit = null;
       if (args.size() >= 2) {
-        Keyword word = (Keyword)args.get(1);
-        unit = Unit.get(word.value());
+        Node node = (Node)args.get(1);
+        if (node.is(NodeType.KEYWORD)) {
+          Keyword word = (Keyword)node;
+          unit = Unit.get(word.value());
+          
+        } else if (node.is(NodeType.QUOTED)) {
+          Quoted quoted = (Quoted)node;
+          quoted = new Quoted(quoted.delimiter(), true, quoted.parts());
+          String repr = env.context().render(quoted);
+          unit = Unit.get(repr);
+
+        }
         if (unit == null) {
-          throw new LessException(unknownUnit(word));
+          throw new LessException(unknownUnit(node.repr()));
         }
       }
       return new Dimension(dim.value(), unit);
