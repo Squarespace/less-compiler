@@ -45,9 +45,16 @@ public abstract class BaseNode implements Node {
     if (value == lval) {
       buf.append(lval);
     } else {
-      // Strip leading and trailing zeros and avoid scientific notation.
+      // Strip trailing zeros and avoid scientific notation.
       String repr = BigDecimal.valueOf(value).stripTrailingZeros().toPlainString();
-      buf.append((value >= 0 && value < 1.0) ? repr.substring(1) : repr);
+      // Strip leading zeros for positive and negative numbers.
+      if (value >= 0 && value < 1.0) {
+        buf.append(repr.substring(1));
+      } else if (value > -1.0 && value < 0) {
+        buf.append('-').append(repr.substring(2));
+      } else {
+        buf.append(repr);
+      }
     }
   }
 

@@ -1,6 +1,4 @@
-// Avoid evaluating these expressions inside a calc() function
-// Pass through to the CSS parser.
 .calc-function {
-    width: calc((100% + 12px));
+    width: calc(~'100% + 12px');
 }
 

@@ -7,9 +7,6 @@ import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION;
 import static com.squarespace.v6.template.less.parse.Parselets.QUOTED;
 import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.CharClass;
 import com.squarespace.v6.template.less.core.Chars;
@@ -51,12 +48,8 @@ public class FunctionCallParselet implements Parselet {
     // within the ASCII range.
     FunctionCall call = new FunctionCall(nameLC);
     ExpressionList args = parseArgs(stm);
-    if (nameLC.equals("calc")) {
-      call.add(new Anonymous(args.repr()));
-    } else {
-      for (Node arg : args.expressions()) {
-        call.add(arg);
-      }
+    for (Node arg : args.expressions()) {
+      call.add(arg);
     }
       
     stm.skipWs();

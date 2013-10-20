@@ -62,6 +62,7 @@ public class RuleParselet implements Parselet {
 
     // If we didn't read a full rule, back up and try to parse an opaque value.
     if (!endPeek(stm)) {
+      important = false;
       stm.restore(valueMark);
       if (name.charAt(0) != Chars.AT_SIGN && stm.matchAnonRuleValue()) {
         value = new Anonymous(stm.token().trim());
