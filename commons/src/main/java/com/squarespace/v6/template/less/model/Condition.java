@@ -206,7 +206,9 @@ public class Condition extends BaseNode {
       double value0 = dim0.value();
       Unit unit0 = dim0.unit();
       Unit unit1 = dim1.unit();
-      
+      unit0 = (unit0 == Unit.PERCENTAGE ? null : unit0);
+      unit1 = (unit1 == Unit.PERCENTAGE ? null : unit1);
+
       double factor = 1.0;
       double scaled = dim1.value();
       if (dim0.unit() != dim1.unit()) { 
