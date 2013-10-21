@@ -19,9 +19,9 @@ public class ColorHSLFunctions implements Registry<Function> {
   public static final Function HSL = new Function("hsl", "ppp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      double hue = number(args.get(0));
-      double saturation = number(args.get(1));
-      double lightness = number(args.get(2));
+      double hue = percent(args.get(0));
+      double saturation = percent(args.get(1));
+      double lightness = percent(args.get(2));
       return new HSLColor(hue % 360 / 360.0, saturation, lightness, 1.0);
     }
   };
@@ -29,10 +29,10 @@ public class ColorHSLFunctions implements Registry<Function> {
   public static final Function HSLA = new Function("hsla", "pppp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      double hue = number(args.get(0));
-      double saturation = number(args.get(1));
-      double lightness = number(args.get(2));
-      double alpha = number(args.get(3));
+      double hue = percent(args.get(0));
+      double saturation = percent(args.get(1));
+      double lightness = percent(args.get(2));
+      double alpha = percent(args.get(3));
       return new HSLColor(hue % 360 / 360.0, saturation, lightness, alpha);
     }
   };
@@ -40,9 +40,9 @@ public class ColorHSLFunctions implements Registry<Function> {
   public static final Function HSV = new Function("hsv", "ppp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      double hue = number(args.get(0));
-      double saturation = number(args.get(1));
-      double value = number(args.get(2));
+      double hue = percent(args.get(0));
+      double saturation = percent(args.get(1));
+      double value = percent(args.get(2));
       return RGBColor.fromHSVA(hue % 360 / 360.0, saturation, value, 1.0);
     }
   };
@@ -50,10 +50,10 @@ public class ColorHSLFunctions implements Registry<Function> {
   public static final Function HSVA = new Function("hsva", "pppp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      double hue = number(args.get(0));
-      double saturation = number(args.get(1));
-      double value = number(args.get(2));
-      double alpha = number(args.get(3));
+      double hue = percent(args.get(0));
+      double saturation = percent(args.get(1));
+      double value = percent(args.get(2));
+      double alpha = percent(args.get(3));
       return RGBColor.fromHSVA(hue % 360 / 360.0, saturation, value, alpha);
     }
   };

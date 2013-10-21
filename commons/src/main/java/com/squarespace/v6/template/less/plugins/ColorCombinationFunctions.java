@@ -81,8 +81,7 @@ public class ColorCombinationFunctions implements Registry<Function> {
       RGBColor c2 = rgb(args.get(1));
       double weight = 0.5;
       if (args.size() == 3) {
-        Dimension dim = (Dimension)args.get(2);
-        weight = dim.value() / 100.0;
+        weight = number(args.get(2)) / 100.0;
       }
       return mix(c1, c2, weight);
     }

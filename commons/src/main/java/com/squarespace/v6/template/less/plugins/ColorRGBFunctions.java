@@ -82,7 +82,7 @@ public class ColorRGBFunctions implements Registry<Function> {
       double red = scaled(args.get(0), 256);
       double green = scaled(args.get(1), 256);
       double blue = scaled(args.get(2), 256);
-      double alpha = number(args.get(3));
+      double alpha = percent(args.get(3));
       return new RGBColor(red, green, blue, alpha);
     }
   };

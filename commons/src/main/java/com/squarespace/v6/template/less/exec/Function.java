@@ -41,12 +41,13 @@ public abstract class Function {
   
   public abstract Node invoke(ExecEnv env, List<Node> args) throws LessException;
   
-  public static double number(Node node) throws LessException {
+  public static double percent(Node node) throws LessException {
     Dimension dim = (Dimension)node;
-    if (dim.unit() == Unit.PERCENTAGE) {
-      return dim.value() / 100.0;
-    }
-    return dim.value();
+    return (dim.unit() == Unit.PERCENTAGE) ? dim.value() * 0.01 : dim.value();
+  }
+  
+  public static double number(Node node) throws LessException {
+    return ((Dimension)node).value();
   }
 
   public static double scaled(Node node, double scale) throws LessException {

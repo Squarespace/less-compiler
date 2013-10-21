@@ -18,12 +18,14 @@ public class ColorAdjustmentFunctionsTest extends LessTestBase {
     // The deeper testing for these functions is moved into the external
     // test suite files (LessTestSuite)
     
-    h.evalEquals("contrast(#fff, #111, #999, 50%)", color("#111"));
-    h.evalEquals("contrast(#222, #111, #999, 50%)", color("#999"));
+    h.evalEquals("contrast(#fff, #111, #999, .5)", color("#111"));
+    h.evalEquals("contrast(#222, #111, #999, .5)", color("#999"));
 
     h = new LessHarness(Parselets.ADDITION);
-    h.evalEquals("darken(#888, .5) + #000", color("#080808"));
+    h.evalEquals("darken(#888, 50%) + #000", color("#080808"));
     h.evalEquals("darken(#f00, 40%) + #000", color("#330000"));
+    h.evalEquals("darken(#fff, 5) + #000", color("#f2f2f2"));
+    h.evalEquals("darken(darken(#fff, 0), 5) + #000", color("#f2f2f2"));
   }
   
 }

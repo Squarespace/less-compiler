@@ -44,7 +44,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
-      double value = number(args.get(1));
+      double value = number(args.get(1)) * 0.01;
       return new HSLColor(hsl.hue() / 360.0, hsl.saturation(), hsl.lightness() - value, hsl.alpha());
     }
   };
@@ -53,7 +53,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
-      double value = number(args.get(1));
+      double value = number(args.get(1)) * 0.01;
       return new HSLColor(hsl.hue() / 360.0, hsl.saturation() - value, hsl.lightness(), hsl.alpha());
     }
   };
@@ -62,7 +62,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       RGBColor rgb = rgb(args.get(0));
-      double alpha = number(args.get(1));
+      double alpha = number(args.get(1)) * 0.01;
       return new RGBColor(rgb.red(), rgb.green(), rgb.blue(), alpha);
     }
   };
@@ -71,7 +71,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, java.util.List<Node> args) throws LessException {
       RGBColor rgb = rgb(args.get(0));
-      double amount = number(args.get(1));
+      double amount = number(args.get(1)) * 0.01;
       return new RGBColor(rgb.red(), rgb.green(), rgb.blue(), rgb.alpha() + amount);
     }
   };
@@ -80,7 +80,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       RGBColor rgb = rgb(args.get(0));
-      double amount = number(args.get(1));
+      double amount = number(args.get(1)) * 0.01;
       return new RGBColor(rgb.red(), rgb.green(), rgb.blue(), rgb.alpha() - amount);
     }
   };
@@ -97,7 +97,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
-      double value = number(args.get(1));
+      double value = number(args.get(1)) * 0.01;
       return new HSLColor(hsl.hue() / 360.0, hsl.saturation(), hsl.lightness() + value, hsl.alpha());
     }
   };
@@ -106,7 +106,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
-      double value = number(args.get(1));
+      double value = number(args.get(1)) * 0.01;
       return new HSLColor(hsl.hue() / 360.0, hsl.saturation() + value, hsl.lightness(), hsl.alpha());
     }
   };

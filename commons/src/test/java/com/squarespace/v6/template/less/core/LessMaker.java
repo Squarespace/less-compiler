@@ -26,6 +26,7 @@ import com.squarespace.v6.template.less.model.Features;
 import com.squarespace.v6.template.less.model.FunctionCall;
 import com.squarespace.v6.template.less.model.GenericBlock;
 import com.squarespace.v6.template.less.model.Guard;
+import com.squarespace.v6.template.less.model.HSLColor;
 import com.squarespace.v6.template.less.model.Keyword;
 import com.squarespace.v6.template.less.model.Media;
 import com.squarespace.v6.template.less.model.Mixin;
@@ -229,6 +230,14 @@ public class LessMaker {
       guard.add(cond);
     }
     return guard;
+  }
+  
+  public HSLColor hsl(double hue, double saturation, double lightness) {
+    return hsla(hue, saturation, lightness, 1.0);
+  }
+  
+  public HSLColor hsla(double hue, double saturation, double lightness, double alpha) {
+    return new HSLColor(hue, saturation, lightness, alpha);
   }
   
   public Keyword kwd(String value) {
