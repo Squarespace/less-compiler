@@ -33,6 +33,10 @@ public class ExecuteErrorMaker {
     return error(ExecuteErrorType.BAD_COLOR_MATH).arg0(msg).arg1(arg.repr());
   }
   
+  public static ErrorInfo divideByZero(Node arg) {
+    return error(ExecuteErrorType.DIVIDE_BY_ZERO).arg0(arg);
+  }
+  
   public static ErrorInfo expectedBoolOp(Object op) {
     return error(ExecuteErrorType.EXPECTED_BOOLOP).arg0(op);
   }

@@ -1,6 +1,5 @@
 package com.squarespace.v6.template.less;
 
-import static com.squarespace.v6.template.less.ExecuteErrorType.PERCENT_MATH_ORDER;
 import static com.squarespace.v6.template.less.model.Operator.ADD;
 import static com.squarespace.v6.template.less.model.Operator.DIVIDE;
 import static com.squarespace.v6.template.less.model.Operator.MULTIPLY;
@@ -97,34 +96,29 @@ public class OperationTest extends LessTestBase {
     h.evalEquals("1+2*", dim(3));
     
     // percentages
-    h.evalEquals("100% * 10px", dim(10, Unit.PX));
-    h.evalEquals("10% * 10px", dim(1, Unit.PX));
-    h.evalEquals("10em * 50%", dim(5, Unit.EM));
+    h.evalEquals("100% * 10px", dim(1000, Unit.PERCENTAGE));
+    h.evalEquals("10% * 10px", dim(100, Unit.PERCENTAGE));
+    h.evalEquals("10em * 50%", dim(500, Unit.EM));
     
-    h.evalEquals("10px / 100%", dim(10, Unit.PX));
-    h.evalEquals("100em / 50%", dim(200, Unit.EM));
+    h.evalEquals("10px / 100%", dim(0.1, Unit.PX));
+    h.evalEquals("100em / 50%", dim(2, Unit.EM));
     
     // adding/subtracting percentages
-    h.evalEquals("10px + 10%", dim(11, Unit.PX));
-    h.evalEquals("20px - 10%", dim(18, Unit.PX));
-    h.evalEquals("100px / 100%", dim(100, Unit.PX));
-    h.evalEquals("100px / 200%", dim(50, Unit.PX));
-    h.evalEquals("100px / 50%", dim(200, Unit.PX));
+    h.evalEquals("10px + 10%", dim(20, Unit.PX));
+    h.evalEquals("20px - 10%", dim(10, Unit.PX));
+    h.evalEquals("100px / 100%", dim(1, Unit.PX));
+    h.evalEquals("100px / 200%", dim(0.5, Unit.PX));
+    h.evalEquals("100px / 50%", dim(2, Unit.PX));
     
     h.evalEquals("50% + 10%", dim(60, Unit.PERCENTAGE));
     h.evalEquals("50% - 10%", dim(40, Unit.PERCENTAGE));
-    h.evalEquals("100% * 50%", dim(50, Unit.PERCENTAGE));
-    h.evalEquals("20% * 50%", dim(10, Unit.PERCENTAGE));
-    h.evalEquals("100% / 10%", dim(1000, Unit.PERCENTAGE));
+    h.evalEquals("100% * 50%", dim(5000, Unit.PERCENTAGE));
+    h.evalEquals("20% * 50%", dim(1000, Unit.PERCENTAGE));
+    h.evalEquals("100% / 10%", dim(10, Unit.PERCENTAGE));
 
     h.evalEquals("30% + 10", dim(40, Unit.PERCENTAGE));
     h.evalEquals("30% - 10", dim(20, Unit.PERCENTAGE));
     h.evalEquals("30% / 10", dim(3, Unit.PERCENTAGE));
-
-    // Can't divide percentages by dimensions with units
-    h.evalFails("10% + 10px", PERCENT_MATH_ORDER);
-    h.evalFails("10% - 10px", PERCENT_MATH_ORDER);
-    h.evalFails("10% / 10px", PERCENT_MATH_ORDER);
   }
  
   @Test

@@ -24,6 +24,9 @@ public enum ExecuteErrorType implements ErrorType {
   BAD_COLOR_MATH
   ("A color cannot %(arg0)s %(arg1)s"),
   
+  DIVIDE_BY_ZERO
+  ("Attempt to divide %(arg0)s by zero."),
+  
   EXPECTED_BOOLOP
   ("Expected a boolean operator but found %(arg0)s"),
   

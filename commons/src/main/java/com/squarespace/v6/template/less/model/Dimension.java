@@ -10,6 +10,7 @@ import com.squarespace.v6.template.less.ErrorInfo;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.Options;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.ExecuteErrorMaker;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
@@ -73,11 +74,71 @@ public class Dimension extends BaseNode {
     }
   }
   
-  /**
-   * All math operations between Dimension instances happen here.
-   */
   @Override
   public Node operate(ExecEnv env, Operator op, Node node) throws LessException {
+    if (!node.is(NodeType.DIMENSION)) {
+      throw new LessException(invalidOperation(op, type()));
+    }
+    
+    Options opts = env.context().options();
+    Dimension dim = (Dimension)node;
+    Unit new_unit = (unit != null) ? unit : dim.unit;
+    double result = 0.0;
+    
+    double factor = UnitConversions.factor(dim.unit, unit);
+    double scaled = dim.value;
+    if (factor == 0.0) {
+      if (dim.unit != Unit.PERCENTAGE) {
+        // Emit a warning if we're converting between incompatible units
+        ErrorInfo info = incompatibleUnits(unit, dim.unit);
+        if (!opts.hideWarnings()) {
+          env.addWarning(info.getMessage() + ".. stripping unit.");
+        }
+      }
+      factor = 1.0;
+    }
+    scaled = dim.value * factor;
+    
+    switch (op) {
+      
+      case ADD:
+        result = value + scaled;
+        break;
+
+      case DIVIDE:
+        if (scaled == 0.0) {
+          ErrorInfo info = ExecuteErrorMaker.divideByZero(this);
+          if (opts.strict()) {
+            throw new LessException(info);
+          } else {
+            env.addWarning(info.getMessage() + "..  using " + this.repr());
+          }
+        } else {
+          result = value / scaled;
+        }
+        break;
+        
+      case MULTIPLY:
+        result = value * scaled;
+        break;
+        
+      case SUBTRACT:
+          result = value - scaled;
+        break;
+        
+      default:
+        throw new LessException(expectedMathOp(op));
+    }
+
+    return new Dimension(result, new_unit);
+  }
+  
+  /**
+   * All math operations between Dimension instances happen here.
+   * 
+   * TODO: this has more advanced handling of percentages. preserving until its clear which way we're going - phensley
+   */
+  public Node new_operate(ExecEnv env, Operator op, Node node) throws LessException {
     if (!node.is(NodeType.DIMENSION)) {
       throw new LessException(invalidOperation(op, type()));
     }
