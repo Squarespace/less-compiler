@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
+import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.exec.ArgSpec;
 import com.squarespace.v6.template.less.exec.ExecEnv;
@@ -58,14 +59,18 @@ public class ArgSpecTest extends LessTestBase {
     }
 
   }
+
+  private ExecEnv env() {
+    return new Context().newEnv();
+  }
   
   private void valid(ArgSpec spec, Node ... nodes) throws LessException {
-    assertTrue(spec.validate(dummy(spec), nodes));
+    assertTrue(spec.validate(env(), dummy(spec), nodes));
   }
   
   private void invalid(ArgSpec spec, Node ... nodes) throws LessException {
     try {
-      spec.validate(dummy(spec), nodes);
+      spec.validate(env(), dummy(spec), nodes);
       fail("Expected LessException for " + spec);
     } catch (LessException e) {
     }

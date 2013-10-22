@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.squarespace.v6.template.less.ErrorInfo;
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.Options;
 import com.squarespace.v6.template.less.model.Dimension;
 import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.NodeType;
@@ -63,24 +65,32 @@ public class ArgSpec {
     return validators;
   }
   
-  public boolean validate(Function func, Node ... args) throws LessException {
-    return validate(func, Arrays.asList(args));
+  public boolean validate(ExecEnv env, Function func, Node ... args) throws LessException {
+    return validate(env, func, Arrays.asList(args));
   }
   
-  public boolean validate(Function func, List<Node> args) throws LessException {
+  public boolean validate(ExecEnv env, Function func, List<Node> args) throws LessException {
     int size = args.size();
-    if (size < minArgs || (size > validators.size() && !variadic)) {
+    if (size < minArgs) {
       throw new LessException(argCount(func.name(), minArgs, size));
+
+    } else if (size > validators.size() && !variadic) {
+      Options opts = env.context().options();
+      ErrorInfo info = argCount(func.name(), minArgs, size);
+      if (opts.strict()) {
+        throw new LessException(info);
+        
+      } else {
+        // Ignore the additional arguments.
+        env.addWarning(info.getMessage() + ".. ignoring additional args");
+        size = validators.size();
+      }
     }
     if (variadic) {
       size = validators.size();
     }
     for (int i = 0; i < size; i++) {
-      try {
-        validators.get(i).validate(i, args.get(i));
-      } catch (LessException e) {
-        throw e;
-      }
+      validators.get(i).validate(i, args.get(i));
     }
     return true;
   }

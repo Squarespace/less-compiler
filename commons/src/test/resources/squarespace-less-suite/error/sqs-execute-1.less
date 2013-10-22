@@ -2,16 +2,29 @@
 
 rule: round(10, 10, 10);
 
+
 //:ExecuteErrorType.ARG_NAMED_NOTFOUND     named arg not found
 
 .mixin(@a, @b) { }
 .mixin(@a: 1, @c: 2);
 
+
 //:ExecuteErrorType.FORMAT_FUNCTION_ARGS   not enough args for format string
 
 property: %('%s %s %s', 1, 2);
 
+
 //:ExecuteErrorType.DIVIDE_BY_ZERO      attempt to divide by zero
 
 prop: 10px / 0;
+
+
+//:ExecuteErrorType.ARG_COUNT         too many args
+
+prop: rgb(20, 20, 20, 20, 20);
+
+
+//:ExecuteErrorType.ARG_COUNT         not enough args
+
+prop: rgb(20, 20);
 

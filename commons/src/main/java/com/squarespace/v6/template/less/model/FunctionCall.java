@@ -70,7 +70,7 @@ public class FunctionCall extends BaseNode {
       // Invoke built-in function
       List<Node> values = evalArgs(env);
       Node result = null;
-      func.spec().validate(func, values);
+      func.spec().validate(env, func, values);
       result = func.invoke(env, values);
       if (result != null) {
         return result;
