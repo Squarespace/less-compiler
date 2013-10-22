@@ -49,15 +49,15 @@ public class CssModel {
   
   public CssModel(Context ctx) {
     buffer = ctx.newBuffer();
-    current = new CssBlock(NodeType.STYLESHEET);
+    current = new CssBlock(STYLESHEET);
   }
   
   public void reset() {
-    current = new CssBlock(NodeType.STYLESHEET);
+    current = new CssBlock(STYLESHEET);
   }
   
   public String render() {
-    if (current.type() != NodeType.STYLESHEET) {
+    if (current.type() != STYLESHEET) {
       throw new RuntimeException("Serious error: stack was not fully popped.");
     }
     buffer.reset();

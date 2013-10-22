@@ -8,8 +8,8 @@ import java.util.Map;
  */
 public interface ErrorType {
 
-  public abstract String prefix(Map<String, Object> params);
+  String prefix(Map<String, Object> params);
   
-  public abstract String message(Map<String, Object> params);
+  String message(Map<String, Object> params);
 
 }

@@ -52,6 +52,7 @@ public class Dimension extends BaseNode {
     return false;
   }
   
+  
   @Override
   public NodeType type() {
     return NodeType.DIMENSION;

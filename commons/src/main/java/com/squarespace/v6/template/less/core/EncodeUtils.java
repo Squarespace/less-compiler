@@ -24,7 +24,7 @@ public class EncodeUtils {
   }
   
   private interface CharTest {
-    public boolean member(char ch);
+    boolean member(char ch);
   }
   
   private static final CharTest ENCODE_URI_TEST = new CharTest() {

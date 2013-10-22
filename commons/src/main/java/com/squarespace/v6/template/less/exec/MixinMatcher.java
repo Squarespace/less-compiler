@@ -193,10 +193,8 @@ public class MixinMatcher {
       Argument arg = args.get(i);
       Parameter param = params.get(i);
       String paramName = param.name();
-      if (paramName == null && !param.variadic()) {
-        if (!valueEquals(arg, param)) {
-          return false;
-        }
+      if (paramName == null && !param.variadic() && !valueEquals(arg, param)) {
+        return false;
       }
     }
     return true;

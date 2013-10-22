@@ -53,7 +53,7 @@ public class DirectiveParselet implements Parselet {
         return result;
       
       case "@media":
-        return parseMedia(stm, mark);
+        return parseMedia(stm);
 
       case "@font-face":
       case "@viewport":
@@ -112,7 +112,7 @@ public class DirectiveParselet implements Parselet {
     return null;
   }
 
-  private Node parseMedia(LessStream stm, Mark pos) throws LessException {
+  private Node parseMedia(LessStream stm) throws LessException {
     Features features = (Features) stm.parse(Parselets.FEATURES);
     Node block = stm.parse(Parselets.BLOCK);
     if (block == null) {

@@ -69,7 +69,7 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
   
   public static final Function FADEIN = new Function("fadein", "cp") {
     @Override
-    public Node invoke(ExecEnv env, java.util.List<Node> args) throws LessException {
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       RGBColor rgb = rgb(args.get(0));
       double amount = number(args.get(1)) * 0.01;
       return new RGBColor(rgb.red(), rgb.green(), rgb.blue(), rgb.alpha() + amount);

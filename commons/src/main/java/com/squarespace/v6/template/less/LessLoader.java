@@ -9,9 +9,9 @@ import java.nio.file.Path;
 public interface LessLoader {
 
   /** Peek to see if the target file exists before trying to load it */
-  public boolean exists(Path path);
+  boolean exists(Path path);
 
   /** Load the target file */
-  public String load(Path path) throws LessException;
+  String load(Path path) throws LessException;
   
 }

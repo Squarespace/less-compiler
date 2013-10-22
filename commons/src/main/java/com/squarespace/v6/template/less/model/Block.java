@@ -129,7 +129,6 @@ public class Block extends BaseNode {
     return false;
   }
   
-  
   @Override
   public String toString() {
     return rules.toString();

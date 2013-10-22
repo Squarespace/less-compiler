@@ -5,6 +5,9 @@ import com.squarespace.v6.template.less.model.Node;
 import com.squarespace.v6.template.less.model.Variable;
 
 
+/**
+ * Parses direct and indirect variable references.
+ */
 public class VariableParselet implements Parselet {
 
   @Override

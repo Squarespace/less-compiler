@@ -43,7 +43,7 @@ public class MixinCallArgsParselet implements Parselet {
       //
       if (node.is(NodeType.VARIABLE)) {
         Variable var = (Variable)node;
-        Node temp = parseVarArg(stm, expressions.size());
+        Node temp = parseVarArg(stm);
         if (temp != null) {
           if (expressions.size() > 0) {
             if (delimSemicolon) {
@@ -94,7 +94,7 @@ public class MixinCallArgsParselet implements Parselet {
     return delimSemicolon ? argsSemicolon : argsComma;
   }
 
-  private Node parseVarArg(LessStream stm, int expCount) throws LessException {
+  private Node parseVarArg(LessStream stm) throws LessException {
     if (!stm.seekIf(Chars.COLON)) {
       return null;
     }

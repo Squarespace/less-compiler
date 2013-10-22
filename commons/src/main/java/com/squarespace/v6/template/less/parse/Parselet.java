@@ -24,6 +24,6 @@ import com.squarespace.v6.template.less.model.Node;
  */
 public interface Parselet {
 
-  public Node parse(LessStream stm) throws LessException;
+  Node parse(LessStream stm) throws LessException;
   
 }

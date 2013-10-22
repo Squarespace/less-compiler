@@ -3,7 +3,6 @@ package com.squarespace.v6.template.less.model;
 import static com.squarespace.v6.template.less.core.Chars.hexchar;
 
 import com.squarespace.v6.template.less.core.Buffer;
-import com.squarespace.v6.template.less.core.Chars;
 
 
 public class RGBColor extends BaseColor {
@@ -186,12 +185,12 @@ public class RGBColor extends BaseColor {
       buf.append(')');
 
     } else {
-      char r0 = Chars.hexchar(c0 >> 4);
-      char r1 = Chars.hexchar(c0 & 0x0F);
-      char g0 = Chars.hexchar(c1 >> 4);
-      char g1 = Chars.hexchar(c1 & 0x0F);
-      char b0 = Chars.hexchar(c2 >> 4);
-      char b1 = Chars.hexchar(c2 & 0x0F);
+      char r0 = hexchar(c0 >> 4);
+      char r1 = hexchar(c0 & 0x0F);
+      char g0 = hexchar(c1 >> 4);
+      char g1 = hexchar(c1 & 0x0F);
+      char b0 = hexchar(c2 >> 4);
+      char b1 = hexchar(c2 & 0x0F);
 
       // Check if the color can be emitted as a 3-character hex sequence.
       boolean hex3 = (r0 == r1 && g0 == g1 && b0 == b1);

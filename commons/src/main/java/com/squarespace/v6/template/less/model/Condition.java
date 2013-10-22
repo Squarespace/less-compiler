@@ -119,17 +119,17 @@ public class Condition extends BaseNode {
         break;
         
       case COLOR:
-        result = compare(env, (BaseColor)left, right);
+        result = compare((BaseColor)left, right);
         break;
         
       case DIMENSION:
-        result = compare(env, (Dimension)left, right);
+        result = compare((Dimension)left, right);
         break;
         
       case KEYWORD:
       case TRUE:
       case FALSE:
-        result = compare(env, (Keyword)left, right);
+        result = compare((Keyword)left, right);
         break;
         
       case QUOTED:
@@ -181,7 +181,7 @@ public class Condition extends BaseNode {
     }
   }
   
-  private int compare(ExecEnv env, BaseColor color, Node arg) throws LessException {
+  private int compare(BaseColor color, Node arg) throws LessException {
     if (arg.is(NodeType.KEYWORD)) {
       Keyword kwd = (Keyword)arg;
       RGBColor tmp = RGBColor.fromName(kwd.value());
@@ -200,7 +200,7 @@ public class Condition extends BaseNode {
         && color0.alpha() == color1.alpha() ? 0 : -1;
   }
   
-  private int compare(ExecEnv env, Dimension dim0, Node arg) throws LessException {
+  private int compare(Dimension dim0, Node arg) throws LessException {
     if (arg instanceof Dimension) {
       Dimension dim1 = (Dimension)arg;
       double value0 = dim0.value();
@@ -223,7 +223,7 @@ public class Condition extends BaseNode {
     return -1;
   }
   
-  private int compare(ExecEnv env, Keyword keyword, Node arg) throws LessException {
+  private int compare(Keyword keyword, Node arg) throws LessException {
     if (arg instanceof Keyword) {
       return compareTo(keyword.value(), ((Keyword)arg).value());
     }
