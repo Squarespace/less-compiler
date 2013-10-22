@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class JailedFilesystemLessLoader extends FilesystemLessLoader {
 
   private static final Pattern ACCEPT_IMPORT = Pattern.compile(".*\\.(less|css)$");
+  
   private Path jailRoot;
   
   public JailedFilesystemLessLoader(Path jailRoot) {

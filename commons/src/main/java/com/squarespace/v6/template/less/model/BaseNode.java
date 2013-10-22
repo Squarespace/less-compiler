@@ -60,7 +60,7 @@ public abstract class BaseNode implements Node {
 
   @Override
   public int hashCode() {
-    throw new RuntimeException("Serious error: model objects are not designed to be hashed.");
+    throw new UnsupportedOperationException("Serious error: model objects are not designed to be hashed.");
   }
   
   @Override

@@ -158,7 +158,7 @@ public class LessC {
     try {
       source = LessUtils.readFile(path);
     } catch (IOException e) {
-      
+      fail("error reading '" + path + "': " + e.getMessage());
     }
     
     Context ctx = new Context(options);

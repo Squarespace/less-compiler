@@ -180,4 +180,9 @@ public class FlexList<E> {
     elems = Arrays.copyOf(elems, capacity + (capacity >> 1));
   }
 
+  @Override
+  public int hashCode() {
+    throw new UnsupportedOperationException("FlexList instances are not hashable.");
+  }
+  
 }

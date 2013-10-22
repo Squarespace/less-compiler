@@ -4,7 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 
-public class TypeRef<T> implements Comparable<TypeRef<T>> {
+public class TypeRef<T> {
 
   private final Type type;
   
@@ -17,9 +17,4 @@ public class TypeRef<T> implements Comparable<TypeRef<T>> {
     return type;
   }
   
-  @Override
-  public int compareTo(TypeRef<T> o) {
-    return 0;
-  }
-
 }

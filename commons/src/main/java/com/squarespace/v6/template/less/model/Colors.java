@@ -180,10 +180,6 @@ public class Colors {
     return NAME_TO_RGB.get(name);
   }
   
-  public static String rgbToHex(int r, int g, int b) {
-    return String.format("%x%x%x", r, g, b);
-  }
-
   public static int rgbToInt(int r, int g, int b) {
     return (r << 16) + (g << 8) + b;
   }

@@ -49,6 +49,10 @@ public class RenderEnv {
   }
   
   public void push(BlockNode blockNode) throws LessException {
+    if (blockNode == null) {
+      throw new IllegalArgumentException("Serious error: blockNode cannot be null.");
+    }
+    
     // Ensure that selectors / features are evaluated outside the block they're attached to.
     Selectors selectors = null;
     Features features = null;

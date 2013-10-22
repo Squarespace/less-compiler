@@ -119,11 +119,11 @@ public class RGBColor extends BaseColor {
       h = s = 0.0;
     } else {
       s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      if (max == r) {
+      if ((max - r) == 0.0) {
         h = (g - b) / d + (g < b ? 6 : 0);
-      } else if (max == g) {
+      } else if ((max - g) == 0.0) {
         h = (b - r) / d + 2;
-      } else if (max == b) {
+      } else if ((max - b) == 0.0) {
         h = (r - g) / d + 4;
       }
       h /= 6.0;
@@ -226,6 +226,5 @@ public class RGBColor extends BaseColor {
       buf.append(" [from keyword]");
     }
   }
-
 
 }
