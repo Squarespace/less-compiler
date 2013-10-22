@@ -28,6 +28,7 @@ public class SelectorsParselet implements Parselet {
         break;
       }
       stm.parse(COMMENT);
+      stm.skipWs();
       selector = stm.parse(SELECTOR);
     }
     

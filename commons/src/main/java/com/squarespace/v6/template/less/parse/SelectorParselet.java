@@ -40,6 +40,7 @@ public class SelectorParselet implements Parselet {
         selector = new Selector();
       }
       selector.add((Element)elem);
+      stm.parse(Parselets.COMMENT);
       if (CharClass.selectorEnd(stm.peek())) {
         break;
       }
