@@ -59,7 +59,6 @@ public abstract class BaseColor extends BaseNode {
           throw new LessException(info);
         }
         env.addWarning(info.getMessage() + ".. stripping unit.");
-        dim = new Dimension(dim.value());
       }
       return operate(op, this, fromDimension((Dimension)arg));
 
