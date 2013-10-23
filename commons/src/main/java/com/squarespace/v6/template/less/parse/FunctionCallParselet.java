@@ -80,8 +80,15 @@ public class FunctionCallParselet implements Parselet {
   public static Node parseUrl(LessStream stm) throws LessException {
     stm.skipWs();
     Node value = stm.parse(QUOTED, VARIABLE);
-    if (value == null && stm.matchUrlEndBare()) {
-      value = new Anonymous(stm.token());
+    if (value == null) {
+      int start = stm.position();
+      char ch = stm.peek();
+      while (ch != Chars.RIGHT_PARENTHESIS && ch != Chars.EOF) {
+        stm.seek(1);
+        ch = stm.peek();
+      }
+      String url = stm.raw().substring(start, stm.position());
+      value = new Anonymous(url.trim());
     }
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {

@@ -67,8 +67,6 @@ public class LessStream extends Stream {
   
   private final Matcher match_URLSTART;
   
-  private final Matcher match_URL_BARE;
-
   private final Matcher match_WHEN;
   
   private final Matcher match_WORD;
@@ -119,7 +117,6 @@ public class LessStream extends Stream {
     this.match_SHORTHAND = Patterns.SHORTHAND.matcher(raw);
     this.match_UNICODE_RANGE = Patterns.UNICODE_DESCRIPTOR.matcher(raw);
     this.match_URLSTART = Patterns.URLSTART.matcher(raw);
-    this.match_URL_BARE = Patterns.URL_BARE.matcher(raw);
     this.match_WHEN = Patterns.WHEN.matcher(raw);
     this.match_WORD = Patterns.WORD.matcher(raw);
   }
@@ -281,10 +278,6 @@ public class LessStream extends Stream {
     return finish(match(match_URLSTART));
   }
   
-  public boolean matchUrlEndBare() {
-    return finish(match(match_URL_BARE));
-  }
-
   public boolean matchWhen() {
     return finish(match(match_WHEN));
   }

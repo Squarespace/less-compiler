@@ -88,8 +88,6 @@ public class Patterns {
   
   public static final Pattern _URLEND_BARE = pattern("[^\\s)]+");
   
-  public static final Pattern URL_BARE = pattern("(?:(?:\\\\[\\(\\)'\"])|[^\\(\\)'\"])+");
-  
   public static final Pattern WHEN = pattern("when");
   
   public static final Pattern WORD = pattern("\\w+");
