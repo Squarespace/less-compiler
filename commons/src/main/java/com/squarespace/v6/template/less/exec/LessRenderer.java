@@ -7,6 +7,7 @@ import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.Options;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.core.FlexList;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.model.Block;
 import com.squarespace.v6.template.less.model.BlockDirective;
 import com.squarespace.v6.template.less.model.Comment;
@@ -189,7 +190,7 @@ public class LessRenderer {
           break;
           
         default:
-          throw new RuntimeException("Unhandled node: " + node.type());
+          throw new LessInternalException("Unhandled node: " + node.type());
       }
     }
   }

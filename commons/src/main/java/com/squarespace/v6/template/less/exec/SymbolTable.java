@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.core.TypeRef;
 
 
@@ -39,10 +40,10 @@ public abstract class SymbolTable<V> {
   
   protected void put(String symbol, V value) {
     if (inUse) {
-      throw new RuntimeException("Attempt to add a symbol after table in use.");
+      throw new LessInternalException("Attempt to add a symbol after table in use.");
     }
     if (table.containsKey(symbol)) {
-      throw new RuntimeException("A symbol named '" + symbol + "' is already registered!");
+      throw new LessInternalException("A symbol named '" + symbol + "' is already registered!");
     }
     table.put(symbol, value);
   }
@@ -61,7 +62,7 @@ public abstract class SymbolTable<V> {
         try {
           registerSymbol(field.get(source));
         } catch (IllegalAccessException e) {
-          throw new RuntimeException("failed to register " + source, e);
+          throw new LessInternalException("Failed to register source " + source, e);
         }
       }
     }

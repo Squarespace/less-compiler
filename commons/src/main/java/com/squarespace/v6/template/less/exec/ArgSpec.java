@@ -149,7 +149,7 @@ public class ArgSpec {
       case 's':
         return NodeType.QUOTED;
     }
-    throw new RuntimeException("Unknown type ch: '" + ch + "'");
+    throw new IllegalArgumentException("Unknown type ch: '" + ch + "'");
   }
  
   static class ArgTypeValidator extends ArgValidator {

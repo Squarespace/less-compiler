@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 
 
 /**
@@ -49,7 +50,7 @@ public class BufferStack {
   
   public void sanityCheck() {
     if (index != 0) {
-      throw new RuntimeException("Serious error: buffer stack was not returned to zero: " + index);
+      throw new LessInternalException("Serious error: buffer stack was not returned to zero: " + index);
     }
   }
 

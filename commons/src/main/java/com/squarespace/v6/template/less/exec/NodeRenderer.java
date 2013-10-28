@@ -7,6 +7,7 @@ import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.core.CharClass;
 import com.squarespace.v6.template.less.core.Chars;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.model.Alpha;
 import com.squarespace.v6.template.less.model.Assignment;
 import com.squarespace.v6.template.less.model.AttributeElement;
@@ -129,7 +130,7 @@ public class NodeRenderer {
         break;
         
       default:
-        throw new RuntimeException("Don't know how to render a node of type " + node.type());
+        throw new LessInternalException("Don't know how to render a node of type " + node.type());
     }
   }
   

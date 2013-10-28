@@ -1,6 +1,7 @@
 package com.squarespace.v6.template.less.model;
 
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 
 
 /**
@@ -22,7 +23,7 @@ public class HSLColor extends BaseColor {
   
   public HSLColor(double hue, double saturation, double lightness, double alpha) {
     if (hue < 0 || hue > 1.0) {
-      throw new RuntimeException("Serious error: something passing hue out of range: " + hue);
+      throw new LessInternalException("Serious error: something passing hue out of range: " + hue);
     }
     this.hue = clamp(hue * 360.0, 0.0, 360.0);
     this.saturation = clamp(saturation, 0.0, 1.0);

@@ -96,7 +96,7 @@ public class Buffer {
   
   public Buffer startDelim(char ch) {
     if (inEscape()) {
-      throw new RuntimeException("Buffer already in escape mode for " + delim);
+      throw new LessInternalException("Serious error: buffer already in escape mode for " + delim);
     }
     this.delim = ch;
     return this;

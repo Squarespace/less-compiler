@@ -3,11 +3,10 @@ package com.squarespace.v6.template.less.core;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.squarespace.v6.template.less.core.CartesianProduct;
 
 
 public class CartesianProductTest {
@@ -26,7 +25,7 @@ public class CartesianProductTest {
     try {
       product.next();
       Assert.fail("Expected IllegalStateException");
-    } catch (IllegalStateException e) {
+    } catch (NoSuchElementException e) {
     }
   }
   

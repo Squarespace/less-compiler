@@ -16,6 +16,7 @@ import java.util.Set;
 
 import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.core.LessUtils;
 import com.squarespace.v6.template.less.model.NodeType;
 
@@ -58,7 +59,7 @@ public class CssModel {
   
   public String render() {
     if (current.type() != STYLESHEET) {
-      throw new RuntimeException("Serious error: stack was not fully popped.");
+      throw new LessInternalException("Serious error: stack was not fully popped.");
     }
     buffer.reset();
     current.render(buffer);
@@ -111,7 +112,7 @@ public class CssModel {
         return;
       }
     }
-    throw new RuntimeException("Serious error: no block accepted " + block.type());
+    throw new LessInternalException("Serious error: no block accepted " + block.type());
   }
   
   static class CssBlock extends CssNode {
@@ -149,7 +150,7 @@ public class CssModel {
           break;
           
         default:
-          throw new RuntimeException("Serious error: css model block cannot be " + type);
+          throw new LessInternalException("Serious error: css model block cannot be " + type);
       }
     }
 

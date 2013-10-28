@@ -12,6 +12,7 @@ import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.core.Constants;
 import com.squarespace.v6.template.less.core.ExecuteErrorMaker;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
@@ -148,7 +149,7 @@ public class Condition extends BaseNode {
       case 1:
         return operator == GREATER_THAN || operator == GREATER_THAN_OR_EQUAL || operator == NOT_EQUAL; 
       default:
-        throw new RuntimeException("Serious error: comparison functions must return one of [-1, 0, 1]. Got " + result);
+        throw new LessInternalException("Serious error: comparison functions must return one of [-1, 0, 1]. Got " + result);
     }
   }
 

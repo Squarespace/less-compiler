@@ -11,6 +11,7 @@ import java.util.Queue;
 
 import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.LessException;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.model.Argument;
 import com.squarespace.v6.template.less.model.Block;
 import com.squarespace.v6.template.less.model.Definition;
@@ -67,7 +68,7 @@ public class MixinMatcher {
    */
   public GenericBlock bind(MixinParams mixinParams) throws LessException {
     if (mixinParams.needsEval()) {
-      throw new RuntimeException("Serious error: params must already be evaluated!");
+      throw new LessInternalException("Serious error: params must already be evaluated!");
     }
     
     List<Parameter> params = mixinParams.params();

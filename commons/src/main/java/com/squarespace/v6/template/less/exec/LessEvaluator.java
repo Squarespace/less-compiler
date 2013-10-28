@@ -12,6 +12,7 @@ import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.Options;
 import com.squarespace.v6.template.less.core.FlexList;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.model.Block;
 import com.squarespace.v6.template.less.model.BlockDirective;
 import com.squarespace.v6.template.less.model.Definition;
@@ -183,7 +184,7 @@ public class LessEvaluator {
             break;
           
           case MIXIN_CALL:
-            throw new RuntimeException("Serious error: all mixin calls should already have been evaluated.");
+            throw new LessInternalException("Serious error: all mixin calls should already have been evaluated.");
             
           case RULESET:
             node = evaluateRuleset(env, (Ruleset)node, forceImportant);

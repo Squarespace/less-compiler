@@ -3,6 +3,7 @@ package com.squarespace.v6.template.less.exec;
 import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.model.BlockNode;
 import com.squarespace.v6.template.less.model.Features;
 import com.squarespace.v6.template.less.model.Media;
@@ -50,7 +51,7 @@ public class RenderEnv {
   
   public void push(BlockNode blockNode) throws LessException {
     if (blockNode == null) {
-      throw new IllegalArgumentException("Serious error: blockNode cannot be null.");
+      throw new LessInternalException("Serious error: blockNode cannot be null.");
     }
     
     // Ensure that selectors / features are evaluated outside the block they're attached to.
@@ -78,7 +79,7 @@ public class RenderEnv {
   
   public void pop() {
     if (frame == null) {
-      throw new RuntimeException("Serious error: popped past the last frame!");
+      throw new LessInternalException("Serious error: popped past the last frame!");
     }
     depth--;
     frame = frame.parent();

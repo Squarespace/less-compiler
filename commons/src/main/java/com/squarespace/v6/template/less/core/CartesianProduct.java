@@ -3,6 +3,7 @@ package com.squarespace.v6.template.less.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
  * from the output.  For example, the input "[ [a, b], [], [1, 2] ]" will produce
  * the same results sequence shown above.
  */
-public class CartesianProduct<T> implements Iterable<List<T>>, Iterator<List<T>> {
+public class CartesianProduct<T> implements Iterator<List<T>> {
 
   private final List<List<T>> lists;
   
@@ -49,11 +50,6 @@ public class CartesianProduct<T> implements Iterable<List<T>>, Iterator<List<T>>
   }
 
   @Override
-  public Iterator<List<T>> iterator() {
-    return this;
-  }
-
-  @Override
   public boolean hasNext() {
     return hasNext;
   }
@@ -64,7 +60,7 @@ public class CartesianProduct<T> implements Iterable<List<T>>, Iterator<List<T>>
       throw new IllegalStateException("No input to iterate over.");
     }
     if (!hasNext) {
-      throw new IllegalStateException("Iterator is exhausted.");
+      throw new NoSuchElementException("Iterator is exhausted.");
     }
 
     int size = indices.length;

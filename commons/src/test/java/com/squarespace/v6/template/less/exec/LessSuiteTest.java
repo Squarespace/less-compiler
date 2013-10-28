@@ -167,7 +167,7 @@ public class LessSuiteTest {
       if (lines[i].startsWith("//:")) {
         String[] parts = lines[i].substring(3).split("\\s+", 2);
         if (parts.length != 2) {
-          throw new RuntimeException("Bad test case definition: " + lines[i]);
+          throw new InvalidTestException("Bad test case definition: " + lines[i]);
         }
         
         // Read the test case's source
@@ -191,7 +191,7 @@ public class LessSuiteTest {
   private ErrorType resolveErrorType(String name) {
     int index = name.indexOf('.');
     if (index == -1) {
-      throw new RuntimeException("The ErrorType name must be of the form CLASS.MEMBER");
+      throw new InvalidTestException("The ErrorType name must be of the form CLASS.MEMBER");
     }
     String cls = name.substring(0, index);
     String member = name.substring(index + 1);
@@ -201,7 +201,7 @@ public class LessSuiteTest {
       case "SyntaxErrorType":
         return SyntaxErrorType.valueOf(member);
       default:
-        throw new RuntimeException("Unknown ErrorType-derived class: " + cls);  
+        throw new InvalidTestException("Unknown ErrorType-derived class: " + cls);  
     }
   }
   
