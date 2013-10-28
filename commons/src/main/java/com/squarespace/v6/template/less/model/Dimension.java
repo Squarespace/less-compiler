@@ -3,8 +3,6 @@ package com.squarespace.v6.template.less.model;
 import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.expectedMathOp;
 import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.incompatibleUnits;
 import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.invalidOperation;
-import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.percentMathOrder;
-import static com.squarespace.v6.template.less.model.Unit.PERCENTAGE;
 
 import com.squarespace.v6.template.less.ErrorInfo;
 import com.squarespace.v6.template.less.LessException;
@@ -137,121 +135,121 @@ public class Dimension extends BaseNode {
   /**
    * All math operations between Dimension instances happen here.
    * 
-   * TODO: this has more advanced handling of percentages. preserving until its clear which way we're going - phensley
+   * TODO: this has more advanced handling of percentages. preserving for future reference. - phensley
    */
-  public Node new_operate(ExecEnv env, Operator op, Node node) throws LessException {
-    if (!node.is(NodeType.DIMENSION)) {
-      throw new LessException(invalidOperation(op, type()));
-    }
-
-    Options opts = env.context().options();
-    Dimension dim = (Dimension)node;
-    Unit new_unit = unit;
-    double result = 0.0;
-    
-    // Special case when the left-hand is a percentage.
-    if (unit == PERCENTAGE) {
-      if (dim.unit != PERCENTAGE && dim.unit != null && op != Operator.MULTIPLY) {
-        ErrorInfo info = percentMathOrder(dim);
-        if (opts.strict()) {
-          throw new LessException(info);
-        } else if (!opts.hideWarnings()) {
-          env.addWarning(info.getMessage() + ".. stripping unit.");
-        }
-        dim = new Dimension(dim.value());
-      }
-      switch (op) {
-        
-        case ADD:
-          result = value + dim.value;
-          break;
-
-        case DIVIDE:
-          if (dim.unit == PERCENTAGE) {
-            result = value / (dim.value * 0.01);
-          } else {
-            result = value / dim.value;
-          }
-          break;
-          
-        case MULTIPLY:
-          if (dim.unit == PERCENTAGE) {
-            result = value * (dim.value * 0.01);
-            
-          } else if (dim.unit == null) {
-            result = value * dim.value;
-          
-          } else {
-            result = (value * 0.01) * dim.value;
-            new_unit = dim.unit;
-          }
-          break;
-          
-        case SUBTRACT:
-          result = value - dim.value;
-          break;
-          
-        default:
-          throw new LessException(expectedMathOp(op));
-      }
-      return new Dimension(result, new_unit);
-    }
-    
-    if (dim.unit != Unit.PERCENTAGE) {
-      new_unit = (unit != null) ? unit : dim.unit;
-    }
-    double factor = UnitConversions.factor(dim.unit, unit);
-    if (factor == 0.0 && dim.unit != Unit.PERCENTAGE) {
-      ErrorInfo info = incompatibleUnits(unit, dim.unit);
-      if (opts.strict()) {
-        throw new LessException(info);
-      } else if (!opts.hideWarnings()) {
-        env.addWarning(info.getMessage() + ".. stripping unit.");
-      }
-      factor = 1.0;
-      dim = new Dimension(dim.value());
-    }
-    double scaled = dim.value * factor;
-    switch (op) {
-      
-      case ADD:
-        if (dim.unit == PERCENTAGE) {
-          result = value + (value * dim.value * 0.01);
-        } else {
-          result = value + scaled;
-        }
-        break;
-
-      case DIVIDE:
-        if (dim.unit == PERCENTAGE) {
-          result = value / (dim.value * 0.01);
-        } else {
-          result = value / scaled;
-        }
-        break;
-        
-      case MULTIPLY:
-        if (dim.unit == PERCENTAGE) {
-          result = value * (dim.value * 0.01);
-        } else {
-          result = value * scaled;
-        }
-        break;
-        
-      case SUBTRACT:
-        if (dim.unit == PERCENTAGE) {
-          result = value - (value * dim.value * 0.01);
-        } else {
-          result = value - scaled;
-        }
-        break;
-        
-      default:
-        throw new LessException(expectedMathOp(op));
-    }
-
-    return new Dimension(result, new_unit);
-  }
+//  public Node new_operate(ExecEnv env, Operator op, Node node) throws LessException {
+//    if (!node.is(NodeType.DIMENSION)) {
+//      throw new LessException(invalidOperation(op, type()));
+//    }
+//
+//    Options opts = env.context().options();
+//    Dimension dim = (Dimension)node;
+//    Unit new_unit = unit;
+//    double result = 0.0;
+//    
+//    // Special case when the left-hand is a percentage.
+//    if (unit == PERCENTAGE) {
+//      if (dim.unit != PERCENTAGE && dim.unit != null && op != Operator.MULTIPLY) {
+//        ErrorInfo info = percentMathOrder(dim);
+//        if (opts.strict()) {
+//          throw new LessException(info);
+//        } else if (!opts.hideWarnings()) {
+//          env.addWarning(info.getMessage() + ".. stripping unit.");
+//        }
+//        dim = new Dimension(dim.value());
+//      }
+//      switch (op) {
+//        
+//        case ADD:
+//          result = value + dim.value;
+//          break;
+//
+//        case DIVIDE:
+//          if (dim.unit == PERCENTAGE) {
+//            result = value / (dim.value * 0.01);
+//          } else {
+//            result = value / dim.value;
+//          }
+//          break;
+//          
+//        case MULTIPLY:
+//          if (dim.unit == PERCENTAGE) {
+//            result = value * (dim.value * 0.01);
+//            
+//          } else if (dim.unit == null) {
+//            result = value * dim.value;
+//          
+//          } else {
+//            result = (value * 0.01) * dim.value;
+//            new_unit = dim.unit;
+//          }
+//          break;
+//          
+//        case SUBTRACT:
+//          result = value - dim.value;
+//          break;
+//          
+//        default:
+//          throw new LessException(expectedMathOp(op));
+//      }
+//      return new Dimension(result, new_unit);
+//    }
+//    
+//    if (dim.unit != Unit.PERCENTAGE) {
+//      new_unit = (unit != null) ? unit : dim.unit;
+//    }
+//    double factor = UnitConversions.factor(dim.unit, unit);
+//    if (factor == 0.0 && dim.unit != Unit.PERCENTAGE) {
+//      ErrorInfo info = incompatibleUnits(unit, dim.unit);
+//      if (opts.strict()) {
+//        throw new LessException(info);
+//      } else if (!opts.hideWarnings()) {
+//        env.addWarning(info.getMessage() + ".. stripping unit.");
+//      }
+//      factor = 1.0;
+//      dim = new Dimension(dim.value());
+//    }
+//    double scaled = dim.value * factor;
+//    switch (op) {
+//      
+//      case ADD:
+//        if (dim.unit == PERCENTAGE) {
+//          result = value + (value * dim.value * 0.01);
+//        } else {
+//          result = value + scaled;
+//        }
+//        break;
+//
+//      case DIVIDE:
+//        if (dim.unit == PERCENTAGE) {
+//          result = value / (dim.value * 0.01);
+//        } else {
+//          result = value / scaled;
+//        }
+//        break;
+//        
+//      case MULTIPLY:
+//        if (dim.unit == PERCENTAGE) {
+//          result = value * (dim.value * 0.01);
+//        } else {
+//          result = value * scaled;
+//        }
+//        break;
+//        
+//      case SUBTRACT:
+//        if (dim.unit == PERCENTAGE) {
+//          result = value - (value * dim.value * 0.01);
+//        } else {
+//          result = value - scaled;
+//        }
+//        break;
+//        
+//      default:
+//        throw new LessException(expectedMathOp(op));
+//    }
+//
+//    return new Dimension(result, new_unit);
+//  }
   
 }
 
