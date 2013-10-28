@@ -1,0 +1,11 @@
+.rule {
+  parent-1: true;
+  sibling-1: true;
+  sibling-2: true;
+  child-1: true;
+}
+@media screen and mobile {
+  .rule {
+    output-once: true;
+  }
+}

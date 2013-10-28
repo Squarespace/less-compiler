@@ -30,7 +30,7 @@ public class BlockParselet implements Parselet {
       return null;
     }
     stm.seek1();
-    return block == null ? new Block() : block;
+    return block;
   }
 
 }

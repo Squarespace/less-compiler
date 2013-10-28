@@ -67,7 +67,6 @@ public class ConditionParselet implements Parselet {
     }
     return res;
   }
-
   
   private Node parseValue(LessStream stm) throws LessException {
     return stm.parse(ADDITION, KEYWORD, QUOTED);

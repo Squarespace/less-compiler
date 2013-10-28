@@ -12,3 +12,19 @@
 
 @import url(foo.css)
 
+
+//:SyntaxErrorType.EXPECTED   missing right paren
+
+.mixin(@arg) when (@arg > 1 {
+
+}
+
+//:SyntaxErrorType.INCOMPLETE_PARSE   missing closing '}'
+
+.foo {
+    color: #123;
+
+//:SyntaxErrorType.INCOMPLETE_PARSE   missing entity
+
+prop: function(arg=);
+

@@ -248,6 +248,7 @@ public class LessEvaluator {
   }
   
   private Block executeImport(ExecEnv env, Import imp) throws LessException {
+    imp = (Import)imp.eval(env);
     String path = imp.renderPath(env);
     Matcher matcher = IMPORT_EXT.matcher(path);
     if (!matcher.matches()) {
