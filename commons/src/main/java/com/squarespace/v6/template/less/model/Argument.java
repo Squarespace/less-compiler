@@ -4,6 +4,7 @@ import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
@@ -19,7 +20,7 @@ public class Argument extends BaseNode {
   
   public Argument(String name, Node value) {
     if (value == null) {
-      throw new IllegalArgumentException("Serious error: value cannot be null");
+      throw new LessInternalException("Serious error: value cannot be null");
     }
     this.name = name;
     this.value = value;

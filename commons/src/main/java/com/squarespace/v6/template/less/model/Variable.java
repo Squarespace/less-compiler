@@ -7,6 +7,7 @@ import static com.squarespace.v6.template.less.model.NodeType.VARIABLE;
 import com.squarespace.v6.template.less.Context;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
@@ -27,7 +28,7 @@ public class Variable extends BaseNode {
   
   public Variable(String name, boolean curly) {
     if (name == null) {
-      throw new IllegalArgumentException("Serious error: name cannot be null");
+      throw new LessInternalException("Serious error: name cannot be null");
     }
     if (name.startsWith("@@")) {
       name = name.substring(1);

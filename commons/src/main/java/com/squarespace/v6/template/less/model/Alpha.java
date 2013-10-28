@@ -5,6 +5,7 @@ import static com.squarespace.v6.template.less.model.NodeType.ALPHA;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
@@ -14,7 +15,7 @@ public class Alpha extends BaseNode {
   
   public Alpha(Node value) {
     if (value == null) {
-      throw new IllegalArgumentException("Serious error: value cannot be null.");
+      throw new LessInternalException("Serious error: value cannot be null.");
     }
     this.value = value;
   }

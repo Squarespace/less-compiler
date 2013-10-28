@@ -5,6 +5,7 @@ import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 
 
 public class Anonymous extends BaseNode {
@@ -13,7 +14,7 @@ public class Anonymous extends BaseNode {
   
   public Anonymous(String value) {
     if (value == null) {
-      throw new IllegalArgumentException("Serious error: value cannot be null.");
+      throw new LessInternalException("Serious error: value cannot be null.");
     }
     this.value = value;
   }

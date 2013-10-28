@@ -4,6 +4,7 @@ import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
@@ -15,7 +16,7 @@ public class Assignment extends BaseNode {
   
   public Assignment(String name, Node value) {
     if (name == null || value == null) {
-      throw new IllegalArgumentException("Serious error: name/value cannot be null.");
+      throw new LessInternalException("Serious error: name/value cannot be null.");
     }
     this.name = name;
     this.value = value;

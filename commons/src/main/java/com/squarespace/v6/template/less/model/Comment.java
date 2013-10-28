@@ -6,6 +6,7 @@ import static com.squarespace.v6.template.less.model.NodeType.COMMENT;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 
 
 public class Comment extends BaseNode {
@@ -22,7 +23,7 @@ public class Comment extends BaseNode {
   
   public Comment(String body, boolean block, boolean newline) {
     if (body == null) {
-      throw new IllegalArgumentException("Serious error: body cannot be null.");
+      throw new LessInternalException("Serious error: body cannot be null.");
     }
     this.body = body;
     this.block = block;

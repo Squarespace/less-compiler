@@ -5,6 +5,7 @@ import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 import java.nio.file.Path;
 
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 
 
 public class Directive extends BaseNode {
@@ -17,7 +18,7 @@ public class Directive extends BaseNode {
   
   public Directive(String name, Node value) {
     if (name == null || value == null) {
-      throw new IllegalArgumentException("Serious error: name/value cannot be null.");
+      throw new LessInternalException("Serious error: name/value cannot be null.");
     }
     this.name = name;
     this.value = value;

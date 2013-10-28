@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.core.LessUtils;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
@@ -32,7 +33,7 @@ public class MixinCallArgs extends BaseNode {
   
   public void add(Argument arg) {
     if (arg == null) {
-      throw new IllegalArgumentException("Serious error: arg cannot be null.");
+      throw new LessInternalException("Serious error: arg cannot be null.");
     }
     args = LessUtils.initList(args, 3);
     args.add(arg);

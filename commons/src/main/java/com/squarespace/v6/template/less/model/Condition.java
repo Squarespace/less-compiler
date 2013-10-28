@@ -28,7 +28,7 @@ public class Condition extends BaseNode {
   
   public Condition(Operator operator, Node operand0, Node operand1, boolean negate) {
     if (operator == null || operand0 == null || operand1 == null) {
-      throw new IllegalArgumentException("Serious error: operator/operands cannot be null.");
+      throw new LessInternalException("Serious error: operator/operands cannot be null.");
     }
     this.operator = operator;
     this.operand0 = operand0;

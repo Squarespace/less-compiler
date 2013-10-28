@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.core.LessUtils;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 import com.squarespace.v6.template.less.exec.Function;
@@ -32,7 +33,7 @@ public class FunctionCall extends BaseNode {
 
   public FunctionCall(String name, List<Node> args, boolean noimpl) {
     if (name == null) {
-      throw new IllegalArgumentException("Serious error: name cannot be null");
+      throw new LessInternalException("Serious error: name cannot be null");
     }
     this.name = name;
     this.args = args;

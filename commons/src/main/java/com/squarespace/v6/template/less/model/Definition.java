@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.core.ExecuteErrorMaker;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.exec.ExecEnv;
 
 
@@ -32,7 +33,7 @@ public class Definition extends BaseNode {
   
   public Definition(String name, Node value) {
     if (name == null || value == null) {
-      throw new IllegalArgumentException("Serious error: name/value cannot be null.");
+      throw new LessInternalException("Serious error: name/value cannot be null.");
     }
     this.name = name;
     this.value = value;

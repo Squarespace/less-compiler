@@ -5,6 +5,7 @@ import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 import java.util.List;
 
 import com.squarespace.v6.template.less.core.Buffer;
+import com.squarespace.v6.template.less.core.LessInternalException;
 import com.squarespace.v6.template.less.core.LessUtils;
 
 
@@ -21,7 +22,7 @@ public class AttributeElement extends Element {
 
   public void add(Node part) {
     if (part == null) {
-      throw new IllegalArgumentException("Serious error: part cannot be null.");
+      throw new LessInternalException("Serious error: part cannot be null.");
     }
     parts = LessUtils.initList(parts, 2);
     parts.add(part);
