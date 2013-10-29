@@ -47,9 +47,7 @@ public class Alpha extends BaseNode {
   @Override
   public void repr(Buffer buf) {
     buf.append("alpha(opacity=");
-    if (value != null) {
-      value.repr(buf);
-    }
+    value.repr(buf);
     buf.append(')');
   }
 
@@ -57,12 +55,10 @@ public class Alpha extends BaseNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     buf.append('\n');
-    if (value != null) {
-      buf.incrIndent();
-      buf.indent();
-      value.modelRepr(buf);
-      buf.decrIndent();
-    }
+    buf.incrIndent();
+    buf.indent();
+    value.modelRepr(buf);
+    buf.decrIndent();
   }
 
 }

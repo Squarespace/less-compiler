@@ -23,8 +23,10 @@ import com.squarespace.v6.template.less.LessCompiler;
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.Options;
 import com.squarespace.v6.template.less.SyntaxErrorType;
+import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.core.ErrorUtils;
 import com.squarespace.v6.template.less.core.LessUtils;
+import com.squarespace.v6.template.less.model.Stylesheet;
 
 import difflib.Chunk;
 import difflib.Delta;
@@ -115,11 +117,21 @@ public class LessSuiteTest {
     // Setup the compiler
     Options opts = new Options();
     opts.addImportPath(importRoot.toString());
-    
+
     Context ctx = new Context(opts);
     LessCompiler compiler = new LessCompiler();
     ctx.setCompiler(compiler);
-    return compiler.compile(source, ctx);
+
+    // First, parse the stylesheet and generate the parse tree and canonical representations.
+    Buffer buf = new Buffer(2);
+    Stylesheet sheet = compiler.parse(source, ctx);
+    sheet.modelRepr(buf);
+    sheet.repr(buf);
+
+    // Finally, compile and execute the stylesheet.
+    String result = compiler.compile(source, ctx);
+    ctx.sanityCheck();
+    return result;
   }
   
   /**

@@ -1,0 +1,80 @@
+// Mixin definitions which take variable number of arguments.
+// A single mixin call may match one or more of these.
+
+// 1:  [0]
+.mixin() {
+    -1: ;
+    -1-args: @arguments;
+}
+
+// 2:  [0..1]
+.mixin(@a: x) {
+    -2: @a;
+    -2-args: @arguments;
+}
+
+// 3:  [0..N]
+.mixin(...) {
+    -3-args: @arguments;
+}
+
+// 4:  [1]
+.mixin(@a) {
+    -4: @a;
+    -4-args: @arguments;
+}
+
+// 5:  [1..N]
+.mixin(@a, ...) {
+    -5: @a;
+    -5-args: @arguments;
+}
+
+// 6:  [1..N]
+.mixin(@a, @rest ...) {
+    -6: @a, @rest;
+    -6-args: @arguments;
+}
+
+// 7:  [P, 0..N]
+.mixin(1, ...) {
+    -7-args: @arguments;
+}
+
+// 8:  [P, P, 0..N]
+.mixin(1, 2, ...) {
+    -8-args: @arguments;
+}
+
+// 9:  [2..N]
+// NOTE: less.js blows up on: .mixin(), we don't
+.mixin(@a, @b, ...) {
+    -9-args: @arguments;
+}
+
+
+.ruleset-1 {
+    match: 1, 2, 3;
+    .mixin();
+}
+
+.ruleset-2 {
+    match: 2, 3, 4, 5, 6, 7;
+    .mixin(1);
+}
+
+.ruleset-3 {
+    match: 3, 5, 6, 7, 8, 9;
+    .mixin(1, 2);
+}
+
+.ruleset-4 {
+    match: 3, 5, 6, 7, 8, 9;
+    .mixin(1, 2, 3, 4);
+}
+
+.ruleset-5 {
+    match: 3, 5, 6, 9;
+    .mixin(2, 2, 3, 4);
+}
+

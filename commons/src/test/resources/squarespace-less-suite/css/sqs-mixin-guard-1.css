@@ -1,0 +1,134 @@
+.result-1 {
+  /* (@a < 10px) */
+  -3: 1;
+  /* (10px > @a) */
+  -6: 1;
+  /* (@a <= 10px), (@a >= 20px) */
+  -8: 1;
+  /* (@a =< 10px), (@a => 20px) */
+  -9: 1;
+  /* (@a != 20px) and (@a != 5px) */
+  -10: 1;
+}
+.result-true {
+  /* (@a) */
+  -1: true;
+  /* (@a = true) */
+  -2: true;
+  /* (@a < 10px) */
+  -3: true;
+  /* (10px < @a) */
+  -5: true;
+  /* (@a <= 10px), (@a >= 20px) */
+  -8: true;
+  /* (@a =< 10px), (@a => 20px) */
+  -9: true;
+  /* (@a != 20px) and (@a != 5px) */
+  -10: true;
+}
+.result-escaped-true {
+  /* (@a) */
+  -1: true;
+  /* (@a = true) */
+  -2: true;
+  /* (@a > 10px) */
+  -4: true;
+  /* (10px < @a) */
+  -5: true;
+  /* (@a <= 10px), (@a >= 20px) */
+  -8: true;
+  /* (@a =< 10px), (@a => 20px) */
+  -9: true;
+  /* (@a != 20px) and (@a != 5px) */
+  -10: true;
+}
+.result-quoted-true {
+  /* (@a < 10px) */
+  -3: 'true';
+  /* (10px < @a) */
+  -5: 'true';
+  /* (@a <= 10px), (@a >= 20px) */
+  -8: 'true';
+  /* (@a =< 10px), (@a => 20px) */
+  -9: 'true';
+  /* (@a != 20px) and (@a != 5px) */
+  -10: 'true';
+}
+.result-quoted-11px {
+  /* (@a > 10px) */
+  -4: 11px;
+  /* (10px < @a) */
+  -5: 11px;
+  /* (@a != 20px) and (@a != 5px) */
+  -10: 11px;
+}
+.result-red {
+  /* (@a < 10px) */
+  -3: red;
+  /* (10px < @a) */
+  -5: red;
+  /* (@a <= 10px), (@a >= 20px) */
+  -8: red;
+  /* (@a =< 10px), (@a => 20px) */
+  -9: red;
+  /* (@a != 20px) and (@a != 5px) */
+  -10: red;
+}
+.result-red-hex {
+  /* (@a < 10px) */
+  -3: red;
+  /* (10px < @a) */
+  -5: red;
+  /* (@a <= 10px), (@a >= 20px) */
+  -8: red;
+  /* (@a =< 10px), (@a => 20px) */
+  -9: red;
+  /* (@a != 20px) and (@a != 5px) */
+  -10: red;
+}
+.result-blue-hex {
+  /* (@a < 10px) */
+  -3: blue;
+  /* (10px < @a) */
+  -5: blue;
+  /* (#00f = @a) */
+  -7: blue;
+  /* (@a <= 10px), (@a >= 20px) */
+  -8: blue;
+  /* (@a =< 10px), (@a => 20px) */
+  -9: blue;
+  /* (@a != 20px) and (@a != 5px) */
+  -10: blue;
+}
+.result-5px {
+  /* (@a < 10px) */
+  -3: 5px;
+  /* (10px > @a) */
+  -6: 5px;
+  /* (@a <= 10px), (@a >= 20px) */
+  -8: 5px;
+  /* (@a =< 10px), (@a => 20px) */
+  -9: 5px;
+}
+.result-20px {
+  /* (@a > 10px) */
+  -4: 20px;
+  /* (10px < @a) */
+  -5: 20px;
+  /* (@a <= 10px), (@a >= 20px) */
+  -8: 20px;
+  /* (@a =< 10px), (@a => 20px) */
+  -9: 20px;
+}
+.result-30px {
+  /* (@a > 10px) */
+  -4: 30px;
+  /* (10px < @a) */
+  -5: 30px;
+  /* (@a <= 10px), (@a >= 20px) */
+  -8: 30px;
+  /* (@a =< 10px), (@a => 20px) */
+  -9: 30px;
+  /* (@a != 20px) and (@a != 5px) */
+  -10: 30px;
+}

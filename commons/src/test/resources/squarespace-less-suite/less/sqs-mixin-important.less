@@ -1,0 +1,30 @@
+
+.m() {
+    a2 {
+        color: blue;
+        font-size: 8px;
+        b2 {
+            color: black;
+        }
+    }
+}
+.m(@a) {
+    a1 {
+        color: red;
+        font-size: 10px;
+        b1 {
+            color: white;
+        }
+        .m;
+    }
+}
+
+.t1 {
+    .m !important;
+}
+
+.t2 {
+    .m(1) !important;
+}
+
+

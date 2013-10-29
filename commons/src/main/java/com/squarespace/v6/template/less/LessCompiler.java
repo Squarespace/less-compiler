@@ -25,6 +25,10 @@ public class LessCompiler {
   
   private static final FunctionTable DEFAULT_FUNCTIONS = buildFunctionTable();
   
+  static {
+    DEFAULT_FUNCTIONS.setInUse();
+  }
+  
   private FunctionTable functionTable;
 
   public LessCompiler() {
@@ -33,6 +37,7 @@ public class LessCompiler {
 
   public LessCompiler(FunctionTable functionTable) {
     this.functionTable = functionTable;
+    this.functionTable.setInUse();
   }
   
   public Context context(Options opts) {

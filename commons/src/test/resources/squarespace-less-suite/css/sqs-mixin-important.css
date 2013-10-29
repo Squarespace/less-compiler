@@ -1,0 +1,21 @@
+.t1 a2 {
+  color: blue !important;
+  font-size: 8px !important;
+}
+.t1 a2 b2 {
+  color: #000 !important;
+}
+.t2 a1 {
+  color: red !important;
+  font-size: 10px !important;
+}
+.t2 a1 b1 {
+  color: #fff !important;
+}
+.t2 a1 a2 {
+  color: blue !important;
+  font-size: 8px !important;
+}
+.t2 a1 a2 b2 {
+  color: #000 !important;
+}

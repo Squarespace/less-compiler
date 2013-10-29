@@ -1,0 +1,54 @@
+#ns .m1.m2 {
+  res: 1;
+}
+#ns .m1.m2 {
+  res: 2;
+}
+#ns .m1 .m2 {
+  res: 3;
+}
+#ns .m1 > .m2 {
+  res: 4;
+}
+#ns .m1 + .m2 {
+  res: 5;
+}
+#ns > .m1 ~ .m2 {
+  res: 6;
+}
+#ns .m1 .m2 {
+  res: 7;
+}
+#ns.m1.m2 {
+  res: 8;
+}
+#ns.m1 > .m2 {
+  res: 9;
+}
+#ns .m1.m2 {
+  res: 10;
+}
+.ruleset-1 {
+  res: 1;
+  res: 2;
+  res: 3;
+  res: 4;
+  res: 5;
+  res: 6;
+  res: 7;
+  res: 8;
+  res: 9;
+  res: 10;
+}
+.ruleset-2 {
+  res: 1;
+  res: 2;
+  res: 3;
+  res: 4;
+  res: 5;
+  res: 6;
+  res: 7;
+  res: 8;
+  res: 9;
+  res: 10;
+}

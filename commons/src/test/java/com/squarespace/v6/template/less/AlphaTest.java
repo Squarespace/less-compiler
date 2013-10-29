@@ -30,7 +30,7 @@ public class AlphaTest extends LessTestBase {
   public void testAlpha() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 
-    h.parseEquals("alpha(opacity=12)", alpha("12"));
+    h.parseEquals("alpha(opacity=12)", alpha(dim(12)));
     h.parseEquals("alpha(opacity=@foo)", alpha(var("@foo")));
     h.parseEquals("alpha(opacity=)", alpha(""));
   }
@@ -40,7 +40,7 @@ public class AlphaTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 
     h.parseEquals("alpha(opacity=)", alpha(anon("")));
-    h.parseEquals("alpha(opacity=1)", alpha(anon("1")));
+    h.parseEquals("alpha(opacity=1)", alpha(dim(1)));
     h.parseEquals("alpha(opacity=@var)", alpha(var("@var")));
   }
 

@@ -1,0 +1,56 @@
+
+// Mixin selector matching.
+#ns {
+    .m1.m2 {
+        res: 1;
+    }
+    .m1 {
+        &.m2 {
+            res: 2;
+        }
+    }
+    .m1 .m2 {
+        res: 3;
+    }
+    .m1 > .m2 {
+        res: 4;
+    }
+    .m1 + .m2 {
+        res: 5;
+    }
+    > .m1 ~ .m2 {
+        res: 6;
+    }
+}
+
+#ns .m1 .m2 {
+    res: 7;
+}
+
+#ns.m1.m2 {
+    res: 8;
+}
+
+#ns.m1 > .m2 {
+    res: 9;
+}
+
+// less.js doesn't match the next mixin due to a bug that only trims a selector by 1
+// rather than by the no. of elements that matched (ruleset.js in "if (match = selector.match( ..."
+// My code fixes this bug.
+#ns .m1 {
+    &.m2 {
+        res: 10;
+    }
+}
+
+// mixin calls below
+
+.ruleset-1 {
+    #ns.m1 .m2;
+}
+
+.ruleset-2 {
+    #ns > .m1.m2;
+}
+

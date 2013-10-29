@@ -11,3 +11,7 @@
   b1: foo;
   b2: %28%20%3d%20%29;
 }
+.function-general-alpha {
+  c1: alpha(opacity=.35);
+  c2: alpha(opacity=.7);
+}

@@ -12,6 +12,9 @@ import com.squarespace.v6.template.jsont.MapFormat;
  */
 public enum SyntaxErrorType implements ErrorType {
 
+  ALPHA_UNITS_INVALID
+  ("Numeric values for alpha cannot have units. Found %(arg0)s"),
+  
   EXPECTED
   ("Expected %(arg0)s"),
 

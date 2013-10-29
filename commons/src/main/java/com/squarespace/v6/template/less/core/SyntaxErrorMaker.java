@@ -11,6 +11,10 @@ import com.squarespace.v6.template.less.SyntaxErrorType;
  */
 public class SyntaxErrorMaker {
 
+  public static ErrorInfo alphaUnitsInvalid(Object arg) {
+    return error(SyntaxErrorType.ALPHA_UNITS_INVALID).arg0(arg);
+  }
+  
   public static ErrorInfo expected(Object thing) {
     return error(SyntaxErrorType.EXPECTED).arg0(thing);
   }

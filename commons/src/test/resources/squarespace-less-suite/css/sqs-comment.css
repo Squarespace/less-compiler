@@ -1,0 +1,22 @@
+/* Block comment 1 */
+.ruleset-1 {
+  /* Block comment 1.1 */
+  child-1: foo;
+  /* Block comment 1.2 */
+}
+/*
+ * Block comment 2
+ */
+.ruleset-2 {
+  /*
+     * Block comment 2.1
+     */
+  child-2: bar;
+  /* 
+     * Block comment 2.2 
+     */
+}
+/* Block comment 3 */
+h1 span:hover {
+  color: /* c */ red;
+}

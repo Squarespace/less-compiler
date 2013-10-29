@@ -1,0 +1,100 @@
+
+// definitions
+
+.m (@a) when (@a) {
+    /* (@a) */
+    -1: @a
+}
+
+.m (@a) when (@a = true) {
+    /* (@a = true) */
+    -2: @a
+}
+
+.m (@a) when (@a < 10px) {
+    /* (@a < 10px) */
+    -3: @a
+}
+
+.m (@a) when (@a > 10px) {
+    /* (@a > 10px) */
+    -4: @a
+}
+
+.m (@a) when (10px < @a) {
+    /* (10px < @a) */
+    -5: @a
+}
+
+.m (@a) when (10px > @a) {
+    /* (10px > @a) */
+    -6: @a
+}
+
+.m (@a) when (#00f = @a) {
+    /* (#00f = @a) */
+    -7: @a
+}
+
+.m (@a) when (@a <= 10px), (@a >= 20px) {
+    /* (@a <= 10px), (@a >= 20px) */
+    -8: @a;
+}
+
+.m (@a) when (@a =< 10px), (@a => 20px) {
+    /* (@a =< 10px), (@a => 20px) */
+    -9: @a;
+}
+
+.m (@a) when (@a != 20px) and (@a != 5px) {
+    /* (@a != 20px) and (@a != 5px) */
+    -10: @a;
+}
+
+
+// calls
+
+.result-1 {
+    .m(1)
+}
+
+.result-true {
+    .m(true)
+}
+
+.result-escaped-true {
+    .m(~'true')
+}
+
+.result-quoted-true {
+    .m('true')
+}
+
+.result-quoted-11px {
+    .m(~'11px')
+}
+
+.result-red {
+    .m(red)
+}
+
+.result-red-hex {
+    .m(#f00);
+}
+
+.result-blue-hex {
+    .m(#00f);
+}
+
+.result-5px {
+    .m(5px)
+}
+
+.result-20px {
+    .m(20px)
+}
+
+.result-30px {
+    .m(30px);
+}
+
