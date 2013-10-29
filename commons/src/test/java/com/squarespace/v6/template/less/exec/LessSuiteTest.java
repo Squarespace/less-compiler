@@ -25,7 +25,12 @@ import com.squarespace.v6.template.less.Options;
 import com.squarespace.v6.template.less.SyntaxErrorType;
 import com.squarespace.v6.template.less.core.Buffer;
 import com.squarespace.v6.template.less.core.ErrorUtils;
+import com.squarespace.v6.template.less.core.FlexList;
 import com.squarespace.v6.template.less.core.LessUtils;
+import com.squarespace.v6.template.less.model.Block;
+import com.squarespace.v6.template.less.model.Comment;
+import com.squarespace.v6.template.less.model.Node;
+import com.squarespace.v6.template.less.model.NodeType;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
 import difflib.Chunk;
@@ -99,7 +104,8 @@ public class LessSuiteTest {
       for (ErrorCase errorCase : errorCases) {
         try {
           compile(errorCase.source, errorRoot);
-          Assert.fail("Expected a LessException for error '" + errorCase.failMessage + "'");
+          Assert.fail("Expected a LessException for error '" + errorCase.failMessage + "' processing\n"
+              + errorCase.source);
 
         } catch (LessException e) {
           // Force generation of the error message, to cover that code
@@ -128,7 +134,24 @@ public class LessSuiteTest {
     sheet.modelRepr(buf);
     sheet.repr(buf);
 
+    // Hack to detect case-specific options enabled via comments. Next rev of the compiler will
+    // make this easier.
+    Block block = sheet.block();
+    FlexList<Node> rules = block.rules();
+    int size = rules.size();
+    for (int i = 0; i < size; i++) {
+      Node rule = rules.get(i);
+      if (rule.is(NodeType.COMMENT)) {
+        Comment comment = (Comment)rule;
+        if (comment.body().trim().equals("strict=false")) {
+          opts.strict(false);
+        }
+      }
+    }
+    
     // Finally, compile and execute the stylesheet.
+    ctx = new Context(opts);
+    ctx.setCompiler(compiler);
     String result = compiler.compile(source, ctx);
     ctx.sanityCheck();
     return result;

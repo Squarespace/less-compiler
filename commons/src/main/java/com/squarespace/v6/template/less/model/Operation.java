@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less.model;
 
 import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.badColorMath;
-import static com.squarespace.v6.template.less.core.ExecuteErrorMaker.incompatibleUnits;
 import static com.squarespace.v6.template.less.core.LessUtils.safeEquals;
 
 import com.squarespace.v6.template.less.ErrorInfo;
@@ -80,19 +79,6 @@ public class Operation extends BaseNode {
       }
     }
 
-    // Dimensions that have units cannot be added/multiplied with a color.
-    if (op0.is(NodeType.COLOR) && op1.is(NodeType.DIMENSION)) {
-      Dimension dim = (Dimension)op1;
-      if (dim.unit() != null) {
-        ErrorInfo info = incompatibleUnits(dim.unit(), "a color");
-        if (opts.strict()) {
-          throw new LessException(info);
-        } else if (!opts.hideWarnings()) {
-          env.addWarning(info.getMessage() + ".. stripping unit.");
-        }
-        op1 = new Dimension(dim.value());
-      }
-    }
     return op0.operate(env, operator, op1);
   }
 

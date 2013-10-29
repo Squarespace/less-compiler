@@ -1,5 +1,6 @@
 package com.squarespace.v6.template.less.model;
 
+import com.squarespace.v6.template.less.core.LessInternalException;
 
 
 public abstract class Element extends BaseNode {
@@ -24,7 +25,7 @@ public abstract class Element extends BaseNode {
   
   @Override
   public boolean equals(Object obj) {
-    throw new UnsupportedOperationException("You must implement equals(Object) in the subclass!");
+    throw new LessInternalException("Element subclass must implement equals(Object)!");
   }
   
   @Override

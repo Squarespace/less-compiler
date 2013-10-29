@@ -6,3 +6,14 @@
     }
 }
 
+.a[href~='squarespace'] {
+    &:visited {
+        color: red;
+    }
+}
+
+.parent {
+    > * + & > & foo {
+        font-size: 1px;
+    }
+}

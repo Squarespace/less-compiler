@@ -52,13 +52,16 @@ public abstract class BaseColor extends BaseNode {
       return operate(op, this, (BaseColor)arg);
     
     } else if (arg.is(NodeType.DIMENSION)) {
+      // Dimensions that have units cannot be added/multiplied with a color.
       Dimension dim = (Dimension)arg;
       if (dim.unit() != null) {
         ErrorInfo info = incompatibleUnits(dim.unit(), NodeType.COLOR);
         if (opts.strict()) {
           throw new LessException(info);
         }
-        env.addWarning(info.getMessage() + ".. stripping unit.");
+        if (!opts.hideWarnings()) {
+          env.addWarning(info.getMessage() + ".. stripping unit.");
+        }
       }
       return operate(op, this, fromDimension((Dimension)arg));
 

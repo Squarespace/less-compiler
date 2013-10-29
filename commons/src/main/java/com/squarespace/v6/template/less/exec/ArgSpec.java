@@ -79,12 +79,12 @@ public class ArgSpec {
       ErrorInfo info = argCount(func.name(), minArgs, size);
       if (opts.strict()) {
         throw new LessException(info);
-        
-      } else {
+      }
+      if (!opts.hideWarnings()) {
         // Ignore the additional arguments.
         env.addWarning(info.getMessage() + ".. ignoring additional args");
-        size = validators.size();
       }
+      size = validators.size();
     }
     if (variadic) {
       size = validators.size();

@@ -109,7 +109,7 @@ public class Dimension extends BaseNode {
           ErrorInfo info = ExecuteErrorMaker.divideByZero(this);
           if (opts.strict()) {
             throw new LessException(info);
-          } else {
+          } else if (!opts.hideWarnings()) {
             env.addWarning(info.getMessage() + "..  using " + this.repr());
           }
         } else {

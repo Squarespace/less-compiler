@@ -86,5 +86,5 @@ public class ColorTest extends LessTestBase {
       }
     }
   }
-
+  
 }

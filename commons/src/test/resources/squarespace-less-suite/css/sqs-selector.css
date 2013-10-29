@@ -1,3 +1,9 @@
 .foo-bar:hover {
   color: blue;
 }
+.a[href~='squarespace']:visited {
+  color: red;
+}
+> * + .parent > .parent foo {
+  font-size: 1px;
+}
