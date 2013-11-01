@@ -418,13 +418,16 @@ public class LessEvaluator {
       }
     }
     
-    // Caps the number of recursions through this mixin.
-    if (original.entryCount() >= opts.recursionLimit()) {
+    // Limits the overall depth if the mixin call stack.
+    Context ctx = env.context();
+    if (ctx.mixinDepth() >= opts.recursionLimit()) {
       throw new LessException(mixinRecurse(call.path(), opts.recursionLimit()));
     }
 
     // Enter the mixin body and execute it.
     original.enter();
+    ctx.enterMixin();
+    
     env.push(mixin);
 
     try {
@@ -451,6 +454,7 @@ public class LessEvaluator {
       e.push(actualCall);
       throw e;
     }
+    ctx.exitMixin();
     original.exit();
     return true;
   }
@@ -461,17 +465,23 @@ public class LessEvaluator {
   private boolean executeRulesetMixin(ExecEnv env, Block collector, MixinMatcher matcher, MixinMatch match) 
       throws LessException {
     MixinCall call = matcher.mixinCall();
-
     Ruleset ruleset = (Ruleset)match.mixin();
+
+    // Limits the overall depth if the mixin call stack.
+    Context ctx = env.context();
+    if (ctx.mixinDepth() >= opts.recursionLimit()) {
+      throw new LessException(mixinRecurse(call.path(), opts.recursionLimit()));
+    }
+    
+    ctx.enterMixin();
     Ruleset result = evaluateRuleset(env, ruleset, call.important());
+    ctx.exitMixin();
     
     Block block = result.block();
-
     if (opts.tracing()) {
       block.prependNode(new MixinMarker(call, true));
       block.appendNode(new MixinMarker(call, false));
     }
-
     collector.appendBlock(block);
     return true;
   }

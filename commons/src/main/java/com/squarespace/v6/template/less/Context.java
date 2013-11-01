@@ -53,6 +53,8 @@ public class Context {
   
   private LessLoader loader;
   
+  private int mixinDepth;
+  
   public Context() {
     this(DEFAULT_OPTS);
   }
@@ -239,5 +241,17 @@ public class Context {
   public NodeRenderer renderer() {
     return renderer;
   }
+ 
+  public void enterMixin() {
+    this.mixinDepth++;
+  }
   
+  public void exitMixin() {
+    this.mixinDepth--;
+  }
+
+  public int mixinDepth() {
+    return this.mixinDepth;
+  }
+
 }
