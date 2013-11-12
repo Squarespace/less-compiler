@@ -18,7 +18,7 @@ import com.squarespace.v6.template.less.core.LessUtils;
 import com.squarespace.v6.template.less.model.Stylesheet;
 
 
-public class LessC {
+public class LessC extends BaseCommand {
 
   private static final String PROGRAM_NAME = "sqs_lessc";
   
@@ -49,6 +49,9 @@ public class LessC {
   @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
   private boolean tracing = false;
 
+  @Parameter(names = { "-V", "-verbose" }, description = "Verbose")
+  private boolean verbose = false;
+  
   @Parameter(names = { "-W", "-wait" }, description = "Wait before executing / exiting.")
   private boolean waitForUser = false;
 
@@ -67,7 +70,7 @@ public class LessC {
   
   @Parameter(names = { "-v", "-version" }, description = "Show version")
   private boolean version = false;
-
+  
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode" )
   private boolean compress = false;
   
@@ -90,6 +93,11 @@ public class LessC {
   
   public static String version() {
     return PROGRAM_NAME + " " + VERSION + " " + IMPLNAME;
+  }
+  
+  @Override
+  public String programName() {
+    return PROGRAM_NAME;
   }
   
   public static void main(String[] args) {
@@ -196,7 +204,10 @@ public class LessC {
       System.exit(1);
     }
     if (stats) {
-      System.err.println(formatStats(ctx.stats()));
+      emitStats(ctx.stats());
+    }
+    if (verbose) {
+      emitMemory("post-compile");
     }
     
     // In trace mode, check for buffer leaks.
@@ -217,7 +228,7 @@ public class LessC {
     return buf.toString();
   }
 
-  private String formatStats(LessStats stats) {
+  private String emitStats(LessStats stats) {
     StringBuilder buf = new StringBuilder();
     buf.append("--------------------------------------------------------\n");
     buf.append(PROGRAM_NAME).append(" statistics:\n");

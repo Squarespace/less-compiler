@@ -1,7 +1,6 @@
 package com.squarespace.v6.template.less;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -45,6 +44,9 @@ public class LessBatchC extends BaseCommand {
   @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
   private boolean tracing = false;
 
+  @Parameter(names = { "-V", "-verbose" }, description = "Verbose")
+  private boolean verbose = false;
+  
   @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
   
@@ -80,6 +82,11 @@ public class LessBatchC extends BaseCommand {
   
   public static String version() {
     return PROGRAM_NAME + " " + VERSION + " " + IMPLNAME;
+  }
+
+  @Override
+  public String programName() {
+    return PROGRAM_NAME;
   }
   
   public static void main(String[] args) {
@@ -120,13 +127,6 @@ public class LessBatchC extends BaseCommand {
     processAll(inputPath, outputPath);
   }
   
-  private PrintStream log(String msg) {
-    System.err.print(PROGRAM_NAME);
-    System.err.print(": ");
-    System.err.print(msg);
-    return System.err;
-  }
-  
   private void processAll(Path inputPath, Path outputPath) {
     List<Path> lessPaths = null;
     Map<Path, Stylesheet> preCache = new HashMap<>();
@@ -160,6 +160,10 @@ public class LessBatchC extends BaseCommand {
         for (String name : compileOnly) {
           lessPaths.add(Paths.get(name));
         }
+      }
+
+      if (verbose) {
+        emitMemory("post-parse");
       }
 
       log("beginning compile:\n");
@@ -206,6 +210,10 @@ public class LessBatchC extends BaseCommand {
     } catch (IOException ioe) {
       log("ERROR: " + ioe.getMessage());
       error = true;
+    }
+    
+    if (verbose) {
+      emitMemory("post-compile");
     }
     
     if (error) {
