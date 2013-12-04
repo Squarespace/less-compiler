@@ -1,11 +1,8 @@
 package com.squarespace.v6.template.less.parse;
 
 import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.expected;
-import static com.squarespace.v6.template.less.parse.Parselets.ALPHA;
-import static com.squarespace.v6.template.less.parse.Parselets.ASSIGNMENT;
-import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION;
-import static com.squarespace.v6.template.less.parse.Parselets.QUOTED;
-import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE;
+import static com.squarespace.v6.template.less.parse.Parselets.FUNCTION_CALL_ARGS;
+import static com.squarespace.v6.template.less.parse.Parselets.FUNCTION_CALL_SUB;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.CharClass;
@@ -36,7 +33,7 @@ public class FunctionCallParselet implements Parselet {
     
     } else if (nameLC.equals("alpha")) {
       // Special handling for IE's alpha function.
-      Node result = stm.parse(ALPHA);
+      Node result = stm.parse(Parselets.ALPHA);
       if (result != null) {
         return result;
       }
@@ -64,7 +61,7 @@ public class FunctionCallParselet implements Parselet {
   private ExpressionList parseArgs(LessStream stm) throws LessException {
     ExpressionList args = new ExpressionList();
     while (true) {
-      Node value = stm.parse(ASSIGNMENT, EXPRESSION);
+      Node value = stm.parse(FUNCTION_CALL_ARGS);
       if (value != null) {
         args.add(value);
       }
@@ -79,7 +76,7 @@ public class FunctionCallParselet implements Parselet {
 
   public static Node parseUrl(LessStream stm) throws LessException {
     stm.skipWs();
-    Node value = stm.parse(QUOTED, VARIABLE);
+    Node value = stm.parse(FUNCTION_CALL_SUB);
     if (value == null) {
       int start = stm.position();
       char ch = stm.peek();

@@ -1,8 +1,6 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.parse.Parselets.ADDITION;
-import static com.squarespace.v6.template.less.parse.Parselets.COMMENT;
-import static com.squarespace.v6.template.less.parse.Parselets.ENTITY;
+import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION_SUB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ public class ExpressionParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Node node = stm.parse(COMMENT, ADDITION, ENTITY);
+    Node node = stm.parse(EXPRESSION_SUB);
     if (node == null) {
       return null;
     }
@@ -27,7 +25,7 @@ public class ExpressionParselet implements Parselet {
     List<Node> entities = new ArrayList<>();
     while (node != null) {
       entities.add(node);
-      node = stm.parse(COMMENT, ADDITION, ENTITY);
+      node = stm.parse(EXPRESSION_SUB);
     }
     return entities.size() == 1 ? entities.get(0) : new Expression(entities);
   }

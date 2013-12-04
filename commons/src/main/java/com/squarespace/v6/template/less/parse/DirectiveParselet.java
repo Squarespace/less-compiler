@@ -1,9 +1,10 @@
 package com.squarespace.v6.template.less.parse;
 
+import static com.squarespace.v6.template.less.parse.Parselets.BLOCK;
 import static com.squarespace.v6.template.less.parse.Parselets.ENTITY;
 import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION;
-import static com.squarespace.v6.template.less.parse.Parselets.QUOTED;
-import static com.squarespace.v6.template.less.parse.Parselets.URL;
+import static com.squarespace.v6.template.less.parse.Parselets.FEATURES;
+import static com.squarespace.v6.template.less.parse.Parselets.DIRECTIVE_IMPORT;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -94,7 +95,7 @@ public class DirectiveParselet implements Parselet {
     }
     
     if (hasBlock) {
-      Node block = stm.parse(Parselets.BLOCK);
+      Node block = stm.parse(BLOCK);
       if (block != null) {
         BlockDirective directive = new BlockDirective(name, (Block)block);
         directive.fileName(stm.fileName());
@@ -113,8 +114,8 @@ public class DirectiveParselet implements Parselet {
   }
 
   private Node parseMedia(LessStream stm) throws LessException {
-    Features features = (Features) stm.parse(Parselets.FEATURES);
-    Node block = stm.parse(Parselets.BLOCK);
+    Features features = (Features) stm.parse(FEATURES);
+    Node block = stm.parse(BLOCK);
     if (block == null) {
       return null;
     }
@@ -129,12 +130,12 @@ public class DirectiveParselet implements Parselet {
       once = true;
     }
     
-    Node path = stm.parse(QUOTED, URL);
+    Node path = stm.parse(DIRECTIVE_IMPORT);
     if (path == null) {
       return null;
     }
 
-    Features features = (Features) stm.parse(Parselets.FEATURES);
+    Features features = (Features) stm.parse(FEATURES);
     stm.skipWs();
     if (stm.seekIf(Chars.SEMICOLON)) {
       Import result = new Import(path, features, once);

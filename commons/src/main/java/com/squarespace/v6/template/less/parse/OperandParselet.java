@@ -1,11 +1,6 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.parse.Parselets.COLOR;
-import static com.squarespace.v6.template.less.parse.Parselets.COLOR_KEYWORD;
-import static com.squarespace.v6.template.less.parse.Parselets.DIMENSION;
-import static com.squarespace.v6.template.less.parse.Parselets.FUNCTION_CALL;
-import static com.squarespace.v6.template.less.parse.Parselets.SUB;
-import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE;
+import static com.squarespace.v6.template.less.parse.Parselets.OPERAND_SUB;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Chars;
@@ -26,7 +21,7 @@ public class OperandParselet implements Parselet {
       negate = true;
       stm.seek1();
     }
-    Node node = stm.parse(SUB, DIMENSION, FUNCTION_CALL, COLOR_KEYWORD, COLOR, VARIABLE);
+    Node node = stm.parse(OPERAND_SUB);
     return negate ? new Operation(Operator.MULTIPLY, node, new Dimension(-1, null)) : node;
   }
 

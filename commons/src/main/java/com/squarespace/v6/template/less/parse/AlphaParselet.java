@@ -2,8 +2,7 @@ package com.squarespace.v6.template.less.parse;
 
 import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.alphaUnitsInvalid;
 import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.expected;
-import static com.squarespace.v6.template.less.parse.Parselets.DIMENSION;
-import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE;
+import static com.squarespace.v6.template.less.parse.Parselets.ALPHA_SUB;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Chars;
@@ -22,7 +21,7 @@ public class AlphaParselet implements Parselet {
       return null;
     }
     
-    Node value = stm.parse(DIMENSION, VARIABLE);
+    Node value = stm.parse(ALPHA_SUB);
     if (value != null && value.is(NodeType.DIMENSION)) {
       Dimension dim = (Dimension)value;
       if (dim.unit() != null) {

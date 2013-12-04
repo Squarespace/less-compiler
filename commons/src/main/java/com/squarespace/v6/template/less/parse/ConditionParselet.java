@@ -3,9 +3,7 @@ package com.squarespace.v6.template.less.parse;
 import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.expected;
 import static com.squarespace.v6.template.less.model.Operator.AND;
 import static com.squarespace.v6.template.less.model.Operator.EQUAL;
-import static com.squarespace.v6.template.less.parse.Parselets.ADDITION;
-import static com.squarespace.v6.template.less.parse.Parselets.KEYWORD;
-import static com.squarespace.v6.template.less.parse.Parselets.QUOTED;
+import static com.squarespace.v6.template.less.parse.Parselets.CONDITION_SUB;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Chars;
@@ -69,7 +67,7 @@ public class ConditionParselet implements Parselet {
   }
   
   private Node parseValue(LessStream stm) throws LessException {
-    return stm.parse(ADDITION, KEYWORD, QUOTED);
+    return stm.parse(CONDITION_SUB);
   }
   
 }

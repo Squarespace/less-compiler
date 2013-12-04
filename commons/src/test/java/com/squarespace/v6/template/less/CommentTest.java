@@ -5,7 +5,6 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.LessHarness;
 import com.squarespace.v6.template.less.core.LessTestBase;
 import com.squarespace.v6.template.less.parse.Parselets;

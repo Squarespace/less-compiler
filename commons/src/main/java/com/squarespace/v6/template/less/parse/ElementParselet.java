@@ -1,8 +1,7 @@
 package com.squarespace.v6.template.less.parse;
 
+import static com.squarespace.v6.template.less.parse.Parselets.ELEMENT_SUB;
 import static com.squarespace.v6.template.less.parse.Parselets.QUOTED;
-import static com.squarespace.v6.template.less.parse.Parselets.SELECTOR;
-import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE;
 import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE_CURLY;
 
 import com.squarespace.v6.template.less.LessException;
@@ -81,7 +80,7 @@ public class ElementParselet implements Parselet {
     if (stm.matchAttributeKey()) {
       key = new Anonymous(stm.token());
     } else {
-      key = stm.parse(Parselets.QUOTED);
+      key = stm.parse(QUOTED);
     }
     if (key == null) {
       return null;
@@ -129,7 +128,7 @@ public class ElementParselet implements Parselet {
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
       return null;
     }
-    Node value = stm.parse(VARIABLE_CURLY, VARIABLE, SELECTOR);
+    Node value = stm.parse(ELEMENT_SUB);
     stm.skipWs();
     if (value != null && stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
       return new Paren(value);

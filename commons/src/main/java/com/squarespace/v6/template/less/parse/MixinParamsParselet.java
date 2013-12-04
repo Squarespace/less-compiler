@@ -3,9 +3,7 @@ package com.squarespace.v6.template.less.parse;
 import static com.squarespace.v6.template.less.core.SyntaxErrorMaker.expected;
 import static com.squarespace.v6.template.less.parse.Parselets.COMMENT;
 import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION;
-import static com.squarespace.v6.template.less.parse.Parselets.KEYWORD;
-import static com.squarespace.v6.template.less.parse.Parselets.LITERAL;
-import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE;
+import static com.squarespace.v6.template.less.parse.Parselets.MIXIN_PARAMETER;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.Chars;
@@ -60,7 +58,7 @@ public class MixinParamsParselet implements Parselet {
   }
   
   private Parameter parseParam(LessStream stm) throws LessException {
-    Node temp = stm.parse(VARIABLE, LITERAL, KEYWORD);
+    Node temp = stm.parse(MIXIN_PARAMETER);
     if (temp == null) {
       return null;
     }

@@ -33,7 +33,7 @@ public class LessHarness {
 
   private GenericBlock defs;
   
-  private Parselet parselet;
+  private Parselet[] parselet;
   
   public LessHarness() {
     this(Parselets.STYLESHEET, null);
@@ -43,11 +43,11 @@ public class LessHarness {
     this(Parselets.STYLESHEET, defs);
   }
 
-  public LessHarness(Parselet parselet) {
+  public LessHarness(Parselet[] parselet) {
     this(parselet, null);
   }
 
-  public LessHarness(Parselet parselet, GenericBlock defs) {
+  public LessHarness(Parselet[] parselet, GenericBlock defs) {
     this.parselet = parselet;
     this.defs = defs;
   }
@@ -135,15 +135,15 @@ public class LessHarness {
     return node.eval(env);
   }
   
-  public Node evaluate(String raw, Parselet parselet) throws LessException {
+  public Node evaluate(String raw, Parselet[] parselet) throws LessException {
     return evaluate(parse(raw, parselet), define(defs));
   }
   
-  public Node evaluate(String raw, Parselet parselet, ExecEnv env) throws LessException {
+  public Node evaluate(String raw, Parselet[] parselet, ExecEnv env) throws LessException {
     return evaluate(parse(raw, parselet), env);
   }
   
-  private Node parse(String raw, Parselet parselet) throws LessException {
+  private Node parse(String raw, Parselet[] parselet) throws LessException {
     LessStream stm = new LessStream(raw);
     Node res = stm.parse(parselet);
     stm.checkComplete();

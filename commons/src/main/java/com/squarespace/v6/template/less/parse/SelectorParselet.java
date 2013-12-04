@@ -1,5 +1,6 @@
 package com.squarespace.v6.template.less.parse;
 
+import static com.squarespace.v6.template.less.parse.Parselets.COMMENT;
 import static com.squarespace.v6.template.less.parse.Parselets.ELEMENT;
 import static com.squarespace.v6.template.less.parse.Parselets.ENTITY;
 
@@ -40,7 +41,7 @@ public class SelectorParselet implements Parselet {
         selector = new Selector();
       }
       selector.add((Element)elem);
-      stm.parse(Parselets.COMMENT);
+      stm.parse(COMMENT);
       if (CharClass.selectorEnd(stm.peek())) {
         break;
       }

@@ -1,8 +1,7 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.parse.Parselets.ENTITY;
 import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION;
-import static com.squarespace.v6.template.less.parse.Parselets.SHORTHAND;
+import static com.squarespace.v6.template.less.parse.Parselets.FONT_SUB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class FontParselet implements Parselet {
   public Node parse(LessStream stm) throws LessException {
     List<Node> expn = new ArrayList<>(2);
     Node node = null;
-    while ((node = stm.parse(SHORTHAND, ENTITY)) != null) {
+    while ((node = stm.parse(FONT_SUB)) != null) {
       expn.add(node);
     }
     

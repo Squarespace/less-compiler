@@ -1,5 +1,7 @@
 package com.squarespace.v6.template.less.parse;
 
+import static com.squarespace.v6.template.less.parse.Parselets.MULTIPLICATION;
+
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.CharClass;
 import com.squarespace.v6.template.less.model.Node;
@@ -11,7 +13,7 @@ public class AdditionParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Node operand0 = stm.parse(Parselets.MULTIPLICATION);
+    Node operand0 = stm.parse(MULTIPLICATION);
     if (operand0 == null) {
       return null;
     }
@@ -23,7 +25,7 @@ public class AdditionParselet implements Parselet {
       if (op == null) {
         break;
       }
-      Node operand1 = stm.parse(Parselets.MULTIPLICATION);
+      Node operand1 = stm.parse(MULTIPLICATION);
       if (operand1 == null) {
         break;
       }

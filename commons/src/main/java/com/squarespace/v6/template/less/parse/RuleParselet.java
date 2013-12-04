@@ -2,8 +2,7 @@ package com.squarespace.v6.template.less.parse;
 
 import static com.squarespace.v6.template.less.parse.Parselets.EXPRESSION_LIST;
 import static com.squarespace.v6.template.less.parse.Parselets.FONT;
-import static com.squarespace.v6.template.less.parse.Parselets.PROPERTY;
-import static com.squarespace.v6.template.less.parse.Parselets.VARIABLE;
+import static com.squarespace.v6.template.less.parse.Parselets.RULE_KEY;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.core.CharClass;
@@ -91,7 +90,7 @@ public class RuleParselet implements Parselet {
   }
   
   private Node parseKey(LessStream stm) throws LessException {
-    Node key = stm.parse(PROPERTY, VARIABLE);
+    Node key = stm.parse(RULE_KEY);
     stm.skipWs();
     if (stm.seekIf(Chars.COLON)) {
       return key;

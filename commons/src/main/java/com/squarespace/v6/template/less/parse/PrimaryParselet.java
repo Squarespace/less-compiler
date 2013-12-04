@@ -1,11 +1,6 @@
 package com.squarespace.v6.template.less.parse;
 
-import static com.squarespace.v6.template.less.parse.Parselets.COMMENT_RULE;
-import static com.squarespace.v6.template.less.parse.Parselets.DIRECTIVE;
-import static com.squarespace.v6.template.less.parse.Parselets.MIXIN;
-import static com.squarespace.v6.template.less.parse.Parselets.MIXIN_CALL;
-import static com.squarespace.v6.template.less.parse.Parselets.RULE;
-import static com.squarespace.v6.template.less.parse.Parselets.RULESET;
+import static com.squarespace.v6.template.less.parse.Parselets.PRIMARY_SUB;
 
 import com.squarespace.v6.template.less.LessException;
 import com.squarespace.v6.template.less.model.Block;
@@ -22,7 +17,7 @@ public class PrimaryParselet implements Parselet {
     
     // Save current stream position before parsing each primary rule type.
     Mark position = stm.mark();
-    while ((node = stm.parse(MIXIN, RULE, RULESET, COMMENT_RULE, MIXIN_CALL, DIRECTIVE)) != null) {
+    while ((node = stm.parse(PRIMARY_SUB)) != null) {
       // Assign stream position to successfully-parsed rule.
       node.setLineOffset(position.lineOffset);
       node.setCharOffset(position.charOffset);

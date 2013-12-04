@@ -146,7 +146,7 @@ public class LessStream extends Stream {
   /**
    * Skips whitespace and tries each parselet in order until one returns a non-null result.
    */
-  public Node parse(Parselet ... parselets) throws LessException {
+  public Node parse(Parselet[] parselets) throws LessException {
     skipWs();
     Node result = null;
     Mark pos = mark();

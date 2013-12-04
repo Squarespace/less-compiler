@@ -141,7 +141,7 @@ public class ArgumentBinderTest extends LessTestBase {
     
   }
   
-  private Node parse(String raw, Parselet parselet) throws LessException {
+  private Node parse(String raw, Parselet[] parselet) throws LessException {
     LessHarness h = new LessHarness(parselet);
     return h.parse(raw);
   }

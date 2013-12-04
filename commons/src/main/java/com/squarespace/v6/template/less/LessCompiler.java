@@ -1,12 +1,13 @@
 package com.squarespace.v6.template.less;
 
+import static com.squarespace.v6.template.less.parse.Parselets.STYLESHEET;
+
 import java.nio.file.Path;
 
 import com.squarespace.v6.template.less.exec.FunctionTable;
 import com.squarespace.v6.template.less.exec.LessEvaluator;
 import com.squarespace.v6.template.less.model.Stylesheet;
 import com.squarespace.v6.template.less.parse.LessStream;
-import com.squarespace.v6.template.less.parse.Parselets;
 import com.squarespace.v6.template.less.plugins.ColorAdjustmentFunctions;
 import com.squarespace.v6.template.less.plugins.ColorCombinationFunctions;
 import com.squarespace.v6.template.less.plugins.ColorHSLFunctions;
@@ -59,7 +60,7 @@ public class LessCompiler {
     long started = stats.now();
     LessStream stm = new LessStream(raw, rootPath, fileName);
     Stylesheet sheet = null;
-    sheet = (Stylesheet) stm.parse(Parselets.STYLESHEET);
+    sheet = (Stylesheet) stm.parse(STYLESHEET);
     stats.parseDone(raw.length(), started);
     return sheet == null ? null : sheet;
   }
