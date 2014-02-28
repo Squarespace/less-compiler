@@ -46,7 +46,7 @@ public class LessSuiteTest {
   
   private static final boolean VERBOSE = false;
   
-  private static final String SUITE_RESOURCE = "squarespace-less-suite";
+  private static final String SUITE_RESOURCE = "test-suite";
   
   private Path suiteRootPath() {
     URL top = getClass().getClassLoader().getResource(SUITE_RESOURCE);
