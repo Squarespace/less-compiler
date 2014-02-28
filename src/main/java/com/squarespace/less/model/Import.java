@@ -12,13 +12,13 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Import extends BaseNode {
 
-  private Node path;
-  
+  private final Node path;
+
+  private final Features features;
+
   private Path rootPath;
   
   private Path fileName;
-
-  private Features features;
   
   private boolean once;
   

@@ -8,7 +8,7 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Media extends BlockNode {
   
-  private Features features;
+  private final Features features;
   
   public Media() {
     features = new Features();

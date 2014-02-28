@@ -32,6 +32,8 @@ public class MixinResolver {
   
   private int maxIndex;
   
+  // TODO: change how this is used, so we can avoid the default constructor / reset method. - phensley
+  
   public MixinResolver() {
   }
 

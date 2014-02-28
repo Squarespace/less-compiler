@@ -12,9 +12,9 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Rule extends BaseNode {
 
-  private Node property;
+  private final Node property;
   
-  private Node value;
+  private final Node value;
   
   private boolean important;
   

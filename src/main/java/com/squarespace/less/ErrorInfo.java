@@ -22,9 +22,9 @@ public class ErrorInfo {
   
   private static final String TYPE = "type";
   
-  private MapBuilder<String, Object> builder = new MapBuilder<>();
+  private final MapBuilder<String, Object> builder = new MapBuilder<>();
   
-  private ErrorType type;
+  private final ErrorType type;
   
   public ErrorInfo(ErrorType type) {
     this.type = type;

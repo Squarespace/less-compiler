@@ -30,11 +30,11 @@ import com.squarespace.less.model.Parameter;
  */
 public class MixinMatcher {
 
-  private ExecEnv callEnv;
+  private final ExecEnv callEnv;
   
-  private MixinCall mixinCall;
+  private final MixinCall mixinCall;
   
-  private MixinCallArgs mixinArgs;
+  private final MixinCallArgs mixinArgs;
   
   public MixinMatcher(ExecEnv callEnv, MixinCall call) throws LessException {
     this.callEnv = callEnv;

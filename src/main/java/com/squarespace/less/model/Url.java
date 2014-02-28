@@ -14,7 +14,7 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Url extends BaseNode {
 
-  private Node value;
+  private final Node value;
   
   public Url(Node value) {
     this.value = value;

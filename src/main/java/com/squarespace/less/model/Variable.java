@@ -16,11 +16,11 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Variable extends BaseNode {
 
-  private String name;
+  private final String name;
   
-  private boolean indirect;
+  private final boolean indirect;
   
-  private boolean curly;
+  private final boolean curly;
   
   public Variable(String name) {
     this(name, false);
@@ -33,6 +33,8 @@ public class Variable extends BaseNode {
     if (name.startsWith("@@")) {
       name = name.substring(1);
       indirect = true;
+    } else {
+      indirect = false;
     }
     this.name = name;
     this.curly = curly;

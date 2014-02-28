@@ -16,9 +16,9 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Definition extends BaseNode {
 
-  private String name;
+  private final String name;
   
-  private Node value;
+  private final Node value;
 
   // Flag to detect late-binding circular references and raise an error.
   private boolean evaluating;

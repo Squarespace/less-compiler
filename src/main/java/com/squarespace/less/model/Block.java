@@ -18,7 +18,7 @@ public class Block extends BaseNode {
 
   private static final int INITIAL_CAPACITY = 8;
   
-  private FlexList<Node> rules;
+  private final FlexList<Node> rules;
   
   private Directive charset;
 
@@ -28,6 +28,10 @@ public class Block extends BaseNode {
   
   public Block() {
     this(INITIAL_CAPACITY);
+  }
+  
+  private Block(FlexList<Node> rules) {
+    this.rules = rules;
   }
   
   public Block(int initialCapacity) {
@@ -88,9 +92,7 @@ public class Block extends BaseNode {
   }
   
   public Block copy() {
-    Block result = new Block();
-    result.rules = rules.copy();
-    return result;
+    return new Block(rules.copy());
   }
   
   public String dumpDefs() {

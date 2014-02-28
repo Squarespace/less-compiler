@@ -7,9 +7,9 @@ package com.squarespace.less.model;
  */
 public class ImportMarker extends BaseNode {
 
-  private Import importStatement;
+  private final Import importStatement;
   
-  private boolean beginning;
+  private final boolean beginning;
   
   public ImportMarker(Import imp, boolean begin) {
     this.importStatement = imp;

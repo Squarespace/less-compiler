@@ -13,9 +13,9 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class MixinCallArgs extends BaseNode {
 
+  private final char delimiter;
+
   private List<Argument> args;
-  
-  private char delimiter;
 
   private boolean evaluate;
 

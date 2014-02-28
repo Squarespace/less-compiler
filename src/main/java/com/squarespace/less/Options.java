@@ -20,10 +20,10 @@ public class Options {
   public static final int DEFAULT_RECURSION_LIMIT = 64;
   
   private final Set<Option> flags = EnumSet.of(Option.STRICT);
-  
-  private int indent = DEFAULT_INDENT;
 
-  private List<Path> importPaths = new ArrayList<>();
+  private final List<Path> importPaths = new ArrayList<>();
+
+  private int indent = DEFAULT_INDENT;
   
   private int recursionLimit = DEFAULT_RECURSION_LIMIT;
   

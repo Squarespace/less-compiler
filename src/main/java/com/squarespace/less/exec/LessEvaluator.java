@@ -43,9 +43,9 @@ public class LessEvaluator {
   
   private static final Pattern IMPORT_CSS = Pattern.compile(".*css([\\?;].*)?$");
   
-  private Context ctx;
+  private final Context ctx;
   
-  private Options opts;
+  private final Options opts;
   
   public LessEvaluator(Context ctx) {
     this.ctx = ctx;
@@ -57,7 +57,7 @@ public class LessEvaluator {
    */
   public String render(Stylesheet sheet) throws LessException {
     sheet = evaluateStylesheet(ctx.newEnv(), sheet);
-    return new LessRenderer().render(ctx, sheet);
+    return LessRenderer.render(ctx, sheet);
   }
 
   public Stylesheet expand(Stylesheet sheet) throws LessException {

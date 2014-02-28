@@ -13,9 +13,9 @@ import com.squarespace.less.model.Node;
 public class LessException extends Exception {
 
   /** Collects additional context about where the primary error occurred */
-  private Deque<Node> errorContext = new ArrayDeque<>(5);
+  private final Deque<Node> errorContext = new ArrayDeque<>(5);
   
-  private ErrorInfo info;
+  private final ErrorInfo info;
   
   public LessException(ErrorInfo info) {
     super(info.getMessage());

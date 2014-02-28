@@ -15,9 +15,9 @@ import com.squarespace.less.core.TypeRef;
  */
 public abstract class SymbolTable<V> {
 
-  private Map<String, V> table;
+  private final Map<String, V> table;
   
-  private TypeRef<V> typeRef;
+  private final TypeRef<V> typeRef;
   
   private boolean inUse = false;
   

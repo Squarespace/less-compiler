@@ -21,11 +21,11 @@ import com.squarespace.less.model.Unit;
  */
 public class ArgSpec {
 
-  private List<ArgValidator> validators;
+  private final List<ArgValidator> validators;
 
-  private int minArgs;
+  private final int minArgs;
   
-  private boolean variadic;
+  private final boolean variadic;
   
   public ArgSpec(NodeType ... types) {
     this(types.length, types);
@@ -154,7 +154,7 @@ public class ArgSpec {
  
   static class ArgTypeValidator extends ArgValidator {
     
-    private NodeType type;
+    private final NodeType type;
     
     public ArgTypeValidator(NodeType type) {
       this.type = type;

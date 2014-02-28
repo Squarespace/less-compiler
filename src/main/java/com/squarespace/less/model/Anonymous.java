@@ -10,7 +10,7 @@ import com.squarespace.less.core.LessInternalException;
 
 public class Anonymous extends BaseNode {
 
-  private String value;
+  private final String value;
   
   public Anonymous(String value) {
     if (value == null) {

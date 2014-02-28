@@ -13,7 +13,7 @@ public enum Combinator {
   SIB_GEN('~')
   ;
   
-  private char ch;
+  private final char ch;
   
   private Combinator(char ch) {
     this.ch = ch;

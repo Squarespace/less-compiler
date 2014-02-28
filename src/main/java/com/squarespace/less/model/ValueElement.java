@@ -10,7 +10,7 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class ValueElement extends Element {
 
-  private Node value;
+  private final Node value;
   
   public ValueElement(Combinator comb, Node value) {
     super(comb);
@@ -49,11 +49,6 @@ public class ValueElement extends Element {
       return combinator == other.combinator && safeEquals(value, other.value);
     }
     return false;
-  }
-  
-  @Override
-  public ValueElement copy() {
-    return new ValueElement(combinator, value);
   }
   
   @Override

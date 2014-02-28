@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class HashMapLessLoader implements LessLoader {
 
-  private Map<Path, String> storage;
+  private final Map<Path, String> storage;
   
   public HashMapLessLoader(Map<Path, String> storage) {
     this.storage = storage;

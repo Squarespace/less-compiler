@@ -14,9 +14,9 @@ import com.squarespace.less.core.LessInternalException;
  */
 public class BufferStack {
 
-  private Context ctx;
+  private final List<Buffer> bufferList = new ArrayList<>();
   
-  private List<Buffer> bufferList = new ArrayList<>();
+  private final Context ctx;
   
   private int index;
 

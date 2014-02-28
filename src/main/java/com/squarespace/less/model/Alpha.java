@@ -11,7 +11,7 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Alpha extends BaseNode {
   
-  private Node value;
+  private final Node value;
   
   public Alpha(Node value) {
     if (value == null) {

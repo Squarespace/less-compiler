@@ -13,9 +13,9 @@ import com.squarespace.less.model.Definition;
  */
 public class ExecEnv {
   
-  private Context ctx;
+  private final Context ctx;
 
-  private FlexList<Block> frames;
+  private final FlexList<Block> frames;
   
   private FlexList<String> warnings;
   

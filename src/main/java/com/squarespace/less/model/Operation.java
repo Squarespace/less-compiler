@@ -19,11 +19,11 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Operation extends BaseNode {
 
-  private Operator operator;
+  private final Operator operator;
   
-  private Node operand0;
+  private final Node operand0;
   
-  private Node operand1;
+  private final Node operand1;
   
   public Operation(Operator operator, Node operand0, Node operand1) {
     this.operator = operator;

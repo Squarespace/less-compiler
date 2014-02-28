@@ -8,18 +8,18 @@ import com.squarespace.less.Options;
  */
 public class Buffer {
 
-  private StringBuilder buf;
+  private final StringBuilder buf;
+
+  private final int indentSize;
+  
+  private final boolean compress;
   
   private char delim = Chars.EOF;
   
-  private int indentSize;
-  
+  private char prev = Chars.LINE_FEED;
+
   private int indentCurr;
 
-  private boolean compress;
-  
-  private char prev = Chars.LINE_FEED;
-  
   public Buffer(Options opts) {
     this(opts.indent(), opts.compress());
   }

@@ -18,7 +18,7 @@ import com.squarespace.less.model.Selectors;
  */
 public class RenderEnv {
 
-  private Context ctx;
+  private final Context ctx;
   
   private RenderFrame frame;
 

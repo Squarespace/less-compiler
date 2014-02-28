@@ -7,9 +7,9 @@ import com.squarespace.less.core.Buffer;
 
 public class TextElement extends Element {
 
-  private String name;
+  private final String name;
   
-  private boolean isWildcard;
+  private final boolean isWildcard;
   
   public TextElement(Combinator comb) {
     super(comb);
@@ -27,11 +27,6 @@ public class TextElement extends Element {
     return name;
   }
  
-  @Override
-  public TextElement copy() {
-    return new TextElement(combinator, name);
-  }
-  
   @Override
   public boolean isWildcard() {
     return isWildcard;

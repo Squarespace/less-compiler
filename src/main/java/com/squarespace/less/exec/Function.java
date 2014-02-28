@@ -17,9 +17,9 @@ import com.squarespace.less.model.Unit;
  */
 public abstract class Function {
 
-  protected String name;
+  protected final String name;
   
-  protected ArgSpec spec;
+  protected final ArgSpec spec;
   
   public Function(String name, String spec) {
     this.name = name;

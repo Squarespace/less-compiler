@@ -5,7 +5,7 @@ import com.squarespace.less.core.LessInternalException;
 
 public abstract class Element extends BaseNode {
   
-  protected Combinator combinator;
+  protected final Combinator combinator;
 
   public Element(Combinator comb) {
     this.combinator = comb;
@@ -15,14 +15,8 @@ public abstract class Element extends BaseNode {
     return combinator;
   }
   
-  public void setCombinator(Combinator comb) {
-    this.combinator = comb;
-  }
-
   public abstract boolean isWildcard();
 
-  public abstract Element copy();
-  
   @Override
   public boolean equals(Object obj) {
     throw new LessInternalException("Element subclass must implement equals(Object)!");

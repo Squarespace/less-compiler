@@ -11,6 +11,9 @@ import com.squarespace.less.SyntaxErrorType;
  */
 public class SyntaxErrorMaker {
 
+  private SyntaxErrorMaker() {
+  }
+
   public static ErrorInfo alphaUnitsInvalid(Object arg) {
     return error(SyntaxErrorType.ALPHA_UNITS_INVALID).arg0(arg);
   }

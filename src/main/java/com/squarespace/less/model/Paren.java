@@ -9,13 +9,13 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Paren extends BaseNode {
 
-  private Node node;
+  private final Node node;
   
   public Paren(Node node) {
     this.node = node;
   }
   
-  public Node getNode() {
+  public Node node() {
     return node;
   }
   

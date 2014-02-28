@@ -8,7 +8,7 @@ import com.squarespace.less.core.Buffer;
 
 public class UnicodeRange extends BaseNode {
   
-  private String value;
+  private final String value;
   
   public UnicodeRange(String value) {
     this.value = value;

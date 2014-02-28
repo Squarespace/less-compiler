@@ -180,14 +180,6 @@ public class Colors {
     return NAME_TO_RGB.get(name);
   }
   
-  public static int rgbToInt(int r, int g, int b) {
-    return (r << 16) + (g << 8) + b;
-  }
-  
-  public static String rgbToName(int r, int g, int b) {
-    return RGB_TO_NAME.get(rgbToInt(r, g, b));
-  }
-  
   public static String colorToName(RGBColor color) {
     return rgbToName(color.red(), color.green(), color.blue());
   }
@@ -217,6 +209,14 @@ public class Colors {
       throw new IllegalArgumentException("Color strings must consist of 3 or 6 hex characters");
     }
     return new int[] { c0, c1, c2 };
+  }
+
+  private static int rgbToInt(int r, int g, int b) {
+    return (r << 16) + (g << 8) + b;
+  }
+  
+  private static String rgbToName(int r, int g, int b) {
+    return RGB_TO_NAME.get(rgbToInt(r, g, b));
   }
   
   private static int component(char ch) {

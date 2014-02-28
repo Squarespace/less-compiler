@@ -33,6 +33,8 @@ public class LessBatchC extends BaseCommand {
   
   private static final String IMPLNAME = "(LESS Batch Compiler) [Java, Squarespace]";
   
+  private final Options options = new Options();
+  
   @Parameter(description = "LESS_DIR [OUTPUT_DIR]")
   private List<String> args;
 
@@ -68,8 +70,6 @@ public class LessBatchC extends BaseCommand {
   @Parameter(names = { "-v", "-version" }, description = "Show version")
   private boolean version = false;
 
-  private Options options = new Options();
-  
   private void buildOptions() {
     options.compress(compress);
     options.importOnce(importOnce);

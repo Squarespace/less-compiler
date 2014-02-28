@@ -10,11 +10,11 @@ import com.squarespace.less.model.Stylesheet;
  */
 public class ImportRecord {
 
-  private Path exactPath;
+  private final Path exactPath;
   
-  private Stylesheet stylesheet;
+  private final Stylesheet stylesheet;
   
-  private boolean onlyOnce;
+  private final boolean onlyOnce;
   
   public ImportRecord(Path exactPath, Stylesheet stylesheet, boolean onlyOnce) {
     this.exactPath = exactPath;

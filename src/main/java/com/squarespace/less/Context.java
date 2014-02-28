@@ -33,26 +33,24 @@ public class Context {
 
   private static final Options DEFAULT_OPTS = new Options();
 
-  private Options opts;
+  private final Options opts;
 
-  private LessCompiler compiler;
-
-  private BufferStack bufferStack;
+  private final BufferStack bufferStack;
   
-  private NodeRenderer renderer;
+  private final MixinResolver mixinResolver;
+  
+  private final LessStats stats;
+  
+  private final Map<Path, ImportRecord> importCache;
+
+  private final Map<Path, Stylesheet> preCache;
+  
+  private final LessLoader loader;
+  
+  private LessCompiler compiler;
 
   private FunctionTable functionTable;
 
-  private MixinResolver mixinResolver;
-  
-  private LessStats stats;
-  
-  private Map<Path, ImportRecord> importCache;
-
-  private Map<Path, Stylesheet> preCache;
-  
-  private LessLoader loader;
-  
   private int mixinDepth;
   
   public Context() {
@@ -70,7 +68,6 @@ public class Context {
   public Context(Options opts, LessLoader loader, Map<Path, Stylesheet> preCache) {
     this.opts = opts;
     this.bufferStack = new BufferStack(this);
-    this.renderer = new NodeRenderer();
     this.mixinResolver = new MixinResolver();
     this.stats = new LessStats();
     this.importCache = new HashMap<>();
@@ -231,17 +228,13 @@ public class Context {
   }
   
   public String render(Node node) throws LessException {
-    return renderer.render(this, node);
+    return NodeRenderer.render(this, node);
   }
   
   public void render(Buffer buf, Node node) throws LessException {
-    renderer.render(buf, node);
+    NodeRenderer.render(buf, node);
   }
   
-  public NodeRenderer renderer() {
-    return renderer;
-  }
- 
   public void enterMixin() {
     this.mixinDepth++;
   }

@@ -20,16 +20,16 @@ public class AttributeElement extends Element {
     super(comb);
   }
 
+  public List<Node> parts() {
+    return LessUtils.safeList(parts);
+  }
+  
   public void add(Node part) {
     if (part == null) {
       throw new LessInternalException("Serious error: part cannot be null.");
     }
     parts = LessUtils.initList(parts, 2);
     parts.add(part);
-  }
-  
-  public List<Node> parts() {
-    return LessUtils.safeList(parts);
   }
   
   @Override
@@ -44,11 +44,6 @@ public class AttributeElement extends Element {
   @Override
   public boolean isWildcard() {
     return false;
-  }
-  
-  @Override
-  public Element copy() {
-    return new AttributeElement(combinator);
   }
   
   @Override

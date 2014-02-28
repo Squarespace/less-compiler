@@ -15,10 +15,10 @@ import com.squarespace.less.exec.ExecEnv;
 public class Quoted extends BaseNode {
 
   private static final int DEFAULT_CAPACITY = 3;
+
+  private final char delim;
   
   private List<Node> parts;
-  
-  private char delim;
   
   private boolean escaped;
   

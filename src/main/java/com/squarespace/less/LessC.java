@@ -26,6 +26,8 @@ public class LessC extends BaseCommand {
   
   private static final String VERSION = "1.3.3";
   
+  private final Options options = new Options();
+  
   @Parameter(description = "LESS_FILE [OUTPUT_FILE]")
   private List<String> args = new ArrayList<String>();
 
@@ -73,8 +75,6 @@ public class LessC extends BaseCommand {
   
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode" )
   private boolean compress = false;
-  
-  private Options options = new Options();
   
   private void buildOptions() {
     options.compress(compress);

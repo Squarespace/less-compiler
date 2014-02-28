@@ -11,13 +11,13 @@ import com.squarespace.less.exec.SelectorUtils;
 
 public class MixinCall extends BaseNode {
 
-  private Selector selector;
-  
+  private final Selector selector;
+
+  private final List<String> selectorPath;
+
   private MixinCallArgs args;
 
   private boolean important;
-
-  private List<String> path;
   
   private Path fileName;
   
@@ -25,7 +25,7 @@ public class MixinCall extends BaseNode {
     this.selector = selector;
     this.args = args;
     this.important = important;
-    this.path = SelectorUtils.renderMixinSelector(selector);
+    this.selectorPath = SelectorUtils.renderMixinSelector(selector);
   }
   
   public MixinCall copy() {
@@ -48,7 +48,7 @@ public class MixinCall extends BaseNode {
   }
   
   public List<String> path() {
-    return this.path;
+    return this.selectorPath;
   }
   
   public Path fileName() {
@@ -93,7 +93,7 @@ public class MixinCall extends BaseNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     buf.append(' ').append(important ? "important" : "");
-    buf.append(' ').append(path.toString()).append('\n');
+    buf.append(' ').append(selectorPath.toString()).append('\n');
     buf.incrIndent().indent();
     selector.modelRepr(buf);
     if (args != null) {

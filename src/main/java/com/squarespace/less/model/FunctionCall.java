@@ -15,7 +15,7 @@ import com.squarespace.less.exec.Function;
 
 public class FunctionCall extends BaseNode {
 
-  private String name;
+  private final String name;
   
   private List<Node> args;
 

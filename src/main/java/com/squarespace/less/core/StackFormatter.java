@@ -30,16 +30,16 @@ import com.squarespace.less.model.Selectors;
  */
 public class StackFormatter {
   
-  private Deque<Node> stack;
+  private final Deque<Node> stack;
+
+  private final Buffer buf;
+
+  private final int indentIncr;
+  
+  private final int frameWindow;
 
   private List<Entry> result;
 
-  private Buffer buf;
-
-  private int indentIncr;
-  
-  private int frameWindow;
-  
   private int indentLevel;
 
   private int col1Width = 0;
@@ -248,11 +248,11 @@ public class StackFormatter {
   
   private static class Entry {
   
-    public String fileName;
+    public final String fileName;
     
-    public String lineNo;
+    public final String lineNo;
 
-    public String repr;
+    public final String repr;
 
     public boolean indent;
     

@@ -42,9 +42,9 @@ public class CssModel {
   
   private static final EnumSet<NodeType> RULESET_ACCEPT = EnumSet.noneOf(NodeType.class);
   
-  private Deque<CssBlock> stack = new ArrayDeque<>();
+  private final Deque<CssBlock> stack = new ArrayDeque<>();
   
-  private Buffer buffer;
+  private final Buffer buffer;
   
   private CssBlock current;
   
@@ -117,15 +117,15 @@ public class CssModel {
   
   static class CssBlock extends CssNode {
 
-    private List<String> headers = new ArrayList<>();
+    private final List<String> headers = new ArrayList<>();
 
-    private Set<CssNode> nodes = new LinkedHashSet<>();
+    private final Set<CssNode> nodes = new LinkedHashSet<>();
+    
+    private final NodeType type;
+    
+    private final EnumSet<NodeType> acceptFilter;
     
     private CssBlock parent;
-    
-    private NodeType type;
-    
-    private EnumSet<NodeType> acceptFilter;
     
     private boolean populated = false;
 
@@ -228,7 +228,7 @@ public class CssModel {
   
   static class CssValue extends CssNode {
     
-    private String value;
+    private final String value;
     
     public CssValue(String value) {
       this.value = value;
@@ -255,7 +255,7 @@ public class CssModel {
   
   static class CssComment extends CssNode { 
     
-    private String value;
+    private final String value;
     
     public CssComment(String value) {
       this.value = value;

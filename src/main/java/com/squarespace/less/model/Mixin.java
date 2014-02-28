@@ -21,11 +21,11 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Mixin extends BlockNode {
 
-  private String name;
+  private final String name;
 
-  private MixinParams params;
+  private final MixinParams params;
   
-  private Guard guard;
+  private final Guard guard;
   
   private ExecEnv closure;
   

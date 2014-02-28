@@ -33,27 +33,30 @@ import com.squarespace.less.model.Stylesheet;
  */
 public class LessRenderer {
 
-  private Context ctx;
+  private final Context ctx;
 
-  private RenderEnv env;
+  private final RenderEnv env;
 
-  private Options opts;
+  private final Options opts;
   
-  private CssModel model;
+  private final CssModel model;
   
   private int traceId;
   
   private int warningId;
   
-  public LessRenderer() {
-  }
-  
-  public String render(Context context, Stylesheet sheet) throws LessException {
+  private LessRenderer(Context context) {
     this.ctx = context;
     this.env = context.newRenderEnv();
     this.opts = context.options();
     this.model = new CssModel(context);
+  }
 
+  public static String render(Context context, Stylesheet sheet) throws LessException {
+    return new LessRenderer(context).render(sheet);
+  }
+  
+  private String render(Stylesheet sheet) throws LessException {
     env.push(sheet);
     Block block = sheet.block();
     Directive charset = block.charset();

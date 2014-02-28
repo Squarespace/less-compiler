@@ -13,7 +13,7 @@ import com.squarespace.less.exec.SelectorUtils;
 
 public class Ruleset extends BlockNode {
 
-  private Selectors selectors;
+  private final Selectors selectors;
 
   private boolean evaluating;
   

@@ -17,9 +17,9 @@ public enum Operator {
   SUBTRACT ("-", "subtract")
   ;
 
-  private String repr;
+  private final String repr;
   
-  private String humanRepr;
+  private final String humanRepr;
   
   private Operator(String repr, String humanRepr) {
     this.repr = repr;

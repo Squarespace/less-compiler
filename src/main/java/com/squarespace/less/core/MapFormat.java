@@ -19,22 +19,22 @@ public class MapFormat {
   
   private static final String EMPTY_STRING = "";
   
-  private List<String> keys = new ArrayList<>();
+  private final List<String> keys = new ArrayList<>();
   
-  private String format;
+  private final String format;
   
-  private String nullPlaceholder = EMPTY_STRING;
+  private final String nullPlaceholder;
   
   public MapFormat(String raw) {
-    init(raw);
+    this(raw, EMPTY_STRING);
   }
   
   public MapFormat(String raw, String nullPlaceholder) {
     this.nullPlaceholder = nullPlaceholder;
-    init(raw);
+    this.format = init(raw);
   }
   
-  private void init(String raw) {
+  private String init(String raw) {
     StringBuffer buf = new StringBuffer();
     Matcher matcher = KEY_ESCAPE.matcher(raw);
     int mark = 0;
@@ -51,7 +51,7 @@ public class MapFormat {
     if (mark < length) {
       buf.append(raw.substring(mark, length));
     }
-    this.format = buf.toString();
+    return buf.toString();
   }
   
   public String getFormat() {

@@ -10,9 +10,9 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Argument extends BaseNode {
 
-  private String name;
+  private final String name;
   
-  private Node value;
+  private final Node value;
     
   public Argument(Node value) {
     this(null, value);
@@ -34,14 +34,6 @@ public class Argument extends BaseNode {
     return value;
   }
   
-  public void setName(String name) {
-    this.name = name;
-  }
-  
-  public void setValue(Node value) {
-    this.value = value;
-  }
-
   @Override
   public NodeType type() {
     return NodeType.ARGUMENT;

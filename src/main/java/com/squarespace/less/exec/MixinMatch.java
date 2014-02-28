@@ -9,9 +9,9 @@ import com.squarespace.less.model.Node;
  */
 public class MixinMatch {
 
-  private Node mixin;
+  private final Node mixin;
   
-  private MixinParams params;
+  private final MixinParams params;
   
   public MixinMatch(Node mixin, MixinParams params) {
     this.mixin = mixin;
