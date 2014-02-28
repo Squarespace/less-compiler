@@ -2,7 +2,7 @@ package com.squarespace.v6.template.less;
 
 import java.util.Map;
 
-import com.squarespace.v6.template.jsont.MapBuilder;
+import com.squarespace.v6.template.less.core.MapBuilder;
 
 
 /**

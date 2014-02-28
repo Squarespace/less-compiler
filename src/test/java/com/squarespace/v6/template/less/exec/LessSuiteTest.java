@@ -46,8 +46,13 @@ public class LessSuiteTest {
   
   private static final boolean VERBOSE = false;
   
+  private static final String SUITE_RESOURCE = "squarespace-less-suite";
+  
   private Path suiteRootPath() {
-    URL top = getClass().getClassLoader().getResource("squarespace-less-suite");
+    URL top = getClass().getClassLoader().getResource(SUITE_RESOURCE);
+    if (top == null) {
+      throw new RuntimeException("Cannot locate test suite resource '" + SUITE_RESOURCE + "'");
+    }
     return Paths.get(top.getPath());
   }
   

@@ -4,7 +4,7 @@ import static com.squarespace.v6.template.less.core.Constants.NULL_PLACEHOLDER;
 
 import java.util.Map;
 
-import com.squarespace.v6.template.jsont.MapFormat;
+import com.squarespace.v6.template.less.core.MapFormat;
 
 
 /**
