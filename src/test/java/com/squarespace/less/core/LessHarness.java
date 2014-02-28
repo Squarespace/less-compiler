@@ -25,7 +25,7 @@ import com.squarespace.less.plugins.TestFunctions;
  */
 public class LessHarness {
 
-  private static final FunctionTable FUNCTIONS = LessCompiler.buildFunctionTable();
+  private static final FunctionTable FUNCTIONS = LessCompiler.defaultFunctionTable();
   
   static {
     FUNCTIONS.register(new TestFunctions());

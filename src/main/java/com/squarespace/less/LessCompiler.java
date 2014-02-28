@@ -23,17 +23,11 @@ import com.squarespace.less.plugins.TypeFunctions;
 public class LessCompiler {
   
   public static final String VERSION = "1.3.3";
-  
-  private static final FunctionTable DEFAULT_FUNCTIONS = buildFunctionTable();
-  
-  static {
-    DEFAULT_FUNCTIONS.setInUse();
-  }
-  
-  private FunctionTable functionTable;
+
+  private final FunctionTable functionTable;
 
   public LessCompiler() {
-    functionTable = DEFAULT_FUNCTIONS;
+    this(defaultFunctionTable());
   }
 
   public LessCompiler(FunctionTable functionTable) {
@@ -88,14 +82,14 @@ public class LessCompiler {
     stats.compileDone(started);
     return result;
   }
-
+  
   /**
    * Build the core function table.  The functions are stateless so this table
    * can be shared among many instances of the compiler.  This method provides
    * a convenient core table, which can be extended by registering further
    * function packages.
    */
-  public static FunctionTable buildFunctionTable() {
+  public static FunctionTable defaultFunctionTable() {
     FunctionTable table = new FunctionTable();
     table.register(new ColorAdjustmentFunctions());
     table.register(new ColorCombinationFunctions());

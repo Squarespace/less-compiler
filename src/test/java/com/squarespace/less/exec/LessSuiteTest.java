@@ -133,14 +133,15 @@ public class LessSuiteTest {
     LessCompiler compiler = new LessCompiler();
     ctx.setCompiler(compiler);
 
-    // First, parse the stylesheet and generate the parse tree and canonical representations.
+    // First, parse the stylesheet and generate the parse tree and canonical representations,
+    // in order to exercise more parts of the code.
     Buffer buf = new Buffer(2);
     Stylesheet sheet = compiler.parse(source, ctx);
     sheet.modelRepr(buf);
     sheet.repr(buf);
 
-    // Hack to detect case-specific options enabled via comments. Next rev of the compiler will
-    // make this easier.
+    // Hack to detect case-specific options enabled via comments. 
+    // Next version of the compiler will make this easier.
     Block block = sheet.block();
     FlexList<Node> rules = block.rules();
     int size = rules.size();

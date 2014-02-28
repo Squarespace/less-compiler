@@ -34,7 +34,8 @@ import com.squarespace.less.model.Stylesheet;
 
 
 /**
- * Given a parse tree, evaluates it, producing a tree that is ready to be rendered.
+ * Given a parse tree, evaluate it. This expands all variable definitions,
+ * mixins, imports, etc. This produces a tree that is ready to be rendered.
  */
 public class LessEvaluator {
 

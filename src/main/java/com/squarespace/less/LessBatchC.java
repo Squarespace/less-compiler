@@ -1,5 +1,7 @@
 package com.squarespace.less;
 
+import static com.squarespace.less.LessCompiler.VERSION;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
