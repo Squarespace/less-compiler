@@ -1,0 +1,12 @@
+
+.mixin(@arg: 0) when (@arg < 30) {
+    (~'rule-@{arg}') {
+        color: #000 + @arg;
+    }
+    .mixin(@arg + 1);
+}
+
+.parent {
+    .mixin;
+}
+

@@ -1,0 +1,14 @@
+
+@import "trace-include.less";
+
+.set-opacity(@amount) {
+    opacity: @amount;
+    .another-mixin(@amount);
+}
+.ruleset-1 {
+    .set-opacity(.75);
+}
+.ruleset-2 {
+    .set-opacity(.25);
+}
+

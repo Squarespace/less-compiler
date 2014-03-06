@@ -1,0 +1,11 @@
+
+.foo(@val) {
+    .bar(@val + 1);
+}
+.bar(@val) {
+    .foo(@val + 1);
+}
+.ruleset {
+    .foo(1);
+}
+
