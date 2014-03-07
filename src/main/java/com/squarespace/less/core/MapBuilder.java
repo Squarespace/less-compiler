@@ -8,7 +8,7 @@ import java.util.Map;
 public class MapBuilder<K, V> {
 
   private final Map<K, V> map = new HashMap<>();
-  
+
   public MapBuilder<K, V> put(K key, V value) {
     map.put(key, value);
     return this;

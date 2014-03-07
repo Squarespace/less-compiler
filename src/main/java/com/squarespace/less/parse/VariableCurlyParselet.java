@@ -15,7 +15,7 @@ public class VariableCurlyParselet implements Parselet {
       return null;
     }
     pos++;
-    
+
     if (stm.peek(pos) == Chars.AT_SIGN) {
       indirect = true;
       pos++;
@@ -25,7 +25,7 @@ public class VariableCurlyParselet implements Parselet {
       return null;
     }
     pos++;
-    
+
     Mark mark = stm.mark();
     stm.seek(pos);
     if (!stm.matchIdentifier()) {
@@ -39,5 +39,5 @@ public class VariableCurlyParselet implements Parselet {
     }
     return new Variable(indirect ? '@' + token : token, true);
   }
-  
+
 }

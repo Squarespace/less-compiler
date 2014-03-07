@@ -22,18 +22,18 @@ public class SelectorsTest extends LessTestBase {
     assertNotEquals(selectors(selector(element("h1"))), selector(element("foo")));
     assertNotEquals(selectors(selector(element("h1"))), selectors(selector(element("h2"))));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     selectors(selector(element("a")), selector(element("y"), element("z"))).toString();
   }
-  
+
   @Test
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(Parselets.SELECTORS);
-    
-    h.parseEquals("a, b", 
+
+    h.parseEquals("a, b",
         selectors(selector(element(DESC, "a")), selector(element(DESC, "b"))));
   }
-  
+
 }

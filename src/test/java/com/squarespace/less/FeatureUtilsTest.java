@@ -30,7 +30,7 @@ public class FeatureUtilsTest extends LessTestBase {
     Variable va = var("@a");
     Paren foo = paren(rule(prop("foo"), va));
     Paren bar = paren(rule(prop("bar"), dim(12, Unit.PX)));
-    
+
     // IN: a b { c {
     Features ancestors = features(expn(ka, kb));
     Features current = features(expn(kc));
@@ -43,11 +43,11 @@ public class FeatureUtilsTest extends LessTestBase {
     // IN: a, b { c, d {
     current = features(expn(kc), expn(kd));
     assertEquals(render(ancestors, current), "a and c, b and c, a and d, b and d");
-    
+
     // IN: a and b, a { c, d {
     ancestors = features(expn(ka, and, kb), expn(ka));
     assertEquals(render(ancestors, current), "a and b and c, a and c, a and b and d, a and d");
-    
+
     GenericBlock defs = defs(
         def("@a", anon("xyz"))
     );
@@ -55,17 +55,17 @@ public class FeatureUtilsTest extends LessTestBase {
     // IN: @a { c, d {
     ancestors = features(expn(va));
     assertEquals(render(ancestors, current, defs), "xyz and c, xyz and d");
-    
+
     // IN: (foo: @a) { c, (bar: 12px) {
     ancestors = features(expn(foo));
     current = features(expn(kc), expn(bar));
     assertEquals(render(ancestors, current, defs), "(foo: xyz) and c, (foo: xyz) and (bar: 12px)");
   }
-  
+
   private String render(Features ancestors, Features current) throws LessException {
     return render(ancestors, current, null);
   }
-  
+
   private String render(Features ancestors, Features current, GenericBlock defs) throws LessException {
     LessHarness h = new LessHarness();
     Context ctx = h.context();

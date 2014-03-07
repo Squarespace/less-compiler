@@ -11,7 +11,7 @@ import com.squarespace.less.exec.ExecEnv;
 public class ValueElement extends Element {
 
   private final Node value;
-  
+
   public ValueElement(Combinator comb, Node value) {
     super(comb);
     if (value == null) {
@@ -23,7 +23,7 @@ public class ValueElement extends Element {
   public Node value() {
     return value;
   }
-  
+
   @Override
   public boolean needsEval() {
     return value.needsEval();
@@ -36,12 +36,12 @@ public class ValueElement extends Element {
     }
     return new ValueElement(combinator(), value.eval(env));
   }
-  
+
   @Override
   public boolean isWildcard() {
     return false;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof ValueElement) {
@@ -50,12 +50,12 @@ public class ValueElement extends Element {
     }
     return false;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     value.repr(buf);
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -64,5 +64,5 @@ public class ValueElement extends Element {
     buf.append(' ');
     value.modelRepr(buf);
   }
-  
+
 }

@@ -23,5 +23,5 @@ public class JavascriptParselet implements Parselet {
     }
     return null;
   }
-  
+
 }

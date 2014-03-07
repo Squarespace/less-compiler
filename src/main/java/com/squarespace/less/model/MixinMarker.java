@@ -14,16 +14,16 @@ public class MixinMarker extends BaseNode {
   private final boolean beginning;
 
   private Path fileName;
-  
+
   public MixinMarker(MixinCall call, boolean begin) {
     this.call = call;
     this.beginning = begin;
   }
-  
+
   public MixinCall mixinCall() {
     return call;
   }
-  
+
   public Path fileName() {
     return fileName;
   }
@@ -35,7 +35,7 @@ public class MixinMarker extends BaseNode {
   public void fileName(Path path) {
     this.fileName = path;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.MIXIN_MARKER;

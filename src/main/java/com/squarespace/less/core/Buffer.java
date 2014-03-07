@@ -11,11 +11,11 @@ public class Buffer {
   private final StringBuilder buf;
 
   private final int indentSize;
-  
+
   private final boolean compress;
-  
+
   private char delim = Chars.EOF;
-  
+
   private char prev = Chars.LINE_FEED;
 
   private int indentCurr;
@@ -23,36 +23,36 @@ public class Buffer {
   public Buffer(Options opts) {
     this(opts.indent(), opts.compress());
   }
-  
+
   public Buffer(int indentSize) {
     this(indentSize, false, new StringBuilder());
   }
-  
+
   public Buffer(int indentSize, boolean compress) {
     this(indentSize, compress, new StringBuilder());
   }
-  
+
   private Buffer(int indentSize, boolean compress, StringBuilder buf) {
     this.indentSize = indentSize;
     this.compress = compress;
     this.buf = buf;
   }
-  
+
   /**
    * Return a fresh buffer with the same initialization options as this one.
    */
   public Buffer newBuffer() {
     return new Buffer(indentSize, compress);
   }
-  
+
   public boolean compress() {
     return compress;
   }
-  
+
   public int length() {
     return buf.length();
   }
-  
+
   public void reset() {
     if (buf.length() != 0) {
       buf.setLength(0);
@@ -60,22 +60,22 @@ public class Buffer {
     delim = Chars.EOF;
     prev = Chars.LINE_FEED;
   }
-  
+
   public Buffer incrIndent() {
     this.indentCurr += indentSize;
     return this;
   }
-  
+
   public Buffer decrIndent() {
     this.indentCurr -= indentSize;
     return this;
   }
-  
+
   public Buffer resetIndent() {
     this.indentCurr = 0;
     return this;
   }
-  
+
   public boolean inEscape() {
     return delim != Chars.EOF;
   }
@@ -93,7 +93,7 @@ public class Buffer {
     }
     return this;
   }
-  
+
   public Buffer startDelim(char ch) {
     if (inEscape()) {
       throw new LessInternalException("Serious error: buffer already in escape mode for " + delim);
@@ -101,30 +101,30 @@ public class Buffer {
     this.delim = ch;
     return this;
   }
-  
+
   public Buffer endDelim() {
     this.delim = Chars.EOF;
     return this;
   }
-  
+
   public Buffer append(long num) {
     buf.append(num);
     prev = buf.charAt(buf.length()-1);
     return this;
   }
-  
+
   public Buffer append(double num) {
     buf.append(num);
     prev = buf.charAt(buf.length()-1);
     return this;
   }
-  
+
   public Buffer append(char ch) {
     buf.append(ch);
     prev = ch;
     return this;
   }
-  
+
   public Buffer append(String str) {
     if (str == null) {
       return this;
@@ -146,7 +146,7 @@ public class Buffer {
       incrIndent();
     }
   }
-  
+
   public void blockClose() {
     if (!compress) {
       decrIndent();
@@ -154,7 +154,7 @@ public class Buffer {
     }
     append("}\n");
   }
-  
+
   public Buffer listSep() {
     if (compress) {
       append(',');
@@ -163,14 +163,14 @@ public class Buffer {
     }
     return this;
   }
-  
+
   public void ruleEnd() {
     append(';');
     if (!compress) {
       append('\n');
     }
   }
-  
+
   public void ruleSep() {
     if (compress) {
       append(':');
@@ -178,7 +178,7 @@ public class Buffer {
       append(": ");
     }
   }
-  
+
   public void selectorSep() {
     if (compress) {
       append(',');
@@ -186,7 +186,7 @@ public class Buffer {
       append(",\n");
     }
   }
-  
+
   @Override
   public String toString() {
     return buf.toString();

@@ -39,7 +39,7 @@ public class NodeRenderer {
 
   private NodeRenderer() {
   }
-  
+
   public static String render(Context ctx, Node node) throws LessException {
     Buffer buf = ctx.acquireBuffer();
     render(buf, node);
@@ -54,11 +54,11 @@ public class NodeRenderer {
 
     // Nodes which are composed of other nodes are output here.
     switch (node.type()) {
-        
+
       case ALPHA:
         _render(buf, (Alpha)node);
         break;
-      
+
       case ANONYMOUS:
       case DIMENSION:
       case FALSE:
@@ -69,85 +69,85 @@ public class NodeRenderer {
       case UNICODE_RANGE:
         node.repr(buf);
         break;
-      
+
       case ASSIGNMENT:
         _render(buf, (Assignment)node);
         break;
-        
+
       case COLOR:
         ((BaseColor)node).toRGB().repr(buf);
         break;
-        
+
       case COMMENT:
         _render(buf, (Comment)node);
         break;
-        
+
       case DIRECTIVE:
-        _render(buf, (Directive)node); 
+        _render(buf, (Directive)node);
         break;
-        
+
       case EXPRESSION:
-        _render(buf, (Expression)node); 
+        _render(buf, (Expression)node);
         break;
-      
+
       case EXPRESSION_LIST:
-        _render(buf, (ExpressionList)node); 
+        _render(buf, (ExpressionList)node);
         break;
-        
-      case FEATURES:  
-        _render(buf, (Features)node); 
+
+      case FEATURES:
+        _render(buf, (Features)node);
         break;
-      
+
       case FUNCTION_CALL:
-        _render(buf, (FunctionCall)node); 
+        _render(buf, (FunctionCall)node);
         break;
-        
+
       case PAREN:
-        _render(buf, (Paren)node); 
+        _render(buf, (Paren)node);
         break;
-        
+
       case QUOTED:
-        _render(buf, (Quoted)node); 
+        _render(buf, (Quoted)node);
         break;
-        
+
       case RULE:
-        _render(buf, (Rule)node); 
+        _render(buf, (Rule)node);
         break;
-        
+
       case SELECTORS:
         for (Selector selector : ((Selectors)node).selectors()) {
           _render(buf, selector);
         }
         break;
-        
+
       case SELECTOR:
-        _render(buf, (Selector)node); 
+        _render(buf, (Selector)node);
         break;
-        
+
       case SHORTHAND:
-        _render(buf, (Shorthand)node); 
+        _render(buf, (Shorthand)node);
         break;
-        
+
       case URL:
-        _render(buf, (Url)node); 
+        _render(buf, (Url)node);
         break;
-        
+
       default:
         throw new LessInternalException("Don't know how to render a node of type " + node.type());
     }
   }
-  
+
   private static void _render(Buffer buf, Alpha alpha) throws LessException {
     buf.append("alpha(opacity=");
     render(buf, alpha.value());
     buf.append(')');
   }
-  
+
   private static void _render(Buffer buf, Assignment assign) throws LessException {
     buf.append(assign.name()).append('=');
     render(buf, assign.value());
   }
-  
+
   private static void _render(Buffer buf, Comment comment) throws LessException {
     String body = comment.body();
     if (comment.block()) {
@@ -159,7 +159,7 @@ public class NodeRenderer {
       buf.append(Chars.LINE_FEED);
     }
   }
-  
+
   private static void _render(Buffer buf, Directive directive) throws LessException {
     buf.append(directive.name());
     Node value = directive.value();
@@ -168,7 +168,7 @@ public class NodeRenderer {
       render(buf, value);
     }
   }
-  
+
   private static void _render(Buffer buf, Expression expn) throws LessException {
     List<Node> values = expn.values();
     int size = values.size();
@@ -190,7 +190,7 @@ public class NodeRenderer {
       render(buf, expns.get(i));
     }
   }
-  
+
   private static void _render(Buffer buf, Features features) throws LessException {
     List<Node> nodes = features.features();
     int size = nodes.size();
@@ -201,7 +201,7 @@ public class NodeRenderer {
       render(buf, nodes.get(i));
     }
   }
-  
+
   private static void _render(Buffer buf, FunctionCall call) throws LessException {
     String name = call.name();
     buf.append(name).append('(');
@@ -216,14 +216,14 @@ public class NodeRenderer {
     }
     buf.append(')');
   }
-  
+
   /** Render a PAREN node. */
   private static void _render(Buffer buf, Paren paren) throws LessException {
     buf.append('(');
     render(buf, paren.node());
     buf.append(')');
   }
-  
+
   /**
    * Render a QUOTED node.
    */
@@ -243,7 +243,7 @@ public class NodeRenderer {
     for (int i = 0; i < size; i++) {
       render(buf, parts.get(i));
     }
-    
+
     if (emitDelim) {
       buf.endDelim();
       if (!escaped) {
@@ -261,14 +261,14 @@ public class NodeRenderer {
       buf.append(" !important");
     }
   }
-  
+
   /** Render a SHORTHAND node. */
   public static void _render(Buffer buf, Shorthand shorthand) throws LessException {
     render(buf, shorthand.left());
     buf.append('/');
     render(buf, shorthand.right());
   }
-  
+
   /** Render a SELECTOR node. */
   private static void _render(Buffer buf, Selector selector) throws LessException {
     List<Element> elements = selector.elements();
@@ -291,14 +291,14 @@ public class NodeRenderer {
         // This combination just emits useless whitespace. Ignore.
         return;
       }
-      
+
       char ch = combinator.getChar();
-      
+
       if (isFirst) {
         if (!isDescendant) {
           buf.append(ch);
         }
-        
+
       } else {
         if (!buf.compress() && !isDescendant) {
           buf.append(' ');
@@ -307,20 +307,20 @@ public class NodeRenderer {
           buf.append(ch);
         }
       }
-      
+
       if (!buf.compress() && !element.isWildcard() && !CharClass.whitespace(buf.prevChar())) {
         buf.append(' ');
       }
     }
-    
+
     // Wildcard elements do not produce output
     if (element.isWildcard()) {
       return;
     }
-    
+
     if (element instanceof TextElement) {
       ((TextElement)element).repr(buf);
-    
+
     } else if (element instanceof ValueElement) {
       ValueElement varElem = (ValueElement)element;
       render(buf, varElem.value());
@@ -335,14 +335,14 @@ public class NodeRenderer {
       }
       buf.append(']');
     }
-    
+
   }
-  
+
   /** Render a URL node. */
   private static void _render(Buffer buf, Url url) throws LessException {
     buf.append("url(");
     render(buf, url.value());
     buf.append(Chars.RIGHT_PARENTHESIS);
   }
-  
+
 }

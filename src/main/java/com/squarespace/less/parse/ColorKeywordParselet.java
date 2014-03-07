@@ -22,5 +22,5 @@ public class ColorKeywordParselet implements Parselet {
     stm.restore(mark);
     return null;
   }
-  
+
 }

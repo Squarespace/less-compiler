@@ -28,10 +28,10 @@ public class ElementParselet implements Parselet {
     Combinator comb = parseCombinator(stm);
     stm.skipWs();
     char ch = stm.peek();
-    
+
     if (stm.matchElement0()) {
       return new TextElement(comb, stm.token());
-      
+
     } else if (stm.matchElement1()) {
       return new TextElement(comb, stm.token());
 
@@ -44,13 +44,13 @@ public class ElementParselet implements Parselet {
     if (elem != null) {
       return elem;
     }
-    
+
     if (stm.matchElement2()) {
       return new TextElement(comb, stm.token());
 
     } else if (stm.matchElement3()) {
       return new TextElement(comb, stm.token());
-    
+
     } else {
       Node var = stm.parse(VARIABLE_CURLY);
       if (var != null) {
@@ -66,7 +66,7 @@ public class ElementParselet implements Parselet {
     }
     return null;
   }
-  
+
   /**
    * For example input selector:  > p[class~="foo"]
    * This method parses the section between the '[' and ']' characters.
@@ -75,7 +75,7 @@ public class ElementParselet implements Parselet {
     if (!stm.seekIf(Chars.LEFT_SQUARE_BRACKET)) {
       return null;
     }
-    
+
     Node key = null;
     if (stm.matchAttributeKey()) {
       key = new Anonymous(stm.token());
@@ -99,7 +99,7 @@ public class ElementParselet implements Parselet {
         elem.add(val);
       }
     }
-    
+
     if (!stm.seekIf(Chars.RIGHT_SQUARE_BRACKET)) {
       return null;
     }
@@ -116,13 +116,13 @@ public class ElementParselet implements Parselet {
     if (CharClass.combinator(ch)) {
       stm.seek1();
       return Combinator.fromChar(ch);
-      
+
     } else if (skipped > 0 || CharClass.whitespace(prev) || prev == Chars.EOF || prev == Chars.COMMA) {
       return Combinator.DESC;
     }
     return null;
   }
-  
+
   private Node parseSub(LessStream stm) throws LessException {
     stm.skipWs();
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
@@ -135,5 +135,5 @@ public class ElementParselet implements Parselet {
     }
     return null;
   }
-  
+
 }

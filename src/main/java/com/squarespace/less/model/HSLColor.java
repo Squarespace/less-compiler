@@ -8,19 +8,19 @@ import com.squarespace.less.core.LessInternalException;
  * Color in the HSL colorspace.
  */
 public class HSLColor extends BaseColor {
-  
+
   private final double hue;
-  
+
   private final double saturation;
-  
+
   private final double lightness;
-  
+
   private final double alpha;
-  
+
   public HSLColor(double hue, double saturation, double lightness) {
     this(hue, saturation, lightness, 1.0);
   }
-  
+
   public HSLColor(double hue, double saturation, double lightness, double alpha) {
     if (hue < 0 || hue > 1.0) {
       throw new LessInternalException("Serious error: something passing hue out of range: " + hue);
@@ -30,15 +30,15 @@ public class HSLColor extends BaseColor {
     this.lightness = clamp(lightness, 0.0, 1.0);
     this.alpha = clamp(alpha, 0.0, 1.0);
   }
-  
+
   public double hue() {
     return hue;
   }
-  
+
   public double saturation() {
     return saturation;
   }
-  
+
   public double lightness() {
     return lightness;
   }
@@ -46,7 +46,7 @@ public class HSLColor extends BaseColor {
   public double alpha() {
     return alpha;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof HSLColor) {
@@ -58,7 +58,7 @@ public class HSLColor extends BaseColor {
     }
     return false;
   }
-  
+
   @Override
   public RGBColor toRGB() {
     double r = 0;
@@ -79,7 +79,7 @@ public class HSLColor extends BaseColor {
     }
     return new RGBColor(r * 255.0, g * 255.0, b * 255.0, alpha);
   }
-  
+
   private double hue(double p, double q, double h) {
     if (h < 0) h += 1.0;
     if (h > 1) h -= 1.0;
@@ -88,12 +88,12 @@ public class HSLColor extends BaseColor {
     if (h < 2 / 3.0) return p + (q - p) * ((2 / 3.0) - h) * 6.0;
     return p;
   }
-  
+
   @Override
   public HSLColor toHSL() {
     return this;
   }
-  
+
   @Override
   public Colorspace getColorspace() {
     return Colorspace.HSL;
@@ -103,12 +103,12 @@ public class HSLColor extends BaseColor {
   public void repr(Buffer buf) {
     this.toRGB().repr(buf);
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     buf.append(' ').append(getColorspace().toString()).append(' ').append(hue).append(' ');
     buf.append(saturation).append(' ').append(lightness).append(' ').append(alpha);
   }
-  
+
 }

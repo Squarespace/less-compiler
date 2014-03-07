@@ -17,11 +17,11 @@ public class FeatureUtils {
 
   /**
    * Combines a list of features with its ancestors using a cartesian product.
-   * 
+   *
    * Examples:
    *  IN: @media a and b { @media c {
    * OUT: @media a and c, b and c {
-   * 
+   *
    *  IN: @media a, b { @media c, d {
    * OUT: @media a and c, b and c, a and d, b and d {
    */
@@ -40,11 +40,11 @@ public class FeatureUtils {
           }
           expn.add(nodes.get(i));
         }
-        
+
         result.add(expn);
       }
     }
     return result;
   }
-    
+
 }

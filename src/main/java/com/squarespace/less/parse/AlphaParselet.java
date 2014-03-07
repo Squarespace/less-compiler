@@ -20,7 +20,7 @@ public class AlphaParselet implements Parselet {
     if (!stm.matchOpacity()) {
       return null;
     }
-    
+
     Node value = stm.parse(ALPHA_SUB);
     if (value != null && value.is(NodeType.DIMENSION)) {
       Dimension dim = (Dimension)value;
@@ -38,5 +38,5 @@ public class AlphaParselet implements Parselet {
     }
     return new Alpha(value == null ? new Anonymous("") : value);
   }
-  
+
 }

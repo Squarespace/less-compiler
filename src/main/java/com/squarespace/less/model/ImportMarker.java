@@ -8,14 +8,14 @@ package com.squarespace.less.model;
 public class ImportMarker extends BaseNode {
 
   private final Import importStatement;
-  
+
   private final boolean beginning;
-  
+
   public ImportMarker(Import imp, boolean begin) {
     this.importStatement = imp;
     this.beginning = begin;
   }
-  
+
   public Import importStatement() {
     return importStatement;
   }
@@ -23,10 +23,10 @@ public class ImportMarker extends BaseNode {
   public boolean beginning() {
     return beginning;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.IMPORT_MARKER;
   }
-  
+
 }

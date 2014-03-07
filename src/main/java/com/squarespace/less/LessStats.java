@@ -7,29 +7,29 @@ package com.squarespace.less;
 public class LessStats {
 
   private static final double FACTOR = 1000000.0;
-  
+
   private double parseTimeMs;
 
   private double compileTimeMs;
 
   private double diskWaitTimeMs;
-  
+
   private int importCount;
 
   private int fileReads;
-  
+
   private int totalSize;
 
   /** Time spent parsing (including imports) */
   public double parseTimeMs() {
     return parseTimeMs;
   }
-  
+
   /** Time spent compiling (including imports) */
   public double compileTimeMs() {
     return compileTimeMs;
   }
-  
+
   /** Time spent waiting for disk I/O of imported files */
   public double diskWaitTimeMs() {
     return diskWaitTimeMs;
@@ -39,12 +39,12 @@ public class LessStats {
   public int importCount() {
     return importCount;
   }
-  
+
   /** Number of files read from disk */
   public int fileReads() {
     return fileReads;
   }
-  
+
   /** Total input size, in number of characters */
   public int totalSize() {
     return totalSize;
@@ -70,7 +70,7 @@ public class LessStats {
     diskWaitTimeMs += deltaMs(started);
   }
 
-  /** 
+  /**
    * Indicate that an import is complete, with a flag to indicate whether
    * the tree was cached or not.
    */

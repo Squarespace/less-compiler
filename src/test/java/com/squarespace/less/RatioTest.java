@@ -22,18 +22,18 @@ public class RatioTest extends LessTestBase {
     assertNotEquals(ratio("3/4"), anon("foo"));
     assertNotEquals(ratio("3/4"), ratio("2/3"));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     ratio("3/4").toString();
   }
- 
+
   @Test
   public void testRatio() throws LessException {
     LessHarness h = new LessHarness(Parselets.RATIO);
-    
+
     h.parseEquals("15/30", ratio("15/30"));
     h.parseFails("foo/bar", INCOMPLETE_PARSE);
   }
-  
+
 }

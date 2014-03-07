@@ -30,7 +30,7 @@ public class ColorTest extends LessTestBase {
     h.parseEquals("#000", rgb(0, 0, 0));
     h.parseEquals("#010203", rgb(1, 2, 3));
   }
-  
+
   @Test
   public void testHex() {
     hexEquals("#48f", 0x44, 0x88, 0xff);
@@ -41,39 +41,39 @@ public class ColorTest extends LessTestBase {
     // bad hex chars
     hexEquals("#xyz", 0, 0, 0);
     hexEquals("#11zy22", 0x11, 0, 0x22);
-    
+
     // varying number of leading '#' symbols, parse is tolerant
     hexEquals("010203", 0x01, 0x02, 0x03);
     hexEquals("###123", 0x11, 0x22, 0x33);
   }
-  
+
   @Test
   public void testConversions() throws LessException {
     RGBColor rgb = rgb(200, 100, 50);
     HSLColor hsl = rgb.toHSL();
     assertEquals(hsl.toRGB(), rgb);
-    
+
     rgb = rgb(32, 32, 32);
     hsl = rgb.toHSL();
     assertEquals(hsl.toRGB(), rgb);
-    
+
     hsl = new HSLColor(.5, .5, .5);
     assertEquals(hsl.toRGB(), new RGBColor(64, 191, 191));
   }
-  
+
   @Test
   public void testClamp() throws LessException {
     assertEquals(BaseColor.clamp(-1, 0, 1), 0.0);
     assertEquals(BaseColor.clamp(500, 0, 255), 255.0);
   }
-  
+
   private void hexEquals(String hex, int red, int green, int blue) {
     RGBColor color = RGBColor.fromHex(hex);
     assertEquals(color.red(), red, "red component of " + hex);
     assertEquals(color.green(), green, "green component of " + hex);
     assertEquals(color.blue(), blue, "blue component of " + hex);
   }
-  
+
   @Test
   public void testBadColors() {
     String[] badColors = new String[] {
@@ -87,5 +87,5 @@ public class ColorTest extends LessTestBase {
       }
     }
   }
-  
+
 }

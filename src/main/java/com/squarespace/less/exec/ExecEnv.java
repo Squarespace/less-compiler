@@ -12,31 +12,31 @@ import com.squarespace.less.model.Definition;
  * Represents the current execution environment.
  */
 public class ExecEnv {
-  
+
   private final Context ctx;
 
   private final FlexList<Block> frames;
-  
+
   private FlexList<String> warnings;
-  
+
   public ExecEnv(Context ctx) {
     this(ctx, new FlexList<Block>(64), null);
   }
-  
+
   public ExecEnv(Context ctx, FlexList<Block> initialStack) {
     this(ctx, initialStack, null);
   }
-  
+
   public ExecEnv(Context ctx, FlexList<Block> initialStack, FlexList<String> warnings) {
     this.ctx = ctx;
     this.frames = initialStack;
     this.warnings = warnings;
   }
-  
+
   public Context context() {
     return ctx;
   }
-  
+
   public ExecEnv copy() {
     return new ExecEnv(ctx, frames.copy(), warnings);
   }
@@ -44,18 +44,18 @@ public class ExecEnv {
   public int depth() {
     return frames.size();
   }
-  
+
   public void append(FlexList<Block> other) {
     frames.append(other);
   }
-  
+
   public void addWarning(String warning) {
     if (warnings == null) {
       warnings = new FlexList<>();
     }
     warnings.append(warning);
   }
-  
+
   public String warnings() {
     if (warnings == null || warnings.isEmpty()) {
       return null;
@@ -71,11 +71,11 @@ public class ExecEnv {
     warnings.clear();
     return buf.toString();
   }
-  
+
   public FlexList<Block> frames() {
     return frames;
   }
-  
+
   /**
    * Iterate up the stack, trying to find the given variable definition in each block.
    */
@@ -89,7 +89,7 @@ public class ExecEnv {
     }
     return null;
   }
-  
+
   /**
    * Iterate up the stack, trying to resolve the mixin against each block.
    */
@@ -102,7 +102,7 @@ public class ExecEnv {
     }
     return false;
   }
-  
+
   /**
    * Push a block onto the stack.
    */
@@ -116,5 +116,5 @@ public class ExecEnv {
   public void pop() {
     frames.pop();
   }
-  
+
 }

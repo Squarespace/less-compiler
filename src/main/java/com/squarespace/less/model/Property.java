@@ -8,11 +8,11 @@ import com.squarespace.less.core.Buffer;
 public class Property extends BaseNode {
 
   private final String name;
-  
+
   public Property(String name) {
     this.name = name;
   }
-  
+
   public String name() {
     return name;
   }
@@ -21,12 +21,12 @@ public class Property extends BaseNode {
   public boolean equals(Object obj) {
     return (obj instanceof Property) ? safeEquals(name, ((Property)obj).name) : false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.PROPERTY;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append(name);
@@ -37,5 +37,5 @@ public class Property extends BaseNode {
     typeRepr(buf);
     buf.append(' ').append(name);
   }
-  
+
 }

@@ -19,11 +19,11 @@ import com.squarespace.less.model.Selectors;
 public class RenderEnv {
 
   private final Context ctx;
-  
+
   private RenderFrame frame;
 
   private int depth;
-  
+
   public RenderEnv(Context ctx) {
     this(ctx, null);
   }
@@ -32,28 +32,28 @@ public class RenderEnv {
     this.ctx = ctx;
     this.frame = frame;
   }
-  
+
   public Context context() {
     return ctx;
   }
-  
+
   public RenderFrame frame() {
     return frame;
   }
-  
+
   public String render(Node node) throws LessException {
     return ctx.render(node);
   }
-  
+
   public void render(Buffer buf, Node node) throws LessException {
     ctx.render(buf, node);
   }
-  
+
   public void push(BlockNode blockNode) throws LessException {
     if (blockNode == null) {
       throw new LessInternalException("Serious error: blockNode cannot be null.");
     }
-    
+
     // Ensure that selectors / features are evaluated outside the block they're attached to.
     Selectors selectors = null;
     Features features = null;
@@ -64,7 +64,7 @@ public class RenderEnv {
         features = (Features) ((Media)blockNode).features();
       }
     }
-    
+
     depth++;
     frame = new RenderFrame(frame, blockNode, depth);
 
@@ -76,7 +76,7 @@ public class RenderEnv {
       frame.mergeFeatures(features);
     }
   }
-  
+
   public void pop() {
     if (frame == null) {
       throw new LessInternalException("Serious error: popped past the last frame!");
@@ -84,5 +84,5 @@ public class RenderEnv {
     depth--;
     frame = frame.parent();
   }
-  
+
 }

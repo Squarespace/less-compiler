@@ -22,7 +22,7 @@ public class ExpressionListParselet implements Parselet {
     if (node == null) {
       return null;
     }
-    
+
     List<Node> expressions = new ArrayList<>();
     while (node != null) {
       expressions.add(node);

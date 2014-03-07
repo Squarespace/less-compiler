@@ -6,5 +6,5 @@ public enum Colorspace {
   RGB,
   HSL
   ;
-  
+
 }

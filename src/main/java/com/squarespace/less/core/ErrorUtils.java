@@ -9,10 +9,10 @@ import com.squarespace.less.LessException;
 public class ErrorUtils {
 
   private static final int STACK_FRAME_WINDOW = 6;
-  
+
   private ErrorUtils() {
   }
-  
+
   /**
    * Formats an error message including a full stack trace.
    */
@@ -26,5 +26,5 @@ public class ErrorUtils {
     ctx.returnBuffer();
     return result;
   }
-  
+
 }

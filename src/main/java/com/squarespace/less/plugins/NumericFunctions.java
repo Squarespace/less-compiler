@@ -67,7 +67,7 @@ public class NumericFunctions implements Registry<Function> {
         if (node.is(NodeType.KEYWORD)) {
           Keyword word = (Keyword)node;
           unit = Unit.get(word.value());
-          
+
         } else if (node.is(NodeType.QUOTED)) {
           Quoted quoted = (Quoted)node;
           quoted = new Quoted(quoted.delimiter(), true, quoted.parts());
@@ -82,7 +82,7 @@ public class NumericFunctions implements Registry<Function> {
       return new Dimension(dim.value(), unit);
     }
   };
-  
+
   @Override
   public void registerTo(SymbolTable<Function> table) {
    // NO-OP

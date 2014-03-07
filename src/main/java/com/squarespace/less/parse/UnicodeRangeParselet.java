@@ -13,5 +13,5 @@ public class UnicodeRangeParselet implements Parselet {
     }
     return null;
   }
-  
+
 }

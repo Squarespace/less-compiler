@@ -30,35 +30,35 @@ public class RuleTest extends LessTestBase {
     assertNotEquals(rule_1, anon("#foo"));
     assertNotEquals(rule_1, rule_2);
   }
-  
+
   @Test
   public void testModelReprSafety() {
     rule(prop("font-size"), dim(12, Unit.PX), true).toString();
   }
-  
+
   @Test
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(Parselets.RULE);
-    
+
     h.parseEquals("foo  :   #123;", rule(prop("foo"), color("#123")));
     h.parseEquals("foo: 12px", rule(prop("foo"), dim(12, Unit.PX)));
-    
-    h.parseEquals("foo \t : \t /* x */ 1 /* y */ 2", 
+
+    h.parseEquals("foo \t : \t /* x */ 1 /* y */ 2",
         rule(prop("foo"), expn(comment(" x ", true), dim(1), comment(" y ", true), dim(2))));
 
     h.parseEquals("foo: foo: foo: 123   ;", rule(prop("foo"), anon("foo: foo: 123")));
 
-    h.parseEquals("font:italic bold 12px/30px Georgia, serif", rule(prop("font"), expnlist( 
+    h.parseEquals("font:italic bold 12px/30px Georgia, serif", rule(prop("font"), expnlist(
         expn(kwd("italic"), kwd("bold"), shorthand(dim(12, PX), dim(30, PX)), kwd("Georgia")), kwd("serif"))));
-    
+
     h = new LessHarness(Parselets.STYLESHEET);
-    
+
     Stylesheet exp = stylesheet();
     exp.add(rule(prop("foo"), anon("")));
     exp.add(rule(prop("bar"), color("#123")));
     h.parseEquals("foo: ;\nbar: #123;", exp);
   }
-  
+
   @Test
   public void testAnonRuleValueParse() throws LessException {
     LessStream stm = new LessStream("foo bar;");
@@ -69,5 +69,5 @@ public class RuleTest extends LessTestBase {
     assertTrue(stm.matchAnonRuleValue());
     assertEquals(stm.token(), "foo: foo: foo: 123 "); // token before trimming
 }
-  
+
 }

@@ -14,13 +14,13 @@ import java.util.regex.Pattern;
 public class JailedFilesystemLessLoader extends FilesystemLessLoader {
 
   private static final Pattern ACCEPT_IMPORT = Pattern.compile(".*\\.(less|css)$");
-  
+
   private final Path jailRoot;
-  
+
   public JailedFilesystemLessLoader(Path jailRoot) {
     this.jailRoot = jailRoot.toAbsolutePath().normalize();
   }
-  
+
   @Override
   public boolean exists(Path path) {
     Matcher matcher = ACCEPT_IMPORT.matcher(path.getFileName().toString());

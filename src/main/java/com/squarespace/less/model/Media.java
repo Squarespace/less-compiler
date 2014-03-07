@@ -7,9 +7,9 @@ import com.squarespace.less.exec.ExecEnv;
 
 
 public class Media extends BlockNode {
-  
+
   private final Features features;
-  
+
   public Media() {
     features = new Features();
   }
@@ -22,18 +22,18 @@ public class Media extends BlockNode {
     super(block);
     this.features = features;
   }
-  
+
   public Media copy(ExecEnv env) throws LessException {
     Features temp = features == null ? null : (Features) features.eval(env);
     Media result = new Media(temp, block.copy());
     result.fileName = fileName;
     return result;
   }
-  
+
   public Features features() {
     return features;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Media) {
@@ -42,12 +42,12 @@ public class Media extends BlockNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.MEDIA;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append("@media ");
@@ -61,7 +61,7 @@ public class Media extends BlockNode {
     buf.decrIndent();
     buf.indent().append("}\n");
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);

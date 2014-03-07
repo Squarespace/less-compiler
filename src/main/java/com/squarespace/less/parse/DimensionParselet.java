@@ -22,8 +22,8 @@ public class DimensionParselet implements Parselet {
     if (stm.matchDimensionUnit()) {
       unit = Unit.get(stm.token());
     }
-    
+
     return new Dimension(Double.parseDouble(value), unit);
   }
-  
+
 }

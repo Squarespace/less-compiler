@@ -15,33 +15,33 @@ import com.squarespace.less.exec.ExecEnv;
 public class ExpressionList extends BaseNode {
 
   private List<Node> values;
-  
+
   private boolean evaluate;
-  
+
   public ExpressionList() {
   }
-  
+
   public ExpressionList(Node node) {
     this.values = new ArrayList<>(2);
     this.values.add(node);
     evaluate |= node.needsEval();
   }
-  
+
   public ExpressionList(List<Node> expressions) {
     this.values = expressions;
     for (Node node : expressions) {
       evaluate |= node.needsEval();
     }
   }
-  
+
   public boolean isEmpty() {
     return size() == 0;
   }
-  
+
   public int size() {
     return values == null ? 0 : values.size();
   }
-  
+
   public void add(Node node) {
     values = LessUtils.initList(values, 2);
     this.values.add(node);
@@ -55,7 +55,7 @@ public class ExpressionList extends BaseNode {
   public boolean needsEval() {
     return evaluate;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!needsEval()) {
@@ -67,10 +67,10 @@ public class ExpressionList extends BaseNode {
     }
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof ExpressionList) 
+    return (obj instanceof ExpressionList)
         ? LessUtils.safeEquals(values, ((ExpressionList)obj).values) : false;
   }
 
@@ -78,7 +78,7 @@ public class ExpressionList extends BaseNode {
   public NodeType type() {
     return NodeType.EXPRESSION_LIST;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     int size = values.size();
@@ -90,7 +90,7 @@ public class ExpressionList extends BaseNode {
     }
 
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -100,5 +100,5 @@ public class ExpressionList extends BaseNode {
     buf.decrIndent();
     buf.indent().append("\n");
   }
-  
+
 }

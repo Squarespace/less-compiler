@@ -18,7 +18,7 @@ public class CharClassTest {
       assertFalse(CharClass.combinator(ch));
       assertFalse(CharClass.uppercase(ch));
     }
-    
+
     for (int i = 0; i < 26; i++) {
       char upper = (char)('A' + i);
       assertTrue(CharClass.uppercase(upper));

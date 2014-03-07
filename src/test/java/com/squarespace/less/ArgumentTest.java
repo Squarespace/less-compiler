@@ -19,7 +19,7 @@ public class ArgumentTest extends LessTestBase {
     assertNotEquals(arg("x", anon("z")), arg("x", anon("y")));
     assertNotEquals(arg("x", anon("y")), arg("x", anon("z")));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     arg(null, anon("y")).toString();

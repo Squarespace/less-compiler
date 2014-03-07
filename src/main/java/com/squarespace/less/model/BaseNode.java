@@ -11,35 +11,35 @@ import com.squarespace.less.exec.ExecEnv;
 public abstract class BaseNode implements Node {
 
   protected int lineOffset;
-  
+
   protected int charOffset;
-  
+
   public void copyPosition(BaseNode from) {
     setLineOffset(from.lineOffset);
     setCharOffset(from.charOffset);
   }
-  
+
   public int lineOffset() {
     return lineOffset;
   }
-  
+
   public void setLineOffset(int lineOffset) {
     this.lineOffset = lineOffset;
   }
-  
+
   public int charOffset() {
     return charOffset;
   }
-  
+
   public void setCharOffset(int charOffset) {
     this.charOffset = charOffset;
   }
-  
+
   public void typeRepr(Buffer buf) {
     buf.append(type().toString());
     buf.append(" [").append(lineOffset).append(',').append(charOffset).append("]");
   }
-  
+
   public static void formatDouble(Buffer buf, double value) {
     long lval = (long)value;
     if (value == lval) {
@@ -62,28 +62,28 @@ public abstract class BaseNode implements Node {
   public final int hashCode() {
     throw new UnsupportedOperationException("Serious error: model objects are not designed to be hashed.");
   }
-  
+
   @Override
   public Node operate(ExecEnv env, Operator op, Node arg) throws LessException {
     NodeType argType = (arg == null) ? null : arg.type();
     throw new LessException(ExecuteErrorMaker.invalidOperation(op, type(), argType));
   }
-  
+
   @Override
   public boolean needsEval() {
     return false;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     return this;
   }
-  
+
   @Override
   public boolean is(NodeType type) {
     return type == type();
   }
-  
+
   @Override
   public String toString() {
     Buffer buf = new Buffer(4);
@@ -97,16 +97,16 @@ public abstract class BaseNode implements Node {
     repr(buf);
     return buf.toString();
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append("<no repr for " + type().toString() + ">");
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     buf.append("<not implemented>");
   }
-  
+
 }

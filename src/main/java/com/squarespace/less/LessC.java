@@ -21,13 +21,13 @@ import com.squarespace.less.model.Stylesheet;
 public class LessC extends BaseCommand {
 
   private static final String PROGRAM_NAME = "sqs_lessc";
-  
+
   private static final String IMPLNAME = "(LESS Compiler) [Java, Squarespace]";
-  
+
   private static final String VERSION = "1.3.3";
-  
+
   private final Options options = new Options();
-  
+
   @Parameter(description = "LESS_FILE [OUTPUT_FILE]")
   private List<String> args = new ArrayList<String>();
 
@@ -53,7 +53,7 @@ public class LessC extends BaseCommand {
 
   @Parameter(names = { "-V", "-verbose" }, description = "Verbose")
   private boolean verbose = false;
-  
+
   @Parameter(names = { "-W", "-wait" }, description = "Wait before executing / exiting.")
   private boolean waitForUser = false;
 
@@ -69,13 +69,13 @@ public class LessC extends BaseCommand {
   @Parameter(names = { "-strict" }, description = "Strict mode, throws exceptions when some invalid rules are "
       + "evaluated instead of embedding warnings.")
   private boolean strictMode;
-  
+
   @Parameter(names = { "-v", "-version" }, description = "Show version")
   private boolean version = false;
-  
+
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode" )
   private boolean compress = false;
-  
+
   private void buildOptions() {
     options.compress(compress);
     options.importOnce(importOnce);
@@ -90,16 +90,16 @@ public class LessC extends BaseCommand {
       options.importPaths(importPaths);
     }
   }
-  
+
   public static String version() {
     return PROGRAM_NAME + " " + VERSION + " " + IMPLNAME;
   }
-  
+
   @Override
   public String programName() {
     return PROGRAM_NAME;
   }
-  
+
   public static void main(String[] args) {
     LessC lessc = new LessC();
     JCommander cmd = new JCommander(lessc);
@@ -110,13 +110,13 @@ public class LessC extends BaseCommand {
       System.err.println(e.getMessage());
       System.exit(1);
     }
-    if (lessc.help) { 
+    if (lessc.help) {
       cmd.usage();
       System.exit(0);
     }
     lessc.main();
   }
-  
+
   private void main() {
     if (version) {
       System.out.println(version());
@@ -132,9 +132,9 @@ public class LessC extends BaseCommand {
     }
     System.exit(0);
   }
-  
+
   /**
-   * Wait for a newline at the prompt before executing / exiting. Assists with 
+   * Wait for a newline at the prompt before executing / exiting. Assists with
    * debugging / profiling at the command line.
    */
   private void waitForUser() {
@@ -145,12 +145,12 @@ public class LessC extends BaseCommand {
       System.exit(1);
     }
   }
-  
+
   private void fail(String message) {
     System.err.println(message);
     System.exit(1);
   }
-  
+
   private void execute() {
     if (args == null || args.isEmpty()) {
       fail("you must provide a .less file.");
@@ -168,18 +168,18 @@ public class LessC extends BaseCommand {
     } catch (IOException e) {
       fail("error reading '" + path + "': " + e.getMessage());
     }
-    
+
     Context ctx = new Context(options);
     ctx.setCompiler(compiler);
     try {
       if (debugMode == DebugMode.CANONICAL) {
         Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath, fileName);
         System.out.println(canonicalize(stylesheet));
-      
+
       } else if (debugMode == DebugMode.PARSE) {
         Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath, fileName);
         System.out.println(parseTree(stylesheet));
-      
+
       } else if (debugMode == DebugMode.EXPAND) {
         // NOTE: This mode doesn't fully work yet.
         Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath, fileName);
@@ -198,7 +198,7 @@ public class LessC extends BaseCommand {
           System.out.print(result);
         }
       }
-      
+
     } catch (LessException e) {
       System.err.println(ErrorUtils.formatError(ctx, path, e, 4));
       System.exit(1);
@@ -209,7 +209,7 @@ public class LessC extends BaseCommand {
     if (verbose) {
       emitMemory("post-compile");
     }
-    
+
     // In trace mode, check for buffer leaks.
     if (options.tracing()) {
       ctx.sanityCheck();
@@ -238,7 +238,7 @@ public class LessC extends BaseCommand {
     buf.append("  import count: ").append(stats.importCount()).append('\n');
     return buf.toString();
   }
-  
+
   public static class DebugModeConverter implements IStringConverter<DebugMode> {
     @Override
     public DebugMode convert(String value) {
@@ -251,5 +251,5 @@ public class LessC extends BaseCommand {
       }
     }
   }
-  
+
 }

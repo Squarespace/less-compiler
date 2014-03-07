@@ -17,15 +17,15 @@ import com.squarespace.less.exec.ExecEnv;
 public class Variable extends BaseNode {
 
   private final String name;
-  
+
   private final boolean indirect;
-  
+
   private final boolean curly;
-  
+
   public Variable(String name) {
     this(name, false);
   }
-  
+
   public Variable(String name, boolean curly) {
     if (name == null) {
       throw new LessInternalException("Serious error: name cannot be null");
@@ -39,31 +39,31 @@ public class Variable extends BaseNode {
     this.name = name;
     this.curly = curly;
   }
-  
+
   public String name() {
     return name;
   }
-  
+
   public boolean curly() {
     return curly;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Variable) {
       Variable other = (Variable)obj;
-      return indirect == other.indirect 
-          && curly == other.curly 
+      return indirect == other.indirect
+          && curly == other.curly
           && safeEquals(name, other.name);
     }
     return false;
   }
-  
+
   @Override
   public boolean needsEval() {
     return true;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     Definition def = (Definition) env.resolveDefinition(name);
@@ -84,7 +84,7 @@ public class Variable extends BaseNode {
     ctx.render(buf, result);
     return new Variable("@" + buf.toString()).eval(env);
   }
-  
+
   @Override
   public NodeType type() {
     return VARIABLE;
@@ -104,7 +104,7 @@ public class Variable extends BaseNode {
       buf.append('}');
     }
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -113,5 +113,5 @@ public class Variable extends BaseNode {
       buf.append(" (curly)");
     }
   }
-  
+
 }

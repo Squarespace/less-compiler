@@ -15,11 +15,11 @@ public class AnoymousTest extends LessTestBase {
   public void testEquals() throws LessException {
     assertEquals(anon(""), anon(""));
     assertEquals(anon("foo"), anon("foo"));
-    
+
     assertNotEquals(anon("foo"), null);
     assertNotEquals(anon("foo"), anon("bar"));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     anon("x").toString();

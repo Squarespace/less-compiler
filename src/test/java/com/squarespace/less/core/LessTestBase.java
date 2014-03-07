@@ -7,6 +7,6 @@ package com.squarespace.less.core;
  * inherit from LessMaker.
  */
 public class LessTestBase extends LessMaker {
-  
+
 
 }

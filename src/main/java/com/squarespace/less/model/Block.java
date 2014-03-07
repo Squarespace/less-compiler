@@ -17,35 +17,35 @@ import com.squarespace.less.core.LessUtils;
 public class Block extends BaseNode {
 
   private static final int INITIAL_CAPACITY = 8;
-  
+
   private final FlexList<Node> rules;
-  
+
   private Directive charset;
 
   private Map<String, Definition> variables;
-  
+
   private boolean rebuildVariables = true;
-  
+
   public Block() {
     this(INITIAL_CAPACITY);
   }
-  
+
   private Block(FlexList<Node> rules) {
     this.rules = rules;
   }
-  
+
   public Block(int initialCapacity) {
     rules = new FlexList<>(initialCapacity);
   }
-  
+
   public void charset(Directive charset) {
     this.charset = charset;
   }
-  
+
   public Directive charset() {
     return charset;
   }
-  
+
   public void prependNode(Node node) {
     rules.splice(0, 0, new Node[] { node });
   }
@@ -61,11 +61,11 @@ public class Block extends BaseNode {
   public FlexList<Node> rules() {
     return rules;
   }
-  
+
   public void resetCache() {
     rebuildVariables = true;
   }
-  
+
   public Definition resolveDefinition(String name) {
     if (rebuildVariables) {
       buildVariables();
@@ -90,17 +90,17 @@ public class Block extends BaseNode {
     }
     rebuildVariables = false;
   }
-  
+
   public Block copy() {
     return new Block(rules.copy());
   }
-  
+
   public String dumpDefs() {
     Buffer buf = new Buffer(4);
     dumpDefs(buf);
     return buf.toString();
   }
-  
+
   /**
    * Debug method - collects list of definitions inside this block.
    */
@@ -117,12 +117,12 @@ public class Block extends BaseNode {
     }
     return output;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.BLOCK;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Block) {
@@ -130,12 +130,12 @@ public class Block extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public String toString() {
     return rules.toString();
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     int size = rules.size();
@@ -145,12 +145,12 @@ public class Block extends BaseNode {
       rule.repr(buf);
     }
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     if (rules != null) {
       ReprUtils.modelRepr(buf, "\n", true, rules);
     }
   }
-  
+
 }

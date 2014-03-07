@@ -25,5 +25,5 @@ public class ExpressionTest extends LessTestBase {
     h.parseEquals("1px solid black", expn(dim(1, PX), kwd("solid"), black));
     h.parseEquals("'bar' 3 + 1", expn(quoted('\'', false, "bar"), oper(ADD, dim(3), dim(1))));
   }
-  
+
 }

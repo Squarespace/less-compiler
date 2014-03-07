@@ -14,7 +14,7 @@ public class PrimaryParselet implements Parselet {
     Block block = new Block();
     Node node = null;
     stm.skipEmpty();
-    
+
     // Save current stream position before parsing each primary rule type.
     Mark position = stm.mark();
     while ((node = stm.parse(PRIMARY_SUB)) != null) {

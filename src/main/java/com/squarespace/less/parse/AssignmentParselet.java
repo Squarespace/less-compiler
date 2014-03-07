@@ -26,14 +26,14 @@ public class AssignmentParselet implements Parselet {
       stm.restore(position);
       return null;
     }
-    
+
     Node value = stm.parse(ENTITY);
     if (value == null) {
       stm.restore(position);
       return null;
     }
-    
+
     return new Assignment(name, value);
   }
-  
+
 }

@@ -20,12 +20,12 @@ public class CommentTest extends LessTestBase {
     assertNotEquals(comment("x", false), comment("y", false));
     assertNotEquals(comment("x", false), comment("x", true));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     comment("x", false).toString();
   }
-  
+
   @Test
   public void testComment() throws LessException {
     LessHarness h = new LessHarness(Parselets.COMMENT);

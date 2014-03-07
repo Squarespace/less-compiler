@@ -25,7 +25,7 @@ public class AlphaTest extends LessTestBase {
   public void testModelReprSafety() {
     alpha("x").toString();
   }
-  
+
   @Test
   public void testAlpha() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);

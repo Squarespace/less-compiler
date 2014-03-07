@@ -25,7 +25,7 @@ public class MixinCallParselet implements Parselet {
     Combinator comb = null;
     while (stm.matchMixinName()) {
       selector.add(new TextElement(comb, stm.token()));
-      
+
       int skipped = stm.skipWs();
       if (stm.peek() == Chars.GREATER_THAN_SIGN) {
         comb = Combinator.CHILD;
@@ -37,20 +37,20 @@ public class MixinCallParselet implements Parselet {
       }
       stm.skipWs();
     }
-    
+
     // If we failed to parse a valid selector, reset and bail out.
     if (selector.isEmpty()) {
       stm.restore(mark);
       return null;
     }
-    
+
     MixinCallArgs args = (MixinCallArgs) stm.parse(MIXIN_CALL_ARGS);
     stm.skipWs();
     boolean important = stm.matchImportant();
-    
+
     stm.skipWs();
     ch = stm.peek();
-    
+
     MixinCall call = null;
     if (ch == Chars.SEMICOLON) {
       stm.seek1();
@@ -63,10 +63,10 @@ public class MixinCallParselet implements Parselet {
       call.fileName(stm.fileName());
       return call;
     }
-    
+
     stm.restore(mark);
     return null;
   }
 
-  
+
 }

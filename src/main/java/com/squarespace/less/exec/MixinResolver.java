@@ -21,19 +21,19 @@ import com.squarespace.less.model.Ruleset;
 public class MixinResolver {
 
   private List<MixinMatch> results;
-  
+
   private MixinMatcher matcher;
-  
+
   private MixinCallArgs args;
 
   private List<String> callPath;
 
   private int callPathSize;
-  
+
   private int maxIndex;
-  
+
   // TODO: change how this is used, so we can avoid the default constructor / reset method. - phensley
-  
+
   public MixinResolver() {
   }
 
@@ -45,20 +45,20 @@ public class MixinResolver {
     this.maxIndex = callPath.size() - 1;
     this.results = new ArrayList<>(3);
   }
-  
+
   public List<MixinMatch> matches() {
     return results;
   }
-  
+
   public boolean match(Block block) throws LessException {
     return match(0, block);
   }
-  
+
   private boolean match(int index, Block block) throws LessException {
     if (index >= callPathSize) {
       return false;
     }
-    
+
     FlexList<Node> rules = block.rules();
     if (rules.isEmpty()) {
       return false;
@@ -75,7 +75,7 @@ public class MixinResolver {
         matched |= matchMixin(index, (Mixin)node);
       }
     }
-    
+
     return matched;
   }
 
@@ -84,12 +84,12 @@ public class MixinResolver {
     if (original.evaluating()) {
       return false;
     }
-    
+
     List<List<String>> paths = ruleset.mixinPaths();
     if (paths.isEmpty()) {
       return false;
     }
-    
+
     // Try each of the ruleset's mixin paths
     for (List<String> path : paths) {
       int remaining = matchPath(index, path);
@@ -114,7 +114,7 @@ public class MixinResolver {
 
     return false;
   }
-  
+
   private boolean matchMixin(int index, Mixin mixin) throws LessException {
     boolean matched = callPath.get(index).equals(mixin.name());
     if (!matched) {

@@ -13,17 +13,17 @@ import com.squarespace.less.exec.ExecEnv;
 public class Selector extends BaseNode {
 
   private static final int DEFAULT_CAPACITY = 4;
-  
+
   private List<Element> elements;
-  
+
   private boolean hasWildcard;
-  
+
   private boolean evaluate;
-  
+
   public boolean hasWildcard() {
     return hasWildcard;
   }
-  
+
   public void add(Element element) {
     elements = LessUtils.initList(elements, DEFAULT_CAPACITY);
     elements.add(element);
@@ -36,11 +36,11 @@ public class Selector extends BaseNode {
   public List<Element> elements() {
     return LessUtils.safeList(elements);
   }
-  
+
   public int size() {
     return (elements == null) ? 0 : elements.size();
   }
-  
+
   public boolean isEmpty() {
     return elements == null || (elements.size() == 0);
   }
@@ -61,17 +61,17 @@ public class Selector extends BaseNode {
     }
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof Selector) ? safeEquals(elements, ((Selector)obj).elements) : false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.SELECTOR;
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -80,5 +80,5 @@ public class Selector extends BaseNode {
     ReprUtils.modelRepr(buf, "\n", true, elements);
     buf.decrIndent();
   }
-  
+
 }

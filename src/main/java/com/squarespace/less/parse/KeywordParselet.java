@@ -13,7 +13,7 @@ public class KeywordParselet implements Parselet {
     if (!CharClass.keywordStart(stm.peek()) || !stm.matchKeyword()) {
       return null;
     }
-    
+
     String token = stm.token();
     RGBColor color = RGBColor.fromName(token);
     if (color != null) {
@@ -21,5 +21,5 @@ public class KeywordParselet implements Parselet {
     }
     return new Keyword(stm.token());
   }
-  
+
 }

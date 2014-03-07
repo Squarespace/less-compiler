@@ -21,7 +21,7 @@ import com.squarespace.less.plugins.TypeFunctions;
  * Singleton and main entry point for parse, compile and render capabilities.
  */
 public class LessCompiler {
-  
+
   public static final String VERSION = "1.3.3";
 
   private final FunctionTable functionTable;
@@ -34,21 +34,21 @@ public class LessCompiler {
     this.functionTable = functionTable;
     this.functionTable.setInUse();
   }
-  
+
   public Context context(Options opts) {
     Context ctx = new Context(opts);
     ctx.setCompiler(this);
     return ctx;
   }
-  
+
   public FunctionTable functionTable() {
     return functionTable;
   }
-  
+
   public Stylesheet parse(String raw, Context ctx) throws LessException {
     return parse(raw, ctx, null, null);
   }
-  
+
   public Stylesheet parse(String raw, Context ctx, Path rootPath, Path fileName) throws LessException {
     LessStats stats = ctx.stats();
     long started = stats.now();
@@ -63,16 +63,16 @@ public class LessCompiler {
     LessEvaluator engine = new LessEvaluator(ctx);
     return engine.render(stylesheet);
   }
-  
+
   public Stylesheet expand(Stylesheet stylesheet, Context ctx) throws LessException {
     LessEvaluator engine = new LessEvaluator(ctx);
     return engine.expand(stylesheet);
   }
-  
+
   public String compile(String raw, Context ctx) throws LessException {
     return compile(raw, ctx, null, null);
   }
-  
+
   public String compile(String raw, Context ctx, Path rootPath, Path fileName) throws LessException {
     Stylesheet sheet = parse(raw, ctx, rootPath, fileName);
     LessStats stats = ctx.stats();
@@ -82,7 +82,7 @@ public class LessCompiler {
     stats.compileDone(started);
     return result;
   }
-  
+
   /**
    * Build the core function table.  The functions are stateless so this table
    * can be shared among many instances of the compiler.  This method provides

@@ -8,9 +8,9 @@ import java.util.HashMap;
 public class UsageExample {
 
   private static final LessCompiler COMPILER = new LessCompiler();
-  
+
   private static final LessMessages MESSAGES = new LessMessages();
-  
+
   private static Options buildOptions(Path importPath) {
     Options opts = new Options();
     opts.addImportPath(importPath.toString());
@@ -29,7 +29,7 @@ public class UsageExample {
     map.put(base, "@baseColor: #abc;");
     return map;
   }
-  
+
   public static void main(String[] args) {
     String source = "@import 'base.less'; .ruleset { color: @baseColor; }";
     Path path = Paths.get("sheet.less").toAbsolutePath();
@@ -45,5 +45,5 @@ public class UsageExample {
       System.err.println(MESSAGES.formatError(exc));
     }
   }
-  
+
 }

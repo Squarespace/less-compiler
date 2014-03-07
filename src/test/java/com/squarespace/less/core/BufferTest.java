@@ -21,7 +21,7 @@ public class BufferTest {
     buf.endDelim();
     assertEquals(buf.toString(), "\"foo\"");
   }
-  
+
   @Test
   public void testNullEscaping() {
     Buffer buf = new Buffer(0, true);
@@ -32,5 +32,5 @@ public class BufferTest {
     assertFalse(buf.inEscape());
     assertEquals(buf.toString(), "foo");
   }
-  
+
 }

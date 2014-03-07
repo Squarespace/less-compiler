@@ -11,13 +11,13 @@ import com.squarespace.less.exec.ExecEnv;
 public class Argument extends BaseNode {
 
   private final String name;
-  
+
   private final Node value;
-    
+
   public Argument(Node value) {
     this(null, value);
   }
-  
+
   public Argument(String name, Node value) {
     if (value == null) {
       throw new LessInternalException("Serious error: value cannot be null");
@@ -25,20 +25,20 @@ public class Argument extends BaseNode {
     this.name = name;
     this.value = value;
   }
-  
+
   public String name() {
     return name;
   }
-  
+
   public Node value() {
     return value;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.ARGUMENT;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Argument) {
@@ -47,17 +47,17 @@ public class Argument extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public boolean needsEval() {
     return value.needsEval();
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     return value.needsEval() ? new Argument(name, value.eval(env)) : this;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     if (name != null) {
@@ -66,7 +66,7 @@ public class Argument extends BaseNode {
     }
     value.repr(buf);
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     buf.append(type().toString()).append("\n");
@@ -85,5 +85,5 @@ public class Argument extends BaseNode {
     }
     buf.decrIndent();
   }
-  
+
 }

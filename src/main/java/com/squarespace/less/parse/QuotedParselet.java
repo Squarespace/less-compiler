@@ -25,13 +25,13 @@ public class QuotedParselet implements Parselet {
       escaped = true;
       offset++;
     }
-    
+
     // Locate the string delimiter.
     char delim = stm.peek(offset);
     if (delim != Chars.APOSTROPHE && delim != Chars.QUOTATION_MARK) {
       return null;
     }
-    
+
     // We have the beginning of a string.
     stm.seek(offset + 1);
     List<Node> parts = new ArrayList<>();
@@ -39,10 +39,10 @@ public class QuotedParselet implements Parselet {
 
     while (stm.index < stm.length) {
       ch = stm.peek();
-      
+
       // If we see an @ symbol embedded into a quoted string, we have to check if it is a
-      // valid variable reference.  We save the current position within the stream and 
-      // attempt to parse out the reference.  If it fails, we restore the position and 
+      // valid variable reference.  We save the current position within the stream and
+      // attempt to parse out the reference.  If it fails, we restore the position and
       // continue processing.
       if (ch == Chars.AT_SIGN) {
         Node ref = stm.parse(VARIABLE_CURLY);
@@ -62,11 +62,11 @@ public class QuotedParselet implements Parselet {
       if (ch == delim || ch == Chars.EOF) {
         break;
       }
-      
+
       if (ch == Chars.LINE_FEED) {
         throw stm.parseError(new LessException(quotedBareLF()));
       }
-      
+
       // We care about backslash only to avoid prematurely terminating the string. All
       // backslash-escaped sequences are left intact.
 
@@ -83,7 +83,7 @@ public class QuotedParselet implements Parselet {
         stm.seek1();
       }
     }
-    
+
     if (buf.length() > 0) {
       parts.add(new Anonymous(buf.toString()));
     }

@@ -16,23 +16,23 @@ public class Ruleset extends BlockNode {
   private final Selectors selectors;
 
   private boolean evaluating;
-  
+
   private List<List<String>> mixinPaths;
-  
+
   public Ruleset() {
     this.selectors = new Selectors();
   }
-  
+
   public Ruleset(Selectors selectors) {
     this(selectors, new Block());
   }
-  
+
   public Ruleset(Selectors selectors, Block block) {
     super(block);
     this.selectors = selectors;
     addMixinPaths(selectors);
   }
-  
+
   public Ruleset copy(ExecEnv env) throws LessException {
     Ruleset result = new Ruleset((Selectors) selectors.eval(env), block.copy());
     result.mixinPaths = mixinPaths;
@@ -42,11 +42,11 @@ public class Ruleset extends BlockNode {
     }
     return result;
   }
-  
+
   public Selectors selectors() {
     return selectors;
   }
-  
+
   public List<List<String>> mixinPaths() {
     return LessUtils.safeList(mixinPaths);
   }
@@ -54,7 +54,7 @@ public class Ruleset extends BlockNode {
   public void enter() {
     evaluating = true;
   }
-  
+
   public void exit() {
     evaluating = false;
   }
@@ -71,14 +71,14 @@ public class Ruleset extends BlockNode {
     }
     return false;
   }
-  
+
   @Override
   public void add(Node node) {
     if (node.is(NodeType.SELECTOR)) {
       Selector selector = (Selector)node;
       selectors.add(selector);
       addMixinPaths(selector);
-      
+
     } else {
       super.add(node);
     }
@@ -88,7 +88,7 @@ public class Ruleset extends BlockNode {
   public NodeType type() {
     return NodeType.RULESET;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     selectors.repr(buf);
@@ -109,24 +109,24 @@ public class Ruleset extends BlockNode {
     super.modelRepr(buf);
     buf.decrIndent().append('\n');
   }
-  
+
   private void addMixinPaths(Selectors selectors) {
     for (Selector selector : selectors.selectors()) {
       addMixinPaths(selector);
     }
   }
-  
+
   private void addMixinPaths(Selector selector) {
     List<String> path = SelectorUtils.renderMixinSelector(selector);
     if (path != null) {
       addMixinPath(path);
     }
   }
-  
+
   private void addMixinPath(List<String> path) {
     mixinPaths = LessUtils.initList(mixinPaths, 2);
     mixinPaths.add(path);
   }
-  
-}  
+
+}
 

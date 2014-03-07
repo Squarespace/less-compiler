@@ -33,11 +33,11 @@ public class MixinParamsParselet implements Parselet {
         params.add(new Parameter(null, true));
         break;
       }
-      
+
       Parameter param = parseParam(stm);
       if (param == null) {
         break;
-      } 
+      }
       params.add(param);
 
       stm.skipWs();
@@ -46,7 +46,7 @@ public class MixinParamsParselet implements Parselet {
         break;
       }
       stm.seek1();
-      
+
     } while (true);
 
     stm.skipWs();
@@ -56,7 +56,7 @@ public class MixinParamsParselet implements Parselet {
     }
     return params;
   }
-  
+
   private Parameter parseParam(LessStream stm) throws LessException {
     Node temp = stm.parse(MIXIN_PARAMETER);
     if (temp == null) {
@@ -65,9 +65,9 @@ public class MixinParamsParselet implements Parselet {
     if (!temp.is(NodeType.VARIABLE)) {
       return new Parameter(null, temp);
     }
-    
+
     Variable var = (Variable)temp;
-    
+
     stm.skipWs();
     if (stm.seekIf(Chars.COLON)) {
       stm.skipWs();
@@ -76,7 +76,7 @@ public class MixinParamsParselet implements Parselet {
         throw stm.parseError(new LessException(expected("an expression")));
       }
       return new Parameter(var.name(), value);
-      
+
     } else if (matchVariadic(stm)) {
       stm.seek(3);
       return new Parameter(var.name(), true);
@@ -88,5 +88,5 @@ public class MixinParamsParselet implements Parselet {
   private boolean matchVariadic(LessStream stm) throws LessException {
     return stm.peek() == Chars.PERIOD && stm.peek(1) == Chars.PERIOD && stm.peek(2) == Chars.PERIOD;
   }
-  
+
 }

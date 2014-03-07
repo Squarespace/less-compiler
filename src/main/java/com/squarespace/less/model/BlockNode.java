@@ -14,26 +14,26 @@ public abstract class BlockNode extends BaseNode {
   protected BlockNode originalBlockNode;
 
   protected boolean important;
-  
+
   protected Path fileName;
-  
+
   public BlockNode() {
     this(new Block());
   }
-  
+
   public BlockNode(Block block) {
     this.block = block;
     this.originalBlockNode = this;
   }
-  
+
   public Block block() {
     return block;
   }
-  
+
   public BlockNode original() {
     return originalBlockNode;
   }
-  
+
   public void markOriginal() {
     originalBlockNode = this;
   }
@@ -41,27 +41,27 @@ public abstract class BlockNode extends BaseNode {
   public boolean important() {
     return important;
   }
-  
+
   public void markImportant() {
     important = true;
   }
-  
+
   public void add(Node node) {
     block.appendNode(node);
   }
-  
+
   public void setBlock(Block block) {
     this.block = block;
   }
-  
+
   public Path fileName() {
     return fileName;
   }
-  
+
   public void fileName(Path fileName) {
     this.fileName = fileName;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof BlockNode) {
@@ -78,5 +78,5 @@ public abstract class BlockNode extends BaseNode {
       block.modelRepr(buf);
     }
   }
-  
+
 }

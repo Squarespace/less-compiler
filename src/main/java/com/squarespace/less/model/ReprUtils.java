@@ -9,7 +9,7 @@ import com.squarespace.less.core.FlexList;
 
 
 public class ReprUtils {
-  
+
   private ReprUtils() {
   }
 
@@ -20,7 +20,7 @@ public class ReprUtils {
   public static void modelRepr(Buffer buf, String delim, List<? extends Node> nodes) {
     modelRepr(buf, delim, false, nodes);
   }
-  
+
   public static void modelRepr(Buffer buf, String delim, boolean indent, Collection<? extends Node> nodes) {
     if (nodes != null) {
       Iterator<? extends Node> iter = nodes.iterator();
@@ -38,7 +38,7 @@ public class ReprUtils {
       }
     }
   }
-  
+
   public static void modelRepr(Buffer buf, String delim, boolean indent, FlexList<? extends Node> rules) {
     int size = rules.size();
     for (int i = 0; i < size; i++) {

@@ -14,15 +14,15 @@ import com.squarespace.less.core.FlexList;
 public class FlexListTest {
 
   private static final FlexList<Object> ALPHA7 = FlexList.<Object>create('a', 'b', 'c', 'd', 'e', 'f', 'g');
-  
+
   private static final FlexList<Object> ALPHA3 = FlexList.<Object>create('a', 'b', 'c');
 
   private static final Object[] DIGIT4 = new Object[] { 1, 2, 3, 4 };
 
   private static final Object[] DIGIT3 = new Object[] { 1, 2, 3 };
-  
+
   private static final Object[] DIGIT2 = new Object[] { 1, 2 };
-  
+
   private static final Object[] EMPTY = new Object[] { };
 
   @Test
@@ -31,13 +31,13 @@ public class FlexListTest {
 
     Object[] insert = new Object[] { 'x', 'y' };
     int overwrite = 1;
-    
+
     // List's size can change on any given iteration, so do not cache
     // the size in advance.
     for (int i = 0; i < list.size(); i++) {
       if (i == 1 || i == 4) {
         list.splice(i, overwrite, insert);
-        
+
         // skip over the numInserted - numOverwritten
         i += insert.length - overwrite;
       }
@@ -50,20 +50,20 @@ public class FlexListTest {
     FlexList<Object> list1 = FlexList.<Object>create(1, 2, 3);
     FlexList<Object> list2 = FlexList.<Object>create(1, 2, 3);
     assertEquals(list1, list2);
-    
+
     list2 = ALPHA3.copy();
     assertNotEquals(list1, list2);
   }
-  
+
   @Test
   public void testReplace() {
     FlexList<Object> expected;
-    
+
     FlexList<Object> list1 = ALPHA7.copy();
     list1.splice(2,  2, DIGIT4, 4);
     expected = FlexList.<Object>create('a', 'b', 1, 2, 3, 4, 'e', 'f', 'g');
     assertEquals(list1, expected);
-    
+
     list1 = ALPHA7.copy();
     list1.splice(2,  1,  DIGIT3, 3);
     expected = FlexList.<Object>create('a', 'b', 1, 2, 3, 'd', 'e', 'f', 'g');
@@ -78,33 +78,33 @@ public class FlexListTest {
     list1.splice(2, 0, DIGIT2, 2);
     expected = FlexList.<Object>create('a', 'b', 1, 2, 'c');
     assertEquals(list1, expected);
-    
+
     list1 = ALPHA3.copy();
     list1.splice(3, 0, DIGIT2, 2);
     expected = FlexList.<Object>create('a', 'b', 'c', 1, 2);
     assertEquals(list1, expected);
   }
-  
+
   @Test
   public void testDelete() {
     FlexList<Object> expected;
-    
+
     FlexList<Object> list1 = ALPHA7.copy();
     list1.splice(2, 2, EMPTY);
     expected = FlexList.<Object>create('a', 'b', 'e', 'f', 'g');
     assertEquals(list1, expected);
-    
+
     list1 = ALPHA7.copy();
     list1.splice(0, 5, EMPTY);
     expected = FlexList.<Object>create('f', 'g');
     assertEquals(list1, expected);
-    
+
     list1 = ALPHA7.copy();
     list1.splice(0, 10, EMPTY);
     expected = FlexList.<Object>create();
     assertEquals(list1, expected);
 }
-  
+
   @Test
   public void testBounds() {
     FlexList<Object> expected;
@@ -133,11 +133,11 @@ public class FlexListTest {
     expected = FlexList.<Object>create('a', 'b', 1, 2, 3);
     assertEquals(list1, expected);
   }
-  
+
   @Test
   public void testAppend() {
     FlexList<Object> expected;
-    
+
     FlexList<Object> list1 = ALPHA3.copy();
     list1.append(ALPHA7);
     expected = FlexList.<Object>create('a', 'b', 'c', 'a', 'b', 'c', 'd', 'e', 'f', 'g');
@@ -155,8 +155,8 @@ public class FlexListTest {
       list.pop();
       fail("Expected NoSuchElementException to be thrown");
     } catch (NoSuchElementException e) {
-      
+
     }
   }
-  
+
 }

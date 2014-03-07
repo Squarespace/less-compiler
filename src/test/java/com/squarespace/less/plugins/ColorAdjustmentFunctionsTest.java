@@ -17,7 +17,7 @@ public class ColorAdjustmentFunctionsTest extends LessTestBase {
     // Tests to ensure that the functions in this package basically work.
     // The deeper testing for these functions is moved into the external
     // test suite files (LessTestSuite)
-    
+
     h.evalEquals("contrast(#fff, #111, #999, .5)", color("#111"));
     h.evalEquals("contrast(#222, #111, #999, .5)", color("#999"));
 
@@ -27,5 +27,5 @@ public class ColorAdjustmentFunctionsTest extends LessTestBase {
     h.evalEquals("darken(#fff, 5) + #000", color("#f2f2f2"));
     h.evalEquals("darken(darken(#fff, 0), 5) + #000", color("#f2f2f2"));
   }
-  
+
 }

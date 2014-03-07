@@ -57,7 +57,7 @@ public class ColorHSLFunctions implements Registry<Function> {
       return RGBColor.fromHSVA(hue % 360 / 360.0, saturation, value, alpha);
     }
   };
-  
+
   public static final Function HUE = new Function("hue", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -85,7 +85,7 @@ public class ColorHSLFunctions implements Registry<Function> {
       return new Dimension(Math.round(rgb(args.get(0)).luma() * 100.0), Unit.PERCENTAGE);
     }
   };
-  
+
   @Override
   public void registerTo(SymbolTable<Function> table) {
     // NO-OP

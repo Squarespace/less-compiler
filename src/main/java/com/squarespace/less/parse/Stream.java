@@ -13,53 +13,53 @@ import com.squarespace.less.core.Chars;
 public class Stream {
 
   protected static final boolean DEBUG = false;
-  
+
   protected final String raw;
-  
+
   protected final int length;
-  
+
   protected int index;
-  
+
   protected int furthest;
 
   protected int lineOffset;
-  
+
   protected int charOffset;
-  
+
   public Stream(String raw) {
     this.raw = raw;
     this.length = raw.length();
   }
-  
+
   public int getLineOffset() {
     return lineOffset;
   }
-  
+
   public int getCharOffset() {
     return charOffset;
   }
-  
+
   protected void dump() {
     char ch = (index >= length) ? Chars.EOF : raw.charAt(index);
     String esc = StringEscapeUtils.escapeJava(ch + "");
     System.out.printf("Stream: index=%d len=%d line=%d char=%d ch=\"%s\"\n",
           index, length, lineOffset, charOffset, esc);
   }
-  
+
   public String raw() {
     return raw;
   }
-  
+
   public int position() {
     return index;
   }
-  
+
   public Mark mark() {
     Mark pos = new Mark();
     mark(pos);
     return pos;
   }
-  
+
   /**
    * Mark current position in the stream so that we can restore it later.
    */
@@ -78,7 +78,7 @@ public class Stream {
     charOffset = mark.charOffset;
     return index;
   }
-  
+
   /**
    * Return the character under the stream pointer. Does not increment the
    * stream pointer.
@@ -134,7 +134,7 @@ public class Stream {
     }
     furthest = Math.max(index, furthest);
   }
-  
+
   /**
    * If the character under the cursor equals 'ch', consume it and return
    * true; else return false;
@@ -146,7 +146,7 @@ public class Stream {
     }
     return false;
   }
-  
+
   /**
    * Consume all whitespace characters, positioning the pointer over the next non-whitespace character.
    * Returns the number of characters skipped.
@@ -164,7 +164,7 @@ public class Stream {
     // Important not to update 'furthest' pointer when skipping whitespace
     return index - start;
   }
-  
+
   public int skipEmpty() {
     int start = index;
     while (index < length) {
@@ -178,12 +178,12 @@ public class Stream {
     // Important not to update 'furthest' pointer when skipping 'empty' chars.
     return index - start;
   }
-  
+
   /**
    * Searches the stream to find the character pattern, consuming every character
    * it sees along the way.  Searching the string "ABCDEFGH" for the pattern "DE",
    * this would position the cursor over the 'F'.
-   * 
+   *
    * Searching for a pattern P in a string S of length N, this runs O(N).
    */
   public boolean seek(CharPattern table) {
@@ -208,15 +208,15 @@ public class Stream {
   public String toString() {
     return "Stream(\"" + StringEscapeUtils.escapeJava(remainder()) + "\")";
   }
-  
+
   public boolean complete() {
     return index == length;
   }
-  
+
   public String remainder() {
     return raw.substring(index);
   }
-  
+
   public String furthest() {
     return raw.substring(Math.min(furthest, length-1));
   }
@@ -237,7 +237,7 @@ public class Stream {
   private void stack() {
     StackTraceElement[] elems = Thread.currentThread().getStackTrace();
     for (int i = 1; i < 5; i++) {
-      System.out.println(elems[i].getLineNumber() + " " + elems[i].getFileName() + 
+      System.out.println(elems[i].getLineNumber() + " " + elems[i].getFileName() +
           " " + elems[i].getMethodName());
     }
     System.out.println();

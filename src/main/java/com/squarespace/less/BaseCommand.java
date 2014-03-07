@@ -6,8 +6,8 @@ import java.io.PrintStream;
 public abstract class BaseCommand {
 
   protected static final String GLOB_LESS = "glob:*.less";
-  
-  protected static final String SEPARATOR = 
+
+  protected static final String SEPARATOR =
       "\n==============================================================================\n";
 
   private static final Runtime RUNTIME = Runtime.getRuntime();
@@ -15,14 +15,14 @@ public abstract class BaseCommand {
   private static final long MEGABYTE = 1024 * 1024;
 
   protected abstract String programName();
-  
+
   protected PrintStream log(String msg) {
     System.err.print(programName());
     System.err.print(": ");
     System.err.print(msg);
     return System.err;
   }
-  
+
   protected void emitMemory(String phase) {
     long maxMemory = RUNTIME.maxMemory();
     long usedMemory = RUNTIME.totalMemory() - RUNTIME.freeMemory();

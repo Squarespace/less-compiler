@@ -9,11 +9,11 @@ import java.util.Map;
 public class HashMapLessLoader implements LessLoader {
 
   private final Map<Path, String> storage;
-  
+
   public HashMapLessLoader(Map<Path, String> storage) {
     this.storage = storage;
   }
-  
+
   @Override
   public boolean exists(Path path) {
     return storage.containsKey(path);
@@ -27,5 +27,5 @@ public class HashMapLessLoader implements LessLoader {
     }
     return result;
   }
-  
+
 }

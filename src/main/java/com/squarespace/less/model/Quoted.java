@@ -17,21 +17,21 @@ public class Quoted extends BaseNode {
   private static final int DEFAULT_CAPACITY = 3;
 
   private final char delim;
-  
+
   private List<Node> parts;
-  
+
   private boolean escaped;
-  
+
   private boolean evaluate;
 
   public Quoted(char delim) {
     this(delim, false);
   }
-  
+
   public Quoted(char delim, boolean escape) {
     this(delim, escape, null);
   }
-  
+
   public Quoted(char delim, boolean escape, List<Node> parts) {
     this.delim = delim;
     this.escaped = escape;
@@ -42,29 +42,29 @@ public class Quoted extends BaseNode {
       }
     }
   }
-  
+
   public char delimiter() {
     return delim;
   }
-  
+
   public boolean escaped() {
     return escaped;
   }
-  
+
   public List<Node> parts() {
     return parts;
   }
-  
+
   public void setEscape(boolean flag) {
     this.escaped = flag;
   }
-  
+
   public void append(Node node) {
     this.parts = LessUtils.initList(parts, DEFAULT_CAPACITY);
     this.parts.add(node);
     this.evaluate |= node.needsEval();
   }
-  
+
   public Quoted copy() {
     Quoted res = new Quoted(delim);
     for (Node part : parts) {
@@ -72,7 +72,7 @@ public class Quoted extends BaseNode {
     }
     return res;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Quoted) {
@@ -81,7 +81,7 @@ public class Quoted extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return QUOTED;
@@ -91,7 +91,7 @@ public class Quoted extends BaseNode {
   public boolean needsEval() {
     return evaluate;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!evaluate) {
@@ -104,7 +104,7 @@ public class Quoted extends BaseNode {
     }
     return new Quoted(delim, escaped, result);
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     if (escaped) {
@@ -117,7 +117,7 @@ public class Quoted extends BaseNode {
     }
     buf.append(delim);
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -129,6 +129,6 @@ public class Quoted extends BaseNode {
     ReprUtils.modelRepr(buf, "\n", true, parts);
     buf.decrIndent();
   }
-  
-  
+
+
 }

@@ -7,27 +7,27 @@ import com.squarespace.less.core.Buffer;
 
 
 public class UnicodeRange extends BaseNode {
-  
+
   private final String value;
-  
+
   public UnicodeRange(String value) {
     this.value = value;
   }
-  
+
   public String value() {
     return value;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof UnicodeRange) ? safeEquals(value, ((UnicodeRange)obj).value) : false; 
+    return (obj instanceof UnicodeRange) ? safeEquals(value, ((UnicodeRange)obj).value) : false;
   }
-  
+
   @Override
   public NodeType type() {
     return UNICODE_RANGE;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append(value);
@@ -38,5 +38,5 @@ public class UnicodeRange extends BaseNode {
     typeRepr(buf);
     buf.append('(').append(value).append(')');
   }
-  
+
 }

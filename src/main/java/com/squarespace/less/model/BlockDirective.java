@@ -8,22 +8,22 @@ import com.squarespace.less.core.Buffer;
 public class BlockDirective extends BlockNode {
 
   private final String name;
-  
+
   public BlockDirective(String name, Block block) {
     this.name = name;
     setBlock(block);
   }
-  
+
   public String name() {
     return name;
   }
-  
+
   public BlockDirective copy() {
     BlockDirective result = new BlockDirective(name, block.copy());
     result.fileName = fileName;
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof BlockDirective) {
@@ -32,12 +32,12 @@ public class BlockDirective extends BlockNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.BLOCK_DIRECTIVE;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append(name);
@@ -47,7 +47,7 @@ public class BlockDirective extends BlockNode {
     buf.decrIndent();
     buf.indent().append("}\n");
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -56,5 +56,5 @@ public class BlockDirective extends BlockNode {
     super.modelRepr(buf);
     buf.decrIndent();
   }
-  
+
 }

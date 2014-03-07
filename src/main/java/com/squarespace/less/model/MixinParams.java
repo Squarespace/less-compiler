@@ -13,13 +13,13 @@ import com.squarespace.less.exec.ExecEnv;
 public class MixinParams extends BaseNode {
 
   private List<Parameter> params;
-  
+
   private boolean variadic;
 
   private int required;
-  
+
   private boolean evaluate;
-  
+
   public void add(Parameter param) {
     params = LessUtils.initList(params, 3);
     params.add(param);
@@ -32,7 +32,7 @@ public class MixinParams extends BaseNode {
       evaluate |= paramValue.needsEval();
     }
   }
-  
+
   public List<Parameter> params() {
     return LessUtils.safeList(params);
   }
@@ -44,16 +44,16 @@ public class MixinParams extends BaseNode {
   public int required() {
     return required;
   }
-  
+
   public boolean variadic() {
     return variadic;
   }
-  
+
   @Override
   public boolean needsEval() {
     return evaluate;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!needsEval()) {
@@ -65,17 +65,17 @@ public class MixinParams extends BaseNode {
     }
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof MixinParams) ? safeEquals(params, ((MixinParams)obj).params) : false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.MIXIN_PARAMS;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     if (params == null) {
@@ -89,7 +89,7 @@ public class MixinParams extends BaseNode {
       params.get(i).repr(buf);
     }
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -101,5 +101,5 @@ public class MixinParams extends BaseNode {
     }
     buf.decrIndent();
   }
-  
+
 }

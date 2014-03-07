@@ -34,7 +34,7 @@ public class SelectorParselet implements Parselet {
       }
       return null;
     }
-    
+
     Node elem = null;
     while ((elem = stm.parse(ELEMENT)) != null) {
       if (selector == null) {
@@ -48,5 +48,5 @@ public class SelectorParselet implements Parselet {
     }
     return selector;
   }
-  
+
 }

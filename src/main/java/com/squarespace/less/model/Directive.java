@@ -11,11 +11,11 @@ import com.squarespace.less.core.LessInternalException;
 public class Directive extends BaseNode {
 
   private final String name;
-  
+
   private final Node value;
-  
+
   private Path fileName;
-  
+
   public Directive(String name, Node value) {
     if (name == null || value == null) {
       throw new LessInternalException("Serious error: name/value cannot be null.");
@@ -23,23 +23,23 @@ public class Directive extends BaseNode {
     this.name = name;
     this.value = value;
   }
-  
+
   public String name() {
     return name;
   }
-  
+
   public Node value() {
     return this.value;
   }
-  
+
   public Path fileName() {
     return fileName;
   }
-  
+
   public void fileName(Path path) {
     this.fileName = path;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Directive) {
@@ -48,12 +48,12 @@ public class Directive extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.DIRECTIVE;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append(name);
@@ -62,7 +62,7 @@ public class Directive extends BaseNode {
       value.repr(buf);
     }
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -71,5 +71,5 @@ public class Directive extends BaseNode {
     value.modelRepr(buf);
     buf.decrIndent();
   }
-  
+
 }

@@ -10,20 +10,20 @@ import com.squarespace.less.exec.ExecEnv;
 
 
 public class Alpha extends BaseNode {
-  
+
   private final Node value;
-  
+
   public Alpha(Node value) {
     if (value == null) {
       throw new LessInternalException("Serious error: value cannot be null.");
     }
     this.value = value;
   }
-  
+
   public Node value() {
     return value;
   }
-  
+
   @Override
   public boolean needsEval() {
     return value.needsEval();
@@ -33,17 +33,17 @@ public class Alpha extends BaseNode {
   public Node eval(ExecEnv env) throws LessException {
     return needsEval() ? new Alpha(value.eval(env)) : this;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof Alpha) ? safeEquals(value, ((Alpha)obj).value) : false;
   }
-  
+
   @Override
   public NodeType type() {
     return ALPHA;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append("alpha(opacity=");

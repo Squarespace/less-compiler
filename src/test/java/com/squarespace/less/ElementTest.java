@@ -18,7 +18,7 @@ public class ElementTest extends LessTestBase {
   @Test
   public void testElement() throws LessException {
     LessHarness h = new LessHarness(Parselets.ELEMENT);
-    
+
     h.parseEquals("h1", element(DESC, "h1"));
     h.parseEquals(" h1", element(DESC, "h1"));
     h.parseEquals("*", element("*"));
@@ -26,11 +26,11 @@ public class ElementTest extends LessTestBase {
     h.parseEquals("+:hover", element(SIB_ADJ, ":hover"));
     h.parseEquals("~.class-one", element(SIB_GEN, ".class-one"));
     h.parseEquals(">&", element(CHILD, "&"));
-    
+
     // Attribute
     h.parseEquals("[foo]", attr(DESC, anon("foo")));
     h.parseEquals("[foo~=\"bar\"]", attr(DESC, anon("foo"), anon("~="), quoted('"', false, "bar")));
-    
+
     // Variable
     h.parseEquals("@{a}", varelem(DESC, var("@a", true)));
     h.parseEquals(">@{foo}", varelem(CHILD, var("@foo", true)));

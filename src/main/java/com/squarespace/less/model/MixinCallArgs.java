@@ -22,15 +22,15 @@ public class MixinCallArgs extends BaseNode {
   public MixinCallArgs(char delimiter) {
     this.delimiter = delimiter;
   }
-  
+
   public char delim() {
     return delimiter;
   }
-  
+
   public List<Argument> args() {
     return LessUtils.safeList(args);
   }
-  
+
   public void add(Argument arg) {
     if (arg == null) {
       throw new LessInternalException("Serious error: arg cannot be null.");
@@ -43,7 +43,7 @@ public class MixinCallArgs extends BaseNode {
   public boolean isEmpty() {
     return args().isEmpty();
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof MixinCallArgs) {
@@ -52,7 +52,7 @@ public class MixinCallArgs extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.MIXIN_ARGS;
@@ -62,7 +62,7 @@ public class MixinCallArgs extends BaseNode {
   public boolean needsEval() {
     return evaluate;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!evaluate) {
@@ -74,7 +74,7 @@ public class MixinCallArgs extends BaseNode {
     }
     return res;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append('(');
@@ -89,7 +89,7 @@ public class MixinCallArgs extends BaseNode {
     }
     buf.append(')');
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     buf.append(type().toString()).append(" delim=").append(delimiter).append('\n');
@@ -97,5 +97,5 @@ public class MixinCallArgs extends BaseNode {
     ReprUtils.modelRepr(buf, "\n", true, args);
     buf.decrIndent();
   }
-  
+
 }

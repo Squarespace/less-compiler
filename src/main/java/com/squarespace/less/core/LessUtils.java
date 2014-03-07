@@ -31,22 +31,22 @@ public class LessUtils {
 
   private LessUtils() {
   }
-  
+
   public static boolean safeEquals(Object o1, Object o2) {
     return (o1 == null) ? (o1 == o2) : o1.equals(o2);
   }
-  
+
   public static <T> List<T> safeList(List<T> list) {
     return list == null ? Collections.<T>emptyList() : list;
   }
-  
+
   public static <T> List<T> initList(List<T> list, int initialSize) {
     if (list == null) {
       list = new ArrayList<T>(initialSize);
     }
     return list;
   }
-  
+
   public static <K, V> Map<K, V> initHashMap(Map<K, V> map, int initialSize) {
     if (map == null) {
       map = new HashMap<K, V>(initialSize);
@@ -59,7 +59,7 @@ public class LessUtils {
       return IOUtils.toString(input, Constants.UTF8);
     }
   }
-  
+
   public static void writeFile(Path outPath, String data) throws IOException {
     try (OutputStream output = Files.newOutputStream(outPath, CREATE, TRUNCATE_EXISTING)) {
       IOUtils.write(data, output, Constants.UTF8);
@@ -110,7 +110,7 @@ public class LessUtils {
       String name = constants[i].name();
       buf.append(lowercase ? name.toLowerCase() : name);
     }
-    
+
     return buf.toString();
   }
 

@@ -29,13 +29,13 @@ public class StreamTest {
     matcher = new CharPattern('*', '/');
     stm = new Stream("  /* foo * bar */ baz");
     assertTrue(stm.seek(matcher));
-    
+
     matcher = new CharPattern('a', 'a', 'b');
     stm = new Stream("aaaaaaaaaaaaaabxyz");
     assertTrue(stm.seek(matcher));
     assertEquals(stm.peek(), 'x');
   }
-  
+
   @Test
   public void testFurthest() {
     Stream stm = new Stream("abcdefghijkl");
@@ -47,7 +47,7 @@ public class StreamTest {
     stm.restore(mark);
     assertEquals(stm.furthest(), "ijkl");
   }
-  
+
   @Test
   public void testPeek() {
     Stream stm = new Stream("abcde");
@@ -60,7 +60,7 @@ public class StreamTest {
     stm.seek(5);
     assertEquals(stm.peek(), Chars.EOF);
   }
-  
+
   @Test
   public void testPeekAhead() {
     Stream stm = new Stream("abcde");
@@ -69,7 +69,7 @@ public class StreamTest {
     assertEquals(stm.peek(4), 'e');
     assertEquals(stm.peek(10), Chars.EOF);
   }
-  
+
   @Test
   public void testMarkRestore() {
     Mark pos = new Mark();
@@ -88,7 +88,7 @@ public class StreamTest {
     stm.restore(pos);
     assertEquals(stm.peek(), 'b');
   }
-  
+
   @Test
   public void testSeek() {
     Stream stm = new Stream("abc\ndef\nghi");
@@ -118,7 +118,7 @@ public class StreamTest {
     stm.seek1();
     assertEquals(stm.peek(), Chars.EOF);
   }
-  
+
   @Test
   public void testSeekTo() {
     Stream stm = new Stream("abcdef");
@@ -127,7 +127,7 @@ public class StreamTest {
     stm.seekTo('z');
     assertEquals(stm.peek(), Chars.EOF);
   }
-  
+
   @Test
   public void testSeekIf() {
     Stream stm = new Stream("abc");
@@ -136,7 +136,7 @@ public class StreamTest {
     stm.seekIf('z');
     assertEquals(stm.peek(), 'b');
   }
-  
+
   @Test
   public void testSkipWhitespace() {
     Stream stm = new Stream("\t\n\r \u000b \tx");

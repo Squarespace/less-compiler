@@ -20,21 +20,21 @@ import com.squarespace.less.model.Unit;
 
 
 public class VariableTest extends LessTestBase {
-  
+
   @Test
   public void testEquals() {
     assertEquals(var("@a"), var("@a"));
-    
+
     assertNotEquals(var("@a"), null);
     assertNotEquals(var("@a"), anon("@a"));
     assertNotEquals(var("@a"), var("@b"));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     var("@a").toString();
   }
- 
+
   @Test
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(VARIABLE);
@@ -43,20 +43,20 @@ public class VariableTest extends LessTestBase {
     h.parseEquals("@1", var("@1"));
     h.parseEquals("@a", var("@a"));
     h.parseEquals("@@a", var("@@a"));
-    
+
     h = new LessHarness(VARIABLE_CURLY);
     h.parseFails("@{", INCOMPLETE_PARSE);
     h.parseFails("@{a", INCOMPLETE_PARSE);
     h.parseFails("@{aa", INCOMPLETE_PARSE);
     h.parseEquals("@{aa}", var("@aa", true));
   }
-  
+
   @Test
   public void testUndefined() throws LessException {
     LessHarness h = new LessHarness();
     h.executeFails(".foo { color: @c; }", VAR_UNDEFINED);
   }
-  
+
   @Test
   public void testSelfReference() throws LessException {
     GenericBlock defs = defs(
@@ -69,7 +69,7 @@ public class VariableTest extends LessTestBase {
     h.evalFails("@link1", VAR_CIRCULAR_REFERENCE);
     h.evalFails("@link2", VAR_CIRCULAR_REFERENCE);
   }
- 
+
   @Test
   public void testIndirectReference() throws LessException {
     GenericBlock defs = defs(
@@ -82,7 +82,7 @@ public class VariableTest extends LessTestBase {
     h.renderEquals("@@one", "\"12px\"");
     h.renderEquals("@@two", "\"12px\"");
   }
-  
+
   @Test
   public void testDereference() throws LessException {
     GenericBlock defs = defs(
@@ -97,7 +97,7 @@ public class VariableTest extends LessTestBase {
     h.renderEquals("@color", "#123");
     h.renderEquals("@num", "1px");
   }
-  
+
   @Test
   public void testEmbeddedReferences() throws LessException {
     GenericBlock defs = defs(
@@ -110,7 +110,7 @@ public class VariableTest extends LessTestBase {
     LessHarness h = new LessHarness(QUOTED, defs);
     h.renderEquals("'@{a} @{b} @{c} @{d} @{e}", "'1em foo 2px \"bar\" #123456'");
   }
- 
+
   @Test
   public void testNestedVariables() throws LessException {
     Options opts = new Options(true);

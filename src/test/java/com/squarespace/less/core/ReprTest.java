@@ -13,7 +13,7 @@ public class ReprTest extends LessTestBase {
   @Test
   public void testQuoted() throws LessException {
     Buffer buf = new Buffer(2);
-    
+
     quoted('\'', false, anon("foo"), var("@foo", true)).repr(buf);
     assertEquals(buf.toString(), "'foo@{foo}'");
 
@@ -21,5 +21,5 @@ public class ReprTest extends LessTestBase {
     quoted('"', true, var("@@foo", true)).repr(buf);
     assertEquals(buf.toString(), "~\"@@{foo}\"");
   }
-  
+
 }

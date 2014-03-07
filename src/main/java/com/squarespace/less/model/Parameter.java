@@ -12,9 +12,9 @@ public class Parameter extends BaseNode {
   private final String name;
 
   private final Node value;
-  
+
   private final boolean variadic;
-  
+
   public Parameter(String name) {
     this(name, null);
   }
@@ -24,7 +24,7 @@ public class Parameter extends BaseNode {
     this.value = value;
     this.variadic = false;
   }
-  
+
   public Parameter(String name, boolean variadic) {
     this.name = name;
     this.value = null;
@@ -34,11 +34,11 @@ public class Parameter extends BaseNode {
   public String name() {
     return name;
   }
-  
+
   public Node value() {
     return value;
   }
-  
+
   public boolean variadic() {
     return variadic;
   }
@@ -47,7 +47,7 @@ public class Parameter extends BaseNode {
   public boolean needsEval() {
     return value != null ? value.needsEval() : false;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!needsEval()) {
@@ -55,7 +55,7 @@ public class Parameter extends BaseNode {
     }
     return value == null ? new Parameter(name, variadic) : new Parameter(name, value.eval(env));
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Parameter) {
@@ -66,12 +66,12 @@ public class Parameter extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.PARAMETER;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     if (name != null) {
@@ -88,7 +88,7 @@ public class Parameter extends BaseNode {
       buf.append("...");
     }
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -102,5 +102,5 @@ public class Parameter extends BaseNode {
       buf.decrIndent();
     }
   }
-  
+
 }

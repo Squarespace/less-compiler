@@ -15,7 +15,7 @@ import com.squarespace.less.core.LessUtils;
 public class AttributeElement extends Element {
 
   private List<Node> parts;
-  
+
   public AttributeElement(Combinator comb) {
     super(comb);
   }
@@ -23,7 +23,7 @@ public class AttributeElement extends Element {
   public List<Node> parts() {
     return LessUtils.safeList(parts);
   }
-  
+
   public void add(Node part) {
     if (part == null) {
       throw new LessInternalException("Serious error: part cannot be null.");
@@ -31,7 +31,7 @@ public class AttributeElement extends Element {
     parts = LessUtils.initList(parts, 2);
     parts.add(part);
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof AttributeElement) {
@@ -40,12 +40,12 @@ public class AttributeElement extends Element {
     }
     return false;
   }
-  
+
   @Override
   public boolean isWildcard() {
     return false;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append('[');
@@ -54,7 +54,7 @@ public class AttributeElement extends Element {
     }
     buf.append(']');
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -63,5 +63,5 @@ public class AttributeElement extends Element {
     ReprUtils.modelRepr(buf, "\n", true, parts);
     buf.decrIndent();
   }
-  
+
 }

@@ -13,5 +13,5 @@ public interface LessLoader {
 
   /** Load the target file */
   String load(Path path) throws LessException;
-  
+
 }

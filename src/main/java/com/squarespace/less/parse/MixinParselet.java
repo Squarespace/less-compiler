@@ -26,7 +26,7 @@ public class MixinParselet implements Parselet {
     if (!stm.matchMixinName()) {
       return null;
     }
-    
+
     String name = stm.token();
     MixinParams params = (MixinParams)stm.parse(MIXIN_PARAMS);
     if (params == null) {
@@ -43,7 +43,7 @@ public class MixinParselet implements Parselet {
       stm.restore(mark);
       return null;
     }
-    
+
     Mixin mixin = new Mixin(name, params, guard, (Block)block);
     mixin.markOriginal();
     return mixin;

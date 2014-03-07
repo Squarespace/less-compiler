@@ -16,12 +16,12 @@ public class SelectorUtils {
 
   private SelectorUtils() {
   }
-  
+
   /**
    * Given a list of ancestor selectors and a list of current selectors, combine them into a
    * single merged selector list.  The merge strategy is based on the way LESS language does
    * nested selector combination:
-   * 
+   *
    * 1. If a selector contains no wildcards, it is appended to each of the ancestors.
    * 2. Otherwise, we need to replace each wildcard element in the selector with
    *    the list of ancestors, and then return the cartesian product.
@@ -38,7 +38,7 @@ public class SelectorUtils {
         SelectorUtils.flatten(inputs, result);
         continue;
       }
-      
+
       // Otherwise, substitute the ancestors after each wildcard element found.
       List<List<Selector>> inputs = new ArrayList<>();
       Selector temp = new Selector();
@@ -51,7 +51,7 @@ public class SelectorUtils {
           temp = new Selector();
         }
       }
-      
+
       if (!temp.isEmpty()) {
         inputs.add(Arrays.asList(temp));
       }
@@ -60,7 +60,7 @@ public class SelectorUtils {
     }
     return result;
   }
-  
+
   /**
    * Generate a cartesian product from 'selectors' and append the flattened selectors
    * to 'result'.

@@ -15,7 +15,7 @@ public class SubParselet implements Parselet {
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
       return null;
     }
-    
+
     Node node = stm.parse(EXPRESSION);
 
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {

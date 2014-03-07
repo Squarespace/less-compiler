@@ -15,15 +15,15 @@ import com.squarespace.less.core.LessInternalException;
 public class BufferStack {
 
   private final List<Buffer> bufferList = new ArrayList<>();
-  
+
   private final Context ctx;
-  
+
   private int index;
 
   public BufferStack(Context ctx) {
     this.ctx = ctx;
   }
-  
+
   /**
    * Acquire a reusable buffer to render nodes.
    */
@@ -43,11 +43,11 @@ public class BufferStack {
     index++;
     return buf;
   }
-  
+
   public void returnBuffer() {
     index--;
   }
-  
+
   public void sanityCheck() {
     if (index != 0) {
       throw new LessInternalException("Serious error: buffer stack was not returned to zero: " + index);

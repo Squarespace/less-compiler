@@ -28,14 +28,14 @@ public class ValueRendererTest extends LessTestBase {
     assertEquals(render(comment(" foo * // * bar ", true)), "/* foo * // * bar */");
     assertEquals(render(comment(" bar /* x */ baz", false)), "// bar /* x */ baz");
   }
-  
+
   @Test
   public void testDimension() throws LessException {
     assertEquals(render(dim(12, Unit.PX)), "12px");
     assertEquals(render(dim(3.14, Unit.IN)), "3.14in");
     assertEquals(render(dim(2.1819)), "2.1819");
   }
-  
+
   @Test
   public void testParenthesis() throws LessException {
     assertEquals(render(paren(kwd("foo"))), "(foo)");
@@ -48,7 +48,7 @@ public class ValueRendererTest extends LessTestBase {
     assertEquals(render(quoted('\'', false, "bar")), "'bar'");
     assertEquals(render(quoted('"', true, "bar", "foo")), "barfoo");
   }
-  
+
   @Test
   public void testSelector() throws LessException {
     List<Selector> selectors = Arrays.asList(
@@ -58,7 +58,7 @@ public class ValueRendererTest extends LessTestBase {
         selector(element("ul"), element("li"), element(null, ".one"), element(SIB_GEN, "li"), element(null, ".two")),
         selector(element("a"), element(null, ".b"), element("c"), element(CHILD, "d"))
         );
-    
+
     List<String> normal = Arrays.asList(
         "> span b",
         "p + div > span",
@@ -66,7 +66,7 @@ public class ValueRendererTest extends LessTestBase {
         "ul li.one ~ li.two",
         "a.b c > d"
         );
-    
+
     List<String> compressed = Arrays.asList(
         ">span b",
         "p+div>span",
@@ -83,7 +83,7 @@ public class ValueRendererTest extends LessTestBase {
   private String render(Node node) throws LessException {
     return render(node, false);
   }
-  
+
   private String compress(Node node) throws LessException {
     return render(node, true);
   }
@@ -93,7 +93,7 @@ public class ValueRendererTest extends LessTestBase {
     ExecEnv env = ctx.newEnv();
     return env.context().render(node);
   }
-  
-  
-  
+
+
+
 }

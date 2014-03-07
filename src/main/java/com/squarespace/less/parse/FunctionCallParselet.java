@@ -30,7 +30,7 @@ public class FunctionCallParselet implements Parselet {
     String nameLC = name.toLowerCase();
     if (nameLC.equals("url")) {
       return parseUrl(stm);
-    
+
     } else if (nameLC.equals("alpha")) {
       // Special handling for IE's alpha function.
       Node result = stm.parse(Parselets.ALPHA);
@@ -40,7 +40,7 @@ public class FunctionCallParselet implements Parselet {
       // Fall through, assuming the built-in alpha function.
 
     }
-  
+
     // Use the lowercase version of the name to match less.js. CSS is case-insensitive
     // within the ASCII range.
     FunctionCall call = new FunctionCall(nameLC);
@@ -48,7 +48,7 @@ public class FunctionCallParselet implements Parselet {
     for (Node arg : args.expressions()) {
       call.add(arg);
     }
-      
+
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
       stm.restore(position);
@@ -56,7 +56,7 @@ public class FunctionCallParselet implements Parselet {
     }
     return call;
   }
-  
+
 
   private ExpressionList parseArgs(LessStream stm) throws LessException {
     ExpressionList args = new ExpressionList();
@@ -65,7 +65,7 @@ public class FunctionCallParselet implements Parselet {
       if (value != null) {
         args.add(value);
       }
-      
+
       stm.skipWs();
       if (!stm.seekIf(Chars.COMMA)) {
         break;
@@ -93,5 +93,5 @@ public class FunctionCallParselet implements Parselet {
     }
     return new Url(value);
   }
-  
+
 }

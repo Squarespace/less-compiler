@@ -26,24 +26,24 @@ public class GuardTest extends LessTestBase {
     Condition one_eq1 = cond(EQUAL, one, one);
     Condition two_eq2 = cond(EQUAL, two, two);
     Condition one_ne2 = cond(NOT_EQUAL, one, two);
-    
+
     LessHarness h = new LessHarness(Parselets.GUARD);
 
     h.parseEquals("when (1)",
         guard(cond(EQUAL, one, Constants.TRUE)));
-    
+
     h.parseEquals("when (1=1), (2=2) and (1!=2)",
         guard(one_eq1, cond(AND, two_eq2, one_ne2)));
-    
+
     h.parseEquals("when not (1=1)",
         guard(cond(EQUAL, one, one, true)));
-    
+
     h.parseEquals("when (1=1) and not (2=2)",
         guard(cond(AND, one_eq1, cond(EQUAL, two, two, true))));
-    
+
     h.parseEquals("when (true), (false)",
         guard(cond(EQUAL, TRUE, TRUE), cond(EQUAL, FALSE, TRUE)));
-    
+
     h.parseEquals("when(true),(false)",
         guard(cond(EQUAL, TRUE, TRUE), cond(EQUAL, FALSE, TRUE)));
   }

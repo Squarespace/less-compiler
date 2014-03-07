@@ -19,16 +19,16 @@ public class RulesetParselet implements Parselet {
     if (group == null) {
       return null;
     }
-    
+
     Node block = stm.parse(BLOCK);
     if (block == null) {
       stm.restore(mark);
       return null;
     }
-    
+
     Ruleset ruleset = new Ruleset(group, (Block)block);
     ruleset.fileName(stm.fileName());
     return ruleset;
   }
-  
+
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 public interface ErrorType {
 
   String prefix(Map<String, Object> params);
-  
+
   String message(Map<String, Object> params);
 
 }

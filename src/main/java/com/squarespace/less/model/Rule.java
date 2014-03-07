@@ -13,33 +13,33 @@ import com.squarespace.less.exec.ExecEnv;
 public class Rule extends BaseNode {
 
   private final Node property;
-  
+
   private final Node value;
-  
+
   private boolean important;
-  
+
   private Path fileName;
-  
+
   private String warnings;
-  
+
   public Rule(Node property, Node value) {
     this(property, value, false);
   }
-  
+
   public Rule(Node property, Node value, boolean important) {
     this.property = property;
     this.value = value;
     this.important = important;
   }
-  
+
   public Node property() {
     return property;
   }
-  
+
   public Node value() {
     return value;
   }
-  
+
   public boolean important() {
     return important;
   }
@@ -47,23 +47,23 @@ public class Rule extends BaseNode {
   public void markImportant(boolean flag) {
     this.important = flag;
   }
-  
+
   public Path fileName() {
     return fileName;
   }
-  
+
   public void fileName(Path path) {
     this.fileName = path;
   }
-  
+
   public String warnings() {
     return warnings;
   }
-  
+
   public void warnings(String warnings) {
     this.warnings = warnings;
   }
-  
+
   public Rule copy() {
     Rule rule = new Rule(property, value, important);
     rule.fileName = fileName;
@@ -80,17 +80,17 @@ public class Rule extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return RULE;
   }
-  
+
   @Override
   public boolean needsEval() {
     return value.needsEval();
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!needsEval()) {
@@ -112,7 +112,7 @@ public class Rule extends BaseNode {
     }
     buf.append(";\n");
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -128,5 +128,5 @@ public class Rule extends BaseNode {
     }
     buf.decrIndent();
   }
-  
+
 }

@@ -19,7 +19,7 @@ public class BlockParselet implements Parselet {
     if (stm.peek() != Chars.LEFT_CURLY_BRACKET) {
       return null;
     }
-    
+
     Mark mark = stm.mark();
     stm.seek1();
     Block block = (Block)stm.parse(PRIMARY);

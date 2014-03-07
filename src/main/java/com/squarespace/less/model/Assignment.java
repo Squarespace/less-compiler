@@ -11,9 +11,9 @@ import com.squarespace.less.exec.ExecEnv;
 public class Assignment extends BaseNode {
 
   private final String name;
-  
+
   private final Node value;
-  
+
   public Assignment(String name, Node value) {
     if (name == null || value == null) {
       throw new LessInternalException("Serious error: name/value cannot be null.");
@@ -21,15 +21,15 @@ public class Assignment extends BaseNode {
     this.name = name;
     this.value = value;
   }
-  
+
   public String name() {
     return name;
   }
-  
+
   public Node value() {
     return value;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.ASSIGNMENT;
@@ -43,7 +43,7 @@ public class Assignment extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public boolean needsEval() {
     return value.needsEval();
@@ -59,7 +59,7 @@ public class Assignment extends BaseNode {
     buf.append(name).append('=');
     value.repr(buf);
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);

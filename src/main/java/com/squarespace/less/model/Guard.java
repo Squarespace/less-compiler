@@ -21,16 +21,16 @@ public class Guard extends BaseNode {
 
   public Guard() {
   }
-  
+
   public void add(Condition cond) {
     conditions = LessUtils.initList(conditions, 2);
     conditions.add(cond);
   }
-  
+
   public void addAll(Condition ... elements) {
     conditions = Arrays.asList(elements);
   }
-  
+
   public List<Condition> conditions() {
     return LessUtils.safeList(conditions);
   }
@@ -43,7 +43,7 @@ public class Guard extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public boolean needsEval() {
     return true;
@@ -60,7 +60,7 @@ public class Guard extends BaseNode {
     }
     return result;
   }
-    
+
   @Override
   public NodeType type() {
     return NodeType.GUARD;
@@ -76,7 +76,7 @@ public class Guard extends BaseNode {
       conditions.get(i).repr(buf);
     }
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -89,5 +89,5 @@ public class Guard extends BaseNode {
     }
     buf.decrIndent();
   }
-  
+
 }

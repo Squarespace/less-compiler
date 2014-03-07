@@ -26,15 +26,15 @@ import com.squarespace.less.plugins.TestFunctions;
 public class LessHarness {
 
   private static final FunctionTable FUNCTIONS = LessCompiler.defaultFunctionTable();
-  
+
   static {
     FUNCTIONS.register(new TestFunctions());
   }
 
   private GenericBlock defs;
-  
+
   private Parselet[] parselet;
-  
+
   public LessHarness() {
     this(Parselets.STYLESHEET, null);
   }
@@ -51,13 +51,13 @@ public class LessHarness {
     this.parselet = parselet;
     this.defs = defs;
   }
-  
+
   public Context context() {
     Context ctx = new Context();
     ctx.setFunctionTable(FUNCTIONS);
     return ctx;
   }
-  
+
   public Context context(Options opts) {
     Context ctx = new Context(opts);
     ctx.setFunctionTable(FUNCTIONS);
@@ -67,7 +67,7 @@ public class LessHarness {
   public String execute(String raw) throws LessException {
     return execute(raw, new Options());
   }
-  
+
   public String execute(String raw, Options opts) throws LessException {
     Context ctx = context(opts);
     ctx.setCompiler(new LessCompiler());
@@ -75,7 +75,7 @@ public class LessHarness {
     Node res = parse(raw, parselet);
     return engine.render((Stylesheet)res);
   }
-  
+
   public void executeFails(String raw, ErrorType expected) {
     try {
       execute(raw);
@@ -84,7 +84,7 @@ public class LessHarness {
       assertEquals(e.primaryError().type(), expected);
     }
   }
-  
+
   public Node parse(String raw) throws LessException {
     return parse(raw, parselet);
   }
@@ -102,18 +102,18 @@ public class LessHarness {
       assertEquals(e.primaryError().type(), expected);
     }
   }
-  
+
   public void renderEquals(String raw, String expected) throws LessException {
     ExecEnv env = define(defs);
     Node res = evaluate(raw, parselet, env);
     assertEquals(env.context().render(res), expected, raw);
   }
-  
+
   public void evalEquals(String raw, Node expected) throws LessException {
     Node res = evaluate(raw, parselet, define(defs));
     assertEquals(res, expected, raw);
   }
-  
+
   public void evalFails(String raw, ErrorType expected) throws LessException {
     try {
       evaluate(raw, parselet, define(defs));
@@ -126,23 +126,23 @@ public class LessHarness {
   public Node evaluate(String raw) throws LessException {
     return evaluate(parse(raw, parselet), define(defs));
   }
-  
+
   public Node evaluate(Node node) throws LessException {
     return node.eval(define(defs));
   }
-  
+
   public Node evaluate(Node node, ExecEnv env) throws LessException {
     return node.eval(env);
   }
-  
+
   public Node evaluate(String raw, Parselet[] parselet) throws LessException {
     return evaluate(parse(raw, parselet), define(defs));
   }
-  
+
   public Node evaluate(String raw, Parselet[] parselet, ExecEnv env) throws LessException {
     return evaluate(parse(raw, parselet), env);
   }
-  
+
   private Node parse(String raw, Parselet[] parselet) throws LessException {
     LessStream stm = new LessStream(raw);
     Node res = stm.parse(parselet);

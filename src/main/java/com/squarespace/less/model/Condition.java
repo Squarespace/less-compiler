@@ -19,13 +19,13 @@ import com.squarespace.less.exec.ExecEnv;
 public class Condition extends BaseNode {
 
   private final Operator operator;
-  
+
   private final Node operand0;
-  
+
   private final Node operand1;
-  
+
   private final boolean negate;
-  
+
   public Condition(Operator operator, Node operand0, Node operand1, boolean negate) {
     if (operator == null || operand0 == null || operand1 == null) {
       throw new LessInternalException("Serious error: operator/operands cannot be null.");
@@ -35,7 +35,7 @@ public class Condition extends BaseNode {
     this.operand1 = operand1;
     this.negate = negate;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Condition) {
@@ -53,18 +53,18 @@ public class Condition extends BaseNode {
   public boolean needsEval() {
     return true;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     boolean result = negate ? !compare(env) : compare(env);
     return result ? Constants.TRUE : Constants.FALSE;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.CONDITION;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     if (negate) {
@@ -76,7 +76,7 @@ public class Condition extends BaseNode {
     operand1.repr(buf);
     buf.append(')');
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -90,53 +90,53 @@ public class Condition extends BaseNode {
     operand1.modelRepr(buf);
     buf.append('\n').decrIndent();
   }
-  
+
   private boolean compare(ExecEnv env) throws LessException {
     Node left = operand0.needsEval() ? operand0.eval(env) : operand0;
     Node right = operand1.needsEval() ? operand1.eval(env) : operand1;
-    
+
     switch (operator) {
       case ADD:
       case DIVIDE:
       case MULTIPLY:
       case SUBTRACT:
         throw new LessException(ExecuteErrorMaker.expectedBoolOp(operator));
-        
+
       case AND:
         return conjunction(env, left, right);
-        
+
       case OR:
         return disjunction(env, left, right);
-        
+
       default:
         break;
     }
-    
+
     NodeType type = left.type();
     int result = -1;
     switch (type) {
       case ANONYMOUS:
         result = compare(env, (Anonymous)left, right);
         break;
-        
+
       case COLOR:
         result = compare((BaseColor)left, right);
         break;
-        
+
       case DIMENSION:
         result = compare((Dimension)left, right);
         break;
-        
+
       case KEYWORD:
       case TRUE:
       case FALSE:
         result = compare((Keyword)left, right);
         break;
-        
+
       case QUOTED:
         result = compare(env, (Quoted)left, right);
         break;
-        
+
       default:
         throw new LessException(ExecuteErrorMaker.uncomparableType(type));
     }
@@ -147,7 +147,7 @@ public class Condition extends BaseNode {
       case 0:
         return operator == EQUAL || operator == LESS_THAN_OR_EQUAL || operator == GREATER_THAN_OR_EQUAL;
       case 1:
-        return operator == GREATER_THAN || operator == GREATER_THAN_OR_EQUAL || operator == NOT_EQUAL; 
+        return operator == GREATER_THAN || operator == GREATER_THAN_OR_EQUAL || operator == NOT_EQUAL;
       default:
         throw new LessInternalException("Serious error: comparison functions must return one of [-1, 0, 1]. Got " + result);
     }
@@ -160,28 +160,28 @@ public class Condition extends BaseNode {
   private boolean disjunction(ExecEnv env, Node left, Node right) throws LessException {
     return truthValue(env, left) || truthValue(env, right);
   }
-  
+
   private int compare(ExecEnv env, Anonymous anon, Node arg) throws LessException {
     String value = env.context().render(arg);
     return anon.value().compareTo(value);
   }
-  
+
   private boolean truthValue(ExecEnv env, Node node) throws LessException {
     switch (node.type()) {
-      
+
       case ANONYMOUS:
       case KEYWORD:
       case QUOTED:
         return "true".equals(render(env, node));
-        
+
       case TRUE:
         return true;
-        
+
       default:
         return false;
     }
   }
-  
+
   private int compare(BaseColor color, Node arg) throws LessException {
     if (arg.is(NodeType.KEYWORD)) {
       Keyword kwd = (Keyword)arg;
@@ -200,7 +200,7 @@ public class Condition extends BaseNode {
         && color0.blue() == color1.blue()
         && color0.alpha() == color1.alpha() ? 0 : -1;
   }
-  
+
   private int compare(Dimension dim0, Node arg) throws LessException {
     if (arg instanceof Dimension) {
       Dimension dim1 = (Dimension)arg;
@@ -212,7 +212,7 @@ public class Condition extends BaseNode {
 
       double factor = 1.0;
       double scaled = dim1.value();
-      if (dim0.unit() != dim1.unit()) { 
+      if (dim0.unit() != dim1.unit()) {
         factor = UnitConversions.factor(unit1, unit0);
         if (factor == 0.0) {
           return -1;
@@ -223,23 +223,23 @@ public class Condition extends BaseNode {
     }
     return -1;
   }
-  
+
   private int compare(Keyword keyword, Node arg) throws LessException {
     if (arg instanceof Keyword) {
       return compareTo(keyword.value(), ((Keyword)arg).value());
     }
     return -1;
   }
-  
+
   private int compare(ExecEnv env, Quoted quoted, Node arg) throws LessException {
     return compareTo(render(env, quoted), render(env, arg));
   }
-  
+
   private String render(ExecEnv env, Node arg) throws LessException {
     switch (arg.type()) {
       case ANONYMOUS:
         return ((Anonymous)arg).value();
-        
+
       case KEYWORD:
         return ((Keyword)arg).value();
 
@@ -247,10 +247,10 @@ public class Condition extends BaseNode {
         return env.context().render(arg);
     }
   }
-  
+
   private int compareTo(String left, String right) {
     int res = left.compareTo(right);
     return res < 0 ? -1 : (res > 0) ? 1 : 0;
   }
-  
+
 }

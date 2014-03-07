@@ -17,7 +17,7 @@ public class NumericFunctionsTest extends LessTestBase {
   @Test
   public void testFunctions() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
-    
+
     // Ceiling / floor
     h.evalEquals("ceil(1.1)", dim(2));
     h.evalEquals("ceil(1.9)", dim(2));
@@ -28,13 +28,13 @@ public class NumericFunctionsTest extends LessTestBase {
     h.evalEquals("floor(-1.1)", dim(-2));
     h.evalEquals("floor(-1.9)", dim(-2));
     h.evalFails("floor('dim')", INVALID_ARG);
-    
+
     // Decimal to percentage
     h.evalEquals("percentage(1)", dim(100, Unit.PERCENTAGE));
     h.evalEquals("percentage(.25)", dim(25, Unit.PERCENTAGE));
     h.evalEquals("percentage(0.0)", dim(0, Unit.PERCENTAGE));
     h.evalEquals("percentage(-2)", dim(-200, Unit.PERCENTAGE));
-    
+
     // Rounding
     h.evalEquals("round(-12.2)", dim(-12));
     h.evalEquals("round(1.57, -5)", dim(2));
@@ -48,14 +48,14 @@ public class NumericFunctionsTest extends LessTestBase {
     h.evalEquals("round(-2.55, 1)", dim(-2.5));
     h.evalEquals("round(-2.52, 1)", dim(-2.5));
     h.evalEquals("round(12.123%, 1)", dim(12.1, Unit.PERCENTAGE));
-    
+
     // Unit changes
     h.evalEquals("unit(1, px)", dim(1, Unit.PX));
     h.evalEquals("unit(3em, pt)", dim(3, Unit.PT));
     h.evalEquals("unit(3em)", dim(3));
     h.evalFails("unit('foo', px)", INVALID_ARG);
     h.evalFails("unit(3em, quark)", UNKNOWN_UNIT);
-    
+
   }
 
 }

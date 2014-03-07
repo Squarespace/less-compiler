@@ -6,9 +6,9 @@ package com.squarespace.less.core;
  * efficiently locate the pattern within a longer string.
  */
 public class CharPattern {
-  
+
   private final char[] chars;
-  
+
   private final int[] next;
 
   public CharPattern(char ... chars) {
@@ -30,7 +30,7 @@ public class CharPattern {
       j++;
     }
   }
-  
+
   /**
    * Returns the character pattern.
    * @return
@@ -38,16 +38,16 @@ public class CharPattern {
   public char[] pattern() {
     return chars;
   }
- 
+
   /**
    * Returns the 'next' table, used by the K-M-P algorithm.
    */
   public int[] next() {
     return next;
   }
-  
+
   public int length() {
     return chars.length;
   }
-  
+
 }

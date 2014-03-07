@@ -18,5 +18,5 @@ public class ColorParselet implements Parselet {
     }
     return null;
   }
-  
+
 }

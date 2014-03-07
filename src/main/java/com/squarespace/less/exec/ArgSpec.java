@@ -24,13 +24,13 @@ public class ArgSpec {
   private final List<ArgValidator> validators;
 
   private final int minArgs;
-  
+
   private final boolean variadic;
-  
+
   public ArgSpec(NodeType ... types) {
     this(types.length, types);
   }
-  
+
   public ArgSpec(int minArgs, NodeType ... types) {
     this(minArgs, build(types));
  }
@@ -42,7 +42,7 @@ public class ArgSpec {
   public ArgSpec(int minArgs, ArgValidator ... validators) {
     this(minArgs, Arrays.asList(validators), false);
   }
-  
+
   public ArgSpec(int minArgs, List<ArgValidator> validators, boolean variadic) {
     if (!variadic && validators.size() < minArgs) {
       throw new IllegalArgumentException("minArgs cannot be < zero or exceed types.length");
@@ -51,11 +51,11 @@ public class ArgSpec {
     this.validators = validators;
     this.variadic = variadic;
   }
-  
+
   private static ArgValidator[] build(NodeType ... types) {
     return build(Arrays.asList(types));
   }
-  
+
   private static ArgValidator[] build(List<NodeType> types) {
     int size = types.size();
     ArgValidator[] validators = new ArgValidator[size];
@@ -64,11 +64,11 @@ public class ArgSpec {
     }
     return validators;
   }
-  
+
   public boolean validate(ExecEnv env, Function func, Node ... args) throws LessException {
     return validate(env, func, Arrays.asList(args));
   }
-  
+
   public boolean validate(ExecEnv env, Function func, List<Node> args) throws LessException {
     int size = args.size();
     if (size < minArgs) {
@@ -106,11 +106,11 @@ public class ArgSpec {
         case 'p':
           validators.add(_PERCENTAGE);
           break;
-          
+
         case 'n':
           validators.add(_NUMBER);
           break;
-          
+
         case '*':
           validators.add(_ANY);
           break;
@@ -123,7 +123,7 @@ public class ArgSpec {
           variadic = true;
           minArgs = i;
           break;
-          
+
         default:
           validators.add(new ArgTypeValidator(fromChar(ch)));
           break;
@@ -137,7 +137,7 @@ public class ArgSpec {
     }
     return new ArgSpec(minArgs, validators, variadic);
   }
-  
+
   private static NodeType fromChar(char ch) {
     switch (ch) {
       case 'c':
@@ -151,15 +151,15 @@ public class ArgSpec {
     }
     throw new IllegalArgumentException("Unknown type ch: '" + ch + "'");
   }
- 
+
   static class ArgTypeValidator extends ArgValidator {
-    
+
     private final NodeType type;
-    
+
     public ArgTypeValidator(NodeType type) {
       this.type = type;
     }
-    
+
     @Override
     public void validate(int index, Node arg) throws LessException {
       if (!arg.is(type)) {
@@ -168,14 +168,14 @@ public class ArgSpec {
     }
 
   }
-  
+
   private static ArgValidator _ANY = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {
       // any node type is valid.
     };
   };
-  
+
   private static ArgValidator _NUMBER = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {
@@ -189,7 +189,7 @@ public class ArgSpec {
       throw new LessException(invalidArg(index, "a unit-less number", arg.type()));
     }
   };
-  
+
   private static ArgValidator _PERCENTAGE = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {
@@ -203,5 +203,5 @@ public class ArgSpec {
       throw new LessException(invalidArg(index + 1, "a unit-less number or a percentage", arg.type()));
     }
   };
-  
+
 }

@@ -9,13 +9,13 @@ import com.squarespace.less.core.Chars;
 public class Colors {
 
   public static final RGBColor BLACK = new RGBColor(0, 0, 0);
-  
+
   public static final RGBColor WHITE = new RGBColor(0xff, 0xff, 0xff);
-  
+
   private static final Map<String, int[]> NAME_TO_RGB = new HashMap<>();
-  
+
   private static final Map<Integer, String> RGB_TO_NAME = new HashMap<>();
-  
+
   static {
     add(0x00, "black");
     add(0xa9, "darkgray");
@@ -30,7 +30,7 @@ public class Colors {
     add(0xc0, "silver");
     add(0xff, "white");
     add(0xf5, "whitesmoke");
-  
+
     add(0xf0, 0xf8, 0xff, "aliceblue");
     add(0xfa, 0xeb, 0xd7, "antiquewhite");
     add(0x00, 0xff, 0xff, "aqua");
@@ -166,7 +166,7 @@ public class Colors {
     add(0xff, 0xff, 0x00, "yellow");
     add(0x9a, 0xcd, 0x32, "yellowgreen");
   }
-  
+
   private static void add(int r, int g, int b, String name) {
     NAME_TO_RGB.put(name, new int[] { r, g, b });
     RGB_TO_NAME.put(rgbToInt(r, g, b), name);
@@ -175,11 +175,11 @@ public class Colors {
   private static void add(int c, String name) {
     add(c, c, c, name);
   }
-  
+
   public static int[] nameToRGB(String name) {
     return NAME_TO_RGB.get(name);
   }
-  
+
   public static String colorToName(RGBColor color) {
     return rgbToName(color.red(), color.green(), color.blue());
   }
@@ -191,7 +191,7 @@ public class Colors {
       len--;
       start++;
     }
-    
+
     int c0 = 0;
     int c1 = 0;
     int c2 = 0;
@@ -199,7 +199,7 @@ public class Colors {
       c0 = component(raw.charAt(start+0));
       c1 = component(raw.charAt(start+1));
       c2 = component(raw.charAt(start+2));
-      
+
     } else if (len == 6) {
       c0 = component(raw.charAt(start+0), raw.charAt(start+1));
       c1 = component(raw.charAt(start+2), raw.charAt(start+3));
@@ -214,11 +214,11 @@ public class Colors {
   private static int rgbToInt(int r, int g, int b) {
     return (r << 16) + (g << 8) + b;
   }
-  
+
   private static String rgbToName(int r, int g, int b) {
     return RGB_TO_NAME.get(rgbToInt(r, g, b));
   }
-  
+
   private static int component(char ch) {
     return component(ch, ch);
   }

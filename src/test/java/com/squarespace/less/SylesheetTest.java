@@ -19,21 +19,21 @@ public class SylesheetTest extends LessTestBase {
 
     Stylesheet sheet_zz = stylesheet();
     sheet_zz.add(rule(prop("z"), anon("z")));
-    
+
     assertEquals(stylesheet(), stylesheet());
     assertEquals(sheet_xy, sheet_xy);
-    
+
     assertNotEquals(sheet_xy, null);
     assertNotEquals(sheet_xy, stylesheet());
     assertNotEquals(sheet_xy, prop("foo"));
     assertNotEquals(sheet_xy, sheet_zz);
   }
-  
+
   @Test
   public void testModelReprSafety() {
     Stylesheet sheet = stylesheet();
     sheet.add(rule(prop("foo"), anon("bar")));
     sheet.toString();
   }
-  
+
 }

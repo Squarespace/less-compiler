@@ -20,12 +20,12 @@ public class DefinitionTest extends LessTestBase {
     assertNotEquals(def("@y", anon("y")), def("@x", anon("y")));
     assertNotEquals(def("@x", anon("y")), def("@y", anon("y")));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     def("@x", anon("y")).toString();
   }
-  
+
   @Test
   public void testDefinition() throws LessException {
     LessHarness h = new LessHarness(Parselets.RULE);

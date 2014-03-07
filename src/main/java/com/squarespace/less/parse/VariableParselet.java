@@ -19,7 +19,7 @@ public class VariableParselet implements Parselet {
       return null;
     }
     pos++;
-    
+
     if (stm.peek(pos) == Chars.AT_SIGN) {
       indirect = true;
       pos++;

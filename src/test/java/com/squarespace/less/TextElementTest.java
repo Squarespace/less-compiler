@@ -17,18 +17,18 @@ public class TextElementTest extends LessTestBase {
     assertEquals(element(".x"), element(".x"));
     assertEquals(element(null, ".x"), element(null, ".x"));
     assertEquals(element(CHILD, ".x"), element(CHILD, ".x"));
-    
+
     assertNotEquals(element(".x"), null);
     assertNotEquals(element(".x"), kwd("foo"));
     assertNotEquals(element(".x"), element(".y"));
     assertNotEquals(element(CHILD, ".x"), element(DESC, ".y"));
     assertNotEquals(element(null, ".x"), element(DESC, ".x"));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     element(null, ".foo").toString();
     element(CHILD, ".foo").toString();
   }
-  
+
 }

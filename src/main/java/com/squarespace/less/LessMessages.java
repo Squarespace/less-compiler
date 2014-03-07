@@ -17,18 +17,18 @@ public class LessMessages {
   private static final int DEFAULT_STACK_WINDOW = 6;
 
   private final int errorIndent;
-  
+
   private final int stackWindow;
-  
+
   public LessMessages() {
     this(DEFAULT_ERROR_INDENT, DEFAULT_STACK_WINDOW);
   }
-  
+
   public LessMessages(int errorIndent, int stackWindow) {
     this.errorIndent = errorIndent;
     this.stackWindow = stackWindow;
   }
-  
+
   public void successHeader(Buffer buf) {
     buf.append(SQUARESPACE_LESS_HEADER);
   }
@@ -40,7 +40,7 @@ public class LessMessages {
   public String formatStats(LessStats stats, Path path) {
     return formatStats(new Buffer(0), stats, path).toString();
   }
-  
+
   public Buffer formatStats(Buffer buf, LessStats stats, Path path) {
     buf.append("/* --------------------------------------------------------\n");
     buf.append("Squarespace LESS compiler ").append(VERSION).append(" Statistics for '");

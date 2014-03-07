@@ -20,17 +20,17 @@ import com.squarespace.less.exec.ExecEnv;
 public class Operation extends BaseNode {
 
   private final Operator operator;
-  
+
   private final Node operand0;
-  
+
   private final Node operand1;
-  
+
   public Operation(Operator operator, Node operand0, Node operand1) {
     this.operator = operator;
     this.operand0 = operand0;
     this.operand1 = operand1;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Operation) {
@@ -41,17 +41,17 @@ public class Operation extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.OPERATION;
   }
-  
+
   @Override
   public boolean needsEval() {
     return true;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     Node op0 = operand0.needsEval() ? operand0.eval(env) : operand0;
@@ -60,14 +60,14 @@ public class Operation extends BaseNode {
     // Check if we can cast the node to a friendlier type.
     op0 = cast(op0);
     op1 = cast(op1);
-    
+
     Options opts = env.context().options();
     if (op0.is(NodeType.DIMENSION) && op1.is(NodeType.COLOR)) {
       if (operator == Operator.MULTIPLY || operator == Operator.ADD) {
         Node temp = op0;
         op0 = op1;
         op1 = temp;
-        
+
       } else {
         ErrorInfo info = badColorMath(operator, op0);
         if (opts.strict()) {
@@ -90,7 +90,7 @@ public class Operation extends BaseNode {
     operand1.repr(buf);
     buf.append(')');
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -102,17 +102,17 @@ public class Operation extends BaseNode {
     operand1.modelRepr(buf);
     buf.decrIndent();
   }
-  
+
   private Node cast(Node node) {
     switch (node.type()) {
       case KEYWORD:
         Keyword kwd = (Keyword)node;
         RGBColor color = RGBColor.fromName(kwd.value());
         return color == null ? kwd : color;
-        
+
       default:
         return node;
     }
   }
-  
+
 }

@@ -40,18 +40,18 @@ import com.squarespace.less.model.Stylesheet;
 public class LessEvaluator {
 
   private static final Pattern IMPORT_EXT = Pattern.compile(".*(\\.[a-z]*$)|([\\?;].*)$");
-  
+
   private static final Pattern IMPORT_CSS = Pattern.compile(".*css([\\?;].*)?$");
-  
+
   private final Context ctx;
-  
+
   private final Options opts;
-  
+
   public LessEvaluator(Context ctx) {
     this.ctx = ctx;
     this.opts = ctx.options();
   }
-  
+
   /**
    * Evaluate and render a LESS stylesheet, using the given context.
    */
@@ -63,8 +63,8 @@ public class LessEvaluator {
   public Stylesheet expand(Stylesheet sheet) throws LessException {
     return evaluateStylesheet(ctx.newEnv(), sheet);
   }
-  
-  
+
+
   /**
    * Evaluate a BLOCK_DIRECTIVE node.
    */
@@ -87,7 +87,7 @@ public class LessEvaluator {
   private Media evaluateMedia(ExecEnv env, Media input) throws LessException {
     Media media = input.copy(env);
     env.push(media);
-    
+
     Block block = media.block();
     expandImports(env, block);
     expandMixins(env, block);
@@ -103,10 +103,10 @@ public class LessEvaluator {
   private Ruleset evaluateRuleset(ExecEnv env, Ruleset input, boolean forceImportant) throws LessException {
     Ruleset original = (Ruleset)input.original();
     Ruleset ruleset = input.copy(env);
-    
+
     env.push(ruleset);
     original.enter();
-    
+
     Block block = ruleset.block();
     expandImports(env, block);
     expandMixins(env, block);
@@ -123,7 +123,7 @@ public class LessEvaluator {
   private Stylesheet evaluateStylesheet(ExecEnv env, Stylesheet original) throws LessException {
     Stylesheet stylesheet = original.copy();
     env.push(stylesheet);
-    
+
     Block block = stylesheet.block();
     expandImports(env, block);
     expandMixins(env, block);
@@ -143,14 +143,14 @@ public class LessEvaluator {
     Import currentImport = null;
     for (int i = 0; i < rules.size(); i++) {
       Node node = rules.get(i);
-      
+
       try {
         switch (node.type()) {
-  
+
           case BLOCK_DIRECTIVE:
             node = evaluateBlockDirective(env, (BlockDirective)node);
             break;
-          
+
           case DEFINITION:
             Definition def = (Definition)node;
             Definition newDef = new Definition(def.name(), def.dereference(env));
@@ -159,23 +159,23 @@ public class LessEvaluator {
             newDef.warnings(env.warnings());
             node = newDef;
             break;
-            
+
           case DIRECTIVE:
             Directive directive = (Directive)node;
             if (directive.name().equals("@charset") && block.charset() == null) {
               block.charset(directive);
             }
             break;
-  
+
           case IMPORT_MARKER:
             ImportMarker marker = (ImportMarker) node;
             currentImport = marker.beginning() ? marker.importStatement() : null;
             break;
-            
+
           case MEDIA:
             node = evaluateMedia(env, (Media)node);
             break;
-            
+
           case MIXIN:
             // Register the closure on the original MIXIN.
             Mixin mixin = (Mixin) ((Mixin)node).original();
@@ -183,14 +183,14 @@ public class LessEvaluator {
               mixin.closure(env);
             }
             break;
-          
+
           case MIXIN_CALL:
             throw new LessInternalException("Serious error: all mixin calls should already have been evaluated.");
-            
+
           case RULESET:
             node = evaluateRuleset(env, (Ruleset)node, forceImportant);
             break;
-            
+
           case RULE:
             Rule rule = (Rule) node;
             Rule newRule = null;
@@ -205,12 +205,12 @@ public class LessEvaluator {
             newRule.warnings(env.warnings());
             node = newRule;
             break;
-            
+
           default:
             node = node.eval(env);
             break;
         }
-        
+
       } catch (LessException e) {
         e.push(node);
         if (currentImport != null) {
@@ -218,18 +218,18 @@ public class LessEvaluator {
         }
         throw e;
       }
-      
+
       rules.set(i, node);
     }
   }
-  
+
   private void expandImports(ExecEnv env, Block block) throws LessException {
     FlexList<Node> rules = block.rules();
     // Use of rules.size() intentional since the list size can change during iteration.
     for (int i = 0; i < rules.size(); i++) {
       Node node = rules.get(i);
       switch (node.type()) {
-        
+
         case IMPORT:
           Block importResult = executeImport(env, (Import)node);
           if (importResult != null) {
@@ -241,13 +241,13 @@ public class LessEvaluator {
           } else {
             // Skip, leave the IMPORT in place since it will be emitted as-is.
           }
-          
+
         default:
           break;
       }
     }
   }
-  
+
   private Block executeImport(ExecEnv env, Import imp) throws LessException {
     imp = (Import)imp.eval(env);
     String path = imp.renderPath(env);
@@ -259,7 +259,7 @@ public class LessEvaluator {
     if (matcher.matches()) {
       return null;
     }
-    
+
     Stylesheet stylesheet = null;
     try {
       stylesheet = ctx.importStylesheet(path, imp.rootPath(), imp.once());
@@ -293,9 +293,9 @@ public class LessEvaluator {
       block.appendNode(new ImportMarker(imp, false));
     }
     return block;
-    
+
   }
-  
+
   /**
    * Iterate over all rules in this block and execute all of the MIXIN_CALL rules found.
    * Each successful call will produce multiple rules. We replace the call with
@@ -307,7 +307,7 @@ public class LessEvaluator {
     for (int i = 0; i < rules.size(); i++) {
       Node node = rules.get(i);
       switch (node.type()) {
-        
+
         case MIXIN_CALL:
           Block mixinResult = executeMixinCall(env, (MixinCall)node);
           FlexList<Node> other = mixinResult.rules();
@@ -346,24 +346,24 @@ public class LessEvaluator {
     for (MixinMatch match : matches) {
       Node node = match.mixin();
       switch (node.type()) {
-        
+
         case MIXIN:
           if (executeMixin(env, results, matcher, match)) {
             calls++;
           }
           break;
-          
+
         case RULESET:
           if (executeRulesetMixin(env, results, matcher, match)) {
             calls++;
           }
           break;
-          
+
         default:
           break;
       }
     }
-    
+
     if (calls == 0) {
       LessException exc = new LessException(mixinUndefined(ctx.render(call.selector())));
       exc.push(call);
@@ -371,25 +371,25 @@ public class LessEvaluator {
     }
     return results;
   }
-  
+
   /**
    * Execute a MIXIN's block.  If argument binding fails, returns false, indicating the
    * call did not successfully match this mixin.  If argument binding succeeds, it sets
    * up the stack and evaluates the mixin's guard expression, if any.
-   * 
+   *
    * If the guard evaluates to FALSE, returns true indicating the mixin was successfully
-   * matched but just not executed.  
-   * 
+   * matched but just not executed.
+   *
    * If the guard evaluates to TRUE, we execute the mixin's block and merge the produced
    * rules into the 'collector' block.
    */
   private boolean executeMixin(ExecEnv env, Block collector, MixinMatcher matcher, MixinMatch match)
       throws LessException {
-    
+
     MixinCall call = matcher.mixinCall();
     Mixin mixin = ((Mixin)match.mixin()).copy();
     MixinParams params = (MixinParams) match.params().eval(env);
-    
+
     // Attempt to bind the arguments to this mixin's parameters. If the argument binding
     // failed, this is considered a resolution failure.
     GenericBlock bindings = matcher.bind(params);
@@ -404,12 +404,12 @@ public class LessEvaluator {
     if (closureEnv != null) {
       env.append(closureEnv.frames());
     }
-    
+
     // Push the argument bindings onto the closure stack and create the dual stack.
     // We can resolve variables against the closure + argument scope or the scope which
     // called the mixin.
     env.push(bindings);
-    
+
     // Evaluate the guard conditions. If FALSE, bail out.
     Guard guard = mixin.guard();
     if (guard != null) {
@@ -418,7 +418,7 @@ public class LessEvaluator {
         return true;
       }
     }
-    
+
     // Limits the overall depth if the mixin call stack.
     Context ctx = env.context();
     if (ctx.mixinDepth() >= opts.recursionLimit()) {
@@ -428,7 +428,7 @@ public class LessEvaluator {
     // Enter the mixin body and execute it.
     original.enter();
     ctx.enterMixin();
-    
+
     env.push(mixin);
 
     try {
@@ -443,10 +443,10 @@ public class LessEvaluator {
         block.prependNode(new MixinMarker(actualCall, true));
         block.appendNode(new MixinMarker(actualCall, false));
       }
-      
+
       evaluateRules(env, block, call.important());
       collector.appendBlock(block);
-      
+
     } catch (LessException e) {
       // If any errors occur inside a mixin call, we want to show the actual
       // arguments to the mixin call.
@@ -459,11 +459,11 @@ public class LessEvaluator {
     original.exit();
     return true;
   }
-  
+
   /**
    * Executes a RULESET as a mixin.
    */
-  private boolean executeRulesetMixin(ExecEnv env, Block collector, MixinMatcher matcher, MixinMatch match) 
+  private boolean executeRulesetMixin(ExecEnv env, Block collector, MixinMatcher matcher, MixinMatch match)
       throws LessException {
     MixinCall call = matcher.mixinCall();
     Ruleset ruleset = (Ruleset)match.mixin();
@@ -473,11 +473,11 @@ public class LessEvaluator {
     if (ctx.mixinDepth() >= opts.recursionLimit()) {
       throw new LessException(mixinRecurse(call.path(), opts.recursionLimit()));
     }
-    
+
     ctx.enterMixin();
     Ruleset result = evaluateRuleset(env, ruleset, call.important());
     ctx.exitMixin();
-    
+
     Block block = result.block();
     if (opts.tracing()) {
       block.prependNode(new MixinMarker(call, true));
@@ -486,7 +486,7 @@ public class LessEvaluator {
     collector.appendBlock(block);
     return true;
   }
-  
+
 }
 
 

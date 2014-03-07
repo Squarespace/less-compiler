@@ -18,15 +18,15 @@ public class ParametersTest extends LessTestBase {
 
     assertEquals(params(), params());
     assertEquals(params(param_xy, param_v), params(param_xy, param_v));
-    
+
     assertNotEquals(params(param_xy, param_v), null);
     assertNotEquals(params(param_xy, param_v), params(param_xy));
     assertNotEquals(param_xy, param_v);
   }
-  
+
   @Test
   public void testModelReprSafety() {
     params(param("@x", anon("y")), param("@z", true)).toString();
   }
-  
+
 }

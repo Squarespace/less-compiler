@@ -12,7 +12,7 @@ import com.squarespace.less.model.Shorthand;
 public class ShorthandParselet implements Parselet {
 
   private static final String PARSE_ERROR = "Shorthand pattern matched but failed to complete parse";
-  
+
   @Override
   public Node parse(LessStream stm) throws LessException {
     if (!stm.peekShorthand()) {

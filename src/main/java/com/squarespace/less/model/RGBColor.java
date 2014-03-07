@@ -17,17 +17,17 @@ public class RGBColor extends BaseColor {
   };
 
   private final int c0;
-  
+
   private final int c1;
 
   private final int c2;
-  
+
   private final double alpha;
-  
+
   private boolean keyword;
-  
+
   private boolean forceHex;
-  
+
   public RGBColor(double c0, double c1, double c2) {
     this(c0, c1, c2, 1.0);
   }
@@ -35,15 +35,15 @@ public class RGBColor extends BaseColor {
   public RGBColor(double c0, double c1, double c2, double alpha) {
     this((int)Math.round(c0), (int)Math.round(c1), (int)Math.round(c2), alpha);
   }
-  
+
   public RGBColor(int c0, int c1, int c2) {
     this(c0, c1, c2, 1.0);
   }
-  
+
   public RGBColor(int c0, int c1, int c2, boolean keyword) {
     this(c0, c1, c2, 1.0, keyword);
   }
-  
+
   public RGBColor(int c0, int c1, int c2, double alpha) {
     this(c0, c1, c2, alpha, false);
   }
@@ -55,11 +55,11 @@ public class RGBColor extends BaseColor {
     this.alpha = clamp(alpha, 0.0, 1.0);
     this.keyword = keyword;
   }
-  
+
   public RGBColor copy() {
     return new RGBColor(c0, c1, c2, alpha, keyword);
   }
-  
+
   public Colorspace getColorspace() {
     return Colorspace.RGB;
   }
@@ -67,40 +67,40 @@ public class RGBColor extends BaseColor {
   public int red() {
     return c0;
   }
-  
+
   public int green() {
     return c1;
   }
-  
+
   public int blue() {
     return c2;
   }
-  
+
   public double alpha() {
     return alpha;
   }
-  
+
   public double luma() {
     return (0.2126 * (c0 / 255.0) + 0.7152 * (c1/255.0) + 0.0722 * (c2/255.0)) * alpha;
   }
-  
+
   public boolean keyword() {
     return keyword && alpha == 1.0;
   }
-  
+
   public boolean forceHex() {
     return forceHex && alpha == 1.0;
   }
-  
+
   public void forceHex(boolean flag) {
     this.forceHex = flag;
   }
-  
+
   @Override
   public RGBColor toRGB() {
     return this;
   }
-  
+
   @Override
   public HSLColor toHSL() {
     double r = c0 / 255.0;
@@ -160,20 +160,20 @@ public class RGBColor extends BaseColor {
     double blue = values[HSV_PERMUTATIONS[i][2]] * 255.0;
     return new RGBColor(red, green, blue, alpha);
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof RGBColor) {
       RGBColor other = (RGBColor)obj;
-      return c0 == other.c0 
-          && c1 == other.c1 
-          && c2 == other.c2 
+      return c0 == other.c0
+          && c1 == other.c1
+          && c2 == other.c2
           && alpha == other.alpha
           && keyword == other.keyword;
     }
     return false;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
 
@@ -215,7 +215,7 @@ public class RGBColor extends BaseColor {
       }
     }
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);

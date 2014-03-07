@@ -24,7 +24,7 @@ public class BlockDirectiveTest extends LessTestBase {
     Block block_xz = block(rule_xz);
 
     assertEquals(dir("x", block_xy), dir("x", block_xy));
-    
+
     assertNotEquals(dir("x", block_xy), dir("y", block_xy));
     assertNotEquals(dir("x", block_xz), dir("x", block_xy));
   }
@@ -33,11 +33,11 @@ public class BlockDirectiveTest extends LessTestBase {
   public void testModelReprSafety() {
     dir("x", block(rule(prop("x"), anon("y")))).toString();
   }
-  
+
   @Test
   public void testBlockDirective() throws LessException {
     LessHarness h = new LessHarness(Parselets.STYLESHEET);
-    
+
     Stylesheet sheet = stylesheet();
     sheet.add(dir("@page foo", block(rule(prop("a"), dim(1)))));
     h.parseEquals("@page foo { a: 1; }", sheet);

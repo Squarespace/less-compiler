@@ -14,5 +14,5 @@ public class RatioParselet implements Parselet {
     }
     return null;
   }
-  
+
 }

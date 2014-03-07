@@ -25,19 +25,19 @@ public class FontParselet implements Parselet {
     while ((node = stm.parse(FONT_SUB)) != null) {
       expn.add(node);
     }
-    
+
     ExpressionList value = new ExpressionList(new Expression(expn));
     stm.skipWs();
     if (stm.seekIf(Chars.COMMA)) {
       while ((node = stm.parse(EXPRESSION)) != null) {
         value.add(node);
         stm.skipWs();
-        if (!stm.seekIf(Chars.COMMA)) { 
+        if (!stm.seekIf(Chars.COMMA)) {
           break;
         }
       }
     }
     return value;
   }
-  
+
 }

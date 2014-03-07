@@ -33,7 +33,7 @@ public class UnitConversions {
     CONVERSIONS[i0][i1] = factor;
     CONVERSIONS[i1][i0] = 1.0 / factor;
   }
-  
+
   static {
     Unit[] values = Unit.values();
     int sz = values.length;
@@ -41,7 +41,7 @@ public class UnitConversions {
     for (Unit unit : values) {
       create(unit, unit, 1.0);
     }
-    
+
     create(IN, CM, 2.54);
     create(IN, MM, 2.54 * 1000.0);
     create(IN, PX, 96.0);
@@ -61,11 +61,11 @@ public class UnitConversions {
     create(PC, PT, 12.0);
 
     create(PT, MM, (2.54 * 1000.0) / 72.0);
-    
+
     create(S, MS, 1000.0);
 
     create(KHZ, HZ, 1000.0);
-    
+
     create(DPCM, DPI, 2.54);
     create(DPPX, DPI, 96.0);
     create(DPPX, DPCM, 2.54 * 96.0);
@@ -77,30 +77,30 @@ public class UnitConversions {
     create(DEG, GRAD, 9 / 10.0);
     create(RAD, GRAD, 1 / (Math.PI / 200.0));
   }
-  
+
   /**
    * Obtain the multiplication factor to convert between units. For example, factor(IN, PX)
    * means "convert from inches to pixels" and would return 96.
-   * 
+   *
    * Incompatible conversions return 0.0, letting the caller throw an appropriate error.
    * Upstream less.js doesn't perform conversion and will drop the units from the
    * right-hand side of the operation.
-   * 
+   *
    * For example, in upstream less.js:
-   * 
+   *
    *   font-size: 12px + 3in - 4s + 24%;
-   * 
+   *
    * Evalutes to:
-   * 
+   *
    *   font-size: 35px;
-   *   
+   *
    * ... which seems nuts.
-   * 
+   *
    * There are also cases in CSS3 where expressions need to be kept intact and
    * not collapsed, since they need to be evaluated by the browser. The calc()
    * function, for example:
    *  http://www.w3.org/TR/css3-values/#calc
-   * 
+   *
    */
   public static double factor(Unit from, Unit to) {
     if (from == null || to == null) {

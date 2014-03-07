@@ -22,7 +22,7 @@ public class GuardParselet implements Parselet {
     while ((cond = stm.parse(CONDITION))!= null) {
       guard.add((Condition)cond);
       stm.skipWs();
-      if (!stm.seekIf(Chars.COMMA)) { 
+      if (!stm.seekIf(Chars.COMMA)) {
         break;
       }
     }

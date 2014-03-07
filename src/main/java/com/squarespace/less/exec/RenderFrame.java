@@ -12,39 +12,39 @@ import com.squarespace.less.model.Selectors;
  * as we drill deeper into RULESET and MEDIA nodes.
  */
 public class RenderFrame {
-  
+
   private final RenderFrame parent;
-  
+
   private final BlockNode blockNode;
-  
+
   private final int depth;
 
   private Selectors selectors;
 
   private Features features;
-  
+
   public RenderFrame() {
     this(null, null, 0);
   }
-  
+
   public RenderFrame(RenderFrame parent, BlockNode blockNode, int depth) {
     this.parent = parent;
     this.blockNode = blockNode;
     this.depth = depth;
   }
-  
+
   public BlockNode blockNode() {
     return blockNode;
   }
-  
+
   public RenderFrame parent() {
     return parent;
   }
-  
+
   public int depth() {
     return depth;
   }
-  
+
   /**
    * Returns the current selectors for this stack frame.
    */
@@ -83,7 +83,7 @@ public class RenderFrame {
   public void pushEmptySelectors() {
     this.selectors = Constants.EMPTY_SELECTORS;
   }
-  
+
   /**
    * Combines this set of media features with its parent's.
    */
@@ -95,12 +95,12 @@ public class RenderFrame {
       this.features = FeatureUtils.combine(ancestors, current);
     }
   }
-  
+
   @Override
   public String toString() {
     return "RenderFrame depth=" + depth;
   }
-  
+
   /**
    * Debug method - returns a string containing info on this frame and its parents,
    * indented based on depth.
@@ -110,7 +110,7 @@ public class RenderFrame {
     repr(buf);
     return buf.toString();
   }
-  
+
   private void repr(Buffer buf) {
     buf.indent().append("Frame depth=").append(depth).append('\n');
     if (blockNode != null) {
@@ -122,5 +122,5 @@ public class RenderFrame {
       buf.decrIndent();
     }
   }
-  
+
 }

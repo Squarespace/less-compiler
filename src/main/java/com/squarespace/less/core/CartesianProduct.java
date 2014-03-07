@@ -10,10 +10,10 @@ import java.util.NoSuchElementException;
  * Given a List<List<T>> input, each iteration returns a List<T> containing
  * one permutation of the elements from each of the input lists.  Iterating
  * to the end produces the full cartesian product of the input.
- * 
+ *
  * input:    [ [a, b], [1, 2] ]
  * results:  [a, 1]  [a, 2]  [b, 1]  [b, 2]
- * 
+ *
  * If one or more of the input lists are empty, that position will be missing
  * from the output.  For example, the input "[ [a, b], [], [1, 2] ]" will produce
  * the same results sequence shown above.
@@ -21,13 +21,13 @@ import java.util.NoSuchElementException;
 public class CartesianProduct<T> implements Iterator<List<T>> {
 
   private final List<List<T>> lists;
-  
+
   private final int[] indices;
 
   private final int[] lengths;
-  
+
   private boolean hasNext;
-  
+
   public CartesianProduct(List<List<T>> lists) {
     this.lists = lists;
     if (lists != null && lists.size() != 0) {
@@ -53,7 +53,7 @@ public class CartesianProduct<T> implements Iterator<List<T>> {
   public boolean hasNext() {
     return hasNext;
   }
-  
+
   @Override
   public List<T> next() {
     if (indices == null) {
@@ -74,12 +74,12 @@ public class CartesianProduct<T> implements Iterator<List<T>> {
     incrIndices();
     return result;
   }
-  
+
   @Override
   public void remove() {
     throw new UnsupportedOperationException();
   }
-  
+
   private void incrIndices() {
     for (int i = indices.length - 1; i >= 0; i--) {
       if (lengths[i] == 0) {
@@ -90,12 +90,12 @@ public class CartesianProduct<T> implements Iterator<List<T>> {
         if (i == 0) {
           hasNext = false;
         }
-        
+
       } else {
         indices[i]++;
         break;
       }
     }
   }
-  
+
 }

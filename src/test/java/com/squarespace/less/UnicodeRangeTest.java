@@ -16,7 +16,7 @@ public class UnicodeRangeTest extends LessTestBase {
   @Test
   public void testEquals() {
     assertEquals(unicode("a"), unicode("a"));
-    
+
     assertNotEquals(unicode("a"), null);
     assertNotEquals(unicode("a"), kwd("a"));
     assertNotEquals(unicode("a"), unicode("b"));
@@ -26,14 +26,14 @@ public class UnicodeRangeTest extends LessTestBase {
   public void testModelReprSafety() {
     unicode("abc").toString();
   }
-  
+
   @Test
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(UNICODE_RANGE);
-    
+
     h.parseEquals("U+?", unicode("U+?"));
     h.parseEquals("U+0-7F", unicode("U+0-7F"));
     h.parseEquals("U+41-5A", unicode("U+41-5A"));
   }
-  
+
 }

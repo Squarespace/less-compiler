@@ -12,13 +12,13 @@ public enum Combinator {
   SIB_ADJ('+'),
   SIB_GEN('~')
   ;
-  
+
   private final char ch;
-  
+
   private Combinator(char ch) {
     this.ch = ch;
   }
-  
+
   public char getChar() {
     return ch;
   }
@@ -38,5 +38,5 @@ public enum Combinator {
     }
     return null;
   }
-  
+
 }

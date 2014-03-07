@@ -22,7 +22,7 @@ public class FilesystemLessLoader implements LessLoader {
   public boolean exists(Path path) {
     return Files.exists(path);
   }
-  
+
   @Override
   public String load(Path path) throws LessException {
     return readFile(path);
@@ -31,10 +31,10 @@ public class FilesystemLessLoader implements LessLoader {
   private String readFile(Path path) throws LessException {
     try (InputStream input = Files.newInputStream(path)) {
       return IOUtils.toString(input, Constants.UTF8);
-      
+
     } catch (NoSuchFileException e) {
       throw new LessException(importError(path, "File cannot be found"));
-      
+
     } catch (IOException e) {
       throw new LessException(importError(path, e.getMessage()));
     }

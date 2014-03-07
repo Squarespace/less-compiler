@@ -20,7 +20,7 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Stylesheet;
 
 
-/** 
+/**
  * Context for a single LESS parse/compile operation.  Used by implementation classes
  * to obtain access to compiler-wide state:
  *  - compile options
@@ -36,35 +36,35 @@ public class Context {
   private final Options opts;
 
   private final BufferStack bufferStack;
-  
+
   private final MixinResolver mixinResolver;
-  
+
   private final LessStats stats;
-  
+
   private final Map<Path, ImportRecord> importCache;
 
   private final Map<Path, Stylesheet> preCache;
-  
+
   private final LessLoader loader;
-  
+
   private LessCompiler compiler;
 
   private FunctionTable functionTable;
 
   private int mixinDepth;
-  
+
   public Context() {
     this(DEFAULT_OPTS);
   }
-  
+
   public Context(Options opts) {
     this(opts, null);
   }
-  
+
   public Context(Options opts, LessLoader loader) {
     this(opts, loader, null);
   }
-  
+
   public Context(Options opts, LessLoader loader, Map<Path, Stylesheet> preCache) {
     this.opts = opts;
     this.bufferStack = new BufferStack(this);
@@ -74,32 +74,32 @@ public class Context {
     this.preCache = preCache == null ? new HashMap<Path, Stylesheet>() : preCache;
     this.loader = loader == null ? new FilesystemLessLoader() : loader;
   }
-  
+
   public Options options() {
     return opts;
   }
-  
+
   public MixinResolver mixinResolver() {
     return mixinResolver;
   }
-  
+
   public void sanityCheck() {
     bufferStack.sanityCheck();
   }
-  
+
   public void setCompiler(LessCompiler compiler) {
     this.compiler = compiler;
     this.functionTable = compiler.functionTable();
   }
-  
+
   public void setFunctionTable(FunctionTable table) {
     this.functionTable = table;
   }
-  
+
   public Function findFunction(String symbol) {
     return (functionTable != null) ? functionTable.get(symbol) : null;
   }
-  
+
   /**
    * Retrieves an external stylesheet. If not already cached, parse it and cache it.
    */
@@ -123,17 +123,17 @@ public class Context {
         }
       }
     }
-    
+
     // If the stylesheet has been imported and the 'onlyOnce' flag is not set, return it.
     // Otherwise return null, indicating to the caller that it has already been imported
     // once and the flag is enforced.
     if (record != null) {
-      
+
       // Global "import once" flag. All imports are processed only once.
       if (opts.importOnce()) {
         return null;
       }
-      
+
       if (!record.onlyOnce()) {
         stats.importDone(true);
       }
@@ -198,7 +198,7 @@ public class Context {
     }
     return null;
   }
-  
+
   public LessStats stats() {
     return stats;
   }
@@ -206,39 +206,39 @@ public class Context {
   public Buffer acquireBuffer() {
     return bufferStack.acquireBuffer();
   }
-  
+
   public void returnBuffer() {
     bufferStack.returnBuffer();
   }
-  
+
   public Buffer newBuffer() {
     return new Buffer(opts);
   }
-  
+
   public ExecEnv newEnv() {
     return new ExecEnv(this);
   }
-  
+
   public RenderEnv newRenderEnv() {
     return new RenderEnv(this);
   }
-  
+
   public ErrorInfo newError(ErrorType type) {
     return new ErrorInfo(type);
   }
-  
+
   public String render(Node node) throws LessException {
     return NodeRenderer.render(this, node);
   }
-  
+
   public void render(Buffer buf, Node node) throws LessException {
     NodeRenderer.render(buf, node);
   }
-  
+
   public void enterMixin() {
     this.mixinDepth++;
   }
-  
+
   public void exitMixin() {
     this.mixinDepth--;
   }

@@ -29,13 +29,13 @@ import com.squarespace.less.model.Selectors;
  * of the stack to be used in an error message.
  */
 public class StackFormatter {
-  
+
   private final Deque<Node> stack;
 
   private final Buffer buf;
 
   private final int indentIncr;
-  
+
   private final int frameWindow;
 
   private List<Entry> result;
@@ -43,7 +43,7 @@ public class StackFormatter {
   private int indentLevel;
 
   private int col1Width = 0;
-  
+
   private int col2Width = 0;
 
   public StackFormatter(Deque<Node> stack, int indent, int frameWindow) {
@@ -52,7 +52,7 @@ public class StackFormatter {
     this.indentIncr = indent;
     this.frameWindow = frameWindow;
   }
-  
+
   public String format() {
     result = new ArrayList<>();
     int size = stack.size();
@@ -63,7 +63,7 @@ public class StackFormatter {
       }
       return format(result, col1Width, col2Width);
     }
-    
+
     int i = 0;
     int limit = size - frameWindow - 1;
     int skipped = 0;
@@ -94,7 +94,7 @@ public class StackFormatter {
       buf.append('-');
     }
     buf.append('\n');
-    
+
     for (Entry entry : entries) {
       if (entry.indent) {
         indent(entry.fileName == null ? col1 : col1 - entry.fileName.length());
@@ -113,19 +113,19 @@ public class StackFormatter {
     }
     return buf.toString();
   }
-  
+
   private void indent() {
     for (int i = 0; i < indentLevel; i++) {
       indent(indentIncr);
     }
   }
-  
+
   private void indent(int size) {
     for (int i = 0; i < size; i++) {
       buf.append(' ');
     }
   }
-  
+
   private void render(Node node) {
     if (node.is(NodeType.PARSE_ERROR)) {
       ParseError error = (ParseError)node;
@@ -140,7 +140,7 @@ public class StackFormatter {
       result.add(entry);
       return;
     }
-    
+
     Entry entry = renderEntry(node);
     if (entry.fileName != null) {
       col1Width = Math.max(col1Width, entry.fileName.length());
@@ -151,10 +151,10 @@ public class StackFormatter {
     result.add(entry);
     indentLevel++;
   }
-  
+
   private Entry renderEntry(Node node) {
     switch (node.type()) {
-      
+
       case BLOCK_DIRECTIVE:
         BlockDirective blockDir = (BlockDirective)node;
         buf.reset();
@@ -168,21 +168,21 @@ public class StackFormatter {
         indent();
         def.repr(buf);
         return new Entry(def.fileName(), def.lineOffset() + 1, buf.toString());
-        
+
       case DIRECTIVE:
         Directive directive = (Directive)node;
         buf.reset();
         indent();
         directive.repr(buf);
         return new Entry(directive.fileName(), directive.lineOffset() + 1, buf.toString());
-        
+
       case IMPORT:
         Import imp = (Import)node;
         buf.reset();
         indent();
         imp.repr(buf);
         return new Entry(imp.fileName(), imp.lineOffset() + 1, buf.toString());
-        
+
       case MEDIA:
         Media media = (Media)node;
         Features features = media.features();
@@ -195,7 +195,7 @@ public class StackFormatter {
         }
         buf.append(" {");
         return new Entry(media.fileName(), media.lineOffset() + 1, buf.toString());
-      
+
       case MIXIN_CALL:
         MixinCall call = (MixinCall)node;
         MixinCallArgs args = call.args();
@@ -208,14 +208,14 @@ public class StackFormatter {
         }
         buf.append(';');
         return new Entry(call.fileName(), call.lineOffset() + 1, buf.toString());
-        
+
       case RULE:
         Rule rule = (Rule)node;
         buf.reset();
         indent();
         rule.repr(buf);
         return new Entry(rule.fileName(), rule.lineOffset() + 1, buf.toString());
-        
+
       case RULESET:
         Ruleset ruleset = (Ruleset)node;
         buf.reset();
@@ -231,7 +231,7 @@ public class StackFormatter {
         return new Entry(null, node.lineOffset() + 1, buf.toString());
     }
   }
-  
+
   private void append(List<String> lines, String delim) {
     int size = lines.size();
     for (int i = 0; i < size; i++) {
@@ -245,21 +245,21 @@ public class StackFormatter {
   private Entry renderSkipped(int skipped) {
     return new Entry(null, null, "\n.. skipped " + skipped + " frames\n");
   }
-  
+
   private static class Entry {
-  
+
     public final String fileName;
-    
+
     public final String lineNo;
 
     public final String repr;
 
     public boolean indent;
-    
+
     public Entry(Path fileName, int lineNo, String repr) {
       this(fileName == null ? null : fileName.toString(), Integer.toString(lineNo), repr);
     }
-    
+
     public Entry(String fileName, String lineNo, String repr) {
       this.fileName =fileName;
       this.lineNo = lineNo;
@@ -267,5 +267,5 @@ public class StackFormatter {
       this.indent = true;
     }
   }
-  
+
 }

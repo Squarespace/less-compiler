@@ -44,7 +44,7 @@ public class DirectiveParselet implements Parselet {
     boolean hasExpression = false;
     boolean hasIdentifier = false;
     switch (nvName) {
-      
+
       case "@import":
       case "@import-once":
         Node result = parseImport(stm, nvName);
@@ -52,7 +52,7 @@ public class DirectiveParselet implements Parselet {
           stm.restore(mark);
         }
         return result;
-      
+
       case "@media":
         return parseMedia(stm);
 
@@ -76,7 +76,7 @@ public class DirectiveParselet implements Parselet {
       case "@right-bottom":
           hasBlock = true;
           break;
-          
+
       case "@page":
       case "@document":
       case "@supports":
@@ -84,16 +84,16 @@ public class DirectiveParselet implements Parselet {
           hasBlock = true;
           hasIdentifier = true;
           break;
-          
+
       case "@namespace":
           hasExpression = true;
           break;
     }
-    
+
     if (hasIdentifier) {
       name += parseIdentifier(stm);
     }
-    
+
     if (hasBlock) {
       Node block = stm.parse(BLOCK);
       if (block != null) {
@@ -101,7 +101,7 @@ public class DirectiveParselet implements Parselet {
         directive.fileName(stm.fileName());
         return directive;
       }
-      
+
     } else {
       Node value = parseRest(stm, hasExpression);
       if (value != null) {
@@ -123,13 +123,13 @@ public class DirectiveParselet implements Parselet {
     media.fileName(stm.fileName());
     return media;
   }
-  
+
   private Node parseImport(LessStream stm, String name) throws LessException {
     boolean once = false;
     if (name.endsWith("-once")) {
       once = true;
     }
-    
+
     Node path = stm.parse(DIRECTIVE_IMPORT);
     if (path == null) {
       return null;
@@ -145,7 +145,7 @@ public class DirectiveParselet implements Parselet {
     }
     return null;
   }
-  
+
   private String parseIdentifier(LessStream stm) throws LessException {
     StringBuilder buf = new StringBuilder();
     stm.skipWs();
@@ -157,7 +157,7 @@ public class DirectiveParselet implements Parselet {
     }
     return " " + StringUtils.strip(buf.toString());
   }
-  
+
   private Node parseRest(LessStream stm, boolean hasExpression) throws LessException {
     Node value = (hasExpression) ? stm.parse(EXPRESSION) : stm.parse(ENTITY);
     stm.skipWs();
@@ -166,5 +166,5 @@ public class DirectiveParselet implements Parselet {
     }
     return null;
   }
-  
+
 }

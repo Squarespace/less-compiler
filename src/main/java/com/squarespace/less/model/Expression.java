@@ -13,14 +13,14 @@ import com.squarespace.less.exec.ExecEnv;
 
 
 public class Expression extends BaseNode {
-  
+
   private List<Node> values;
-  
+
   private boolean evaluate;
-  
+
   public Expression() {
   }
-  
+
   public Expression(List<Node> entities) {
     for (Node node : entities) {
       add(node);
@@ -36,26 +36,26 @@ public class Expression extends BaseNode {
   public int size() {
     return (values == null) ? 0 : values.size();
   }
-  
+
   public List<Node> values() {
     return LessUtils.safeList(values);
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof Expression) ? safeEquals(values, ((Expression)obj).values) : false;
   }
-  
+
   @Override
   public NodeType type() {
     return EXPRESSION;
   }
-  
+
   @Override
   public boolean needsEval() {
     return evaluate;
   }
-  
+
   /**
    * Called when an expression is part of a variable definition.
    */
@@ -86,7 +86,7 @@ public class Expression extends BaseNode {
       values.get(i).repr(buf);
     }
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -95,5 +95,5 @@ public class Expression extends BaseNode {
     ReprUtils.modelRepr(buf, "\n", true, values);
     buf.decrIndent();
   }
-  
+
 }

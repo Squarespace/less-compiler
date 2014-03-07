@@ -13,5 +13,5 @@ public class CommentRuleParselet implements Parselet {
   public Node parse(LessStream stm) {
     return CommentParselet.parseComment(stm, true);
   }
-  
+
 }

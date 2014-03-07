@@ -13,15 +13,15 @@ public class ReprUtils {
 
   private ReprUtils() {
   }
-  
+
   public static List<String> reprLines(Node node) {
     return reprLines(node, -1);
   }
-  
+
   public static List<String> reprLines(Node node, int limit) {
     return splitLines(node.repr(), limit);
   }
-  
+
   public static List<String> splitLines(String raw, int limit) {
     String[] lines = raw.split("\n");
     List<String> result = new ArrayList<>();

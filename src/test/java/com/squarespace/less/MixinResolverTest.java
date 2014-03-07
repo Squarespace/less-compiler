@@ -37,7 +37,7 @@ public class MixinResolverTest extends LessTestBase {
     resolver.reset(matcher);
     assertTrue(resolver.match(sheet.block()));
   }
-  
+
 //  @Test  // enable for performance testing and profiling
   public void testBindSpeed() throws Exception {
     int N = 1000;
@@ -48,10 +48,10 @@ public class MixinResolverTest extends LessTestBase {
 
     MixinParams params = params(param("a"), param("b"), param("c"), param("rest", true));
     MixinMatcher matcher = new MixinMatcher(env, call);
-    
+
     for (int i = 0; i < N; i++) {
       matcher.bind(params);
     }
   }
-  
+
 }

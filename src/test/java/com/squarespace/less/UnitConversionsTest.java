@@ -19,5 +19,5 @@ public class UnitConversionsTest {
     assertEquals(factor(Unit.KHZ, Unit.HZ), 1000.0);
     assertEquals(factor(Unit.HZ, Unit.KHZ), 1 / 1000.0);
   }
-  
+
 }

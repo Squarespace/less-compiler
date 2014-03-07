@@ -62,14 +62,14 @@ public class TypeFunctions implements Registry<Function> {
   };
 
   private static class DimensionUnitFunction extends Function {
-    
+
     private Unit unit;
 
     public DimensionUnitFunction(String name, Unit unit) {
       super(name, "*");
       this.unit = unit;
     }
-    
+
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Node arg = args.get(0);
@@ -80,13 +80,13 @@ public class TypeFunctions implements Registry<Function> {
       return FALSE;
     }
   }
-  
+
   public static final Function ISEM = new DimensionUnitFunction("isem", Unit.EM);
 
   public static final Function ISPERCENTAGE = new DimensionUnitFunction("ispercentage", Unit.PERCENTAGE);
-  
+
   public static final Function ISPIXEL = new DimensionUnitFunction("ispixel", Unit.PX);
-  
+
   @Override
   public void registerTo(SymbolTable<Function> table) {
     // NO-OP

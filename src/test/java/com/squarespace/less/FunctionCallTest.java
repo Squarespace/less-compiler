@@ -15,7 +15,7 @@ public class FunctionCallTest extends LessTestBase {
   @Test
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
-    
+
     h.parseEquals("rgb(1,2,3)", call("rgb", dim(1), dim(2), dim(3)));
     h.parseEquals("foo-bar(@a)", call("foo-bar", var("@a")));
 
@@ -26,5 +26,5 @@ public class FunctionCallTest extends LessTestBase {
     Node bar_2px = assign("bar", dim(2, Unit.PX));
     h.parseEquals("name(foo=1, bar=2px)", call("name", foo_1, bar_2px));
   }
-  
+
 }

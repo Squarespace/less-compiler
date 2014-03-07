@@ -23,7 +23,7 @@ public class TypeFunctionsTest extends LessTestBase {
     );
 
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL, defs);
-    
+
     // Colors
     h.evalEquals("iscolor(#123)", TRUE);
     h.evalEquals("iscolor(rgb(1, 2, 3))", TRUE);
@@ -38,32 +38,32 @@ public class TypeFunctionsTest extends LessTestBase {
     h.evalEquals("iskeyword(blue)", FALSE);
     h.evalEquals("iskeyword('abc')", FALSE);
     h.evalEquals("iskeyword(@color)", FALSE);
-    
+
     // Numbers
     h.evalEquals("isnumber(3.14)", TRUE);
     h.evalEquals("isnumber(10px)", TRUE);
     h.evalEquals("isnumber('foo')", FALSE);
     h.evalEquals("isnumber(@number)", TRUE);
     h.evalEquals("isnumber(@color)", FALSE);
-    
+
     // Ems
     h.evalEquals("isem(12.3em)", TRUE);
     h.evalEquals("isem(12.3)", FALSE);
     h.evalEquals("isem(1dpi)", FALSE);
     h.evalEquals("isem('foo')", FALSE);
-    
+
     // Pixels
     h.evalEquals("ispixel(1px)", TRUE);
     h.evalEquals("ispixel(3.14px)", TRUE);
     h.evalEquals("ispixel(3)", FALSE);
     h.evalEquals("ispixel('foo')", FALSE);
-    
+
     // Strings
     h.evalEquals("isstring('foo')", TRUE);
     h.evalEquals("isstring(@string)", TRUE);
     h.evalEquals("isstring(12)", FALSE);
     h.evalEquals("isstring(@number)", FALSE);
-    
+
     // Urls
     h.evalEquals("isurl(url('foo'))", TRUE);
     h.evalEquals("isurl(url(http://foo.com/))", TRUE);

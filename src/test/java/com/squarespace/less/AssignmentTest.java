@@ -17,12 +17,12 @@ public class AssignmentTest extends LessTestBase {
   @Test
   public void testEquals() {
     assertEquals(assign("x", anon("y")), assign("x", anon("y")));
-    
+
     assertNotEquals(assign("x", anon("y")), null);
     assertNotEquals(assign("x", anon("y")), assign("z", anon("y")));
     assertNotEquals(assign("x", anon("y")), assign("x", anon("z")));
   }
- 
+
   @Test
   public void testModelReprSafety() {
     assign("x", anon("y")).toString();

@@ -26,12 +26,12 @@ public class UrlTest extends LessTestBase {
   public void testModelReprSafety() {
     url(quoted('"', false, "http://squarespace.com/@{page}")).toString();
   }
-  
+
   @Test
   public void testUrl() throws LessException {
     LessHarness h = new LessHarness(FUNCTION_CALL);
 
-    h.parseEquals("url('http://foo.com/@{bar}')", 
+    h.parseEquals("url('http://foo.com/@{bar}')",
         url(quoted('\'', false, anon("http://foo.com/"), var("@bar", true))));
 
     h.parseEquals("url(http://glonk.com)",

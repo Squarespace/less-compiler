@@ -16,11 +16,11 @@ import com.squarespace.less.core.TypeRef;
 public abstract class SymbolTable<V> {
 
   private final Map<String, V> table;
-  
+
   private final TypeRef<V> typeRef;
-  
+
   private boolean inUse = false;
-  
+
   public SymbolTable(TypeRef<V> typeRef, int numBuckets) {
     this.table = new HashMap<>(numBuckets);
     this.typeRef = typeRef;
@@ -29,15 +29,15 @@ public abstract class SymbolTable<V> {
   public void setInUse() {
     this.inUse = true;
   }
-  
+
   public void register(Registry<V> source) {
     registerClass(source);
   }
-  
+
   public V get(String symbol) {
     return table.get(symbol);
   }
-  
+
   protected void put(String symbol, V value) {
     if (inUse) {
       throw new LessInternalException("Attempt to add a symbol after table in use.");
@@ -47,9 +47,9 @@ public abstract class SymbolTable<V> {
     }
     table.put(symbol, value);
   }
-  
+
   public abstract void registerSymbol(Object impl);
-  
+
   private void registerClass(Registry<V> source) {
     Field[] fields = source.getClass().getDeclaredFields();
     for (Field field : fields) {

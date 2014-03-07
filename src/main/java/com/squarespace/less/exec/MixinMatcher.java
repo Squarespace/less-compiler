@@ -31,34 +31,34 @@ import com.squarespace.less.model.Parameter;
 public class MixinMatcher {
 
   private final ExecEnv callEnv;
-  
+
   private final MixinCall mixinCall;
-  
+
   private final MixinCallArgs mixinArgs;
-  
+
   public MixinMatcher(ExecEnv callEnv, MixinCall call) throws LessException {
     this.callEnv = callEnv;
     this.mixinCall = call;
     MixinCallArgs args = call.args();
     this.mixinArgs = (MixinCallArgs) (args == null ? args : args.eval(callEnv));
   }
-  
+
   public MixinCall mixinCall() {
     return mixinCall;
   }
-  
+
   public MixinCallArgs mixinArgs() {
     return mixinArgs;
   }
-  
+
   public ExecEnv callEnv() {
     return callEnv;
   }
-  
+
   /**
    * Attempts to bind the mixin arguments to the mixin parameters. This happens in the following
    * discrete steps:
-   * 
+   *
    *  1. Bind default values for named parameters and create the expression to capture variadic
    *     arguments, if any.
    *  2. Bind named arguments and track which named parameters have been bound.
@@ -70,7 +70,7 @@ public class MixinMatcher {
     if (mixinParams.needsEval()) {
       throw new LessInternalException("Serious error: params must already be evaluated!");
     }
-    
+
     List<Parameter> params = mixinParams.params();
     List<Argument> args = mixinArgs == null ? null : mixinArgs.args();
     int paramSize = params.size();
@@ -78,10 +78,10 @@ public class MixinMatcher {
 
     Map<String, Node> boundValues = new LinkedHashMap<>();
     Queue<String> names = new ArrayDeque<>();
-    
+
     String variadicName = null;
     Expression variadic = null;
-    
+
     // Bind parameter default values, collect names, and prepare variadic expression, if any.
     for (int i = 0; i < paramSize; i++) {
       Parameter param = params.get(i);
@@ -122,7 +122,7 @@ public class MixinMatcher {
       if (argName != null) {
         continue;
       }
-      
+
       // Have a positional parameter?  Check for variadic or value pattern match
       boolean haveParams = i < paramSize;
       if (haveParams) {
@@ -130,7 +130,7 @@ public class MixinMatcher {
         if (param.variadic()) {
           variadic.add(arg.value());
           continue;
-          
+
         } else if (param.name() == null) {
           // Pattern match.
           continue;
@@ -151,7 +151,7 @@ public class MixinMatcher {
         throw new LessException(argTooMany());
       }
     }
-    
+
     // Build the final bindings block.
     Expression arguments = new Expression();
     Block bindings = new Block(boundValues.size());
@@ -171,7 +171,7 @@ public class MixinMatcher {
     bindings.appendNode(new Definition("@arguments", arguments));
     return new GenericBlock(bindings);
   }
-  
+
   /**
    * Determine if the arguments match the parameter's pattern.
    */
@@ -180,7 +180,7 @@ public class MixinMatcher {
     List<Argument> args = mixinArgs == null ? null : mixinArgs.args();
     int paramSize = params.size();
     int argSize = args == null ? 0 : args.size();
-    
+
     if (argSize < mixinParams.required()) {
       return false;
     }
@@ -200,7 +200,7 @@ public class MixinMatcher {
     }
     return true;
   }
-  
+
   /**
    * Check if the argument's value is equal to the parameter's value. It first
    * tries the Node.equals() method, and if that fails it falls back to comparing

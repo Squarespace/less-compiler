@@ -24,7 +24,7 @@ public class RuleParselet implements Parselet {
     if (!CharClass.ruleStart(stm.peek())) {
       return null;
     }
-    
+
     Mark ruleMark = stm.mark();
     Node key = parseKey(stm);
     if (key == null) {
@@ -40,11 +40,11 @@ public class RuleParselet implements Parselet {
     }
     Node value = null;
     stm.skipWs();
-      
+
     Mark valueMark = stm.mark();
     if (name.equals("font")) {
       value = stm.parse(FONT);
-      
+
     } else {
       value = stm.parse(EXPRESSION_LIST);
       if (value != null) {
@@ -55,7 +55,7 @@ public class RuleParselet implements Parselet {
         }
       }
     }
-    
+
     stm.skipWs();
     boolean important = important(stm);
 
@@ -69,7 +69,7 @@ public class RuleParselet implements Parselet {
     } else if (value == null) {
       value = new Anonymous("");
     }
-    
+
     // Only emit a rule if we've parsed a value and found the rule ending.
     if (value != null && end(stm)) {
       if (key.is(NodeType.VARIABLE)) {
@@ -77,18 +77,18 @@ public class RuleParselet implements Parselet {
         Definition def = new Definition(name, value);
         def.fileName(stm.fileName());
         return def;
-        
+
       } else {
         Rule rule = new Rule((Property)key, value, important);
         rule.fileName(stm.fileName());
         return rule;
       }
     }
-    
+
     stm.restore(ruleMark);
     return null;
   }
-  
+
   private Node parseKey(LessStream stm) throws LessException {
     Node key = stm.parse(RULE_KEY);
     stm.skipWs();
@@ -97,7 +97,7 @@ public class RuleParselet implements Parselet {
     }
     return null;
   }
-  
+
   private boolean important(LessStream stm) {
     return (stm.peek() == Chars.EXCLAMATION_MARK && stm.matchImportant());
   }
@@ -107,14 +107,14 @@ public class RuleParselet implements Parselet {
     char ch = stm.peek();
     return ch == Chars.SEMICOLON || ch == Chars.RIGHT_CURLY_BRACKET || ch == Chars.EOF;
   }
-  
+
   private boolean end(LessStream stm) {
     stm.skipWs();
     switch (stm.peek()) {
       case Chars.SEMICOLON:
         stm.seek1();
         return true;
-        
+
       case Chars.EOF:
       case Chars.RIGHT_CURLY_BRACKET:
         return true;

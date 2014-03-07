@@ -30,7 +30,7 @@ public class CartesianProductTest {
     } catch (NoSuchElementException e) {
     }
   }
-  
+
   @Test
   public void testOneEmpty() {
     List<String> list1 = Arrays.asList("a", "b");
@@ -45,7 +45,7 @@ public class CartesianProductTest {
     }
     Assert.assertTrue(!product.hasNext());
   }
-  
+
   @Test
   public void testAllEmpty() {
     List<String> list1 = Collections.emptyList();
@@ -54,7 +54,7 @@ public class CartesianProductTest {
     CartesianProduct<String> product = new CartesianProduct<>(Arrays.asList(list1, list2, list3));
     Assert.assertTrue(!product.hasNext());
   }
-  
+
   @Test
   public void testNulls() {
     List<Integer> list1 = Arrays.asList(1, 2);
@@ -70,5 +70,5 @@ public class CartesianProductTest {
     }
     Assert.assertTrue(!product.hasNext());
   }
-  
+
 }

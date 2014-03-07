@@ -55,5 +55,5 @@ public enum NodeType {
   VARIABLE
 
   ;
-  
+
 }

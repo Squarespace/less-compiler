@@ -38,13 +38,13 @@ public class LessRenderer {
   private final RenderEnv env;
 
   private final Options opts;
-  
+
   private final CssModel model;
-  
+
   private int traceId;
-  
+
   private int warningId;
-  
+
   private LessRenderer(Context context) {
     this.ctx = context;
     this.env = context.newRenderEnv();
@@ -55,7 +55,7 @@ public class LessRenderer {
   public static String render(Context context, Stylesheet sheet) throws LessException {
     return new LessRenderer(context).render(sheet);
   }
-  
+
   private String render(Stylesheet sheet) throws LessException {
     env.push(sheet);
     Block block = sheet.block();
@@ -69,7 +69,7 @@ public class LessRenderer {
 
     return model.render();
   }
-  
+
   private void renderRuleset(Ruleset ruleset) throws LessException {
     env.push(ruleset);
     model.push(NodeType.RULESET);
@@ -90,12 +90,12 @@ public class LessRenderer {
     model.pop();
     env.pop();
   }
-  
+
   private void renderMedia(Media media) throws LessException {
     env.push(media);
     model.push(NodeType.MEDIA);
     model.header("@media " + env.render(env.frame().features()));
-    
+
     // Force any parent selectors to be emitted, to wrap our rules.
     Ruleset inner = new Ruleset();
     inner.setBlock(media.block());
@@ -109,30 +109,30 @@ public class LessRenderer {
     env.push(directive);
     model.push(NodeType.BLOCK_DIRECTIVE);
     model.header(directive.name());
-    
+
     renderBlock(directive.block(), true);
 
     model.pop();
     env.pop();
   }
-  
+
   private void renderImports(Block block) throws LessException {
     FlexList<Node> rules = block.rules();
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node node = rules.get(i);
       switch (node.type()) {
-        
+
         case IMPORT:
           renderImport((Import)node);
           break;
-          
+
         default:
           break;
       }
     }
   }
-  
+
   private void renderBlock(Block block, boolean includeImports) throws LessException {
     FlexList<Node> rules = block.rules();
     int size = rules.size();
@@ -143,7 +143,7 @@ public class LessRenderer {
         case BLOCK_DIRECTIVE:
           renderBlockDirective((BlockDirective)node);
           break;
-          
+
         case COMMENT:
           Comment comment = (Comment)node;
           if (!opts.compress() && comment.block()) {
@@ -154,7 +154,7 @@ public class LessRenderer {
         case DEFINITION:
           renderDefinition((Definition)node);
           break;
-          
+
         case DIRECTIVE:
           Directive directive = (Directive)node;
           if (!directive.name().equals("@charset")) {
@@ -167,7 +167,7 @@ public class LessRenderer {
             renderImport((Import)node);
           }
           break;
-          
+
         case IMPORT_MARKER:
           renderImportMarker((ImportMarker)node);
           break;
@@ -183,7 +183,7 @@ public class LessRenderer {
         case MIXIN_MARKER:
           renderMixinMarker((MixinMarker)node);
           break;
-          
+
         case RULE:
           renderRule((Rule)node);
           break;
@@ -191,13 +191,13 @@ public class LessRenderer {
         case RULESET:
           renderRuleset((Ruleset)node);
           break;
-          
+
         default:
           throw new LessInternalException("Unhandled node: " + node.type());
       }
     }
   }
-  
+
   private void renderDefinition(Definition def) throws LessException {
     String warnings = def.warnings();
     if (warnings != null) {
@@ -207,7 +207,7 @@ public class LessRenderer {
     if (opts.tracing()) {
       Path fileName = def.fileName();
       Buffer buf = ctx.acquireBuffer();
-      
+
       buf.append("  define   ");
       buf.append(def.repr().trim());
       if (fileName != null) {
@@ -218,7 +218,7 @@ public class LessRenderer {
       ctx.returnBuffer();
     }
   }
-  
+
   private void renderImport(Import imp) throws LessException {
     Buffer buf = new Buffer(0);
     buf.append("@import ");
@@ -230,7 +230,7 @@ public class LessRenderer {
     }
     model.value(buf.toString());
   }
-  
+
   private void renderImportMarker(ImportMarker marker) throws LessException {
     Import imp = marker.importStatement();
     String repr = imp.repr().trim();
@@ -242,7 +242,7 @@ public class LessRenderer {
       emitTrace("      end   " + repr + "    " + line + " ");
     }
   }
-  
+
   private void renderMixinMarker(MixinMarker marker) throws LessException {
     MixinCall call = marker.mixinCall();
     String repr = call.repr().trim();
@@ -254,7 +254,7 @@ public class LessRenderer {
       emitTrace("      end   " + repr + "    " + line + " ");
     }
   }
-  
+
   /**
    * Render a rule, consisting of a property, value and optional "!important" modifier.
    */
@@ -279,7 +279,7 @@ public class LessRenderer {
   private void emitTrace(String what) {
     model.comment("/* TRACE[" + (++traceId) + "]: " + what + " */\n");
   }
-  
+
   private void emitWarnings(String what, String warnings) {
     if (warnings != null) {
       // Build a comment containing all of the warnings.

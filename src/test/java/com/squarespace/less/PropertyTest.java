@@ -22,22 +22,22 @@ public class PropertyTest extends LessTestBase {
     assertNotEquals(prop("x"), anon("x"));
     assertNotEquals(prop("x"), prop("y"));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     prop("x").toString();
   }
-  
+
   @Test
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(Parselets.PROPERTY);
-    
+
     h.parseEquals("a", prop("a"));
     h.parseEquals("-moz-foo-bar", prop("-moz-foo-bar"));
     h.parseEquals("*-foo", prop("*-foo"));
-    
+
     h.parseFails("A", INCOMPLETE_PARSE);
   }
-  
-  
+
+
 }

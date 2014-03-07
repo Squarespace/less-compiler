@@ -24,7 +24,7 @@ public class FeatureParselet implements Parselet {
     if (elem == null) {
       return null;
     }
-    
+
     Expression expn = new Expression();
     while (elem != null) {
       expn.add(elem);
@@ -32,13 +32,13 @@ public class FeatureParselet implements Parselet {
     }
     return expn;
   }
-  
+
   private Node parseOne(LessStream stm) throws LessException {
     Mark mark = stm.mark();
     Node node = stm.parse(KEYWORD);
     if (node != null) {
       return node;
-      
+
     } else if (stm.seekIf(Chars.LEFT_PARENTHESIS)) {
       Node prop = parseProperty(stm);
       node = stm.parse(ENTITY);
@@ -46,17 +46,17 @@ public class FeatureParselet implements Parselet {
       if (stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
         if (prop != null && node != null) {
           return new Paren(new Rule(prop, node));
-          
+
         } else if (node != null) {
           return new Paren(node);
         }
       }
     }
-    
+
     stm.restore(mark);
     return null;
   }
-  
+
   private Property parseProperty(LessStream stm) throws LessException {
     Mark mark = stm.mark();
     Node prop = stm.parse(PROPERTY);
@@ -69,5 +69,5 @@ public class FeatureParselet implements Parselet {
     stm.restore(mark);
     return null;
   }
-  
+
 }

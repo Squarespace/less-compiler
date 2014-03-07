@@ -45,7 +45,7 @@ public class LessSpeedTest extends LessTestBase {
       ".foo { margin: ; }"
       );
 
-  
+
 //  @Test  // enable for manual performance testing.
   public void testSpeed() throws LessException {
     int size = SCRIPTS.size();
@@ -57,7 +57,7 @@ public class LessSpeedTest extends LessTestBase {
       System.out.println();
     }
   }
-  
+
   private void run(List<String> scripts, int iters) throws LessException {
     long start = System.nanoTime();
     for (int i = 0; i < iters; i++) {
@@ -83,16 +83,16 @@ public class LessSpeedTest extends LessTestBase {
       }
     }
   }
-  
+
   private void runVerbose(String script) throws LessException {
     System.out.println("Executing:\n" + script + "\n-------------------------------------");
     LessHarness h = new LessHarness();
     Node node = h.parse(script);
-  
+
     LessEvaluator machine = new LessEvaluator(h.context());
     String result = machine.render((Stylesheet)node);
     System.out.println(result);
     System.out.println("===========================================");
   }
-  
+
 }

@@ -29,22 +29,22 @@ public class ConditionParselet implements Parselet {
     }
     return cond;
   }
-  
+
   private Condition parseCondition(LessStream stm) throws LessException {
     stm.skipWs();
     boolean negate = stm.matchNot();
-    
+
     Condition res = null;
     stm.skipWs();
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
       throw stm.parseError(new LessException(expected("left parenthesis '(' to start guard condition")));
     }
-    
+
     Node left = parseValue(stm);
     if (left == null) {
       throw stm.parseError(new LessException(expected("condition value")));
     }
-    
+
     stm.skipWs();
     if (stm.matchBoolOperator()) {
       Operator op = Operator.fromString(stm.token());
@@ -65,9 +65,9 @@ public class ConditionParselet implements Parselet {
     }
     return res;
   }
-  
+
   private Node parseValue(LessStream stm) throws LessException {
     return stm.parse(CONDITION_SUB);
   }
-  
+
 }

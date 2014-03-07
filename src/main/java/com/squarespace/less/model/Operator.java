@@ -18,22 +18,22 @@ public enum Operator {
   ;
 
   private final String repr;
-  
+
   private final String humanRepr;
-  
+
   private Operator(String repr, String humanRepr) {
     this.repr = repr;
     this.humanRepr = humanRepr;
   }
-  
+
   public String humanRepr() {
     return humanRepr;
   }
-  
+
   public String toString() {
     return repr;
   }
-  
+
   public static Operator fromChar(char ch) {
     switch (ch) {
       case '+': return ADD;
@@ -63,12 +63,12 @@ public enum Operator {
       case "<=":
       case "=<":
         return LESS_THAN_OR_EQUAL;
-        
+
       case "!=":
       case "<>":
         return NOT_EQUAL;
     }
     return null;
   }
-  
+
 }

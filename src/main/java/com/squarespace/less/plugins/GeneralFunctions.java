@@ -21,9 +21,9 @@ import com.squarespace.less.model.RGBColor;
 
 
 public class GeneralFunctions implements Registry<Function> {
-  
+
   private static String asString(ExecEnv env, Node node, boolean escape) throws LessException {
-    if (escape && node.is(NodeType.QUOTED)) { 
+    if (escape && node.is(NodeType.QUOTED)) {
       Quoted str = (Quoted)node;
       str = str.copy();
       str.setEscape(true);
@@ -31,7 +31,7 @@ public class GeneralFunctions implements Registry<Function> {
     }
     return env.context().render(node);
   }
-  
+
   public static final Function E = new Function("e", "s") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -40,7 +40,7 @@ public class GeneralFunctions implements Registry<Function> {
       return new Anonymous(env.context().render(str));
     }
   };
-  
+
   public static final Function ESCAPE = new Function("escape", "s") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -57,7 +57,7 @@ public class GeneralFunctions implements Registry<Function> {
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Quoted orig = (Quoted)args.get(0);
       String format = asString(env, orig, true);
-      
+
       Buffer buf = env.context().newBuffer();
       int size = format.length();
       int i = 0; // character index
@@ -71,7 +71,7 @@ public class GeneralFunctions implements Registry<Function> {
           i++;
           continue;
         }
-        
+
         i++;
         if (i == size) {
           buf.append('%');
@@ -119,5 +119,5 @@ public class GeneralFunctions implements Registry<Function> {
   public void registerTo(SymbolTable<Function> table) {
     // NO-OP
   }
-  
+
 }

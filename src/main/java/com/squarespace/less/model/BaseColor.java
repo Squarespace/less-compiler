@@ -15,14 +15,14 @@ public abstract class BaseColor extends BaseNode {
   public abstract Colorspace getColorspace();
 
   public abstract RGBColor toRGB();
-  
+
   public abstract HSLColor toHSL();
-  
+
   public static RGBColor fromHex(String raw) {
     int[] c = Colors.hexToRGB(raw);
     return new RGBColor(c[0], c[1], c[2]);
   }
-  
+
   public static RGBColor fromDimension(Dimension dim) {
     int val = (int)dim.value();
     return new RGBColor(val, val, val);
@@ -35,22 +35,22 @@ public abstract class BaseColor extends BaseNode {
     }
     return null;
   }
-  
+
   public static double clamp(double val, double min, double max) {
     return Math.min(Math.max(val, min), max);
   }
-  
+
   @Override
   public NodeType type() {
     return COLOR;
   }
-  
+
   @Override
   public Node operate(ExecEnv env, Operator op, Node arg) throws LessException {
     Options opts = env.context().options();
     if (arg.is(NodeType.COLOR)) {
       return operate(op, this, (BaseColor)arg);
-    
+
     } else if (arg.is(NodeType.DIMENSION)) {
       // Dimensions that have units cannot be added/multiplied with a color.
       Dimension dim = (Dimension)arg;
@@ -76,7 +76,7 @@ public abstract class BaseColor extends BaseNode {
       return this;
     }
   }
-  
+
   private BaseColor operate(Operator op, BaseColor arg0, BaseColor arg1) throws LessException {
     RGBColor c0 = arg0.toRGB();
     RGBColor c1 = arg1.toRGB();
@@ -87,7 +87,7 @@ public abstract class BaseColor extends BaseNode {
     switch (op) {
       case ADD:
         return new RGBColor(r + c1.red(), g + c1.green(), b + c1.blue(), a);
-        
+
       case DIVIDE:
         return new RGBColor(r / c1.red(), g / c1.green(), b / c1.blue(), a);
 

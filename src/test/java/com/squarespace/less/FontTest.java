@@ -16,5 +16,5 @@ public class FontTest extends LessTestBase {
     h.parseEquals("0/0 a", expnlist(expn(ratio("0/0"), kwd("a"))));
     h.parseEquals("small/0 a", expnlist(expn(shorthand(kwd("small"), dim(0)), kwd("a"))));
   }
-  
+
 }

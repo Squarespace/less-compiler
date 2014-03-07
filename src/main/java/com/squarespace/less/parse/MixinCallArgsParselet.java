@@ -22,7 +22,7 @@ public class MixinCallArgsParselet implements Parselet {
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
       return null;
     }
-    
+
     boolean delimSemicolon = false;
     boolean containsNamed = false;
     MixinCallArgs argsComma = new MixinCallArgs(Chars.COMMA);
@@ -30,14 +30,14 @@ public class MixinCallArgsParselet implements Parselet {
     ExpressionList expressions = new ExpressionList();
     String name = null;
     Node node = null;
-    
+
     while ((node = stm.parse(EXPRESSION)) != null) {
       String nameLoop = null;
       Node value = node;
 
       // If the last node parsed is a variable reference, check if it is a named argument.
       // If not, treat the variable as a pass-by-reference value.
-      
+
       // Examples:   (@x, @y)      - both @x and @y are pass-by-reference
       //             (@x: 1, @y)   - @x is pass-by-value named argument, @y is pass-by-reference
       //
@@ -58,12 +58,12 @@ public class MixinCallArgsParselet implements Parselet {
 
       expressions.add(value);
       argsComma.add(new Argument(nameLoop, value));
-      
+
       stm.skipWs();
       if (stm.seekIf(Chars.COMMA)) {
         continue;
       }
-      
+
       // Detect whether the arguments are semicolon delimited.
       if (stm.seekIf(Chars.SEMICOLON)) {
         delimSemicolon = true;
@@ -71,7 +71,7 @@ public class MixinCallArgsParselet implements Parselet {
       } else if (!delimSemicolon) {
         continue;
       }
-      
+
       // Handle semicolon-delimited arguments.
       if (containsNamed) {
         throw stm.parseError(new LessException(mixedDelimiters()));
@@ -85,7 +85,7 @@ public class MixinCallArgsParselet implements Parselet {
       expressions = new ExpressionList();
       containsNamed = false;
     }
-    
+
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
       throw stm.parseError(new LessException(expected("right parenthesis ')' to end mixin call arguments")));
@@ -104,5 +104,5 @@ public class MixinCallArgsParselet implements Parselet {
     }
     return value;
   }
-  
+
 }

@@ -18,51 +18,51 @@ public class MixinCall extends BaseNode {
   private MixinCallArgs args;
 
   private boolean important;
-  
+
   private Path fileName;
-  
+
   public MixinCall(Selector selector, MixinCallArgs args, boolean important) {
     this.selector = selector;
     this.args = args;
     this.important = important;
     this.selectorPath = SelectorUtils.renderMixinSelector(selector);
   }
-  
+
   public MixinCall copy() {
     MixinCall result = new MixinCall(selector, args, important);
     result.copyPosition(this);
     result.fileName = fileName;
     return result;
   }
-  
+
   public Selector selector() {
     return selector;
   }
-  
+
   public MixinCallArgs args() {
     return args;
   }
-  
+
   public boolean important() {
     return important;
   }
-  
+
   public List<String> path() {
     return this.selectorPath;
   }
-  
+
   public Path fileName() {
     return fileName;
   }
-  
+
   public void args(MixinCallArgs args) {
     this.args = args;
   }
-  
+
   public void fileName(Path fileName) {
     this.fileName = fileName;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     // 'path' field is derived from the selector, so doesn't need to be included.
@@ -74,12 +74,12 @@ public class MixinCall extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.MIXIN_CALL;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     Selectors.reprSelector(buf, selector);
@@ -88,7 +88,7 @@ public class MixinCall extends BaseNode {
     }
     buf.append(";\n");
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -102,5 +102,5 @@ public class MixinCall extends BaseNode {
     }
     buf.decrIndent();
   }
-  
+
 }

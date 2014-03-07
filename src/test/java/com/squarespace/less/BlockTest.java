@@ -16,16 +16,16 @@ public class BlockTest extends LessTestBase {
     Rule rule_xy = rule(prop("x"), anon("y"));
     Rule rule_xz = rule(prop("x"), anon("z"));
     assertEquals(block(rule_xy, rule_xz), block(rule_xy, rule_xz));
-    
+
     assertNotEquals(block(rule_xy), block());
     assertNotEquals(block(), block(rule_xy));
     assertNotEquals(block(rule_xy, rule_xz), block(rule_xz, rule_xy));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     block(rule(prop("x"), anon("y"))).toString();
     block(rule(prop("x"), anon("y"))).toString();
   }
-  
+
 }

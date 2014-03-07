@@ -24,7 +24,7 @@ public class AttributeElementTest extends LessTestBase {
     assertNotEquals(attr(null, "y", anon("z")), attr(null, anon("y")));
     assertNotEquals(attr(null, "y", anon("z")), attr(DESC, "y", anon("z")));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     attr(DESC, "x", "y").toString();
@@ -34,10 +34,10 @@ public class AttributeElementTest extends LessTestBase {
   @Test
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(Parselets.ELEMENT);
-    
+
     h.parseEquals(" [class]", attr(DESC, anon("class")));
     h.parseEquals(">[foo=\"bar\"]", attr(CHILD, anon("foo"), anon("="), quoted('"', false, "bar")));
     h.parseEquals("+[a=\"@{bar}\"]", attr(SIB_ADJ, anon("a"), anon("="), quoted('"', false, var("@bar", true))));
   }
-  
+
 }

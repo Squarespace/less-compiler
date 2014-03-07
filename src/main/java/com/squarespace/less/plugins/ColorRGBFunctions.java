@@ -30,7 +30,7 @@ public class ColorRGBFunctions implements Registry<Function> {
       return color.toARGB();
     }
   };
-  
+
   public static final Function BLUE = new Function("blue", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -49,7 +49,7 @@ public class ColorRGBFunctions implements Registry<Function> {
       return RGBColor.fromHex(repr);
     }
   };
-  
+
   public static final Function GREEN = new Function("green", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -86,10 +86,10 @@ public class ColorRGBFunctions implements Registry<Function> {
       return new RGBColor(red, green, blue, alpha);
     }
   };
-  
+
   @Override
   public void registerTo(SymbolTable<Function> table) {
     // NO-OP
   }
-  
+
 }

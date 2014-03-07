@@ -18,75 +18,75 @@ public class LessStream extends Stream {
   private final Matcher match_AND;
 
   private final Matcher match_ANON_RULE_VALUE;
-  
+
   private final Matcher match_ATTRIBUTE_KEY;
-  
+
   private final Matcher match_ATTRIBUTE_OP;
-  
+
   private final Matcher match_BOOL_OPERATOR;
-  
+
   private final Matcher match_CALL_NAME;
 
   private final Matcher match_DIGITS;
-  
+
   private final Matcher match_DIMENSION_UNIT;
 
   private final Matcher match_DIMENSION_VALUE;
 
   private final Matcher match_DIRECTIVE;
-  
+
   private final Matcher match_ELEMENT0;
-  
+
   private final Matcher match_ELEMENT1;
-  
+
   private final Matcher match_ELEMENT2;
-  
+
   private final Matcher match_ELEMENT3;
 
   private final Matcher match_HEXCOLOR;
-  
+
   private final Matcher match_IDENTIFIER;
-  
+
   private final Matcher match_IMPORTANT;
-  
+
   private final Matcher match_KEYWORD;
-  
+
   private final Matcher match_MIXIN_NAME;
-  
+
   private final Matcher match_NOT;
-  
+
   private final Matcher match_OPACITY;
-  
+
   private final Matcher match_PROPERTY;
-  
+
   private final Matcher match_RATIO;
-  
+
   private final Matcher match_SHORTHAND;
-  
+
   private final Matcher match_UNICODE_RANGE;
-  
+
   private final Matcher match_URLSTART;
-  
+
   private final Matcher match_WHEN;
-  
+
   private final Matcher match_WORD;
-  
+
   private int matchEnd = -1;
-  
+
   private Mark tokenPosition = new Mark();
-  
+
   private String token;
-  
+
   private Path rootPath;
-  
+
   private Path fileName;
-  
+
   private Mark position = new Mark();
-  
+
   public LessStream(String raw) {
     this(raw, null, null);
   }
-  
+
   public LessStream(String raw, Path rootPath, Path fileName) {
     super(raw);
     this.rootPath = rootPath;
@@ -124,15 +124,15 @@ public class LessStream extends Stream {
   public LessException parseError(LessException exc) {
     return ParseUtils.parseError(exc, fileName, raw, furthest);
   }
-  
+
   public Path rootPath() {
     return rootPath;
   }
-  
+
   public Path fileName() {
     return fileName;
   }
-  
+
   /**
    * Make sure the stream was fully read; otherwise, throw an exception.
    */
@@ -142,7 +142,7 @@ public class LessStream extends Stream {
       throw parseError(new LessException(incompleteParse()));
     }
   }
-  
+
   /**
    * Skips whitespace and tries each parselet in order until one returns a non-null result.
    */
@@ -165,11 +165,11 @@ public class LessStream extends Stream {
   public String token() {
     return token;
   }
-  
+
   public boolean matchAnd() {
     return finish(match(match_AND));
   }
-  
+
   public boolean matchAnonRuleValue() {
     if (!match(match_ANON_RULE_VALUE)) {
       return false;
@@ -179,19 +179,19 @@ public class LessStream extends Stream {
     consume();
     return true;
   }
-  
+
   public boolean matchAttributeKey() {
     return finish(match(match_ATTRIBUTE_KEY));
   }
-  
+
   public boolean matchAttributeOp() {
     return finish(match(match_ATTRIBUTE_OP));
   }
-  
+
   public boolean matchBoolOperator() {
     return finish(match(match_BOOL_OPERATOR));
   }
-  
+
   public boolean matchCallName() {
     if (!match(match_CALL_NAME)) {
       return false;
@@ -201,11 +201,11 @@ public class LessStream extends Stream {
     consume();
     return true;
   }
-  
+
   public boolean matchDigits() {
     return finish(match(match_DIGITS));
   }
-  
+
   public boolean matchDimensionUnit() {
     return finish(match(match_DIMENSION_UNIT));
   }
@@ -217,7 +217,7 @@ public class LessStream extends Stream {
   public boolean matchDirective() {
     return finish(match(match_DIRECTIVE));
   }
-  
+
   public boolean matchElement0() {
     return finish(match(match_ELEMENT0));
   }
@@ -241,43 +241,43 @@ public class LessStream extends Stream {
   public boolean matchIdentifier() {
     return finish(match(match_IDENTIFIER));
   }
-  
+
   public boolean matchImportant() {
     return finish(match(match_IMPORTANT));
   }
-  
+
   public boolean matchKeyword() {
     return finish(match(match_KEYWORD));
   }
-  
+
   public boolean matchMixinName() {
     return finish(match(match_MIXIN_NAME));
   }
-  
+
   public boolean matchNot() {
     return finish(match(match_NOT));
   }
-  
+
   public boolean matchOpacity() {
     return finish(match(match_OPACITY));
   }
-  
+
   public boolean matchProperty() {
     return finish(match(match_PROPERTY));
   }
-  
+
   public boolean matchRatio() {
     return finish(match(match_RATIO));
   }
-  
+
   public boolean matchUnicodeRange() {
     return finish(match(match_UNICODE_RANGE));
   }
-  
+
   public boolean matchUrlStart() {
     return finish(match(match_URLSTART));
   }
-  
+
   public boolean matchWhen() {
     return finish(match(match_WHEN));
   }
@@ -289,12 +289,12 @@ public class LessStream extends Stream {
   public boolean peekShorthand() {
     return peek(match_SHORTHAND);
   }
-  
+
   private boolean peek(Matcher matcher) {
     matcher.region(index, length);
     return matcher.lookingAt();
   }
-  
+
   private boolean match(Matcher matcher) {
     matcher.region(index, length);
     boolean matched = matcher.lookingAt();
@@ -311,11 +311,11 @@ public class LessStream extends Stream {
     }
     return result;
   }
-  
+
   private void consume() {
     seek(matchEnd - index);
   }
-  
+
   private void set(int start, int end) {
     tokenPosition.index = start;
     tokenPosition.lineOffset = lineOffset;

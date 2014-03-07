@@ -26,7 +26,7 @@ public class ColorCombinationFunctions implements Registry<Function> {
       return new RGBColor(red, green, blue);
     }
   };
-  
+
   public static final Function DIFFERENCE = new Function("difference", "cc") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -38,7 +38,7 @@ public class ColorCombinationFunctions implements Registry<Function> {
       return new RGBColor(red, green, blue);
     }
   };
-  
+
   public static final Function EXCLUSION = new Function("exclusion", "cc") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -50,11 +50,11 @@ public class ColorCombinationFunctions implements Registry<Function> {
       return new RGBColor(red, green, blue);
     }
   };
-  
+
   private static double exclusion(double c1, double c2) {
     return (c1 + c2 * (255 - c1 - c1) / 255.0);
   }
-  
+
   public static final Function HARDLIGHT = new Function("hardlight", "cc") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -66,14 +66,14 @@ public class ColorCombinationFunctions implements Registry<Function> {
       return new RGBColor(red, green, blue);
     }
   };
-  
+
   private static double hardlight(double c1, double c2) {
     if (c2 < 128) {
       return (2 * c2 * c1 / 255.0);
     }
     return (255 - 2 * (255 - c2) * (255 - c1) / 255.0);
   }
-  
+
   public static final Function MIX = new Function("mix", "cc:d") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -86,7 +86,7 @@ public class ColorCombinationFunctions implements Registry<Function> {
       return mix(c1, c2, weight);
     }
   };
-  
+
   private static final RGBColor mix(RGBColor c1, RGBColor c2, double weight) {
     double p = weight;
     double w = p * 2 - 1;
@@ -111,7 +111,7 @@ public class ColorCombinationFunctions implements Registry<Function> {
       return new RGBColor(red, green, blue);
     }
   };
-  
+
   public static final Function NEGATION = new Function("negation", "cc") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -127,7 +127,7 @@ public class ColorCombinationFunctions implements Registry<Function> {
   private static final double negation(double c1, double c2) {
     return 255 - Math.abs(255 - c2 - c1);
   }
-  
+
   public static final Function OVERLAY = new Function("overlay", "cc") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -146,7 +146,7 @@ public class ColorCombinationFunctions implements Registry<Function> {
     }
     return 255 - 2 * (255 - c1) * (255 - c2) / 255.0;
   }
-  
+
   public static final Function SCREEN = new Function("screen", "cc") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -158,11 +158,11 @@ public class ColorCombinationFunctions implements Registry<Function> {
       return new RGBColor(red, green, blue);
     }
   };
-  
+
   private static double screen(double c1, double c2) {
     return 255 - (255 - c1) * (255 - c2) / 255.0;
   }
-  
+
   public static final Function SHADE = new Function("shade", "cd") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -189,7 +189,7 @@ public class ColorCombinationFunctions implements Registry<Function> {
     double r = t + c1 * (255.0 - (255.0 - c1) * (255.0 - c2) / 255.0 - t) / 255.0;
     return r;
   }
-  
+
   public static final Function TINT = new Function("tint", "cd") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -204,5 +204,5 @@ public class ColorCombinationFunctions implements Registry<Function> {
   public void registerTo(SymbolTable<Function> table) {
     // NO-OP
   }
-  
+
 }

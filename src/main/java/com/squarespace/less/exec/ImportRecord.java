@@ -11,27 +11,27 @@ import com.squarespace.less.model.Stylesheet;
 public class ImportRecord {
 
   private final Path exactPath;
-  
+
   private final Stylesheet stylesheet;
-  
+
   private final boolean onlyOnce;
-  
+
   public ImportRecord(Path exactPath, Stylesheet stylesheet, boolean onlyOnce) {
     this.exactPath = exactPath;
     this.stylesheet = stylesheet;
     this.onlyOnce = onlyOnce;
   }
-  
+
   public Path exactPath() {
     return exactPath;
   }
-  
+
   public Stylesheet stylesheeet() {
     return stylesheet;
   }
-  
+
   public boolean onlyOnce() {
     return onlyOnce;
   }
-  
+
 }

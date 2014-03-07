@@ -18,7 +18,7 @@ public class SelectorsParselet implements Parselet {
     if (selector == null) {
       return null;
     }
-    
+
     Selectors group = new Selectors();
     while (selector != null) {
       group.add((Selector)selector);
@@ -31,8 +31,8 @@ public class SelectorsParselet implements Parselet {
       stm.skipWs();
       selector = stm.parse(SELECTOR);
     }
-    
+
     return group;
   }
-  
+
 }

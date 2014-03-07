@@ -8,7 +8,7 @@ import static com.squarespace.less.core.CharClass.UPPERCASE;
 
 
 /**
- * Implements the encodeURI and encodeURIComponent functions, which are available 
+ * Implements the encodeURI and encodeURIComponent functions, which are available
  * as built-ins for JavaScript, but which no efficient version could be found for
  * Java.  Simple, straightforward implementation following the V8 engine, with
  * one exception: this avoids raising an error for invalid Unicode chars, choosing
@@ -17,16 +17,16 @@ import static com.squarespace.less.core.CharClass.UPPERCASE;
 public class EncodeUtils {
 
   private static final int ENCODE_URI_CLASS = ENCODE_URI | LOWERCASE | UPPERCASE | DIGIT;
-  
+
   private static final int ENCODE_URI_COMPONENT_CLASS = ENCODE_URI_COMPONENT | LOWERCASE | UPPERCASE | DIGIT;
-  
+
   private EncodeUtils() {
   }
-  
+
   private interface CharTest {
     boolean member(char ch);
   }
-  
+
   private static final CharTest ENCODE_URI_TEST = new CharTest() {
     @Override
     public boolean member(char ch) {
@@ -47,7 +47,7 @@ public class EncodeUtils {
       return CharClass.isMember(ch, ENCODE_URI_CLASS) && !CharClass.isMember(ch, CharClass.ESCAPE);
     }
   };
-  
+
   /**
    * Implementation of JavaScript's encodeURI function.
    */
@@ -68,7 +68,7 @@ public class EncodeUtils {
   public static String escape(String uri) {
     return encodeChars(uri, ESCAPE_TEST);
   }
-  
+
   /**
    * Emits UTF-8 hex escape sequences for all characters which are not members of
    * the given character class. It ignores bad Unicode sequences.
@@ -83,12 +83,12 @@ public class EncodeUtils {
         buf.append(ch);
         i++;
         continue;
-        
+
       } else if (ch <= 0x7F) {
         hexoctet(buf, ch);
         i++;
         continue;
-       
+
       } else if (ch >= 0xDC00 && ch <= 0xDFFF) {
         // skip
         i++;
@@ -122,7 +122,7 @@ public class EncodeUtils {
         // skip
         continue;
       }
-      
+
       // Emit UTF-8 escape sequence
       int u = ((ch >> 6) & 0xF) + 1;
       int w = (ch >> 2) & 0xF;
@@ -141,5 +141,5 @@ public class EncodeUtils {
   private static void hexoctet(StringBuilder buf, int octet) {
     buf.append('%').append(Chars.hexchar(octet >> 4)).append(Chars.hexchar(octet & 0xF));
   }
-  
+
 }

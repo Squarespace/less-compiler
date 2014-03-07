@@ -17,21 +17,21 @@ public class Import extends BaseNode {
   private final Features features;
 
   private Path rootPath;
-  
+
   private Path fileName;
-  
+
   private boolean once;
-  
+
   public Import(Node path, Features features, boolean once) {
     this.path = path;
     this.features = features;
     this.once = once;
   }
-  
+
   public Node path() {
     return path;
   }
-  
+
   public Features features() {
     return features;
   }
@@ -39,23 +39,23 @@ public class Import extends BaseNode {
   public boolean once() {
     return once;
   }
-  
+
   public Path rootPath() {
     return rootPath;
   }
-  
+
   public Path fileName() {
     return fileName;
   }
-  
+
   public void rootPath(Path rootPath) {
     this.rootPath = rootPath;
   }
-  
+
   public void fileName(Path fileName) {
     this.fileName = fileName;
   }
-  
+
   public String renderPath(ExecEnv env) throws LessException {
     Node value = path;
     if (value.is(NodeType.URL)) {
@@ -66,7 +66,7 @@ public class Import extends BaseNode {
     Quoted quoted = null;
     String rendered = null;
     if (value.is(NodeType.QUOTED)) {
-      
+
       // Strip quote delimiters and render inner string. This technique allows
       // for variable substitution inside @import paths, which may or may not
       // be useful.
@@ -82,7 +82,7 @@ public class Import extends BaseNode {
     }
     return rendered;
   }
-  
+
   @Override
   public boolean needsEval() {
     return path.needsEval() || (features != null && features.needsEval());
@@ -99,17 +99,17 @@ public class Import extends BaseNode {
     result.copyPosition(this);
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof Import) ? safeEquals(path, ((Import)obj).path) : false; 
+    return (obj instanceof Import) ? safeEquals(path, ((Import)obj).path) : false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.IMPORT;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append("@import");
@@ -125,7 +125,7 @@ public class Import extends BaseNode {
     }
     buf.append(";\n");
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -141,5 +141,5 @@ public class Import extends BaseNode {
     }
     buf.decrIndent();
   }
-  
+
 }

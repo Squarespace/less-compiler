@@ -13,7 +13,7 @@ import com.squarespace.less.model.ParseError;
 public class ParseUtils {
 
   private static final int WINDOW_SIZE = 74;
-  
+
   /**
    * Build a user-readable parser error message, showing the exact context for
    * the error. We append this to the given exception inside a ParseError node.
@@ -43,7 +43,7 @@ public class ParseUtils {
     for (int i = start; i < size; i++) {
       int[] pos = offsets.get(i);
       position(buf, i + 1, 4);
-      
+
       // Last line has special handling. We want to position the error in the middle
       // of the line, so for extremely long lines we need to shift things over.
       if (i + 1 == size) {
@@ -59,12 +59,12 @@ public class ParseUtils {
         } else {
           buf.append(raw.substring(pos[0], pos[1]));
         }
-        
+
       } else {
         buf.append(compressString(raw.substring(pos[0], pos[1])));
       }
     }
-    
+
     // Position an arrow at the offending character position
     if (buf.prevChar() != '\n') {
       buf.append('\n');
@@ -74,14 +74,14 @@ public class ParseUtils {
       buf.append('.');
     }
     buf.append("^\n");
-    
+
     ParseError error = new ParseError();
     error.filePath(filePath);
     error.errorMessage(buf.toString());
     exc.push(error);
     return exc;
   }
-  
+
   private static void indent(Buffer buf, int width) {
     for (int i = 0; i < width; i++) {
       buf.append(' ');
@@ -95,10 +95,10 @@ public class ParseUtils {
     for (int i = 0; i < width; i++) {
       buf.append(' ');
     }
-    buf.append(pos).append("   "); 
+    buf.append(pos).append("   ");
     return pos.length();
   }
-  
+
   public static String compressString(String value) {
     int len = value.length();
     if (len <= WINDOW_SIZE) {
@@ -117,5 +117,5 @@ public class ParseUtils {
         .append(value.substring(len - segSize, len))
         .toString();
   }
-  
+
 }

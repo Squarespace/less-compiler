@@ -16,17 +16,17 @@ import com.squarespace.less.exec.Function;
 public class FunctionCall extends BaseNode {
 
   private final String name;
-  
+
   private List<Node> args;
 
   private boolean evaluate;
-  
+
   private boolean noimpl;
-  
+
   public FunctionCall(String name) {
     this(name, null, false);
   }
-  
+
   public FunctionCall(String name, List<Node> args) {
     this(name, args, false);
   }
@@ -39,32 +39,32 @@ public class FunctionCall extends BaseNode {
     this.args = args;
     this.noimpl = noimpl;
   }
-  
+
   public String name() {
     return name;
   }
-  
+
   public List<Node> args() {
     return LessUtils.safeList(args);
   }
-  
+
   public void add(Node arg) {
     args = LessUtils.initList(args, 3);
     args.add(arg);
     evaluate |= arg.needsEval();
   }
-  
+
   @Override
   public boolean needsEval() {
     return !noimpl || evaluate;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (noimpl) {
       return evaluate ? new FunctionCall(name, evalArgs(env), true) : this;
     }
-    
+
     // Check if this function is built-in.
     Function func = env.context().findFunction(name);
     if (func != null) {
@@ -76,18 +76,18 @@ public class FunctionCall extends BaseNode {
       if (result != null) {
         return result;
       }
-      
+
       // If we get null, fall through. Its a way for a function impl to signal
       // that it should be emitted, not executed. This hapepns in the context()
       // function -- it checks its args, and if the first arg is not of the expected
       // type, it returns null, indicating that the function call's repr should
       // be emitted, not an evaluated result.
     }
-    
+
     // Function is not a built-in so render the function and its args.
     return evaluate ? new FunctionCall(name, evalArgs(env), true) : this;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof FunctionCall) {
@@ -96,12 +96,12 @@ public class FunctionCall extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return NodeType.FUNCTION_CALL;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     buf.append(name).append('(');
@@ -116,7 +116,7 @@ public class FunctionCall extends BaseNode {
     }
     buf.append(')');
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -128,7 +128,7 @@ public class FunctionCall extends BaseNode {
     ReprUtils.modelRepr(buf, "\n", true, args);
     buf.decrIndent();
   }
-  
+
   private List<Node> evalArgs(ExecEnv env) throws LessException {
     List<Node> tempArgs = args();
     if (tempArgs.isEmpty()) {

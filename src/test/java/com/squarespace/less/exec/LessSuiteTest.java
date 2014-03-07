@@ -43,11 +43,11 @@ import difflib.Patch;
  * Runs the on-disk test suite.
  */
 public class LessSuiteTest {
-  
+
   private static final boolean VERBOSE = false;
-  
+
   private static final String SUITE_RESOURCE = "test-suite";
-  
+
   private Path suiteRootPath() {
     URL top = getClass().getClassLoader().getResource(SUITE_RESOURCE);
     if (top == null) {
@@ -55,7 +55,7 @@ public class LessSuiteTest {
     }
     return Paths.get(top.getPath());
   }
-  
+
   @Test
   public void testSuite() throws IOException {
     Path rootPath = suiteRootPath();
@@ -76,24 +76,24 @@ public class LessSuiteTest {
         failures.append("\nCompile error " + lessPath.getFileName() + "\n" + e.primaryError().getMessage());
         continue;
       }
-      
+
       // Compare with expected CSS result.
       String[] parts = lessPath.getFileName().toString().split("\\.(?=[^\\.]+$)");
       Path cssPath = cssRoot.resolve(parts[0] + ".css").normalize();
       String cssData = LessUtils.readFile(cssPath);
-      
+
       String result = diff(cssData, lessCompiled);
       if (result != null) {
         failures.append("\nDifferences detected in compiled output for ");
         failures.append(lessPath.getFileName() + "\n" + result);
       }
     }
-    
+
     if (failures.length() > 0) {
       Assert.fail(failures.toString());
     }
   }
-  
+
   @Test
   public void testErrorSuite() throws IOException {
     Path rootPath = suiteRootPath();
@@ -120,10 +120,10 @@ public class LessSuiteTest {
           }
           assertEquals(errorCase.errorType, e.primaryError().type());
         }
-      }      
+      }
     }
   }
-  
+
   private String compile(String source, Path importRoot) throws LessException {
     // Setup the compiler
     Options opts = new Options();
@@ -140,7 +140,7 @@ public class LessSuiteTest {
     sheet.modelRepr(buf);
     sheet.repr(buf);
 
-    // Hack to detect case-specific options enabled via comments. 
+    // Hack to detect case-specific options enabled via comments.
     // Next version of the compiler will make this easier.
     Block block = sheet.block();
     FlexList<Node> rules = block.rules();
@@ -154,7 +154,7 @@ public class LessSuiteTest {
         }
       }
     }
-    
+
     // Finally, compile and execute the stylesheet.
     ctx = new Context(opts);
     ctx.setCompiler(compiler);
@@ -162,7 +162,7 @@ public class LessSuiteTest {
     ctx.sanityCheck();
     return result;
   }
-  
+
   /**
    * Create a diff between the expected and actual strings. If any
    * differences are found, format an error message.
@@ -210,7 +210,7 @@ public class LessSuiteTest {
         if (parts.length != 2) {
           throw new InvalidTestException("Bad test case definition: " + lines[i]);
         }
-        
+
         // Read the test case's source
         ErrorType errorType = resolveErrorType(parts[0]);
         StringBuilder buf = new StringBuilder();
@@ -228,7 +228,7 @@ public class LessSuiteTest {
     }
     return errorCases;
   }
-  
+
   private ErrorType resolveErrorType(String name) {
     int index = name.indexOf('.');
     if (index == -1) {
@@ -242,24 +242,24 @@ public class LessSuiteTest {
       case "SyntaxErrorType":
         return SyntaxErrorType.valueOf(member);
       default:
-        throw new InvalidTestException("Unknown ErrorType-derived class: " + cls);  
+        throw new InvalidTestException("Unknown ErrorType-derived class: " + cls);
     }
   }
-  
+
   private static class ErrorCase {
 
     private ErrorType errorType;
-    
+
     private String failMessage;
-    
+
     private String source;
-    
-    public ErrorCase(ErrorType errorType, String failMessage, String source) { 
+
+    public ErrorCase(ErrorType errorType, String failMessage, String source) {
       this.errorType = errorType;
       this.failMessage = failMessage;
       this.source = source;
     }
 
   }
-  
+
 }

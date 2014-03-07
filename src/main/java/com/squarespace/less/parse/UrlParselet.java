@@ -25,5 +25,5 @@ public class UrlParselet implements Parselet {
     stm.restore(mark);
     return null;
   }
-  
+
 }

@@ -6,6 +6,6 @@ import com.squarespace.less.model.Node;
 
 public abstract class ArgValidator {
 
-  public abstract void validate(int index, Node arg) throws LessException; 
-  
+  public abstract void validate(int index, Node arg) throws LessException;
+
 }

@@ -36,14 +36,14 @@ public class ArgumentBinderTest extends LessTestBase {
   public void testPatternMatch() throws LessException {
 
     // TESTS  assert..(parameters, arguments)
-    
+
     // ARITY
     assertMatches("()", "()");
     assertMatches("(@a)", "(1)");
     assertMatches("(@a: 1)", "()");
     assertMatches("(@a: 1)", "(1)");
     assertMatches("(@a: 1, @b)", "(1)");
-    
+
     assertMatchFails("()", "(1)");
     assertMatchFails("(@a)", "()");
     assertMatchFails("(@a)", "(1, 2)");
@@ -65,7 +65,7 @@ public class ArgumentBinderTest extends LessTestBase {
     assertMatchFails("(@a: 1, false)", "(1, true)");
     assertMatchFails("(@a: 1, foo)", "(2; foo, bar)");
     assertMatchFails("(true, @a: 1)", "(@a: 1, true)");
-    
+
     // VARIADIC
     assertMatches("(...)", "()");
     assertMatches("(@a ...)", "()");
@@ -79,12 +79,12 @@ public class ArgumentBinderTest extends LessTestBase {
     assertMatches("(3.14px, @a: 1, ...)", "(3.14px, 2)");
     assertMatches("(3.14px, @a: 1, ...)", "(3.14px, 2, 3, 4)");
     assertMatches("('foo')", "('foo')");
-    
+
     assertMatchFails("(@a, @b ...)", "()");
     assertMatchFails("(false, @a: 1, @b ...)", "(true)");
     assertMatchFails("(false, @a: 1, @b ...)", "(@a: 2)");
     assertMatchFails("(3.14px, @a: 1, @b ...)", "(3.15px)");
-    
+
     // EVAL + RENDER PATTERNS
     assertMatches("(~'foo')", "(foo)");
     assertMatches("(~'foo', ~'bar', ...)", "(foo, bar, 2, 3, 4)");
@@ -98,23 +98,23 @@ public class ArgumentBinderTest extends LessTestBase {
   public void testFoo() throws LessException {
     assertMatchFails("(@a, @b ...)", "()");
   }
-  
+
   @Test
   public void testBinding() throws LessException {
     assertBinds("(@a: 1)", "(2)", defs(
-        
+
         def("@a", dim(2)),
         def("@arguments", expn(dim(2)))
         ));
-    
+
     assertBinds("(@a: 'foo')", "(2)", defs(
-        
+
         def("@a", dim(2)),
         def("@arguments", expn(dim(2)))
         ));
-    
+
     assertBinds("(true, @a: 1)", "(true, 2px)", defs(
-        
+
         def("@a", dim(2, Unit.PX)),
         def("@arguments", expn(dim(2, Unit.PX)))
         ));
@@ -125,7 +125,7 @@ public class ArgumentBinderTest extends LessTestBase {
         ));
 
     assertBinds("(@a: 1, @b ...)", "(12em, 1, 2, 3)", defs(
-        
+
         def("@a", dim(12, Unit.EM)),
         def("@b", expn(dim(1), dim(2), dim(3))),
         def("@arguments", expn(dim(12, Unit.EM), dim(1), dim(2), dim(3)))
@@ -140,14 +140,14 @@ public class ArgumentBinderTest extends LessTestBase {
 
     // BINDING FAILURES
     assertBindFails("(@b: 2)", "(@c: 1)", ARG_NAMED_NOTFOUND);
-    
+
   }
-  
+
   private Node parse(String raw, Parselet[] parselet) throws LessException {
     LessHarness h = new LessHarness(parselet);
     return h.parse(raw);
   }
-  
+
   private void assertBinds(String rawParams, String rawArgs, GenericBlock defs) throws LessException {
     MixinParams params = (MixinParams) parse(rawParams, Parselets.MIXIN_PARAMS);
     MixinCallArgs args = (MixinCallArgs) parse(rawArgs, Parselets.MIXIN_CALL_ARGS);
@@ -158,7 +158,7 @@ public class ArgumentBinderTest extends LessTestBase {
       Definition def = (Definition)rules.get(i);
       expected.put(def.name(), def.value());
     }
-    
+
     GenericBlock result = bind(params, args);
     rules = result.block().rules();
     size = rules.size();
@@ -179,7 +179,7 @@ public class ArgumentBinderTest extends LessTestBase {
       assertEquals(e.primaryError().type(), errorType);
     }
   }
-  
+
   private GenericBlock bind(MixinParams params, MixinCallArgs args) throws LessException {
     LessHarness h = new LessHarness();
     ExecEnv env = h.context().newEnv();
@@ -207,5 +207,5 @@ public class ArgumentBinderTest extends LessTestBase {
     MixinMatcher binder = new MixinMatcher(env, new MixinCall(sel, args, false));
     return binder.patternMatch(params);
   }
-  
+
 }

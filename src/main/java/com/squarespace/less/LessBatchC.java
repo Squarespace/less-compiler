@@ -22,26 +22,26 @@ import com.squarespace.less.model.Stylesheet;
 /**
  * Batch-compile Squarespace LESS rollups. Reads all files from disk,
  * parses them and caches the parsed trees in a hashmap. Once all files
- * are parsed, it proceeds to compile them, only writing .css files 
+ * are parsed, it proceeds to compile them, only writing .css files
  * for which no errors were thrown.
- * 
+ *
  * TODO:  merge this in as a subcommand of LessC ("batch" mode).
  */
 public class LessBatchC extends BaseCommand {
 
   private static final String PROGRAM_NAME = "sqs_batch_lessc";
-  
+
   private static final String IMPLNAME = "(LESS Batch Compiler) [Java, Squarespace]";
-  
+
   private final Options options = new Options();
-  
+
   @Parameter(description = "LESS_DIR [OUTPUT_DIR]")
   private List<String> args;
 
   @Parameter(names = { "-C", "-compile" }, variableArity = true, description = "Only write final CSS for the "
       + "listed files. The rest of the files in the LESS_DIR will be parsed and treated as includes.")
   private List<String> compileOnly;
-  
+
   @Parameter(names = { "-I", "-import-path" }, description = "Add path to the list of import paths" )
   public List<String> importPaths;
 
@@ -50,23 +50,23 @@ public class LessBatchC extends BaseCommand {
 
   @Parameter(names = { "-V", "-verbose" }, description = "Verbose")
   private boolean verbose = false;
-  
+
   @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
-  
+
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
   private int indent = 2;
-  
+
   @Parameter(names = { "-import-once" }, description = "Imports are only processed once")
   private boolean importOnce;
-  
+
   @Parameter(names = { "-strict" }, description = "Strict mode, throws exceptions when some invalid rules are "
       + "evaluated instead of embedding warnings.")
   private boolean strictMode;
 
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode")
   private boolean compress;
-  
+
   @Parameter(names = { "-v", "-version" }, description = "Show version")
   private boolean version = false;
 
@@ -81,7 +81,7 @@ public class LessBatchC extends BaseCommand {
       options.importPaths(importPaths);
     }
   }
-  
+
   public static String version() {
     return PROGRAM_NAME + " " + VERSION + " " + IMPLNAME;
   }
@@ -90,7 +90,7 @@ public class LessBatchC extends BaseCommand {
   public String programName() {
     return PROGRAM_NAME;
   }
-  
+
   public static void main(String[] args) {
     LessBatchC batcher = new LessBatchC();
     JCommander cmd = new JCommander(batcher);
@@ -101,7 +101,7 @@ public class LessBatchC extends BaseCommand {
       System.err.println(e.getMessage());
       System.exit(1);
     }
-    if (batcher.help) { 
+    if (batcher.help) {
       cmd.usage();
       System.exit(0);
     }
@@ -128,7 +128,7 @@ public class LessBatchC extends BaseCommand {
     }
     processAll(inputPath, outputPath);
   }
-  
+
   private void processAll(Path inputPath, Path outputPath) {
     List<Path> lessPaths = null;
     Map<Path, Stylesheet> preCache = new HashMap<>();
@@ -149,7 +149,7 @@ public class LessBatchC extends BaseCommand {
           double elapsed = (System.nanoTime() - start) / 1000000.0;
           System.err.printf("  %.3fms\n", elapsed);
           preCache.put(realPath, stylesheet);
-          
+
         } catch (LessException e) {
           System.err.println(ErrorUtils.formatError(ctx, path, e, 4) + "\n");
           error = true;
@@ -188,7 +188,7 @@ public class LessBatchC extends BaseCommand {
           } else {
             realPath = outputPath;
           }
-          
+
           Path cssPath = realPath.resolve(fileParts[0] + ".css").normalize();
           log("compiling to " + cssPath);
           long start = System.nanoTime();
@@ -198,13 +198,13 @@ public class LessBatchC extends BaseCommand {
           writeFile(cssPath, cssData);
           double elapsed = (System.nanoTime() - start) / 1000000.0;
           System.err.printf("  %.3fms\n", elapsed);
-          
+
         } catch (LessException e) {
           System.err.println("\n\n" + ErrorUtils.formatError(ctx, path, e, 4) + SEPARATOR + "\n");
           error = true;
         }
       }
-      
+
     } catch (NoSuchFileException e) {
       log("ERROR: cannot locate path " + e.getMessage());
       error = true;
@@ -213,16 +213,16 @@ public class LessBatchC extends BaseCommand {
       log("ERROR: " + ioe.getMessage());
       error = true;
     }
-    
+
     if (verbose) {
       emitMemory("post-compile");
     }
-    
+
     if (error) {
       System.exit(1);
     }
   }
-  
+
   private static void writeFile(Path outPath, String data) {
     try {
       LessUtils.writeFile(outPath, data);
@@ -230,5 +230,5 @@ public class LessBatchC extends BaseCommand {
       System.err.println("\n    " + e.getMessage());
     }
   }
-  
+
 }

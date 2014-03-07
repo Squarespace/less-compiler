@@ -12,15 +12,15 @@ import com.squarespace.less.core.LessInternalException;
 public class Comment extends BaseNode {
 
   private final String body;
-  
+
   private final boolean block;
-  
+
   private final boolean newline;
-  
+
   public Comment(String body, boolean block) {
     this(body, block, false);
   }
-  
+
   public Comment(String body, boolean block, boolean newline) {
     if (body == null) {
       throw new LessInternalException("Serious error: body cannot be null.");
@@ -37,11 +37,11 @@ public class Comment extends BaseNode {
   public boolean block() {
     return block;
   }
-  
+
   public boolean newline() {
     return newline;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Comment) {
@@ -50,12 +50,12 @@ public class Comment extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return COMMENT;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     if (block) {
@@ -67,7 +67,7 @@ public class Comment extends BaseNode {
       buf.append("\n");
     }
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -78,5 +78,5 @@ public class Comment extends BaseNode {
     buf.append(StringEscapeUtils.escapeJava(body));
     buf.decrIndent();
   }
-  
+
 }

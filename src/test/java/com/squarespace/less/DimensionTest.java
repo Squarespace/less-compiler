@@ -27,14 +27,14 @@ public class DimensionTest extends LessTestBase {
     assertNotEquals(dim(3.5, Unit.IN), dim(3.5, Unit.PX));
     assertNotEquals(dim(3.5, Unit.IN), dim(3.5, Unit.PX));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     dim(1).toString();
     dim(1, Unit.PX).toString();
     dim(3.5, Unit.IN).toString();
   }
-  
+
   @Test
   public void testDimension() throws LessException {
     LessHarness h = new LessHarness(Parselets.DIMENSION);

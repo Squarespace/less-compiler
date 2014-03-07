@@ -16,15 +16,15 @@ import com.squarespace.less.exec.ExecEnv;
 public class Features extends BaseNode {
 
   private List<Node> features;
-  
+
   private boolean evaluate;
-  
+
   public void add(Node node) {
     features = LessUtils.initList(features, 2);
     features.add(node);
     evaluate |= node.needsEval();
   }
-  
+
   public void add(List<Node> nodes) {
     features = LessUtils.initList(features, nodes.size());
     for (Node node : nodes) {
@@ -32,20 +32,20 @@ public class Features extends BaseNode {
       evaluate |= node.needsEval();
     }
   }
-  
+
   public List<Node> features() {
     return LessUtils.safeList(features);
   }
-  
+
   public boolean isEmpty() {
     return features == null ? true : features.isEmpty();
   }
-  
+
   @Override
   public boolean needsEval() {
     return evaluate;
   }
-  
+
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!evaluate) {
@@ -57,17 +57,17 @@ public class Features extends BaseNode {
     }
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof Features) ? safeEquals(features, ((Features)obj).features) : false;
   }
- 
+
   @Override
   public NodeType type() {
     return NodeType.FEATURES;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     if (features != null) {
@@ -80,7 +80,7 @@ public class Features extends BaseNode {
       }
     }
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);

@@ -14,5 +14,5 @@ public class LessInternalException extends RuntimeException {
   public LessInternalException(String message, Throwable cause) {
     super(message, cause);
   }
-  
+
 }

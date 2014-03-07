@@ -18,10 +18,10 @@ public class ParenTest extends LessTestBase {
     assertNotEquals(paren(dim(1)), anon("a"));
     assertNotEquals(paren(dim(1)), paren(dim(2)));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     paren(anon("a")).toString();
   }
-  
+
 }

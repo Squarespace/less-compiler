@@ -22,12 +22,12 @@ public class ParameterTest extends LessTestBase {
     assertNotEquals(param("@x", anon("y")), param("@x", true));
     assertNotEquals(param("@x", anon("y")), param("@x", anon("z")));
   }
-  
+
   @Test
   public void testModelReprSafety() {
     param("@x").toString();
     param("@x", anon("y")).toString();
     param("@x", true).toString();
   }
-  
+
 }

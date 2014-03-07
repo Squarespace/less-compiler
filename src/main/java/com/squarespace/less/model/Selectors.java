@@ -18,28 +18,28 @@ public class Selectors extends BaseNode {
   private List<Selector> selectors;
 
   private boolean evaluate;
-  
+
   public Selectors() {
   }
-  
+
   public Selectors(List<Selector> selectors) {
     this.selectors = selectors;
   }
-  
+
   public boolean isEmpty() {
     return selectors == null ? true : selectors.isEmpty();
   }
-  
+
   public void add(Selector selector) {
     selectors = LessUtils.initList(selectors, 2);
     selectors.add(selector);
     evaluate |= selector.needsEval();
   }
- 
+
   public List<Selector> selectors() {
     return LessUtils.safeList(selectors);
   }
-  
+
   @Override
   public boolean needsEval() {
     return evaluate;
@@ -56,7 +56,7 @@ public class Selectors extends BaseNode {
     }
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof Selectors) ? LessUtils.safeEquals(selectors, ((Selectors)obj).selectors) : false;
@@ -66,7 +66,7 @@ public class Selectors extends BaseNode {
   public NodeType type() {
     return NodeType.SELECTORS;
   }
-  
+
   @Override
   public void repr(Buffer buf) {
     int size1 = selectors.size();
@@ -85,7 +85,7 @@ public class Selectors extends BaseNode {
       reprElement(buf, elements.get(i), i == 0);
     }
   }
-  
+
   private static void reprElement(Buffer buf, Element element, boolean isFirst) {
     Combinator combinator = element.combinator();
     if (combinator != null) {
@@ -118,5 +118,5 @@ public class Selectors extends BaseNode {
     ReprUtils.modelRepr(buf, "\n", true, selectors);
     buf.decrIndent();
   }
-  
+
 }

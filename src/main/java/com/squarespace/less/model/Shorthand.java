@@ -11,22 +11,22 @@ import com.squarespace.less.exec.ExecEnv;
 public class Shorthand extends BaseNode {
 
   private final Node left;
-  
+
   private final Node right;
-  
+
   public Shorthand(Node left, Node right) {
     this.left = left;
     this.right = right;
   }
-  
+
   public Node left() {
     return left;
   }
-  
+
   public Node right() {
     return right;
   }
-  
+
   @Override
   public boolean needsEval() {
     return left.needsEval() || right.needsEval();
@@ -36,7 +36,7 @@ public class Shorthand extends BaseNode {
   public Node eval(ExecEnv env) throws LessException {
     return needsEval() ? new Shorthand(left.eval(env), right.eval(env)) : this;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Shorthand) {
@@ -45,7 +45,7 @@ public class Shorthand extends BaseNode {
     }
     return false;
   }
-  
+
   @Override
   public NodeType type() {
     return SHORTHAND;
@@ -57,7 +57,7 @@ public class Shorthand extends BaseNode {
     buf.append('/');
     right.repr(buf);
   }
-  
+
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -67,5 +67,5 @@ public class Shorthand extends BaseNode {
     right.modelRepr(buf);
     buf.decrIndent();
   }
-  
+
 }
