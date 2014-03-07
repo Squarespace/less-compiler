@@ -60,6 +60,11 @@ public class HSLColor extends BaseColor {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public RGBColor toRGB() {
     double r = 0;
     double g = 0;
@@ -81,11 +86,11 @@ public class HSLColor extends BaseColor {
   }
 
   private double hue(double p, double q, double h) {
-    if (h < 0) h += 1.0;
-    if (h > 1) h -= 1.0;
-    if (h < 1 / 6.0) return p + (q - p) * 6.0 * h;
-    if (h < 1 / 2.0) return q;
-    if (h < 2 / 3.0) return p + (q - p) * ((2 / 3.0) - h) * 6.0;
+    if (h < 0) { h += 1.0; }
+    if (h > 1) { h -= 1.0; }
+    if (h < 1 / 6.0) { return p + (q - p) * 6.0 * h; }
+    if (h < 1 / 2.0) { return q; }
+    if (h < 2 / 3.0) { return p + (q - p) * ((2 / 3.0) - h) * 6.0; }
     return p;
   }
 

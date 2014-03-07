@@ -10,8 +10,7 @@ public enum Combinator {
   DESC(' '),
   NAMESPACE('|'),
   SIB_ADJ('+'),
-  SIB_GEN('~')
-  ;
+  SIB_GEN('~');
 
   private final char ch;
 
@@ -35,6 +34,8 @@ public enum Combinator {
         return SIB_ADJ;
       case '~':
         return SIB_GEN;
+      default:
+        break;
     }
     return null;
   }

@@ -8,7 +8,6 @@ import static com.squarespace.less.model.Operator.NOT_EQUAL;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
@@ -23,9 +22,9 @@ public class GuardTest extends LessTestBase {
   public void testParse() throws LessException {
     Dimension one = dim(1);
     Dimension two = dim(2);
-    Condition one_eq1 = cond(EQUAL, one, one);
-    Condition two_eq2 = cond(EQUAL, two, two);
-    Condition one_ne2 = cond(NOT_EQUAL, one, two);
+    Condition oneEq1 = cond(EQUAL, one, one);
+    Condition twoEq2 = cond(EQUAL, two, two);
+    Condition oneNe2 = cond(NOT_EQUAL, one, two);
 
     LessHarness h = new LessHarness(Parselets.GUARD);
 
@@ -33,13 +32,13 @@ public class GuardTest extends LessTestBase {
         guard(cond(EQUAL, one, Constants.TRUE)));
 
     h.parseEquals("when (1=1), (2=2) and (1!=2)",
-        guard(one_eq1, cond(AND, two_eq2, one_ne2)));
+        guard(oneEq1, cond(AND, twoEq2, oneNe2)));
 
     h.parseEquals("when not (1=1)",
         guard(cond(EQUAL, one, one, true)));
 
     h.parseEquals("when (1=1) and not (2=2)",
-        guard(cond(AND, one_eq1, cond(EQUAL, two, two, true))));
+        guard(cond(AND, oneEq1, cond(EQUAL, two, two, true))));
 
     h.parseEquals("when (true), (false)",
         guard(cond(EQUAL, TRUE, TRUE), cond(EQUAL, FALSE, TRUE)));

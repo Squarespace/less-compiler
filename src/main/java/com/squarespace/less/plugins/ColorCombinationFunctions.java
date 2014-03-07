@@ -87,7 +87,7 @@ public class ColorCombinationFunctions implements Registry<Function> {
     }
   };
 
-  private static final RGBColor mix(RGBColor c1, RGBColor c2, double weight) {
+  private static RGBColor mix(RGBColor c1, RGBColor c2, double weight) {
     double p = weight;
     double w = p * 2 - 1;
     double a = c1.toHSL().alpha() - c2.toHSL().alpha();
@@ -124,7 +124,7 @@ public class ColorCombinationFunctions implements Registry<Function> {
     }
   };
 
-  private static final double negation(double c1, double c2) {
+  private static double negation(double c1, double c2) {
     return 255 - Math.abs(255 - c2 - c1);
   }
 

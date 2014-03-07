@@ -4,8 +4,6 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.Context;
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.MixinMatcher;
@@ -40,7 +38,7 @@ public class MixinResolverTest extends LessTestBase {
 
 //  @Test  // enable for performance testing and profiling
   public void testBindSpeed() throws Exception {
-    int N = 1000;
+    int iters = 1000;
     Context ctx = new Context();
     ExecEnv env = ctx.newEnv();
     MixinCallArgs args = args(',', arg("a", dim(1)), arg("b", dim(2)), arg("c", dim(3)), arg(dim(17)));
@@ -49,7 +47,7 @@ public class MixinResolverTest extends LessTestBase {
     MixinParams params = params(param("a"), param("b"), param("c"), param("rest", true));
     MixinMatcher matcher = new MixinMatcher(env, call);
 
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < iters; i++) {
       matcher.bind(params);
     }
   }

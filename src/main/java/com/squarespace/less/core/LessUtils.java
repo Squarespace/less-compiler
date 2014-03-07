@@ -66,7 +66,8 @@ public class LessUtils {
     }
   }
 
-  public static List<Path> getMatchingFiles(final Path rootPath, String globPattern, boolean recursive) throws IOException {
+  public static List<Path> getMatchingFiles(final Path rootPath, String globPattern, boolean recursive)
+      throws IOException {
     final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(globPattern);
     final List<Path> result = new ArrayList<>();
     if (!recursive) {

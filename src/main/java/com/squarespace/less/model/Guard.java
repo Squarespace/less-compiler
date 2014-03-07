@@ -45,6 +45,11 @@ public class Guard extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public boolean needsEval() {
     return true;
   }

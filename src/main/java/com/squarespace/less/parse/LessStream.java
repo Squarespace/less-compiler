@@ -15,61 +15,61 @@ import com.squarespace.less.model.Node;
  */
 public class LessStream extends Stream {
 
-  private final Matcher match_AND;
+  private final Matcher matcherAnd;
 
-  private final Matcher match_ANON_RULE_VALUE;
+  private final Matcher matcherAnonRuleValue;
 
-  private final Matcher match_ATTRIBUTE_KEY;
+  private final Matcher matcherAttributeKey;
 
-  private final Matcher match_ATTRIBUTE_OP;
+  private final Matcher matcherAttributeOp;
 
-  private final Matcher match_BOOL_OPERATOR;
+  private final Matcher matcherBoolOperator;
 
-  private final Matcher match_CALL_NAME;
+  private final Matcher matcherCallName;
 
-  private final Matcher match_DIGITS;
+  private final Matcher matcherDigits;
 
-  private final Matcher match_DIMENSION_UNIT;
+  private final Matcher matcherDimensionUnit;
 
-  private final Matcher match_DIMENSION_VALUE;
+  private final Matcher matcherDimensionValue;
 
-  private final Matcher match_DIRECTIVE;
+  private final Matcher matcherDirective;
 
-  private final Matcher match_ELEMENT0;
+  private final Matcher matcherElement0;
 
-  private final Matcher match_ELEMENT1;
+  private final Matcher matcherElement1;
 
-  private final Matcher match_ELEMENT2;
+  private final Matcher matcherElement2;
 
-  private final Matcher match_ELEMENT3;
+  private final Matcher matcherElement3;
 
-  private final Matcher match_HEXCOLOR;
+  private final Matcher matcherHexColor;
 
-  private final Matcher match_IDENTIFIER;
+  private final Matcher matcherIdentifier;
 
-  private final Matcher match_IMPORTANT;
+  private final Matcher matcherImportant;
 
-  private final Matcher match_KEYWORD;
+  private final Matcher matcherKeyword;
 
-  private final Matcher match_MIXIN_NAME;
+  private final Matcher matcherMixinName;
 
-  private final Matcher match_NOT;
+  private final Matcher matcherNot;
 
-  private final Matcher match_OPACITY;
+  private final Matcher matcherOpacity;
 
-  private final Matcher match_PROPERTY;
+  private final Matcher matcherProperty;
 
-  private final Matcher match_RATIO;
+  private final Matcher matcherRatio;
 
-  private final Matcher match_SHORTHAND;
+  private final Matcher matcherShorthand;
 
-  private final Matcher match_UNICODE_RANGE;
+  private final Matcher matcherUnicodeRange;
 
-  private final Matcher match_URLSTART;
+  private final Matcher matcherUrlStart;
 
-  private final Matcher match_WHEN;
+  private final Matcher matcherWhen;
 
-  private final Matcher match_WORD;
+  private final Matcher matcherWord;
 
   private int matchEnd = -1;
 
@@ -91,34 +91,34 @@ public class LessStream extends Stream {
     super(raw);
     this.rootPath = rootPath;
     this.fileName = fileName;
-    this.match_AND = Patterns.AND.matcher(raw);
-    this.match_ANON_RULE_VALUE = Patterns.ANON_RULE_VALUE.matcher(raw);
-    this.match_ATTRIBUTE_KEY = Patterns.ATTRIBUTE_KEY.matcher(raw);
-    this.match_ATTRIBUTE_OP = Patterns.ATTRIBUTE_OP.matcher(raw);
-    this.match_BOOL_OPERATOR = Patterns.BOOL_OPERATOR.matcher(raw);
-    this.match_CALL_NAME = Patterns.CALL_NAME.matcher(raw);
-    this.match_DIGITS = Patterns.DIGITS.matcher(raw);
-    this.match_DIMENSION_UNIT = Patterns.DIMENSION_UNIT.matcher(raw);
-    this.match_DIMENSION_VALUE = Patterns.DIMENSION_VALUE.matcher(raw);
-    this.match_DIRECTIVE = Patterns.DIRECTIVE.matcher(raw);
-    this.match_ELEMENT0 = Patterns.ELEMENT0.matcher(raw);
-    this.match_ELEMENT1 = Patterns.ELEMENT1.matcher(raw);
-    this.match_ELEMENT2 = Patterns.ELEMENT2.matcher(raw);
-    this.match_ELEMENT3 = Patterns.ELEMENT3.matcher(raw);
-    this.match_HEXCOLOR = Patterns.HEXCOLOR.matcher(raw);
-    this.match_IDENTIFIER = Patterns.IDENTIFIER.matcher(raw);
-    this.match_IMPORTANT = Patterns.IMPORTANT.matcher(raw);
-    this.match_KEYWORD = Patterns.KEYWORD.matcher(raw);
-    this.match_MIXIN_NAME = Patterns.MIXIN_NAME.matcher(raw);
-    this.match_NOT = Patterns.NOT.matcher(raw);
-    this.match_OPACITY = Patterns.OPACITY.matcher(raw);
-    this.match_PROPERTY = Patterns.PROPERTY.matcher(raw);
-    this.match_RATIO = Patterns.RATIO.matcher(raw);
-    this.match_SHORTHAND = Patterns.SHORTHAND.matcher(raw);
-    this.match_UNICODE_RANGE = Patterns.UNICODE_DESCRIPTOR.matcher(raw);
-    this.match_URLSTART = Patterns.URLSTART.matcher(raw);
-    this.match_WHEN = Patterns.WHEN.matcher(raw);
-    this.match_WORD = Patterns.WORD.matcher(raw);
+    this.matcherAnd = Patterns.AND.matcher(raw);
+    this.matcherAnonRuleValue = Patterns.ANON_RULE_VALUE.matcher(raw);
+    this.matcherAttributeKey = Patterns.ATTRIBUTE_KEY.matcher(raw);
+    this.matcherAttributeOp = Patterns.ATTRIBUTE_OP.matcher(raw);
+    this.matcherBoolOperator = Patterns.BOOL_OPERATOR.matcher(raw);
+    this.matcherCallName = Patterns.CALL_NAME.matcher(raw);
+    this.matcherDigits = Patterns.DIGITS.matcher(raw);
+    this.matcherDimensionUnit = Patterns.DIMENSION_UNIT.matcher(raw);
+    this.matcherDimensionValue = Patterns.DIMENSION_VALUE.matcher(raw);
+    this.matcherDirective = Patterns.DIRECTIVE.matcher(raw);
+    this.matcherElement0 = Patterns.ELEMENT0.matcher(raw);
+    this.matcherElement1 = Patterns.ELEMENT1.matcher(raw);
+    this.matcherElement2 = Patterns.ELEMENT2.matcher(raw);
+    this.matcherElement3 = Patterns.ELEMENT3.matcher(raw);
+    this.matcherHexColor = Patterns.HEXCOLOR.matcher(raw);
+    this.matcherIdentifier = Patterns.IDENTIFIER.matcher(raw);
+    this.matcherImportant = Patterns.IMPORTANT.matcher(raw);
+    this.matcherKeyword = Patterns.KEYWORD.matcher(raw);
+    this.matcherMixinName = Patterns.MIXIN_NAME.matcher(raw);
+    this.matcherNot = Patterns.NOT.matcher(raw);
+    this.matcherOpacity = Patterns.OPACITY.matcher(raw);
+    this.matcherProperty = Patterns.PROPERTY.matcher(raw);
+    this.matcherRatio = Patterns.RATIO.matcher(raw);
+    this.matcherShorthand = Patterns.SHORTHAND.matcher(raw);
+    this.matcherUnicodeRange = Patterns.UNICODE_DESCRIPTOR.matcher(raw);
+    this.matcherUrlStart = Patterns.URLSTART.matcher(raw);
+    this.matcherWhen = Patterns.WHEN.matcher(raw);
+    this.matcherWord = Patterns.WORD.matcher(raw);
   }
 
   public LessException parseError(LessException exc) {
@@ -167,11 +167,11 @@ public class LessStream extends Stream {
   }
 
   public boolean matchAnd() {
-    return finish(match(match_AND));
+    return finish(match(matcherAnd));
   }
 
   public boolean matchAnonRuleValue() {
-    if (!match(match_ANON_RULE_VALUE)) {
+    if (!match(matcherAnonRuleValue)) {
       return false;
     }
     matchEnd--;
@@ -181,19 +181,19 @@ public class LessStream extends Stream {
   }
 
   public boolean matchAttributeKey() {
-    return finish(match(match_ATTRIBUTE_KEY));
+    return finish(match(matcherAttributeKey));
   }
 
   public boolean matchAttributeOp() {
-    return finish(match(match_ATTRIBUTE_OP));
+    return finish(match(matcherAttributeOp));
   }
 
   public boolean matchBoolOperator() {
-    return finish(match(match_BOOL_OPERATOR));
+    return finish(match(matcherBoolOperator));
   }
 
   public boolean matchCallName() {
-    if (!match(match_CALL_NAME)) {
+    if (!match(matcherCallName)) {
       return false;
     }
     // Back up to before the parenthesis.
@@ -203,91 +203,91 @@ public class LessStream extends Stream {
   }
 
   public boolean matchDigits() {
-    return finish(match(match_DIGITS));
+    return finish(match(matcherDigits));
   }
 
   public boolean matchDimensionUnit() {
-    return finish(match(match_DIMENSION_UNIT));
+    return finish(match(matcherDimensionUnit));
   }
 
   public boolean matchDimensionValue() {
-    return finish(match(match_DIMENSION_VALUE));
+    return finish(match(matcherDimensionValue));
   }
 
   public boolean matchDirective() {
-    return finish(match(match_DIRECTIVE));
+    return finish(match(matcherDirective));
   }
 
   public boolean matchElement0() {
-    return finish(match(match_ELEMENT0));
+    return finish(match(matcherElement0));
   }
 
   public boolean matchElement1() {
-    return finish(match(match_ELEMENT1));
+    return finish(match(matcherElement1));
   }
 
   public boolean matchElement2() {
-    return finish(match(match_ELEMENT2));
+    return finish(match(matcherElement2));
   }
 
   public boolean matchElement3() {
-    return finish(match(match_ELEMENT3));
+    return finish(match(matcherElement3));
   }
 
   public boolean matchHexColor() {
-    return finish(match(match_HEXCOLOR));
+    return finish(match(matcherHexColor));
   }
 
   public boolean matchIdentifier() {
-    return finish(match(match_IDENTIFIER));
+    return finish(match(matcherIdentifier));
   }
 
   public boolean matchImportant() {
-    return finish(match(match_IMPORTANT));
+    return finish(match(matcherImportant));
   }
 
   public boolean matchKeyword() {
-    return finish(match(match_KEYWORD));
+    return finish(match(matcherKeyword));
   }
 
   public boolean matchMixinName() {
-    return finish(match(match_MIXIN_NAME));
+    return finish(match(matcherMixinName));
   }
 
   public boolean matchNot() {
-    return finish(match(match_NOT));
+    return finish(match(matcherNot));
   }
 
   public boolean matchOpacity() {
-    return finish(match(match_OPACITY));
+    return finish(match(matcherOpacity));
   }
 
   public boolean matchProperty() {
-    return finish(match(match_PROPERTY));
+    return finish(match(matcherProperty));
   }
 
   public boolean matchRatio() {
-    return finish(match(match_RATIO));
+    return finish(match(matcherRatio));
   }
 
   public boolean matchUnicodeRange() {
-    return finish(match(match_UNICODE_RANGE));
+    return finish(match(matcherUnicodeRange));
   }
 
   public boolean matchUrlStart() {
-    return finish(match(match_URLSTART));
+    return finish(match(matcherUrlStart));
   }
 
   public boolean matchWhen() {
-    return finish(match(match_WHEN));
+    return finish(match(matcherWhen));
   }
 
   public boolean matchWord() {
-    return finish(match(match_WORD));
+    return finish(match(matcherWord));
   }
 
   public boolean peekShorthand() {
-    return peek(match_SHORTHAND);
+    return peek(matcherShorthand);
   }
 
   private boolean peek(Matcher matcher) {

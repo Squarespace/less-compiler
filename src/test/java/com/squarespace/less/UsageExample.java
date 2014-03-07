@@ -24,7 +24,7 @@ public class UsageExample {
   }
 
   public static HashMap<Path, String> buildMap() {
-    HashMap<Path,String> map = new HashMap<>();
+    HashMap<Path, String> map = new HashMap<>();
     Path base = Paths.get("base.less").toAbsolutePath().normalize();
     map.put(base, "@baseColor: #abc;");
     return map;

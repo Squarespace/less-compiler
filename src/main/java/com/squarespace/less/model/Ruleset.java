@@ -73,6 +73,11 @@ public class Ruleset extends BlockNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public void add(Node node) {
     if (node.is(NodeType.SELECTOR)) {
       Selector selector = (Selector)node;

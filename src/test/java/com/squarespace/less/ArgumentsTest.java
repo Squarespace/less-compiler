@@ -6,7 +6,6 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Argument;
@@ -18,17 +17,17 @@ public class ArgumentsTest extends LessTestBase {
 
   @Test
   public void testEquals() {
-    Argument arg_xy = arg("x", anon("y"));
-    Argument arg_xz = arg("x", anon("z"));
+    Argument argXY = arg("x", anon("y"));
+    Argument argXZ = arg("x", anon("z"));
 
     assertEquals(args(';'), args(';'));
-    assertEquals(args(';', arg_xy), args(';', arg_xy));
-    assertEquals(args(',', arg_xy, arg_xz), args(',', arg_xy, arg_xz));
+    assertEquals(args(';', argXY), args(';', argXY));
+    assertEquals(args(',', argXY, argXZ), args(',', argXY, argXZ));
 
     assertNotEquals(args(','), null);
     assertNotEquals(args(','), args(';'));
-    assertNotEquals(args(','), args(';', arg_xz));
-    assertNotEquals(args(',', arg_xy), args(';', arg_xz));
+    assertNotEquals(args(','), args(';', argXZ));
+    assertNotEquals(args(',', argXY), args(';', argXZ));
   }
 
   @Test

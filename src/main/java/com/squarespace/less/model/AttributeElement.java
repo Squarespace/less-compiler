@@ -42,6 +42,11 @@ public class AttributeElement extends Element {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public boolean isWildcard() {
     return false;
   }

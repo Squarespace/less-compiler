@@ -31,9 +31,7 @@ public enum SyntaxErrorType implements ErrorType {
   ("Cannot mix semicolon and comma as delimiters"),
 
   QUOTED_BARE_LF
-  ("Quoted string contains a bare line feed")
-
-  ;
+  ("Quoted string contains a bare line feed");
 
   private static final String PREFIX = "SyntaxError %(code)s ";
 

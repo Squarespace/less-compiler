@@ -15,9 +15,9 @@
 //:SyntaxErrorType.INCOMPLETE_PARSE   bad selector
 
 .ruleset {
-	%x {
-		color: white;
-	}
+    %x {
+        color: white;
+    }
 }
 
 
@@ -34,36 +34,36 @@
 //:SyntaxErrorType.EXPECTED   expected right ')'
 
 .ruleset {
-	rule: alpha(opacity=xyz);
+    rule: alpha(opacity=xyz);
 }
 
 
 //:SyntaxErrorType.EXPECTED   expected right ')'
 
 .ruleset {
-	rule: url(foo;
+    rule: url(foo;
 }
 
 
 //:SyntaxErrorType.JAVASCRIPT_DISABLED  javascript is disabled
 
 .ruleset {
-	rule: `window.document.title`;
+    rule: `window.document.title`;
 }
 
 
 //:SyntaxErrorType.QUOTED_BARE_LF    bare line feed in quoted string
 
 .ruleset {
-	rule: 'foo
-	';
+    rule: 'foo
+    ';
 }
 
 
 //:SyntaxErrorType.MIXED_DELIMITERS   mixin comma and semicolon to delimit arguments
 
 .ruleset {
-	.mixin(1, 2, @a: 3, 4; 5);
+    .mixin(1, 2, @a: 3, 4; 5);
 }
 
 

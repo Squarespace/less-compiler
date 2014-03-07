@@ -14,8 +14,7 @@ public enum Operator {
   MULTIPLY ("*", "multiply"),
   NOT_EQUAL ("<>", "not equal to"),
   OR ("or", "or"),
-  SUBTRACT ("-", "subtract")
-  ;
+  SUBTRACT ("-", "subtract");
 
   private final String repr;
 
@@ -43,6 +42,8 @@ public enum Operator {
       case '<': return LESS_THAN;
       case '*': return MULTIPLY;
       case '-': return SUBTRACT;
+      default:
+        break;
     }
     return null;
   }
@@ -67,6 +68,9 @@ public enum Operator {
       case "!=":
       case "<>":
         return NOT_EQUAL;
+
+      default:
+        break;
     }
     return null;
   }

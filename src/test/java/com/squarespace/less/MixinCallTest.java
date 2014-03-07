@@ -6,7 +6,6 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.MixinCallArgs;
@@ -19,18 +18,18 @@ public class MixinCallTest extends LessTestBase {
 
   @Test
   public void testEquals() {
-    Selector sel_xy = selector(element(".x"), element(".y"));
-    Selector sel_xz = selector(element(".x"), element(".z"));
+    Selector selXY = selector(element(".x"), element(".y"));
+    Selector selXZ = selector(element(".x"), element(".z"));
     MixinCallArgs args = args(';', arg("@a", anon("b")));
 
-    assertEquals(mixincall(sel_xy), mixincall(sel_xy));
-    assertEquals(mixincall(sel_xy, args), mixincall(sel_xy, args));
-    assertEquals(mixincall(sel_xy, args, true), mixincall(sel_xy, args, true));
+    assertEquals(mixincall(selXY), mixincall(selXY));
+    assertEquals(mixincall(selXY, args), mixincall(selXY, args));
+    assertEquals(mixincall(selXY, args, true), mixincall(selXY, args, true));
 
-    assertNotEquals(mixincall(sel_xy), null);
-    assertNotEquals(mixincall(sel_xy), mixincall(sel_xz));
-    assertNotEquals(mixincall(sel_xy), mixincall(sel_xy, args));
-    assertNotEquals(mixincall(sel_xy, args), mixincall(sel_xy, args, true));
+    assertNotEquals(mixincall(selXY), null);
+    assertNotEquals(mixincall(selXY), mixincall(selXZ));
+    assertNotEquals(mixincall(selXY), mixincall(selXY, args));
+    assertNotEquals(mixincall(selXY, args), mixincall(selXY, args, true));
   }
 
   @Test

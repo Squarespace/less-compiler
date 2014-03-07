@@ -104,15 +104,15 @@ public class ArgSpec {
       char ch = raw.charAt(i);
       switch (ch) {
         case 'p':
-          validators.add(_PERCENTAGE);
+          validators.add(ARG_PERCENTAGE);
           break;
 
         case 'n':
-          validators.add(_NUMBER);
+          validators.add(ARG_NUMBER);
           break;
 
         case '*':
-          validators.add(_ANY);
+          validators.add(ARG_ANY);
           break;
 
         case ':':
@@ -148,6 +148,8 @@ public class ArgSpec {
         return NodeType.KEYWORD;
       case 's':
         return NodeType.QUOTED;
+      default:
+        break;
     }
     throw new IllegalArgumentException("Unknown type ch: '" + ch + "'");
   }
@@ -169,14 +171,14 @@ public class ArgSpec {
 
   }
 
-  private static ArgValidator _ANY = new ArgValidator() {
+  private static final ArgValidator ARG_ANY = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {
       // any node type is valid.
     };
   };
 
-  private static ArgValidator _NUMBER = new ArgValidator() {
+  private static final ArgValidator ARG_NUMBER = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {
       if (!arg.is(NodeType.DIMENSION)) {
@@ -190,7 +192,7 @@ public class ArgSpec {
     }
   };
 
-  private static ArgValidator _PERCENTAGE = new ArgValidator() {
+  private static final ArgValidator ARG_PERCENTAGE = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {
       if (!arg.is(NodeType.DIMENSION)) {

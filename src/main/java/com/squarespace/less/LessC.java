@@ -32,14 +32,17 @@ public class LessC extends BaseCommand {
   private List<String> args = new ArrayList<String>();
 
   // TODO: emit DebugMode.description() in usage
-  @Parameter(names = { "-D" }, description = "Debug mode (canonical, parse, expand)", converter = DebugModeConverter.class)
+  @Parameter(
+      names = { "-D" },
+      description = "Debug mode (canonical, parse, expand)",
+      converter = DebugModeConverter.class)
   private DebugMode debugMode;
 
 // TODO: low priority
 //  @Parameter(names = { "-L", "-lines" }, description = "Line number")
 //  private boolean lineNumbers;
 
-  @Parameter(names = { "-I", "-import-path" }, description = "Add path to the list of import paths" )
+  @Parameter(names = { "-I", "-import-path" }, description = "Add path to the list of import paths")
   public List<String> importPaths;
 
   @Parameter(names = { "-R" }, description = "Recursion limit")
@@ -73,7 +76,7 @@ public class LessC extends BaseCommand {
   @Parameter(names = { "-v", "-version" }, description = "Show version")
   private boolean version = false;
 
-  @Parameter(names = { "-x", "-compress" }, description = "Compress mode" )
+  @Parameter(names = { "-x", "-compress" }, description = "Compress mode")
   private boolean compress = false;
 
   private void buildOptions() {

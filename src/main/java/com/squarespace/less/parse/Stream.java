@@ -218,7 +218,7 @@ public class Stream {
   }
 
   public String furthest() {
-    return raw.substring(Math.min(furthest, length-1));
+    return raw.substring(Math.min(furthest, length - 1));
   }
 
   private void consume(char ch) {
@@ -237,8 +237,7 @@ public class Stream {
   private void stack() {
     StackTraceElement[] elems = Thread.currentThread().getStackTrace();
     for (int i = 1; i < 5; i++) {
-      System.out.println(elems[i].getLineNumber() + " " + elems[i].getFileName() +
-          " " + elems[i].getMethodName());
+      System.out.println(elems[i].getLineNumber() + " " + elems[i].getFileName() + " " + elems[i].getMethodName());
     }
     System.out.println();
   }

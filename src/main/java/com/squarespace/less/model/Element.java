@@ -23,6 +23,11 @@ public abstract class Element extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public NodeType type() {
     return NodeType.ELEMENT;
   }

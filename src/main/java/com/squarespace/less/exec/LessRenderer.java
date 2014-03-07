@@ -283,7 +283,7 @@ public class LessRenderer {
   private void emitWarnings(String what, String warnings) {
     if (warnings != null) {
       // Build a comment containing all of the warnings.
-      model.comment("/* WARNING[" + (++warningId) + "] raised evaluating " + what + ": "+ warnings + " */\n");
+      model.comment("/* WARNING[" + (++warningId) + "] raised evaluating " + what + ": " + warnings + " */\n");
     }
   }
 

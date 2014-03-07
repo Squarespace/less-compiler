@@ -73,6 +73,11 @@ public abstract class BlockNode extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public void modelRepr(Buffer buf) {
     if (block != null) {
       block.modelRepr(buf);

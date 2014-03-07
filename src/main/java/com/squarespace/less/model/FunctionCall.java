@@ -21,7 +21,7 @@ public class FunctionCall extends BaseNode {
 
   private boolean evaluate;
 
-  private boolean noimpl;
+  private final boolean noimpl;
 
   public FunctionCall(String name) {
     this(name, null, false);
@@ -95,6 +95,11 @@ public class FunctionCall extends BaseNode {
       return safeEquals(name, other.name) && safeEquals(args, other.args);
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
   @Override

@@ -24,6 +24,11 @@ public class UnicodeRange extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public NodeType type() {
     return UNICODE_RANGE;
   }

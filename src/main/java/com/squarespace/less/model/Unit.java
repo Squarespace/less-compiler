@@ -80,9 +80,7 @@ public enum Unit {
   // Radians
   RAD ("rad", "radians"),
   // Turns
-  TURN ("turn", "turns")
-
-  ;
+  TURN ("turn", "turns");
 
   // Keep this sorted roughly by most-used first
   // NOTE: 'vm' is not a real unit, but is added here since less.js thinks its real.

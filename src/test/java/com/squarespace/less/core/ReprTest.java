@@ -5,7 +5,6 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.Buffer;
 
 
 public class ReprTest extends LessTestBase {

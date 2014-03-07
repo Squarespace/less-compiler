@@ -2,7 +2,6 @@ package com.squarespace.less;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Keyword;
@@ -28,13 +27,13 @@ public class FeaturesTest extends LessTestBase {
     Variable vb = var("@b");
     h.parseEquals("@a, @b", features(va, vb));
 
-    Paren rule_ab = paren(rule(prop("a"), kb));
-    h.parseEquals("(a: b)", features(expn(rule_ab)));
+    Paren ruleAB = paren(rule(prop("a"), kb));
+    h.parseEquals("(a: b)", features(expn(ruleAB)));
 
-    Paren rule_avb = paren(rule(prop("a"), vb));
-    h.parseEquals("(a: @b)", features(expn(rule_avb)));
-    h.parseEquals("(a: @b) and b", features(expn(rule_avb, and, kb)));
-    h.parseEquals("(a: b), (a: @b)", features(expn(rule_ab), expn(rule_avb)));
+    Paren ruleAVB = paren(rule(prop("a"), vb));
+    h.parseEquals("(a: @b)", features(expn(ruleAVB)));
+    h.parseEquals("(a: @b) and b", features(expn(ruleAVB, and, kb)));
+    h.parseEquals("(a: b), (a: @b)", features(expn(ruleAB), expn(ruleAVB)));
 
     h.parseEquals("handheld", features(expn(kwd("handheld"))));
     h.parseEquals("(screen)", features(expn(paren(kwd("screen")))));

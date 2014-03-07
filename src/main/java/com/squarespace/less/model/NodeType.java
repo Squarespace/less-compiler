@@ -52,8 +52,6 @@ public enum NodeType {
   UNICODE_RANGE,
   URL,
   EXPRESSION_LIST,
-  VARIABLE
-
-  ;
+  VARIABLE;
 
 }

@@ -86,6 +86,11 @@ public class Definition extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public NodeType type() {
     return NodeType.DEFINITION;
   }

@@ -95,6 +95,11 @@ public class Mixin extends BlockNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public NodeType type() {
     return NodeType.MIXIN;
   }

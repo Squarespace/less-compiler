@@ -5,7 +5,6 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Block;
@@ -18,15 +17,15 @@ public class BlockDirectiveTest extends LessTestBase {
 
   @Test
   public void testEquals() {
-    Rule rule_xy = rule(prop("x"), anon("y"));
-    Rule rule_xz = rule(prop("x"), anon("z"));
-    Block block_xy = block(rule_xy);
-    Block block_xz = block(rule_xz);
+    Rule ruleXY = rule(prop("x"), anon("y"));
+    Rule ruleXZ = rule(prop("x"), anon("z"));
+    Block blockXY = block(ruleXY);
+    Block blockXZ = block(ruleXZ);
 
-    assertEquals(dir("x", block_xy), dir("x", block_xy));
+    assertEquals(dir("x", blockXY), dir("x", blockXY));
 
-    assertNotEquals(dir("x", block_xy), dir("y", block_xy));
-    assertNotEquals(dir("x", block_xz), dir("x", block_xy));
+    assertNotEquals(dir("x", blockXY), dir("y", blockXY));
+    assertNotEquals(dir("x", blockXZ), dir("x", blockXY));
   }
 
   @Test

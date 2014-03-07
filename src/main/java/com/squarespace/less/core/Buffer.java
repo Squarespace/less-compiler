@@ -109,13 +109,13 @@ public class Buffer {
 
   public Buffer append(long num) {
     buf.append(num);
-    prev = buf.charAt(buf.length()-1);
+    prev = buf.charAt(buf.length() - 1);
     return this;
   }
 
   public Buffer append(double num) {
     buf.append(num);
-    prev = buf.charAt(buf.length()-1);
+    prev = buf.charAt(buf.length() - 1);
     return this;
   }
 

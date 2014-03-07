@@ -132,6 +132,11 @@ public class Block extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public String toString() {
     return rules.toString();
   }

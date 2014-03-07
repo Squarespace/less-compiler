@@ -75,6 +75,11 @@ public class ExpressionList extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public NodeType type() {
     return NodeType.EXPRESSION_LIST;
   }

@@ -8,8 +8,6 @@ import java.util.NoSuchElementException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.squarespace.less.core.CartesianProduct;
-
 
 public class CartesianProductTest {
 

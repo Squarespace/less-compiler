@@ -42,6 +42,11 @@ public class TextElement extends Element {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public void repr(Buffer buf) {
     if (name != null) {
       buf.append(name);

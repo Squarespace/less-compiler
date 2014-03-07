@@ -6,14 +6,13 @@ import java.util.List;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.exec.LessEvaluator;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Stylesheet;
 
 
 public class LessSpeedTest extends LessTestBase {
 
-  List<String> SCRIPTS = Arrays.asList(
+  private static final List<String> SCRIPTS = Arrays.asList(
       ".m(@arg) { @a: @arg + 1; .foo { a: @arg + 1; } } .rule { @a: 3; .m(10); @a: 4; a: @a }",
       "@a: 1; .rule { prop: @a; .foo, .bar { color: #123; .xyz { background: red; } } }",
       "@a: 'foo'; @b: @a 'bar'; .rule{prop: @b;}",

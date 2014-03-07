@@ -16,9 +16,7 @@ public enum DebugMode {
       + "the canonical form of the expanded template"),
 
   PARSE
-  ("Parses the file and displays the internal parse tree (potentially extremely verbose)")
-
-  ;
+  ("Parses the file and displays the internal parse tree (potentially extremely verbose)");
 
   private String description;
 

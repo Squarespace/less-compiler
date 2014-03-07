@@ -7,7 +7,6 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Combinator;
@@ -19,21 +18,21 @@ public class RulesetTest extends LessTestBase {
 
   @Test
   public void testEquals() {
-    Ruleset ruleset_xy = ruleset(selector(element(".x"), element(CHILD, ".y")));
-    ruleset_xy.add(rule(prop("color"), color("black")));
+    Ruleset rulesetXY = ruleset(selector(element(".x"), element(CHILD, ".y")));
+    rulesetXY.add(rule(prop("color"), color("black")));
 
     assertEquals(ruleset(selector(element(".x"))), ruleset(selector(element(".x"))));
-    assertEquals(ruleset_xy, ruleset_xy);
+    assertEquals(rulesetXY, rulesetXY);
 
-    assertNotEquals(ruleset_xy, null);
-    assertNotEquals(ruleset_xy, prop("foo"));
+    assertNotEquals(rulesetXY, null);
+    assertNotEquals(rulesetXY, prop("foo"));
   }
 
   @Test
   public void testModelReprSafety() {
-    Ruleset ruleset_xy = ruleset(selector(element(".x"), element(CHILD, ".y")));
-    ruleset_xy.add(rule(prop("color"), color("black")));
-    ruleset_xy.toString();
+    Ruleset rulesetXY = ruleset(selector(element(".x"), element(CHILD, ".y")));
+    rulesetXY.add(rule(prop("color"), color("black")));
+    rulesetXY.toString();
   }
 
   @Test

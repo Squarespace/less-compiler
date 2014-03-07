@@ -111,6 +111,7 @@ public class RuleParselet implements Parselet {
   private boolean end(LessStream stm) {
     stm.skipWs();
     switch (stm.peek()) {
+
       case Chars.SEMICOLON:
         stm.seek1();
         return true;
@@ -118,6 +119,9 @@ public class RuleParselet implements Parselet {
       case Chars.EOF:
       case Chars.RIGHT_CURLY_BRACKET:
         return true;
+
+      default:
+        break;
     }
     return false;
   }

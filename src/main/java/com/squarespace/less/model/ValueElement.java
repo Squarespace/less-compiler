@@ -52,6 +52,11 @@ public class ValueElement extends Element {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public void repr(Buffer buf) {
     value.repr(buf);
   }

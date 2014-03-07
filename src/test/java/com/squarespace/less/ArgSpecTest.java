@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.Context;
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.exec.ArgSpec;
 import com.squarespace.less.exec.ExecEnv;

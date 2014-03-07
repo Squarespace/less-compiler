@@ -11,8 +11,6 @@ import java.util.Map;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.ErrorType;
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.FlexList;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;

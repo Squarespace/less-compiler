@@ -17,7 +17,7 @@ public class MixinCall extends BaseNode {
 
   private MixinCallArgs args;
 
-  private boolean important;
+  private final boolean important;
 
   private Path fileName;
 
@@ -73,6 +73,11 @@ public class MixinCall extends BaseNode {
           && safeEquals(args, other.args);
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
   @Override

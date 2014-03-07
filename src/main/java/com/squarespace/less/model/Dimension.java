@@ -50,6 +50,10 @@ public class Dimension extends BaseNode {
     return false;
   }
 
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
 
   @Override
   public NodeType type() {
@@ -81,7 +85,7 @@ public class Dimension extends BaseNode {
 
     Options opts = env.context().options();
     Dimension dim = (Dimension)node;
-    Unit new_unit = (unit != null) ? unit : dim.unit;
+    Unit newUnit = (unit != null) ? unit : dim.unit;
     double result = 0.0;
 
     double factor = UnitConversions.factor(dim.unit, unit);
@@ -129,7 +133,7 @@ public class Dimension extends BaseNode {
         throw new LessException(expectedMathOp(op));
     }
 
-    return new Dimension(result, new_unit);
+    return new Dimension(result, newUnit);
   }
 
   /**

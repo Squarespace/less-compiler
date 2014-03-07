@@ -13,15 +13,15 @@ public class ParametersTest extends LessTestBase {
 
   @Test
   public void testEquals() {
-    Parameter param_xy = param("@x", anon("y"));
-    Parameter param_v = param("@x", true);
+    Parameter paramXY = param("@x", anon("y"));
+    Parameter paramX = param("@x", true);
 
     assertEquals(params(), params());
-    assertEquals(params(param_xy, param_v), params(param_xy, param_v));
+    assertEquals(params(paramXY, paramX), params(paramXY, paramX));
 
-    assertNotEquals(params(param_xy, param_v), null);
-    assertNotEquals(params(param_xy, param_v), params(param_xy));
-    assertNotEquals(param_xy, param_v);
+    assertNotEquals(params(paramXY, paramX), null);
+    assertNotEquals(params(paramXY, paramX), params(paramXY));
+    assertNotEquals(paramXY, paramX);
   }
 
   @Test

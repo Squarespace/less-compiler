@@ -24,7 +24,7 @@ public class RGBColor extends BaseColor {
 
   private final double alpha;
 
-  private boolean keyword;
+  private final boolean keyword;
 
   private boolean forceHex;
 
@@ -81,7 +81,7 @@ public class RGBColor extends BaseColor {
   }
 
   public double luma() {
-    return (0.2126 * (c0 / 255.0) + 0.7152 * (c1/255.0) + 0.0722 * (c2/255.0)) * alpha;
+    return (0.2126 * (c0 / 255.0) + 0.7152 * (c1 / 255.0) + 0.0722 * (c2 / 255.0)) * alpha;
   }
 
   public boolean keyword() {
@@ -147,7 +147,7 @@ public class RGBColor extends BaseColor {
   }
   public static RGBColor fromHSVA(double hue, double saturation, double value, double alpha) {
     hue *= 360;
-    int i = (int)Math.floor(( hue / 60) % 6);
+    int i = (int)Math.floor((hue / 60) % 6);
     double f = (hue / 60.0) - i;
     double[] values = new double[] {
         value,
@@ -172,6 +172,11 @@ public class RGBColor extends BaseColor {
           && keyword == other.keyword;
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
   @Override

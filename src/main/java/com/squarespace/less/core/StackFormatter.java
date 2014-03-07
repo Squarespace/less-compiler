@@ -261,7 +261,7 @@ public class StackFormatter {
     }
 
     public Entry(String fileName, String lineNo, String repr) {
-      this.fileName =fileName;
+      this.fileName = fileName;
       this.lineNo = lineNo;
       this.repr = repr;
       this.indent = true;

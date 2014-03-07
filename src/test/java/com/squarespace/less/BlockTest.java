@@ -13,13 +13,13 @@ public class BlockTest extends LessTestBase {
 
   @Test
   public void testEquals() {
-    Rule rule_xy = rule(prop("x"), anon("y"));
-    Rule rule_xz = rule(prop("x"), anon("z"));
-    assertEquals(block(rule_xy, rule_xz), block(rule_xy, rule_xz));
+    Rule ruleXY = rule(prop("x"), anon("y"));
+    Rule ruleXZ = rule(prop("x"), anon("z"));
+    assertEquals(block(ruleXY, ruleXZ), block(ruleXY, ruleXZ));
 
-    assertNotEquals(block(rule_xy), block());
-    assertNotEquals(block(), block(rule_xy));
-    assertNotEquals(block(rule_xy, rule_xz), block(rule_xz, rule_xy));
+    assertNotEquals(block(ruleXY), block());
+    assertNotEquals(block(), block(ruleXY));
+    assertNotEquals(block(ruleXY, ruleXZ), block(ruleXZ, ruleXY));
   }
 
   @Test

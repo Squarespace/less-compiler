@@ -40,6 +40,11 @@ public class Alpha extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public NodeType type() {
     return ALPHA;
   }

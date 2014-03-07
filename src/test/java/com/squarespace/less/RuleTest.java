@@ -7,7 +7,6 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Rule;
@@ -21,14 +20,14 @@ public class RuleTest extends LessTestBase {
 
   @Test
   public void testEquals() {
-    Rule rule_1 = rule(prop("color"), color("#123"));
-    Rule rule_2 = rule(prop("color"), color("#123"), true);
+    Rule rule1 = rule(prop("color"), color("#123"));
+    Rule rule2 = rule(prop("color"), color("#123"), true);
 
     assertEquals(rule(prop("color"), color("#123")), rule(prop("color"), color("#123")));
 
-    assertNotEquals(rule_1, null);
-    assertNotEquals(rule_1, anon("#foo"));
-    assertNotEquals(rule_1, rule_2);
+    assertNotEquals(rule1, null);
+    assertNotEquals(rule1, anon("#foo"));
+    assertNotEquals(rule1, rule2);
   }
 
   @Test

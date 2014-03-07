@@ -13,20 +13,20 @@ public class SylesheetTest extends LessTestBase {
 
   @Test
   public void testEquals() {
-    Stylesheet sheet_xy = stylesheet();
-    sheet_xy.add(rule(prop("x"), anon("y")));
-    sheet_xy.add(rule(prop("y"), anon("z")));
+    Stylesheet sheetXY = stylesheet();
+    sheetXY.add(rule(prop("x"), anon("y")));
+    sheetXY.add(rule(prop("y"), anon("z")));
 
-    Stylesheet sheet_zz = stylesheet();
-    sheet_zz.add(rule(prop("z"), anon("z")));
+    Stylesheet sheetZZ = stylesheet();
+    sheetZZ.add(rule(prop("z"), anon("z")));
 
     assertEquals(stylesheet(), stylesheet());
-    assertEquals(sheet_xy, sheet_xy);
+    assertEquals(sheetXY, sheetXY);
 
-    assertNotEquals(sheet_xy, null);
-    assertNotEquals(sheet_xy, stylesheet());
-    assertNotEquals(sheet_xy, prop("foo"));
-    assertNotEquals(sheet_xy, sheet_zz);
+    assertNotEquals(sheetXY, null);
+    assertNotEquals(sheetXY, stylesheet());
+    assertNotEquals(sheetXY, prop("foo"));
+    assertNotEquals(sheetXY, sheetZZ);
   }
 
   @Test

@@ -79,9 +79,7 @@ public enum ExecuteErrorType implements ErrorType {
   ("Failed to locate a definition for the variable %(name)s in current scope"),
 
   VAR_CIRCULAR_REFERENCE
-  ("Variable %(name)s references itself")
-
-  ;
+  ("Variable %(name)s references itself");
 
   private static final String PREFIX = "ExecuteError %(code)s: ";
 

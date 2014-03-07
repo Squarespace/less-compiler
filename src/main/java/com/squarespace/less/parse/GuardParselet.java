@@ -19,7 +19,7 @@ public class GuardParselet implements Parselet {
     }
     Guard guard = new Guard();
     Node cond = null;
-    while ((cond = stm.parse(CONDITION))!= null) {
+    while ((cond = stm.parse(CONDITION)) != null) {
       guard.add((Condition)cond);
       stm.skipWs();
       if (!stm.seekIf(Chars.COMMA)) {

@@ -50,6 +50,11 @@ public class Condition extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public boolean needsEval() {
     return true;
   }
@@ -149,7 +154,7 @@ public class Condition extends BaseNode {
       case 1:
         return operator == GREATER_THAN || operator == GREATER_THAN_OR_EQUAL || operator == NOT_EQUAL;
       default:
-        throw new LessInternalException("Serious error: comparison functions must return one of [-1, 0, 1]. Got " + result);
+        throw new LessInternalException("Serious error: comparison functions must return -1, 0, or 1. Got " + result);
     }
   }
 

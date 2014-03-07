@@ -196,14 +196,14 @@ public class Colors {
     int c1 = 0;
     int c2 = 0;
     if (len == 3) {
-      c0 = component(raw.charAt(start+0));
-      c1 = component(raw.charAt(start+1));
-      c2 = component(raw.charAt(start+2));
+      c0 = component(raw.charAt(start + 0));
+      c1 = component(raw.charAt(start + 1));
+      c2 = component(raw.charAt(start + 2));
 
     } else if (len == 6) {
-      c0 = component(raw.charAt(start+0), raw.charAt(start+1));
-      c1 = component(raw.charAt(start+2), raw.charAt(start+3));
-      c2 = component(raw.charAt(start+4), raw.charAt(start+5));
+      c0 = component(raw.charAt(start + 0), raw.charAt(start + 1));
+      c1 = component(raw.charAt(start + 2), raw.charAt(start + 3));
+      c2 = component(raw.charAt(start + 4), raw.charAt(start + 5));
 
     } else {
       throw new IllegalArgumentException("Color strings must consist of 3 or 6 hex characters");

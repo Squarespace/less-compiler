@@ -45,6 +45,11 @@ public class Assignment extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public boolean needsEval() {
     return value.needsEval();
   }

@@ -20,7 +20,7 @@ public class Import extends BaseNode {
 
   private Path fileName;
 
-  private boolean once;
+  private final boolean once;
 
   public Import(Node path, Features features, boolean once) {
     this.path = path;
@@ -103,6 +103,11 @@ public class Import extends BaseNode {
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof Import) ? safeEquals(path, ((Import)obj).path) : false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
   @Override

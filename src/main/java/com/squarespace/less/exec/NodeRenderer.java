@@ -56,7 +56,7 @@ public class NodeRenderer {
     switch (node.type()) {
 
       case ALPHA:
-        _render(buf, (Alpha)node);
+        renderImpl(buf, (Alpha)node);
         break;
 
       case ANONYMOUS:
@@ -71,7 +71,7 @@ public class NodeRenderer {
         break;
 
       case ASSIGNMENT:
-        _render(buf, (Assignment)node);
+        renderImpl(buf, (Assignment)node);
         break;
 
       case COLOR:
@@ -79,57 +79,57 @@ public class NodeRenderer {
         break;
 
       case COMMENT:
-        _render(buf, (Comment)node);
+        renderImpl(buf, (Comment)node);
         break;
 
       case DIRECTIVE:
-        _render(buf, (Directive)node);
+        renderImpl(buf, (Directive)node);
         break;
 
       case EXPRESSION:
-        _render(buf, (Expression)node);
+        renderImpl(buf, (Expression)node);
         break;
 
       case EXPRESSION_LIST:
-        _render(buf, (ExpressionList)node);
+        renderImpl(buf, (ExpressionList)node);
         break;
 
       case FEATURES:
-        _render(buf, (Features)node);
+        renderImpl(buf, (Features)node);
         break;
 
       case FUNCTION_CALL:
-        _render(buf, (FunctionCall)node);
+        renderImpl(buf, (FunctionCall)node);
         break;
 
       case PAREN:
-        _render(buf, (Paren)node);
+        renderImpl(buf, (Paren)node);
         break;
 
       case QUOTED:
-        _render(buf, (Quoted)node);
+        renderImpl(buf, (Quoted)node);
         break;
 
       case RULE:
-        _render(buf, (Rule)node);
+        renderImpl(buf, (Rule)node);
         break;
 
       case SELECTORS:
         for (Selector selector : ((Selectors)node).selectors()) {
-          _render(buf, selector);
+          renderImpl(buf, selector);
         }
         break;
 
       case SELECTOR:
-        _render(buf, (Selector)node);
+        renderImpl(buf, (Selector)node);
         break;
 
       case SHORTHAND:
-        _render(buf, (Shorthand)node);
+        renderImpl(buf, (Shorthand)node);
         break;
 
       case URL:
-        _render(buf, (Url)node);
+        renderImpl(buf, (Url)node);
         break;
 
       default:
@@ -137,18 +137,18 @@ public class NodeRenderer {
     }
   }
 
-  private static void _render(Buffer buf, Alpha alpha) throws LessException {
+  private static void renderImpl(Buffer buf, Alpha alpha) throws LessException {
     buf.append("alpha(opacity=");
     render(buf, alpha.value());
     buf.append(')');
   }
 
-  private static void _render(Buffer buf, Assignment assign) throws LessException {
+  private static void renderImpl(Buffer buf, Assignment assign) throws LessException {
     buf.append(assign.name()).append('=');
     render(buf, assign.value());
   }
 
-  private static void _render(Buffer buf, Comment comment) throws LessException {
+  private static void renderImpl(Buffer buf, Comment comment) throws LessException {
     String body = comment.body();
     if (comment.block()) {
       buf.append("/*").append(body).append("*/");
@@ -160,7 +160,7 @@ public class NodeRenderer {
     }
   }
 
-  private static void _render(Buffer buf, Directive directive) throws LessException {
+  private static void renderImpl(Buffer buf, Directive directive) throws LessException {
     buf.append(directive.name());
     Node value = directive.value();
     if (value != null) {
@@ -169,7 +169,7 @@ public class NodeRenderer {
     }
   }
 
-  private static void _render(Buffer buf, Expression expn) throws LessException {
+  private static void renderImpl(Buffer buf, Expression expn) throws LessException {
     List<Node> values = expn.values();
     int size = values.size();
     for (int i = 0; i < size; i++) {
@@ -180,7 +180,7 @@ public class NodeRenderer {
     }
   }
 
-  private static void _render(Buffer buf, ExpressionList list) throws LessException {
+  private static void renderImpl(Buffer buf, ExpressionList list) throws LessException {
     List<Node> expns = list.expressions();
     int size = expns.size();
     for (int i = 0; i < size; i++) {
@@ -191,7 +191,7 @@ public class NodeRenderer {
     }
   }
 
-  private static void _render(Buffer buf, Features features) throws LessException {
+  private static void renderImpl(Buffer buf, Features features) throws LessException {
     List<Node> nodes = features.features();
     int size = nodes.size();
     for (int i = 0; i < size; i++) {
@@ -202,7 +202,7 @@ public class NodeRenderer {
     }
   }
 
-  private static void _render(Buffer buf, FunctionCall call) throws LessException {
+  private static void renderImpl(Buffer buf, FunctionCall call) throws LessException {
     String name = call.name();
     buf.append(name).append('(');
 
@@ -218,7 +218,7 @@ public class NodeRenderer {
   }
 
   /** Render a PAREN node. */
-  private static void _render(Buffer buf, Paren paren) throws LessException {
+  private static void renderImpl(Buffer buf, Paren paren) throws LessException {
     buf.append('(');
     render(buf, paren.node());
     buf.append(')');
@@ -227,7 +227,7 @@ public class NodeRenderer {
   /**
    * Render a QUOTED node.
    */
-  private static void _render(Buffer buf, Quoted quoted) throws LessException {
+  private static void renderImpl(Buffer buf, Quoted quoted) throws LessException {
     List<Node> parts = quoted.parts();
     boolean escaped = quoted.escaped();
     char delim = escaped ? Chars.NULL : quoted.delimiter();
@@ -253,7 +253,7 @@ public class NodeRenderer {
   }
 
   /** Render a RULE node. */
-  public static void _render(Buffer buf, Rule rule) throws LessException {
+  public static void renderImpl(Buffer buf, Rule rule) throws LessException {
     render(buf, rule.property());
     buf.ruleSep();
     render(buf, rule.value());
@@ -263,18 +263,18 @@ public class NodeRenderer {
   }
 
   /** Render a SHORTHAND node. */
-  public static void _render(Buffer buf, Shorthand shorthand) throws LessException {
+  public static void renderImpl(Buffer buf, Shorthand shorthand) throws LessException {
     render(buf, shorthand.left());
     buf.append('/');
     render(buf, shorthand.right());
   }
 
   /** Render a SELECTOR node. */
-  private static void _render(Buffer buf, Selector selector) throws LessException {
+  private static void renderImpl(Buffer buf, Selector selector) throws LessException {
     List<Element> elements = selector.elements();
     int size = elements.size();
     for (int i = 0; i < size; i++) {
-      _render(buf, elements.get(i), i == 0);
+      renderImpl(buf, elements.get(i), i == 0);
     }
   }
 
@@ -283,7 +283,7 @@ public class NodeRenderer {
    * of this method is required to properly emit whitespace before and after combinators, depending
    * on if we're in compress mode or not.
    */
-  private static void _render(Buffer buf, Element element, boolean isFirst) throws LessException {
+  private static void renderImpl(Buffer buf, Element element, boolean isFirst) throws LessException {
     Combinator combinator = element.combinator();
     if (combinator != null) {
       boolean isDescendant = combinator == Combinator.DESC;
@@ -339,7 +339,7 @@ public class NodeRenderer {
   }
 
   /** Render a URL node. */
-  private static void _render(Buffer buf, Url url) throws LessException {
+  private static void renderImpl(Buffer buf, Url url) throws LessException {
     buf.append("url(");
     render(buf, url.value());
     buf.append(Chars.RIGHT_PARENTHESIS);

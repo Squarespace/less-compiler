@@ -6,8 +6,6 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.core.CharPattern;
-import com.squarespace.less.core.Chars;
 import com.squarespace.less.parse.Mark;
 import com.squarespace.less.parse.Patterns;
 import com.squarespace.less.parse.Stream;

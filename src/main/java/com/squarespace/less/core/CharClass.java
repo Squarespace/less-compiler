@@ -284,6 +284,9 @@ public class CharClass {
 
       case '~':
         return COMBINATOR | ENCODE_URI | ENCODE_URI_COMPONENT;
+
+      default:
+        break;
     }
 
     return (ch >= Chars.NO_BREAK_SPACE) ? NONASCII : 0;

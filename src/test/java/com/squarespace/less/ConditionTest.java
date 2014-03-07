@@ -15,7 +15,6 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
@@ -53,22 +52,22 @@ public class ConditionTest extends LessTestBase {
   public void testCompare() throws LessException {
     Dimension two = dim(2);
     Dimension four = dim(4);
-    Dimension two_s = dim(2, Unit.S);
-    Dimension twok_ms = dim(2000, Unit.MS);
-    Dimension four_s = dim(4, Unit.S);
-    Dimension two_px = dim(2, Unit.PX);
-    Quoted str_true = quoted('"', false, "true");
-    Quoted bare_true = quoted('"', true, "true");
+    Dimension twoS = dim(2, Unit.S);
+    Dimension twoKMS = dim(2000, Unit.MS);
+    Dimension fourS = dim(4, Unit.S);
+    Dimension twoPX = dim(2, Unit.PX);
+    Quoted strTrue = quoted('"', false, "true");
+    Quoted bareTrue = quoted('"', true, "true");
 
     // Booleans (only the string "true" counts)
     compare(true, cond(AND, TRUE, anon("true")));
-    compare(true, cond(AND, TRUE, bare_true));
-    compare(false, cond(AND, TRUE, str_true));
+    compare(true, cond(AND, TRUE, bareTrue));
+    compare(false, cond(AND, TRUE, strTrue));
     compare(false, cond(AND, TRUE, two));
 
     compare(true, cond(OR, TRUE, FALSE));
     compare(true, cond(OR, FALSE, TRUE));
-    compare(true, cond(OR, bare_true, FALSE));
+    compare(true, cond(OR, bareTrue, FALSE));
     compare(true, cond(OR, two, TRUE));
 
     // Unit-less values
@@ -77,40 +76,40 @@ public class ConditionTest extends LessTestBase {
     compare(false, cond(NOT_EQUAL, two, two));
 
     // Mixed unit and unit-less.
-    compare(true, cond(EQUAL, two, two_s));
-    compare(true, cond(EQUAL, two_s, two));
-    compare(true, cond(NOT_EQUAL, two, four_s));
+    compare(true, cond(EQUAL, two, twoS));
+    compare(true, cond(EQUAL, twoS, two));
+    compare(true, cond(NOT_EQUAL, two, fourS));
     compare(true, cond(NOT_EQUAL, two, four));
 
     // Mixed units requiring conversions
-    compare(true, cond(EQUAL, two_s, twok_ms));
-    compare(true, cond(EQUAL, twok_ms, two_s));
-    compare(false, cond(EQUAL, two_s, four_s));
-    compare(false, cond(EQUAL, four_s, two_s));
+    compare(true, cond(EQUAL, twoS, twoKMS));
+    compare(true, cond(EQUAL, twoKMS, twoS));
+    compare(false, cond(EQUAL, twoS, fourS));
+    compare(false, cond(EQUAL, fourS, twoS));
 
-    compare(true, cond(NOT_EQUAL, two_s, four_s));
-    compare(true, cond(NOT_EQUAL, four_s, two_s));
-    compare(false, cond(NOT_EQUAL, two_s, twok_ms));
+    compare(true, cond(NOT_EQUAL, twoS, fourS));
+    compare(true, cond(NOT_EQUAL, fourS, twoS));
+    compare(false, cond(NOT_EQUAL, twoS, twoKMS));
 
-    compare(true, cond(LESS_THAN, two_s, four_s));
-    compare(false, cond(LESS_THAN, two_s, twok_ms));
-    compare(false, cond(LESS_THAN, four_s, two_s));
+    compare(true, cond(LESS_THAN, twoS, fourS));
+    compare(false, cond(LESS_THAN, twoS, twoKMS));
+    compare(false, cond(LESS_THAN, fourS, twoS));
 
-    compare(true, cond(LESS_THAN_OR_EQUAL, two_s, twok_ms));
-    compare(true, cond(LESS_THAN_OR_EQUAL, two_s, four_s));
-    compare(false, cond(LESS_THAN_OR_EQUAL, four_s, two_s));
+    compare(true, cond(LESS_THAN_OR_EQUAL, twoS, twoKMS));
+    compare(true, cond(LESS_THAN_OR_EQUAL, twoS, fourS));
+    compare(false, cond(LESS_THAN_OR_EQUAL, fourS, twoS));
 
-    compare(true, cond(GREATER_THAN, four_s, two_s));
-    compare(false, cond(GREATER_THAN, two_s, four_s));
-    compare(false, cond(GREATER_THAN, two_s, twok_ms));
+    compare(true, cond(GREATER_THAN, fourS, twoS));
+    compare(false, cond(GREATER_THAN, twoS, fourS));
+    compare(false, cond(GREATER_THAN, twoS, twoKMS));
 
-    compare(true, cond(GREATER_THAN_OR_EQUAL, four_s, two_s));
-    compare(true, cond(GREATER_THAN_OR_EQUAL, two_s, twok_ms));
-    compare(false, cond(GREATER_THAN_OR_EQUAL, two_s, four_s));
+    compare(true, cond(GREATER_THAN_OR_EQUAL, fourS, twoS));
+    compare(true, cond(GREATER_THAN_OR_EQUAL, twoS, twoKMS));
+    compare(false, cond(GREATER_THAN_OR_EQUAL, twoS, fourS));
 
     // Incompatible units
-    compare(false, cond(EQUAL, two_s, two_px));
-    compare(true, cond(NOT_EQUAL, two_s, two_px));
+    compare(false, cond(EQUAL, twoS, twoPX));
+    compare(true, cond(NOT_EQUAL, twoS, twoPX));
 
     // Negation
     compare(true, cond(NOT_EQUAL, two, two, true));

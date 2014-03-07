@@ -88,6 +88,9 @@ public class DirectiveParselet implements Parselet {
       case "@namespace":
           hasExpression = true;
           break;
+
+      default:
+        break;
     }
 
     if (hasIdentifier) {

@@ -34,6 +34,11 @@ public class BlockDirective extends BlockNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public NodeType type() {
     return NodeType.BLOCK_DIRECTIVE;
   }

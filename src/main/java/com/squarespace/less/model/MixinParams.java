@@ -72,6 +72,11 @@ public class MixinParams extends BaseNode {
   }
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public NodeType type() {
     return NodeType.MIXIN_PARAMS;
   }

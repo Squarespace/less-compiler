@@ -3,8 +3,6 @@ package com.squarespace.less;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.squarespace.less.Context;
-import com.squarespace.less.Options;
 import com.squarespace.less.exec.CssModel;
 import com.squarespace.less.model.NodeType;
 
