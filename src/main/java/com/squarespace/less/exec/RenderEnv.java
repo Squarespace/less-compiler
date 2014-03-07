@@ -59,9 +59,9 @@ public class RenderEnv {
     Features features = null;
     if (blockNode != null) {
       if (blockNode.is(NodeType.RULESET)) {
-        selectors = (Selectors) ((Ruleset)blockNode).selectors();
+        selectors = ((Ruleset)blockNode).selectors();
       } else if (blockNode.is(NodeType.MEDIA)) {
-        features = (Features) ((Media)blockNode).features();
+        features = ((Media)blockNode).features();
       }
     }
 

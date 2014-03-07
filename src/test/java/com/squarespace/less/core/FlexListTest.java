@@ -11,9 +11,11 @@ import org.testng.annotations.Test;
 
 public class FlexListTest {
 
-  private static final FlexList<Object> ALPHA7 = FlexList.<Object>create('a', 'b', 'c', 'd', 'e', 'f', 'g');
+  private static final FlexList<Object> ALPHA7 = FlexList.<Object>create(
+      new Object[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g' });
 
-  private static final FlexList<Object> ALPHA3 = FlexList.<Object>create('a', 'b', 'c');
+  private static final FlexList<Object> ALPHA3 = FlexList.<Object>create(
+      new Object[] { 'a', 'b', 'c' });
 
   private static final Object[] DIGIT4 = new Object[] { 1, 2, 3, 4 };
 
@@ -25,7 +27,7 @@ public class FlexListTest {
 
   @Test
   public void testUsageExample() {
-    FlexList<Object> list = FlexList.<Object>create(1, 2, 3, 4, 5);
+    FlexList<Object> list = FlexList.<Object>create(new Object[] { 1, 2, 3, 4, 5 });
 
     Object[] insert = new Object[] { 'x', 'y' };
     int overwrite = 1;
@@ -40,13 +42,13 @@ public class FlexListTest {
         i += insert.length - overwrite;
       }
     }
-    assertEquals(list, FlexList.<Object>create(1, 'x', 'y', 3, 'x', 'y', 5));
+    assertEquals(list, FlexList.<Object>create(new Object[] { 1, 'x', 'y', 3, 'x', 'y', 5 }));
   }
 
   @Test
   public void testEquals() {
-    FlexList<Object> list1 = FlexList.<Object>create(1, 2, 3);
-    FlexList<Object> list2 = FlexList.<Object>create(1, 2, 3);
+    FlexList<Object> list1 = FlexList.<Object>create(new Object[] { 1, 2, 3 });
+    FlexList<Object> list2 = FlexList.<Object>create(new Object[] { 1, 2, 3 });
     assertEquals(list1, list2);
 
     list2 = ALPHA3.copy();
@@ -59,27 +61,27 @@ public class FlexListTest {
 
     FlexList<Object> list1 = ALPHA7.copy();
     list1.splice(2,  2, DIGIT4, 4);
-    expected = FlexList.<Object>create('a', 'b', 1, 2, 3, 4, 'e', 'f', 'g');
+    expected = FlexList.<Object>create(new Object[] { 'a', 'b', 1, 2, 3, 4, 'e', 'f', 'g' });
     assertEquals(list1, expected);
 
     list1 = ALPHA7.copy();
     list1.splice(2,  1,  DIGIT3, 3);
-    expected = FlexList.<Object>create('a', 'b', 1, 2, 3, 'd', 'e', 'f', 'g');
+    expected = FlexList.<Object>create(new Object[] { 'a', 'b', 1, 2, 3, 'd', 'e', 'f', 'g' });
     assertEquals(list1, expected);
 
     list1 = ALPHA7.copy();
     list1.splice(4,  0,  DIGIT3, 3);
-    expected = FlexList.<Object>create('a', 'b', 'c', 'd', 1, 2, 3, 'e', 'f', 'g');
+    expected = FlexList.<Object>create(new Object[] { 'a', 'b', 'c', 'd', 1, 2, 3, 'e', 'f', 'g' });
     assertEquals(list1, expected);
 
     list1 = ALPHA3.copy();
     list1.splice(2, 0, DIGIT2, 2);
-    expected = FlexList.<Object>create('a', 'b', 1, 2, 'c');
+    expected = FlexList.<Object>create(new Object[] { 'a', 'b', 1, 2, 'c' });
     assertEquals(list1, expected);
 
     list1 = ALPHA3.copy();
     list1.splice(3, 0, DIGIT2, 2);
-    expected = FlexList.<Object>create('a', 'b', 'c', 1, 2);
+    expected = FlexList.<Object>create(new Object[] { 'a', 'b', 'c', 1, 2 });
     assertEquals(list1, expected);
   }
 
@@ -89,17 +91,17 @@ public class FlexListTest {
 
     FlexList<Object> list1 = ALPHA7.copy();
     list1.splice(2, 2, EMPTY);
-    expected = FlexList.<Object>create('a', 'b', 'e', 'f', 'g');
+    expected = FlexList.<Object>create(new Object[] { 'a', 'b', 'e', 'f', 'g' });
     assertEquals(list1, expected);
 
     list1 = ALPHA7.copy();
     list1.splice(0, 5, EMPTY);
-    expected = FlexList.<Object>create('f', 'g');
+    expected = FlexList.<Object>create(new Object[] { 'f', 'g' });
     assertEquals(list1, expected);
 
     list1 = ALPHA7.copy();
     list1.splice(0, 10, EMPTY);
-    expected = FlexList.<Object>create();
+    expected = FlexList.<Object>create(new Object[] { });
     assertEquals(list1, expected);
 }
 
@@ -110,25 +112,25 @@ public class FlexListTest {
     // Range appends
     FlexList<Object> list1 = ALPHA3.copy();
     list1.splice(10, 10, DIGIT3, 3);
-    expected = FlexList.<Object>create('a', 'b', 'c', 1, 2, 3);
+    expected = FlexList.<Object>create(new Object[] { 'a', 'b', 'c', 1, 2, 3 });
     assertEquals(list1, expected);
 
     // Range prepends
     list1 = ALPHA3.copy();
     list1.splice(-5, -5, DIGIT3, 3);
-    expected = FlexList.<Object>create(1, 2, 3, 'a', 'b', 'c');
+    expected = FlexList.<Object>create(new Object[] { 1, 2, 3, 'a', 'b', 'c' });
     assertEquals(list1, expected);
 
     // Range overwrites entire list
     list1 = ALPHA3.copy();
     list1.splice(-5, 50, DIGIT3, 3);
-    expected = FlexList.<Object>create(1, 2, 3);
+    expected = FlexList.<Object>create(new Object[] { 1, 2, 3 });
     assertEquals(list1, expected);
 
     // Range overwrites end of list
     list1 = ALPHA7.copy();
     list1.splice(2, 10, DIGIT3, 3);
-    expected = FlexList.<Object>create('a', 'b', 1, 2, 3);
+    expected = FlexList.<Object>create(new Object[] { 'a', 'b', 1, 2, 3 });
     assertEquals(list1, expected);
   }
 
@@ -138,7 +140,7 @@ public class FlexListTest {
 
     FlexList<Object> list1 = ALPHA3.copy();
     list1.append(ALPHA7);
-    expected = FlexList.<Object>create('a', 'b', 'c', 'a', 'b', 'c', 'd', 'e', 'f', 'g');
+    expected = FlexList.<Object>create(new Object[] { 'a', 'b', 'c', 'a', 'b', 'c', 'd', 'e', 'f', 'g' });
     assertEquals(list1, expected);
   }
 

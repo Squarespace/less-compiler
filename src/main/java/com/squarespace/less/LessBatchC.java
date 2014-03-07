@@ -46,16 +46,16 @@ public class LessBatchC extends BaseCommand {
   public List<String> importPaths;
 
   @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
-  private boolean tracing = false;
+  private final boolean tracing = false;
 
   @Parameter(names = { "-V", "-verbose" }, description = "Verbose")
-  private boolean verbose = false;
+  private final boolean verbose = false;
 
   @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
 
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
-  private int indent = 2;
+  private final int indent = 2;
 
   @Parameter(names = { "-import-once" }, description = "Imports are only processed once")
   private boolean importOnce;
@@ -68,7 +68,7 @@ public class LessBatchC extends BaseCommand {
   private boolean compress;
 
   @Parameter(names = { "-v", "-version" }, description = "Show version")
-  private boolean version = false;
+  private final boolean version = false;
 
   private void buildOptions() {
     options.compress(compress);
@@ -145,7 +145,7 @@ public class LessBatchC extends BaseCommand {
         try {
           log("parsing " + path + " ");
           long start = System.nanoTime();
-          stylesheet = (Stylesheet) compiler.parse(data, ctx, realPath.getParent(), realPath.getFileName());
+          stylesheet = compiler.parse(data, ctx, realPath.getParent(), realPath.getFileName());
           double elapsed = (System.nanoTime() - start) / 1000000.0;
           System.err.printf("  %.3fms\n", elapsed);
           preCache.put(realPath, stylesheet);

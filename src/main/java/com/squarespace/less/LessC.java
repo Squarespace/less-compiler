@@ -29,7 +29,7 @@ public class LessC extends BaseCommand {
   private final Options options = new Options();
 
   @Parameter(description = "LESS_FILE [OUTPUT_FILE]")
-  private List<String> args = new ArrayList<String>();
+  private final List<String> args = new ArrayList<String>();
 
   // TODO: emit DebugMode.description() in usage
   @Parameter(
@@ -46,25 +46,25 @@ public class LessC extends BaseCommand {
   public List<String> importPaths;
 
   @Parameter(names = { "-R" }, description = "Recursion limit")
-  private int recursionLimit = Options.DEFAULT_RECURSION_LIMIT;
+  private final int recursionLimit = Options.DEFAULT_RECURSION_LIMIT;
 
   @Parameter(names = { "-S", "-stats" }, description = "Output statistics")
-  private boolean stats = false;
+  private final boolean stats = false;
 
   @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
-  private boolean tracing = false;
+  private final boolean tracing = false;
 
   @Parameter(names = { "-V", "-verbose" }, description = "Verbose")
-  private boolean verbose = false;
+  private final boolean verbose = false;
 
   @Parameter(names = { "-W", "-wait" }, description = "Wait before executing / exiting.")
-  private boolean waitForUser = false;
+  private final boolean waitForUser = false;
 
   @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
 
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
-  private int indent = Options.DEFAULT_INDENT;
+  private final int indent = Options.DEFAULT_INDENT;
 
   @Parameter(names = { "-import-once" }, description = "Imports are only processed once")
   private boolean importOnce;
@@ -74,10 +74,10 @@ public class LessC extends BaseCommand {
   private boolean strictMode;
 
   @Parameter(names = { "-v", "-version" }, description = "Show version")
-  private boolean version = false;
+  private final boolean version = false;
 
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode")
-  private boolean compress = false;
+  private final boolean compress = false;
 
   private void buildOptions() {
     options.compress(compress);
@@ -176,16 +176,16 @@ public class LessC extends BaseCommand {
     ctx.setCompiler(compiler);
     try {
       if (debugMode == DebugMode.CANONICAL) {
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath, fileName);
+        Stylesheet stylesheet = compiler.parse(source, ctx, rootPath, fileName);
         System.out.println(canonicalize(stylesheet));
 
       } else if (debugMode == DebugMode.PARSE) {
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath, fileName);
+        Stylesheet stylesheet = compiler.parse(source, ctx, rootPath, fileName);
         System.out.println(parseTree(stylesheet));
 
       } else if (debugMode == DebugMode.EXPAND) {
         // NOTE: This mode doesn't fully work yet.
-        Stylesheet stylesheet = (Stylesheet) compiler.parse(source, ctx, rootPath, fileName);
+        Stylesheet stylesheet = compiler.parse(source, ctx, rootPath, fileName);
         stylesheet = compiler.expand(stylesheet, ctx);
         System.out.println(canonicalize(stylesheet));
 

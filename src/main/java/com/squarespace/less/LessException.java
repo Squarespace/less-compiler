@@ -12,6 +12,8 @@ import com.squarespace.less.model.Node;
  */
 public class LessException extends Exception {
 
+  static final long serialVersionUID = 1L;
+
   /** Collects additional context about where the primary error occurred */
   private final Deque<Node> errorContext = new ArrayDeque<>(5);
 

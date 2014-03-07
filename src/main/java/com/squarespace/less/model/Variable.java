@@ -71,7 +71,7 @@ public class Variable extends BaseNode {
 
   @Override
   public Node eval(ExecEnv env) throws LessException {
-    Definition def = (Definition) env.resolveDefinition(name);
+    Definition def = env.resolveDefinition(name);
     if (def == null) {
       throw new LessException(varUndefined(name));
     }

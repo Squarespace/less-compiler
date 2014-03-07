@@ -63,7 +63,7 @@ public class NumericFunctions implements Registry<Function> {
       Dimension dim = (Dimension)args.get(0);
       Unit unit = null;
       if (args.size() >= 2) {
-        Node node = (Node)args.get(1);
+        Node node = args.get(1);
         if (node.is(NodeType.KEYWORD)) {
           Keyword word = (Keyword)node;
           unit = Unit.get(word.value());

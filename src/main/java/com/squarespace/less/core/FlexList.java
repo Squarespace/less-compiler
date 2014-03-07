@@ -39,8 +39,8 @@ public class FlexList<E> {
     size = 0;
   }
 
-  @SafeVarargs
-  public static final <T> FlexList<T> create(T ... objs) {
+//  @SafeVarargs
+  public static final <T> FlexList<T> create(T[] objs) {
     return new FlexList<T>(objs, objs.length, false);
   }
 

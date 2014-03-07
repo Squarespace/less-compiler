@@ -7,6 +7,8 @@ package com.squarespace.less.core;
  */
 public class LessInternalException extends RuntimeException {
 
+  static final long serialVersionUID = 1L;
+
   public LessInternalException(String message) {
     super(message);
   }

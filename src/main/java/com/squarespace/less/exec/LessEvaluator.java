@@ -241,6 +241,7 @@ public class LessEvaluator {
           } else {
             // Skip, leave the IMPORT in place since it will be emitted as-is.
           }
+          break;
 
         default:
           break;
