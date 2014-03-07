@@ -5,6 +5,10 @@ A Java implementation of the LESS CSS preprocessor language.
 
 Current [Less.js][lessjs] compatibility level: 1.3.3
 
+License: [Apache 2.0](LICENSE.txt) ([tl;dr][license-tldr])
+
+Copyright (c) 2014 Squarespace, Inc.
+
 ## Project Goals
 
  * Migrate away from use of [Node.js][nodejs] + [Less.js][lessjs] for server-side
@@ -37,4 +41,6 @@ conversion of LESS to CSS.
 
 [lessjs]: http://lesscss.org/  "Less.js"
 [nodejs]: http://nodejs.org/ "Node.js"
+[license-tldr]: https://tldrlegal.com/license/apache-license-2.0-(apache-2.0) "Apache 2.0 tl;dr"
+
 
