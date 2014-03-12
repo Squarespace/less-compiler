@@ -1,12 +1,9 @@
-<project 
-    xmlns="http://maven.apache.org/POM/4.0.0" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.squarespace.less</groupId>
   <artifactId>squarespace-less</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <url>https://github.com/squarespace/squarespace-less</url>
   <description>Squarespace LESS (to CSS) Compiler</description>
@@ -25,8 +22,7 @@
   <licenses>
     <license>
       <name>Apache 2.0 License</name>
-      <url>https://github.com/squarespace/squarespace-less/blob/master/LICENSE</url>
-      <distribution>repo</distribution>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
 
@@ -46,7 +42,7 @@
     <developer>
       <id>phensley</id>
       <name>Patrick Hensley</name>
-      <email>phensley@squarespace.com</email>
+      <email>spaceboy@indirect.com</email>
     </developer>
   </developers>
 
@@ -93,10 +89,31 @@
         </includes>
       </resource>
     </resources>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.scm</groupId>
+            <artifactId>maven-scm-provider-gitexe</artifactId>
+            <version>1.9</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+          <configuration>
+            <useAgent>true</useAgent>
+          </configuration>
         <executions>
           <execution>
             <id>sign-artifacts</id>
@@ -111,6 +128,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -144,6 +162,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -157,6 +176,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -174,7 +194,7 @@
         <configuration>
           <failsOnError>true</failsOnError>
           <consoleOutput>true</consoleOutput>
-          <configLocation>checkstyle.xml</configLocation>
+          <configLocation>./checkstyle.xml</configLocation>
         </configuration>
         <executions>
           <execution>
@@ -186,6 +206,7 @@
         </executions>
       </plugin>
 
+<!--
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -203,6 +224,7 @@
           <nexusUrl>https://oss.sonatype.org/</nexusUrl>
         </configuration>
       </plugin>
+-->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -217,7 +239,7 @@
             </goals>
             <configuration>
               <shadedArtifactAttached>true</shadedArtifactAttached>
-              <shadedClassifierName/>
+              <shadedClassifierName />
               <createDependencyReducedPom>false</createDependencyReducedPom>
             </configuration>
           </execution>
