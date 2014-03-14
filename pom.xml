@@ -2,7 +2,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.squarespace.less</groupId>
-  <artifactId>squarespace-less</artifactId>
+  <artifactId>less-compiler</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <url>https://github.com/squarespace/squarespace-less</url>
