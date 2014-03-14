@@ -16,7 +16,7 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.LessCompiler.VERSION;
+import static com.squarespace.less.LessCompiler.LESSJS_VERSION;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,16 +62,16 @@ public class LessBatchC extends BaseCommand {
   public List<String> importPaths;
 
   @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
-  private final boolean tracing = false;
+  private boolean tracing = false;
 
   @Parameter(names = { "-V", "-verbose" }, description = "Verbose")
-  private final boolean verbose = false;
+  private boolean verbose = false;
 
   @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
 
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
-  private final int indent = 2;
+  private int indent = 2;
 
   @Parameter(names = { "-import-once" }, description = "Imports are only processed once")
   private boolean importOnce;
@@ -84,7 +84,7 @@ public class LessBatchC extends BaseCommand {
   private boolean compress;
 
   @Parameter(names = { "-v", "-version" }, description = "Show version")
-  private final boolean version = false;
+  private boolean version = false;
 
   private void buildOptions() {
     options.compress(compress);
@@ -99,7 +99,7 @@ public class LessBatchC extends BaseCommand {
   }
 
   public static String version() {
-    return PROGRAM_NAME + " " + VERSION + " " + IMPLNAME;
+    return PROGRAM_NAME + " compatibility=" + LESSJS_VERSION + "  " + IMPLNAME;
   }
 
   @Override

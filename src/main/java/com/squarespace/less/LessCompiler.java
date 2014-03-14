@@ -38,7 +38,7 @@ import com.squarespace.less.plugins.TypeFunctions;
  */
 public class LessCompiler {
 
-  public static final String VERSION = "1.3.3";
+  public static final String LESSJS_VERSION = "1.3.3";
 
   private final FunctionTable functionTable;
 

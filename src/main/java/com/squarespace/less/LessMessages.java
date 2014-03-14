@@ -16,7 +16,7 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.LessCompiler.VERSION;
+import static com.squarespace.less.LessCompiler.LESSJS_VERSION;
 
 import java.nio.file.Path;
 
@@ -26,7 +26,7 @@ import com.squarespace.less.core.StackFormatter;
 
 public class LessMessages {
 
-  private static final String SQUARESPACE_LESS_HEADER = "\n/* Squarespace LESS Compiler " + VERSION + " */\n";
+  private static final String SQUARESPACE_LESS_HEADER = "\n/* Squarespace LESS Compiler " + LESSJS_VERSION + " */\n";
 
   private static final int DEFAULT_ERROR_INDENT = 4;
 
@@ -59,7 +59,7 @@ public class LessMessages {
 
   public Buffer formatStats(Buffer buf, LessStats stats, Path path) {
     buf.append("/* --------------------------------------------------------\n");
-    buf.append("Squarespace LESS compiler ").append(VERSION).append(" Statistics for '");
+    buf.append("Squarespace LESS compiler ").append(LESSJS_VERSION).append(" Statistics for '");
     buf.append(path.toString()).append("':\n");
     buf.append("    parse time: ").append(formatMs(stats.parseTimeMs())).append('\n');
     buf.append("  compile time: ").append(formatMs(stats.compileTimeMs())).append('\n');

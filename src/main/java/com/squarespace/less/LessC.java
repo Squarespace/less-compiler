@@ -16,6 +16,8 @@
 
 package com.squarespace.less;
 
+import static com.squarespace.less.LessCompiler.LESSJS_VERSION;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,8 +42,6 @@ public class LessC extends BaseCommand {
 
   private static final String IMPLNAME = "(LESS Compiler) [Java, Squarespace]";
 
-  private static final String VERSION = "1.3.3";
-
   private final Options options = new Options();
 
   @Parameter(description = "LESS_FILE [OUTPUT_FILE]")
@@ -62,25 +62,25 @@ public class LessC extends BaseCommand {
   public List<String> importPaths;
 
   @Parameter(names = { "-R" }, description = "Recursion limit")
-  private final int recursionLimit = Options.DEFAULT_RECURSION_LIMIT;
+  private int recursionLimit = Options.DEFAULT_RECURSION_LIMIT;
 
   @Parameter(names = { "-S", "-stats" }, description = "Output statistics")
-  private final boolean stats = false;
+  private boolean stats = false;
 
   @Parameter(names = { "-T", "-tracing" }, description = "Trace execution")
-  private final boolean tracing = false;
+  private boolean tracing = false;
 
   @Parameter(names = { "-V", "-verbose" }, description = "Verbose")
-  private final boolean verbose = false;
+  private boolean verbose = false;
 
   @Parameter(names = { "-W", "-wait" }, description = "Wait before executing / exiting.")
-  private final boolean waitForUser = false;
+  private boolean waitForUser = false;
 
   @Parameter(names = { "-h", "-help" }, description = "Show usage", help = true)
   private boolean help;
 
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
-  private final int indent = Options.DEFAULT_INDENT;
+  private int indent = Options.DEFAULT_INDENT;
 
   @Parameter(names = { "-import-once" }, description = "Imports are only processed once")
   private boolean importOnce;
@@ -90,10 +90,10 @@ public class LessC extends BaseCommand {
   private boolean strictMode;
 
   @Parameter(names = { "-v", "-version" }, description = "Show version")
-  private final boolean version = false;
+  private boolean version = false;
 
   @Parameter(names = { "-x", "-compress" }, description = "Compress mode")
-  private final boolean compress = false;
+  private boolean compress = false;
 
   private void buildOptions() {
     options.compress(compress);
@@ -111,7 +111,7 @@ public class LessC extends BaseCommand {
   }
 
   public static String version() {
-    return PROGRAM_NAME + " " + VERSION + " " + IMPLNAME;
+    return PROGRAM_NAME + " compatibility=" + LESSJS_VERSION + "  " + IMPLNAME;
   }
 
   @Override
@@ -126,6 +126,8 @@ public class LessC extends BaseCommand {
     try {
       cmd.parse(args);
     } catch (ParameterException e) {
+      System.err.println("HERE");
+      e.printStackTrace();
       System.err.println(e.getMessage());
       System.exit(1);
     }
