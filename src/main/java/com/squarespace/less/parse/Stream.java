@@ -222,15 +222,7 @@ public class Stream {
 
   @Override
   public String toString() {
-    return "Stream(\"" + StringEscapeUtils.escapeJava(remainder()) + "\")";
-  }
-
-  public boolean complete() {
-    return index == length;
-  }
-
-  public String remainder() {
-    return raw.substring(index);
+    return "Stream(\"" + StringEscapeUtils.escapeJava(raw.substring(index)) + "\")";
   }
 
   public String furthest() {

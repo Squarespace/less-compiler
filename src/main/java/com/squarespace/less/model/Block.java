@@ -29,8 +29,17 @@ import com.squarespace.less.core.LessUtils;
  * such an IMPORT or MIXIN_CALL can be expanded into multiple rules which
  * will be spliced into the array.  For this reason, blocks manage their
  * arrays of objects directly.
+ *
+ * Each block contains a set of flags which are used to avoid unnecessary
+ * scans of the block's rules during evaluation.
  */
 public class Block extends BaseNode {
+
+  private static final byte FLAG_REBUILD_VARS = 0x01;
+
+  private static final byte FLAG_HAS_IMPORTS = 0x02;
+
+  private static final byte FLAG_HAS_MIXIN_CALLS = 0x04;
 
   private static final int INITIAL_CAPACITY = 8;
 
@@ -40,14 +49,15 @@ public class Block extends BaseNode {
 
   private Map<String, Definition> variables;
 
-  private boolean rebuildVariables = true;
+  private byte flags = FLAG_REBUILD_VARS;
 
   public Block() {
     this(INITIAL_CAPACITY);
   }
 
-  private Block(FlexList<Node> rules) {
+  private Block(FlexList<Node> rules, byte flags) {
     this.rules = rules;
+    this.flags = flags;
   }
 
   public Block(int initialCapacity) {
@@ -63,14 +73,17 @@ public class Block extends BaseNode {
   }
 
   public void prependNode(Node node) {
+    setFlags(node);
     rules.splice(0, 0, new Node[] { node });
   }
 
   public void appendNode(Node node) {
+    setFlags(node);
     rules.append(node);
   }
 
   public void appendBlock(Block block) {
+    flags |= block.flags;
     rules.append(block.rules);
   }
 
@@ -78,12 +91,20 @@ public class Block extends BaseNode {
     return rules;
   }
 
+  public boolean hasImports() {
+    return (flags & FLAG_HAS_IMPORTS) != 0;
+  }
+
+  public boolean hasMixinCalls() {
+    return (flags & FLAG_HAS_MIXIN_CALLS) != 0;
+  }
+
   public void resetCache() {
-    rebuildVariables = true;
+    flags |= FLAG_REBUILD_VARS;
   }
 
   public Definition resolveDefinition(String name) {
-    if (rebuildVariables) {
+    if ((flags & FLAG_REBUILD_VARS) != 0) {
       buildVariables();
     }
     return variables.get(name);
@@ -104,11 +125,11 @@ public class Block extends BaseNode {
       Definition def = (Definition)node;
       variables.put(def.name(), def);
     }
-    rebuildVariables = false;
+    flags &= ~FLAG_REBUILD_VARS;
   }
 
   public Block copy() {
-    return new Block(rules.copy());
+    return new Block(rules.copy(), flags);
   }
 
   public String dumpDefs() {
@@ -171,6 +192,18 @@ public class Block extends BaseNode {
   public void modelRepr(Buffer buf) {
     if (rules != null) {
       ReprUtils.modelRepr(buf, "\n", true, rules);
+    }
+  }
+
+  public void orFlags(Block block) {
+    flags |= block.flags;
+  }
+
+  private void setFlags(Node node) {
+    if (node.type() == NodeType.IMPORT) {
+      flags |= FLAG_HAS_IMPORTS;
+    } else if (node.type() == NodeType.MIXIN_CALL) {
+      flags |= FLAG_HAS_MIXIN_CALLS;
     }
   }
 

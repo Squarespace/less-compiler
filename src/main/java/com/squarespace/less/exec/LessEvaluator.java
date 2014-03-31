@@ -231,6 +231,9 @@ public class LessEvaluator {
   }
 
   private void expandImports(ExecEnv env, Block block) throws LessException {
+    if (!block.hasImports()) {
+      return;
+    }
     FlexList<Node> rules = block.rules();
     // Use of rules.size() intentional since the list size can change during iteration.
     for (int i = 0; i < rules.size(); i++) {
@@ -244,6 +247,7 @@ public class LessEvaluator {
             rules.splice(i, 1, other);
             i += other.size() - 1;
             block.resetCache();
+            block.orFlags(importResult);
 
           } else {
             // Skip, leave the IMPORT in place since it will be emitted as-is.
@@ -310,6 +314,9 @@ public class LessEvaluator {
    * the rules it produced.
    */
   private void expandMixins(ExecEnv env, Block block) throws LessException {
+    if (!block.hasMixinCalls()) {
+      return;
+    }
     FlexList<Node> rules = block.rules();
     // Use of rules.size() intentional since the list size can change during iteration.
     for (int i = 0; i < rules.size(); i++) {
@@ -322,6 +329,7 @@ public class LessEvaluator {
           rules.splice(i, 1, other);
           i += other.size() - 1;
           block.resetCache();
+          block.orFlags(mixinResult);
           break;
 
         default:
