@@ -80,7 +80,7 @@ public class LessRenderer {
     Block block = stylesheet.block();
     Directive charset = block.charset();
     if (charset != null) {
-      model.value(env.render(charset));
+      model.value(ctx.render(charset));
     }
     renderImports(block);
     renderBlock(block, false);
@@ -98,7 +98,7 @@ public class LessRenderer {
       // Selectors are indented and delimited by the model.
       Buffer buf = ctx.acquireBuffer();
       for (Selector selector : selectors.selectors()) {
-        env.render(buf, selector);
+        ctx.render(buf, selector);
         model.header(buf.toString());
         buf.reset();
       }
@@ -113,7 +113,7 @@ public class LessRenderer {
   private void renderMedia(Media media) throws LessException {
     env.push(media);
     model.push(NodeType.MEDIA);
-    model.header("@media " + env.render(env.frame().features()));
+    model.header("@media " + ctx.render(env.frame().features()));
 
     // Force any parent selectors to be emitted, to wrap our rules.
     Ruleset inner = new Ruleset();
@@ -136,6 +136,9 @@ public class LessRenderer {
   }
 
   private void renderImports(Block block) throws LessException {
+    if (!block.hasImports()) {
+      return;
+    }
     FlexList<Node> rules = block.rules();
     int size = rules.size();
     for (int i = 0; i < size; i++) {
@@ -166,7 +169,7 @@ public class LessRenderer {
         case COMMENT:
           Comment comment = (Comment)node;
           if (!opts.compress() && comment.block()) {
-            model.comment(env.render(comment));
+            model.comment(ctx.render(comment));
           }
           break;
 
@@ -177,7 +180,7 @@ public class LessRenderer {
         case DIRECTIVE:
           Directive directive = (Directive)node;
           if (!directive.name().equals("@charset")) {
-            model.value(env.render(directive));
+            model.value(ctx.render(directive));
           }
           break;
 
@@ -241,11 +244,11 @@ public class LessRenderer {
   private void renderImport(Import imp) throws LessException {
     Buffer buf = new Buffer(0);
     buf.append("@import ");
-    env.render(buf, imp.path());
+    ctx.render(buf, imp.path());
     Features features = imp.features();
     if (features != null && !features.isEmpty()) {
       buf.append(' ');
-      env.render(buf, features);
+      ctx.render(buf, features);
     }
     model.value(buf.toString());
   }
@@ -285,9 +288,9 @@ public class LessRenderer {
       emitTrace("next rule defined at '" + line + "'");
     }
     Buffer buf = ctx.acquireBuffer();
-    env.render(buf, rule.property());
+    ctx.render(buf, rule.property());
     buf.ruleSep();
-    env.render(buf, rule.value());
+    ctx.render(buf, rule.value());
     if (rule.important()) {
       buf.append(" !important");
     }

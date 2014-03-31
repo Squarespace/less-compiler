@@ -18,12 +18,10 @@ package com.squarespace.less.exec;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Media;
-import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selectors;
@@ -55,14 +53,6 @@ public class RenderEnv {
 
   public RenderFrame frame() {
     return frame;
-  }
-
-  public String render(Node node) throws LessException {
-    return ctx.render(node);
-  }
-
-  public void render(Buffer buf, Node node) throws LessException {
-    ctx.render(buf, node);
   }
 
   public void push(BlockNode blockNode) throws LessException {
