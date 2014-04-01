@@ -169,41 +169,33 @@ public class StackFormatter {
   }
 
   private Entry renderEntry(Node node) {
+    buf.reset();
+    indent();
     switch (node.type()) {
 
       case BLOCK_DIRECTIVE:
         BlockDirective blockDir = (BlockDirective)node;
-        buf.reset();
-        indent();
         buf.append(blockDir.name()).append(" {");
         return new Entry(blockDir.fileName(), blockDir.lineOffset() + 1, buf.toString());
 
       case DEFINITION:
         Definition def = (Definition)node;
-        buf.reset();
-        indent();
         def.repr(buf);
         return new Entry(def.fileName(), def.lineOffset() + 1, buf.toString());
 
       case DIRECTIVE:
         Directive directive = (Directive)node;
-        buf.reset();
-        indent();
         directive.repr(buf);
         return new Entry(directive.fileName(), directive.lineOffset() + 1, buf.toString());
 
       case IMPORT:
         Import imp = (Import)node;
-        buf.reset();
-        indent();
         imp.repr(buf);
         return new Entry(imp.fileName(), imp.lineOffset() + 1, buf.toString());
 
       case MEDIA:
         Media media = (Media)node;
         Features features = media.features();
-        buf.reset();
-        indent();
         buf.append("@media");
         if (features != null) {
           buf.append(' ');
@@ -216,8 +208,6 @@ public class StackFormatter {
         MixinCall call = (MixinCall)node;
         MixinCallArgs args = call.args();
         Selectors selectors = new Selectors(Arrays.asList(call.selector()));
-        buf.reset();
-        indent();
         selectors.repr(buf);
         if (args != null) {
           args.repr(buf);
@@ -227,22 +217,16 @@ public class StackFormatter {
 
       case RULE:
         Rule rule = (Rule)node;
-        buf.reset();
-        indent();
         rule.repr(buf);
         return new Entry(rule.fileName(), rule.lineOffset() + 1, buf.toString());
 
       case RULESET:
         Ruleset ruleset = (Ruleset)node;
-        buf.reset();
-        indent();
         append(ReprUtils.reprLines(ruleset.selectors(), 3), " ");
         buf.append(" {");
         return new Entry(ruleset.fileName(), ruleset.lineOffset() + 1, buf.toString());
 
       default:
-        buf.reset();
-        indent();
         node.repr(buf);
         return new Entry(null, node.lineOffset() + 1, buf.toString());
     }

@@ -72,7 +72,7 @@ public class EncodeUtils {
   }
 
   /**
-   * Implementation of JavaScripts encodeURIComponent function.
+   * Implementation of JavaScript's encodeURIComponent function.
    */
   public static String encodeURIComponent(String uri) {
     return encodeChars(uri, ENCODE_URI_COMPONENT_TEST);
