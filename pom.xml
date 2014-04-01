@@ -241,10 +241,16 @@
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName />
               <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.squarespace.less.LessC</mainClass>
+                </transformer>
+              </transformers>
             </configuration>
           </execution>
         </executions>
       </plugin>
+
     </plugins>
 
   </build>

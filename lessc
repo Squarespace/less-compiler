@@ -1,0 +1,11 @@
+#!/bin/bash
+
+DIR=$(cd `dirname $0`; pwd)
+JAR=$DIR/target/*-shaded.jar
+
+if [ ! -f $JAR ] ; then
+    echo "Can't execute $0: shaded JAR file does not exist."
+    exit
+fi
+java -jar $JAR $*
+
