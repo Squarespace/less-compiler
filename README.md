@@ -22,7 +22,7 @@ conversion of LESS to CSS.
 
 ## Features
 
- * Performance improvement of 2-5x over Less.js
+ * Performance improvement of 2-5x over Less.js when used in server context
  * Improved error messages with [full stack traces](docs/error-stack-trace.md)
  * [Execution trace mode](docs/execution-trace.md)
  * Modular parser that supports fine-grained unit testing of syntax fragments
@@ -37,10 +37,9 @@ conversion of LESS to CSS.
    model that ensures they are emitted at the correct scope in the output
    document.
  * Color keywords can participate in math operations.
-
+ * See more complete [list of differences](DIFFERENCES.md)
 
 [lessjs]: http://lesscss.org/  "Less.js"
 [nodejs]: http://nodejs.org/ "Node.js"
 [license-tldr]: https://tldrlegal.com/license/apache-license-2.0-(apache-2.0) "Apache 2.0 tl;dr"
-
 
