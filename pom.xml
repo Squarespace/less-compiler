@@ -8,10 +8,18 @@
   <url>https://github.com/squarespace/squarespace-less</url>
   <description>Squarespace LESS (to CSS) Compiler</description>
 
+<!--
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>7</version>
+  </parent>
+-->
+
+  <parent>
+    <groupId>com.squarespace</groupId>
+    <artifactId>squarespace-maven-project</artifactId>
+    <version>RELEASE</version>
   </parent>
 
   <organization>
