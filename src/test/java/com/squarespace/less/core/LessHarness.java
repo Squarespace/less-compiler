@@ -19,17 +19,15 @@ package com.squarespace.less.core;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessErrorType;
-import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.FunctionTable;
-import com.squarespace.less.exec.LessEvaluator;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.parse.LessStream;
 import com.squarespace.less.parse.Parselet;
 import com.squarespace.less.parse.Parselets;
@@ -47,9 +45,11 @@ public class LessHarness {
     FUNCTIONS.register(new TestFunctions());
   }
 
-  private GenericBlock defs;
+  private final LessCompiler compiler = new LessCompiler();
 
-  private Parselet[] parselet;
+  private final GenericBlock defs;
+
+  private final Parselet[] parselet;
 
   public LessHarness() {
     this(Parselets.STYLESHEET, null);
@@ -86,10 +86,8 @@ public class LessHarness {
 
   public String execute(String raw, LessOptions opts) throws LessException {
     LessContext ctx = context(opts);
-    ctx.setCompiler(new LessCompiler());
-    LessEvaluator engine = new LessEvaluator(ctx);
-    Node res = parse(raw, parselet);
-    return engine.render((Stylesheet)res);
+    ctx.setCompiler(compiler);
+    return compiler.compile(raw, ctx);
   }
 
   public void executeFails(String raw, LessErrorType expected) {

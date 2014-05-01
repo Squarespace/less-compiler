@@ -68,18 +68,9 @@ public class LessEvaluator {
     this.opts = ctx.options();
   }
 
-  /**
-   * Evaluate and render a LESS stylesheet, using the given context.
-   */
-  public String render(Stylesheet sheet) throws LessException {
-    sheet = evaluateStylesheet(ctx.newEnv(), sheet);
-    return LessRenderer.render(ctx, sheet);
-  }
-
-  public Stylesheet expand(Stylesheet sheet) throws LessException {
+  public Stylesheet evaluate(Stylesheet sheet) throws LessException {
     return evaluateStylesheet(ctx.newEnv(), sheet);
   }
-
 
   /**
    * Evaluate a BLOCK_DIRECTIVE node.

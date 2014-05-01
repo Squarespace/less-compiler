@@ -22,6 +22,7 @@ import java.nio.file.Path;
 
 import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.exec.LessEvaluator;
+import com.squarespace.less.exec.LessRenderer;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.parse.LessStream;
 import com.squarespace.less.plugins.ColorAdjustmentFunctions;
@@ -69,20 +70,20 @@ public class LessCompiler {
     LessStats stats = ctx.stats();
     long started = stats.now();
     LessStream stm = new LessStream(raw, rootPath, fileName);
-    Stylesheet sheet = null;
-    sheet = (Stylesheet) stm.parse(STYLESHEET);
+    Stylesheet sheet = (Stylesheet) stm.parse(STYLESHEET);
     stats.parseDone(raw.length(), started);
-    return sheet == null ? null : sheet;
+    return sheet;
   }
 
   public String render(Stylesheet stylesheet, LessContext ctx) throws LessException {
     LessEvaluator engine = new LessEvaluator(ctx);
-    return engine.render(stylesheet);
+    Stylesheet expanded = engine.evaluate(stylesheet);
+    return new LessRenderer(ctx, expanded).render();
   }
 
   public Stylesheet expand(Stylesheet stylesheet, LessContext ctx) throws LessException {
     LessEvaluator engine = new LessEvaluator(ctx);
-    return engine.expand(stylesheet);
+    return engine.evaluate(stylesheet);
   }
 
   public String compile(String raw, LessContext ctx) throws LessException {
@@ -93,8 +94,7 @@ public class LessCompiler {
     Stylesheet sheet = parse(raw, ctx, rootPath, fileName);
     LessStats stats = ctx.stats();
     long started = stats.now();
-    LessEvaluator cm = new LessEvaluator(ctx);
-    String result = cm.render(sheet);
+    String result = render(sheet, ctx);
     stats.compileDone(started);
     return result;
   }

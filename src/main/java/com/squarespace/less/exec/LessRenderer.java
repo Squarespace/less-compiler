@@ -51,6 +51,8 @@ public class LessRenderer {
 
   private final LessContext ctx;
 
+  private final Stylesheet stylesheet;
+
   private final RenderEnv env;
 
   private final LessOptions opts;
@@ -61,20 +63,21 @@ public class LessRenderer {
 
   private int warningId;
 
-  private LessRenderer(LessContext context) {
+  public LessRenderer(LessContext context, Stylesheet stylesheet) {
     this.ctx = context;
+    this.stylesheet = stylesheet;
     this.env = context.newRenderEnv();
     this.opts = context.options();
     this.model = new CssModel(context);
   }
 
   public static String render(LessContext context, Stylesheet sheet) throws LessException {
-    return new LessRenderer(context).render(sheet);
+    return new LessRenderer(context, sheet).render();
   }
 
-  private String render(Stylesheet sheet) throws LessException {
-    env.push(sheet);
-    Block block = sheet.block();
+  public String render() throws LessException {
+    env.push(stylesheet);
+    Block block = stylesheet.block();
     Directive charset = block.charset();
     if (charset != null) {
       model.value(env.render(charset));

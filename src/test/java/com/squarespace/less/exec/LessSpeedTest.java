@@ -19,14 +19,14 @@ package com.squarespace.less.exec;
 import java.util.Arrays;
 import java.util.List;
 
+import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.model.Node;
-import com.squarespace.less.model.Stylesheet;
 
 
 public class LessSpeedTest extends LessTestBase {
+
 
   private static final List<String> SCRIPTS = Arrays.asList(
       ".m(@arg) { @a: @arg + 1; .foo { a: @arg + 1; } } .rule { @a: 3; .m(10); @a: 4; a: @a }",
@@ -60,6 +60,7 @@ public class LessSpeedTest extends LessTestBase {
       ".foo { margin: ; }"
       );
 
+  private static final LessCompiler compiler = new LessCompiler();
 
 //  @Test  // enable for manual performance testing.
   public void testSpeed() throws LessException {
@@ -75,12 +76,10 @@ public class LessSpeedTest extends LessTestBase {
 
   private void run(List<String> scripts, int iters) throws LessException {
     long start = System.nanoTime();
+    LessHarness harness = new LessHarness();
     for (int i = 0; i < iters; i++) {
       for (String script : scripts) {
-        LessHarness h = new LessHarness();
-        Node node = h.parse(script);
-        LessEvaluator machine = new LessEvaluator(h.context());
-        machine.render((Stylesheet)node);
+        compiler.compile(script, harness.context());
       }
     }
     double elapsed = (System.nanoTime() - start) / 1000000.0;
@@ -101,11 +100,8 @@ public class LessSpeedTest extends LessTestBase {
 
   private void runVerbose(String script) throws LessException {
     System.out.println("Executing:\n" + script + "\n-------------------------------------");
-    LessHarness h = new LessHarness();
-    Node node = h.parse(script);
-
-    LessEvaluator machine = new LessEvaluator(h.context());
-    String result = machine.render((Stylesheet)node);
+    LessHarness harness = new LessHarness();
+    String result = compiler.compile(script, harness.context());
     System.out.println(result);
     System.out.println("===========================================");
   }
