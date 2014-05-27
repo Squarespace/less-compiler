@@ -76,11 +76,12 @@ public class RuleTest extends LessTestBase {
 
   @Test
   public void testAnonRuleValueParse() throws LessException {
-    LessStream stm = new LessStream("foo bar;");
+    LessContext ctx = new LessContext();
+    LessStream stm = new LessStream(ctx, "foo bar;");
     assertTrue(stm.matchAnonRuleValue());
     assertEquals(stm.token(), "foo bar");
 
-    stm = new LessStream("foo: foo: foo: 123 ;");
+    stm = new LessStream(ctx, "foo: foo: foo: 123 ;");
     assertTrue(stm.matchAnonRuleValue());
     assertEquals(stm.token(), "foo: foo: foo: 123 "); // token before trimming
 }

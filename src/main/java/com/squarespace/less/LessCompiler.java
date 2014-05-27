@@ -69,7 +69,7 @@ public class LessCompiler {
   public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
     LessStats stats = ctx.stats();
     long started = stats.now();
-    LessStream stm = new LessStream(raw, rootPath, fileName);
+    LessStream stm = new LessStream(ctx, raw, rootPath, fileName);
     Stylesheet sheet = (Stylesheet) stm.parse(STYLESHEET);
     stats.parseDone(raw.length(), started);
     return sheet;

@@ -154,7 +154,7 @@ public class LessHarness {
   }
 
   private Node parse(String raw, Parselet[] parselet) throws LessException {
-    LessStream stm = new LessStream(raw);
+    LessStream stm = new LessStream(context(), raw);
     Node res = stm.parse(parselet);
     stm.checkComplete();
     return res;

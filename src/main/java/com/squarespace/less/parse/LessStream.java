@@ -21,6 +21,7 @@ import static com.squarespace.less.core.SyntaxErrorMaker.incompleteParse;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Node;
@@ -87,6 +88,8 @@ public class LessStream extends Stream {
 
   private final Matcher matcherWord;
 
+  private final LessContext context;
+
   private int matchEnd = -1;
 
   private Mark tokenPosition = new Mark();
@@ -99,12 +102,13 @@ public class LessStream extends Stream {
 
   private Mark position = new Mark();
 
-  public LessStream(String raw) {
-    this(raw, null, null);
+  public LessStream(LessContext ctx, String raw) {
+    this(ctx, raw, null, null);
   }
 
-  public LessStream(String raw, Path rootPath, Path fileName) {
+  public LessStream(LessContext ctx, String raw, Path rootPath, Path fileName) {
     super(raw);
+    this.context = ctx;
     this.rootPath = rootPath;
     this.fileName = fileName;
     this.matcherAnd = Patterns.AND.matcher(raw);
@@ -139,6 +143,10 @@ public class LessStream extends Stream {
 
   public LessException parseError(LessException exc) {
     return ParseUtils.parseError(exc, fileName, raw, furthest);
+  }
+
+  public LessContext context() {
+    return context;
   }
 
   public Path rootPath() {
