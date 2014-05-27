@@ -270,7 +270,7 @@ public class LessEvaluator {
 
     Stylesheet stylesheet = null;
     try {
-      stylesheet = ctx.importStylesheet(path, imp.rootPath(), imp.once());
+      stylesheet = ctx.importer().importStylesheet(path, imp.rootPath(), imp.once());
     } catch (LessException e) {
       e.push(imp);
       throw e;
