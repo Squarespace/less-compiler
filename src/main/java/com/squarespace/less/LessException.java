@@ -33,14 +33,14 @@ public class LessException extends Exception {
   /** Collects additional context about where the primary error occurred */
   private final Deque<Node> errorContext = new ArrayDeque<>(5);
 
-  private final ErrorInfo info;
+  private final LessErrorInfo info;
 
-  public LessException(ErrorInfo info) {
+  public LessException(LessErrorInfo info) {
     super(info.getMessage());
     this.info = info;
   }
 
-  public ErrorInfo primaryError() {
+  public LessErrorInfo primaryError() {
     return info;
   }
 

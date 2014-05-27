@@ -19,9 +19,9 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.ExecuteErrorMaker.badColorMath;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 
-import com.squarespace.less.ErrorInfo;
+import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessException;
-import com.squarespace.less.Options;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.ExecEnv;
 
@@ -82,7 +82,7 @@ public class Operation extends BaseNode {
     op0 = cast(op0);
     op1 = cast(op1);
 
-    Options opts = env.context().options();
+    LessOptions opts = env.context().options();
     if (op0.is(NodeType.DIMENSION) && op1.is(NodeType.COLOR)) {
       if (operator == Operator.MULTIPLY || operator == Operator.ADD) {
         Node temp = op0;
@@ -90,7 +90,7 @@ public class Operation extends BaseNode {
         op1 = temp;
 
       } else {
-        ErrorInfo info = badColorMath(operator, op0);
+        LessErrorInfo info = badColorMath(operator, op0);
         if (opts.strict()) {
           throw new LessException(info);
         } else if (!opts.hideWarnings()) {

@@ -82,7 +82,7 @@ public class FeatureUtilsTest extends LessTestBase {
 
   private String render(Features ancestors, Features current, GenericBlock defs) throws LessException {
     LessHarness h = new LessHarness();
-    Context ctx = h.context();
+    LessContext ctx = h.context();
     ExecEnv env = ctx.newEnv();
     if (defs != null) {
       env.push(defs);

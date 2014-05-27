@@ -24,7 +24,7 @@ import com.squarespace.less.core.MapBuilder;
 /**
  * Captures type and message formatting arguments for error messages.
  */
-public class ErrorInfo {
+public class LessErrorInfo {
 
   private static final String ARG0 = "arg0";
 
@@ -40,37 +40,37 @@ public class ErrorInfo {
 
   private final MapBuilder<String, Object> builder = new MapBuilder<>();
 
-  private final ErrorType type;
+  private final LessErrorType type;
 
-  public ErrorInfo(ErrorType type) {
+  public LessErrorInfo(LessErrorType type) {
     this.type = type;
   }
 
-  public ErrorInfo code(Object code) {
+  public LessErrorInfo code(Object code) {
     return put(CODE, code);
   }
 
-  public ErrorInfo arg0(Object arg) {
+  public LessErrorInfo arg0(Object arg) {
     return put(ARG0, arg);
   }
 
-  public ErrorInfo arg1(Object arg) {
+  public LessErrorInfo arg1(Object arg) {
     return put(ARG1, arg);
   }
 
-  public ErrorInfo arg2(Object arg) {
+  public LessErrorInfo arg2(Object arg) {
     return put(ARG2, arg);
   }
 
-  public ErrorInfo name(Object name) {
+  public LessErrorInfo name(Object name) {
     return put(NAME, name);
   }
 
-  public ErrorInfo type(Object type) {
+  public LessErrorInfo type(Object type) {
     return put(TYPE, type);
   }
 
-  public ErrorType type() {
+  public LessErrorType type() {
     return type;
   }
 
@@ -81,7 +81,7 @@ public class ErrorInfo {
     return buf.toString();
   }
 
-  private ErrorInfo put(String key, Object val) {
+  private LessErrorInfo put(String key, Object val) {
     builder.put(key, val);
     return this;
   }

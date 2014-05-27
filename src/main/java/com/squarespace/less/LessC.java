@@ -36,13 +36,13 @@ import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Stylesheet;
 
 
-public class LessC extends BaseCommand {
+public class LessC extends LessBaseCommand {
 
   private static final String PROGRAM_NAME = "sqs_lessc";
 
   private static final String IMPLNAME = "(LESS Compiler) [Java, Squarespace]";
 
-  private final Options options = new Options();
+  private final LessOptions options = new LessOptions();
 
   @Parameter(description = "LESS_FILE [OUTPUT_FILE]")
   private final List<String> args = new ArrayList<String>();
@@ -52,7 +52,7 @@ public class LessC extends BaseCommand {
       names = { "-D" },
       description = "Debug mode (canonical, parse, expand)",
       converter = DebugModeConverter.class)
-  private DebugMode debugMode;
+  private LessDebugMode debugMode;
 
 // TODO: low priority
 //  @Parameter(names = { "-L", "-lines" }, description = "Line number")
@@ -62,7 +62,7 @@ public class LessC extends BaseCommand {
   public List<String> importPaths;
 
   @Parameter(names = { "-R" }, description = "Recursion limit")
-  private int recursionLimit = Options.DEFAULT_RECURSION_LIMIT;
+  private int recursionLimit = LessOptions.DEFAULT_RECURSION_LIMIT;
 
   @Parameter(names = { "-S", "-stats" }, description = "Output statistics")
   private boolean stats = false;
@@ -80,7 +80,7 @@ public class LessC extends BaseCommand {
   private boolean help;
 
   @Parameter(names = { "-i", "-indent" }, description = "Indent size")
-  private int indent = Options.DEFAULT_INDENT;
+  private int indent = LessOptions.DEFAULT_INDENT;
 
   @Parameter(names = { "-import-once" }, description = "Imports are only processed once")
   private boolean importOnce;
@@ -190,18 +190,18 @@ public class LessC extends BaseCommand {
       fail("error reading '" + path + "': " + e.getMessage());
     }
 
-    Context ctx = new Context(options);
+    LessContext ctx = new LessContext(options);
     ctx.setCompiler(compiler);
     try {
-      if (debugMode == DebugMode.CANONICAL) {
+      if (debugMode == LessDebugMode.CANONICAL) {
         Stylesheet stylesheet = compiler.parse(source, ctx, rootPath, fileName);
         System.out.println(canonicalize(stylesheet));
 
-      } else if (debugMode == DebugMode.PARSE) {
+      } else if (debugMode == LessDebugMode.PARSE) {
         Stylesheet stylesheet = compiler.parse(source, ctx, rootPath, fileName);
         System.out.println(parseTree(stylesheet));
 
-      } else if (debugMode == DebugMode.EXPAND) {
+      } else if (debugMode == LessDebugMode.EXPAND) {
         // NOTE: This mode doesn't fully work yet.
         Stylesheet stylesheet = compiler.parse(source, ctx, rootPath, fileName);
         stylesheet = compiler.expand(stylesheet, ctx);
@@ -260,15 +260,15 @@ public class LessC extends BaseCommand {
     return buf.toString();
   }
 
-  public static class DebugModeConverter implements IStringConverter<DebugMode> {
+  public static class DebugModeConverter implements IStringConverter<LessDebugMode> {
     @Override
-    public DebugMode convert(String value) {
+    public LessDebugMode convert(String value) {
       try {
-        return DebugMode.fromString(value);
+        return LessDebugMode.fromString(value);
 
       } catch (IllegalArgumentException e) {
         throw new ParameterException("Unknown debug mode '" + value + "'. "
-            + "Available modes are: " + DebugMode.modes());
+            + "Available modes are: " + LessDebugMode.modes());
       }
     }
   }

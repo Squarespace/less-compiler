@@ -18,7 +18,7 @@ package com.squarespace.less.exec;
 
 import java.util.List;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.CharClass;
@@ -56,7 +56,7 @@ public class NodeRenderer {
   private NodeRenderer() {
   }
 
-  public static String render(Context ctx, Node node) throws LessException {
+  public static String render(LessContext ctx, Node node) throws LessException {
     Buffer buf = ctx.acquireBuffer();
     render(buf, node);
     ctx.returnBuffer();

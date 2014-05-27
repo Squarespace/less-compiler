@@ -18,9 +18,9 @@ package com.squarespace.less.exec;
 
 import java.nio.file.Path;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
-import com.squarespace.less.Options;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.FlexList;
 import com.squarespace.less.core.LessInternalException;
@@ -49,11 +49,11 @@ import com.squarespace.less.model.Stylesheet;
  */
 public class LessRenderer {
 
-  private final Context ctx;
+  private final LessContext ctx;
 
   private final RenderEnv env;
 
-  private final Options opts;
+  private final LessOptions opts;
 
   private final CssModel model;
 
@@ -61,14 +61,14 @@ public class LessRenderer {
 
   private int warningId;
 
-  private LessRenderer(Context context) {
+  private LessRenderer(LessContext context) {
     this.ctx = context;
     this.env = context.newRenderEnv();
     this.opts = context.options();
     this.model = new CssModel(context);
   }
 
-  public static String render(Context context, Stylesheet sheet) throws LessException {
+  public static String render(LessContext context, Stylesheet sheet) throws LessException {
     return new LessRenderer(context).render(sheet);
   }
 

@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.squarespace.less.ErrorInfo;
+import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessException;
-import com.squarespace.less.Options;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
@@ -91,8 +91,8 @@ public class ArgSpec {
       throw new LessException(argCount(func.name(), minArgs, size));
 
     } else if (size > validators.size() && !variadic) {
-      Options opts = env.context().options();
-      ErrorInfo info = argCount(func.name(), minArgs, size);
+      LessOptions opts = env.context().options();
+      LessErrorInfo info = argCount(func.name(), minArgs, size);
       if (opts.strict()) {
         throw new LessException(info);
       }

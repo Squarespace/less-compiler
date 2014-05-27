@@ -18,7 +18,7 @@ package com.squarespace.less.core;
 
 import java.nio.file.Path;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 
 
@@ -32,7 +32,7 @@ public class ErrorUtils {
   /**
    * Formats an error message including a full stack trace.
    */
-  public static String formatError(Context ctx, Path mainPath, LessException exc, int indent) {
+  public static String formatError(LessContext ctx, Path mainPath, LessException exc, int indent) {
     Buffer buf = ctx.acquireBuffer();
     buf.append("An error occurred in '" + mainPath + "':\n\n");
     StackFormatter fmt = new StackFormatter(exc.errorContext(), 4, STACK_FRAME_WINDOW);

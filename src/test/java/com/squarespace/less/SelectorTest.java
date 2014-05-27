@@ -79,7 +79,7 @@ public class SelectorTest extends LessTestBase {
   }
 
   private String render(boolean compress, Selector selector) throws LessException {
-    Context ctx = new Context(new Options(compress));
+    LessContext ctx = new LessContext(new LessOptions(compress));
     ExecEnv env = ctx.newEnv();
     return env.context().render(selector);
   }

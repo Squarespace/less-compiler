@@ -183,7 +183,7 @@ public class ArgumentBinderTest extends LessTestBase {
     }
   }
 
-  private void assertBindFails(String rawParams, String rawArgs, ErrorType errorType) throws LessException {
+  private void assertBindFails(String rawParams, String rawArgs, LessErrorType errorType) throws LessException {
     MixinParams params = (MixinParams) parse(rawParams, Parselets.MIXIN_PARAMS);
     MixinCallArgs args = (MixinCallArgs) parse(rawArgs, Parselets.MIXIN_CALL_ARGS);
     try {

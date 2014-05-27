@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * General interface for syntax and execution errors.
  */
-public interface ErrorType {
+public interface LessErrorType {
 
   String prefix(Map<String, Object> params);
 

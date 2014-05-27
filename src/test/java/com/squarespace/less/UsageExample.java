@@ -27,8 +27,8 @@ public class UsageExample {
 
   private static final LessMessages MESSAGES = new LessMessages();
 
-  private static Options buildOptions(Path importPath) {
-    Options opts = new Options();
+  private static LessOptions buildOptions(Path importPath) {
+    LessOptions opts = new LessOptions();
     opts.addImportPath(importPath.toString());
     opts.compress(false);
     opts.tracing(false);
@@ -50,8 +50,8 @@ public class UsageExample {
     String source = "@import 'base.less'; .ruleset { color: @baseColor; }";
     Path path = Paths.get("sheet.less").toAbsolutePath();
     LessLoader loader = new HashMapLessLoader(buildMap());
-    Options opts = buildOptions(path);
-    Context ctx = new Context(opts, loader);
+    LessOptions opts = buildOptions(path);
+    LessContext ctx = new LessContext(opts, loader);
     ctx.setCompiler(COMPILER);
     try {
       String result = COMPILER.compile(source, ctx, path.getParent(), path);

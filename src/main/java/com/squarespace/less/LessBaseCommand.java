@@ -19,7 +19,7 @@ package com.squarespace.less;
 import java.io.PrintStream;
 
 
-public abstract class BaseCommand {
+public abstract class LessBaseCommand {
 
   protected static final String GLOB_LESS = "glob:*.less";
 

@@ -20,9 +20,9 @@ import static com.squarespace.less.core.ExecuteErrorMaker.incompatibleUnits;
 import static com.squarespace.less.core.ExecuteErrorMaker.invalidOperation;
 import static com.squarespace.less.model.NodeType.COLOR;
 
-import com.squarespace.less.ErrorInfo;
+import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessException;
-import com.squarespace.less.Options;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.exec.ExecEnv;
 
 
@@ -63,7 +63,7 @@ public abstract class BaseColor extends BaseNode {
 
   @Override
   public Node operate(ExecEnv env, Operator op, Node arg) throws LessException {
-    Options opts = env.context().options();
+    LessOptions opts = env.context().options();
     if (arg.is(NodeType.COLOR)) {
       return operate(op, this, (BaseColor)arg);
 
@@ -71,7 +71,7 @@ public abstract class BaseColor extends BaseNode {
       // Dimensions that have units cannot be added/multiplied with a color.
       Dimension dim = (Dimension)arg;
       if (dim.unit() != null) {
-        ErrorInfo info = incompatibleUnits(dim.unit(), NodeType.COLOR);
+        LessErrorInfo info = incompatibleUnits(dim.unit(), NodeType.COLOR);
         if (opts.strict()) {
           throw new LessException(info);
         }
@@ -82,7 +82,7 @@ public abstract class BaseColor extends BaseNode {
       return operate(op, this, fromDimension((Dimension)arg));
 
     } else {
-      ErrorInfo info = invalidOperation(op, type());
+      LessErrorInfo info = invalidOperation(op, type());
       if (opts.strict()) {
         throw new LessException(info);
       }

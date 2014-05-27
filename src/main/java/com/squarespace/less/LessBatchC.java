@@ -43,13 +43,13 @@ import com.squarespace.less.model.Stylesheet;
  *
  * TODO:  merge this in as a subcommand of LessC ("batch" mode).
  */
-public class LessBatchC extends BaseCommand {
+public class LessBatchC extends LessBaseCommand {
 
   private static final String PROGRAM_NAME = "sqs_batch_lessc";
 
   private static final String IMPLNAME = "(LESS Batch Compiler) [Java, Squarespace]";
 
-  private final Options options = new Options();
+  private final LessOptions options = new LessOptions();
 
   @Parameter(description = "LESS_DIR [OUTPUT_DIR]")
   private List<String> args;
@@ -151,7 +151,7 @@ public class LessBatchC extends BaseCommand {
     boolean error = false;
     try {
       log("beginning parse and pre-cache:\n");
-      Context ctx = new Context(options);
+      LessContext ctx = new LessContext(options);
       LessCompiler compiler = new LessCompiler();
       lessPaths = LessUtils.getMatchingFiles(inputPath, GLOB_LESS, true);
       for (Path path : lessPaths) {
@@ -208,7 +208,7 @@ public class LessBatchC extends BaseCommand {
           Path cssPath = realPath.resolve(fileParts[0] + ".css").normalize();
           log("compiling to " + cssPath);
           long start = System.nanoTime();
-          ctx = new Context(options, null, preCache);
+          ctx = new LessContext(options, null, preCache);
           ctx.setCompiler(compiler);
           String cssData = compiler.render(stylesheet.copy(), ctx);
           writeFile(cssPath, cssData);

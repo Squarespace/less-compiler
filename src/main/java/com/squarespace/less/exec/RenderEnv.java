@@ -16,7 +16,7 @@
 
 package com.squarespace.less.exec;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
@@ -34,22 +34,22 @@ import com.squarespace.less.model.Selectors;
  */
 public class RenderEnv {
 
-  private final Context ctx;
+  private final LessContext ctx;
 
   private RenderFrame frame;
 
   private int depth;
 
-  public RenderEnv(Context ctx) {
+  public RenderEnv(LessContext ctx) {
     this(ctx, null);
   }
 
-  public RenderEnv(Context ctx, RenderFrame frame) {
+  public RenderEnv(LessContext ctx, RenderFrame frame) {
     this.ctx = ctx;
     this.frame = frame;
   }
 
-  public Context context() {
+  public LessContext context() {
     return ctx;
   }
 

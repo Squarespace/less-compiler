@@ -19,7 +19,7 @@ package com.squarespace.less.exec;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
 
@@ -32,11 +32,11 @@ public class BufferStack {
 
   private final List<Buffer> bufferList = new ArrayList<>();
 
-  private final Context ctx;
+  private final LessContext ctx;
 
   private int index;
 
-  public BufferStack(Context ctx) {
+  public BufferStack(LessContext ctx) {
     this.ctx = ctx;
   }
 

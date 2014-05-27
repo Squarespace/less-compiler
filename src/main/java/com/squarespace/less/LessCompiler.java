@@ -51,8 +51,8 @@ public class LessCompiler {
     this.functionTable.setInUse();
   }
 
-  public Context context(Options opts) {
-    Context ctx = new Context(opts);
+  public LessContext context(LessOptions opts) {
+    LessContext ctx = new LessContext(opts);
     ctx.setCompiler(this);
     return ctx;
   }
@@ -61,11 +61,11 @@ public class LessCompiler {
     return functionTable;
   }
 
-  public Stylesheet parse(String raw, Context ctx) throws LessException {
+  public Stylesheet parse(String raw, LessContext ctx) throws LessException {
     return parse(raw, ctx, null, null);
   }
 
-  public Stylesheet parse(String raw, Context ctx, Path rootPath, Path fileName) throws LessException {
+  public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
     LessStats stats = ctx.stats();
     long started = stats.now();
     LessStream stm = new LessStream(raw, rootPath, fileName);
@@ -75,21 +75,21 @@ public class LessCompiler {
     return sheet == null ? null : sheet;
   }
 
-  public String render(Stylesheet stylesheet, Context ctx) throws LessException {
+  public String render(Stylesheet stylesheet, LessContext ctx) throws LessException {
     LessEvaluator engine = new LessEvaluator(ctx);
     return engine.render(stylesheet);
   }
 
-  public Stylesheet expand(Stylesheet stylesheet, Context ctx) throws LessException {
+  public Stylesheet expand(Stylesheet stylesheet, LessContext ctx) throws LessException {
     LessEvaluator engine = new LessEvaluator(ctx);
     return engine.expand(stylesheet);
   }
 
-  public String compile(String raw, Context ctx) throws LessException {
+  public String compile(String raw, LessContext ctx) throws LessException {
     return compile(raw, ctx, null, null);
   }
 
-  public String compile(String raw, Context ctx, Path rootPath, Path fileName) throws LessException {
+  public String compile(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
     Stylesheet sheet = parse(raw, ctx, rootPath, fileName);
     LessStats stats = ctx.stats();
     long started = stats.now();

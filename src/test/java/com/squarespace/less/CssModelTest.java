@@ -27,8 +27,8 @@ public class CssModelTest {
 
   @Test
   public void testBasic() {
-    Options opts = new Options(true);
-    CssModel model = new CssModel(new Context(opts));
+    LessOptions opts = new LessOptions(true);
+    CssModel model = new CssModel(new LessContext(opts));
 
     model.push(NodeType.MEDIA);
     model.header("@media foo and bar");

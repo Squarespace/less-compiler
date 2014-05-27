@@ -26,7 +26,7 @@ import com.squarespace.less.core.MapFormat;
 /**
  * Errors thrown in the execute phase of the compile are execute errors.
  */
-public enum ExecuteErrorType implements ErrorType {
+public enum ExecuteErrorType implements LessErrorType {
 
   ARG_COUNT
   ("Function %(name)s requires at least %(arg0)s args, found %(arg1)s "),

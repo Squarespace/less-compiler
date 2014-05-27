@@ -19,11 +19,11 @@ package com.squarespace.less.core;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
-import com.squarespace.less.Context;
-import com.squarespace.less.ErrorType;
+import com.squarespace.less.LessContext;
+import com.squarespace.less.LessErrorType;
 import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessException;
-import com.squarespace.less.Options;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.exec.LessEvaluator;
@@ -68,31 +68,31 @@ public class LessHarness {
     this.defs = defs;
   }
 
-  public Context context() {
-    Context ctx = new Context();
+  public LessContext context() {
+    LessContext ctx = new LessContext();
     ctx.setFunctionTable(FUNCTIONS);
     return ctx;
   }
 
-  public Context context(Options opts) {
-    Context ctx = new Context(opts);
+  public LessContext context(LessOptions opts) {
+    LessContext ctx = new LessContext(opts);
     ctx.setFunctionTable(FUNCTIONS);
     return ctx;
   }
 
   public String execute(String raw) throws LessException {
-    return execute(raw, new Options());
+    return execute(raw, new LessOptions());
   }
 
-  public String execute(String raw, Options opts) throws LessException {
-    Context ctx = context(opts);
+  public String execute(String raw, LessOptions opts) throws LessException {
+    LessContext ctx = context(opts);
     ctx.setCompiler(new LessCompiler());
     LessEvaluator engine = new LessEvaluator(ctx);
     Node res = parse(raw, parselet);
     return engine.render((Stylesheet)res);
   }
 
-  public void executeFails(String raw, ErrorType expected) {
+  public void executeFails(String raw, LessErrorType expected) {
     try {
       execute(raw);
       fail("Expected LessException of type " + expected);
@@ -110,7 +110,7 @@ public class LessHarness {
     assertEquals(res, expected, raw);
   }
 
-  public void parseFails(String raw, ErrorType expected) {
+  public void parseFails(String raw, LessErrorType expected) {
     try {
       parse(raw);
       fail("Expected LessException of type " + expected);
@@ -130,7 +130,7 @@ public class LessHarness {
     assertEquals(res, expected, raw);
   }
 
-  public void evalFails(String raw, ErrorType expected) throws LessException {
+  public void evalFails(String raw, LessErrorType expected) throws LessException {
     try {
       evaluate(raw, parselet, define(defs));
       fail("Expected LessException of type " + expected);
@@ -167,7 +167,7 @@ public class LessHarness {
   }
 
   private ExecEnv define(GenericBlock defs) throws LessException {
-    Context ctx = context();
+    LessContext ctx = context();
     ExecEnv env = ctx.newEnv();
     if (defs != null) {
       env.push(defs);

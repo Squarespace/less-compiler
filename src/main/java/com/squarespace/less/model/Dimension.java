@@ -20,9 +20,9 @@ import static com.squarespace.less.core.ExecuteErrorMaker.expectedMathOp;
 import static com.squarespace.less.core.ExecuteErrorMaker.incompatibleUnits;
 import static com.squarespace.less.core.ExecuteErrorMaker.invalidOperation;
 
-import com.squarespace.less.ErrorInfo;
+import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessException;
-import com.squarespace.less.Options;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.ExecuteErrorMaker;
 import com.squarespace.less.exec.ExecEnv;
@@ -99,7 +99,7 @@ public class Dimension extends BaseNode {
       throw new LessException(invalidOperation(op, type()));
     }
 
-    Options opts = env.context().options();
+    LessOptions opts = env.context().options();
     Dimension dim = (Dimension)node;
     Unit newUnit = (unit != null) ? unit : dim.unit;
     double result = 0.0;
@@ -109,7 +109,7 @@ public class Dimension extends BaseNode {
     if (factor == 0.0) {
       if (dim.unit != Unit.PERCENTAGE) {
         // Emit a warning if we're converting between incompatible units
-        ErrorInfo info = incompatibleUnits(unit, dim.unit);
+        LessErrorInfo info = incompatibleUnits(unit, dim.unit);
         if (!opts.hideWarnings()) {
           env.addWarning(info.getMessage() + ".. stripping unit.");
         }
@@ -126,7 +126,7 @@ public class Dimension extends BaseNode {
 
       case DIVIDE:
         if (scaled == 0.0) {
-          ErrorInfo info = ExecuteErrorMaker.divideByZero(this);
+          LessErrorInfo info = ExecuteErrorMaker.divideByZero(this);
           if (opts.strict()) {
             throw new LessException(info);
           } else if (!opts.hideWarnings()) {

@@ -45,11 +45,11 @@ import com.squarespace.less.model.Stylesheet;
  *  - reusable buffer stack
  *  etc.
  */
-public class Context {
+public class LessContext {
 
-  private static final Options DEFAULT_OPTS = new Options();
+  private static final LessOptions DEFAULT_OPTS = new LessOptions();
 
-  private final Options opts;
+  private final LessOptions opts;
 
   private final BufferStack bufferStack;
 
@@ -69,19 +69,19 @@ public class Context {
 
   private int mixinDepth;
 
-  public Context() {
+  public LessContext() {
     this(DEFAULT_OPTS);
   }
 
-  public Context(Options opts) {
+  public LessContext(LessOptions opts) {
     this(opts, null);
   }
 
-  public Context(Options opts, LessLoader loader) {
+  public LessContext(LessOptions opts, LessLoader loader) {
     this(opts, loader, null);
   }
 
-  public Context(Options opts, LessLoader loader, Map<Path, Stylesheet> preCache) {
+  public LessContext(LessOptions opts, LessLoader loader, Map<Path, Stylesheet> preCache) {
     this.opts = opts;
     this.bufferStack = new BufferStack(this);
     this.mixinResolver = new MixinResolver();
@@ -91,7 +91,7 @@ public class Context {
     this.loader = loader == null ? new FilesystemLessLoader() : loader;
   }
 
-  public Options options() {
+  public LessOptions options() {
     return opts;
   }
 
@@ -239,8 +239,8 @@ public class Context {
     return new RenderEnv(this);
   }
 
-  public ErrorInfo newError(ErrorType type) {
-    return new ErrorInfo(type);
+  public LessErrorInfo newError(LessErrorType type) {
+    return new LessErrorInfo(type);
   }
 
   public String render(Node node) throws LessException {

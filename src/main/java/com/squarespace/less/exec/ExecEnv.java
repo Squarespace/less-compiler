@@ -16,7 +16,7 @@
 
 package com.squarespace.less.exec;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.FlexList;
 import com.squarespace.less.model.Block;
@@ -29,27 +29,27 @@ import com.squarespace.less.model.Definition;
  */
 public class ExecEnv {
 
-  private final Context ctx;
+  private final LessContext ctx;
 
   private final FlexList<Block> frames;
 
   private FlexList<String> warnings;
 
-  public ExecEnv(Context ctx) {
+  public ExecEnv(LessContext ctx) {
     this(ctx, new FlexList<Block>(64), null);
   }
 
-  public ExecEnv(Context ctx, FlexList<Block> initialStack) {
+  public ExecEnv(LessContext ctx, FlexList<Block> initialStack) {
     this(ctx, initialStack, null);
   }
 
-  public ExecEnv(Context ctx, FlexList<Block> initialStack, FlexList<String> warnings) {
+  public ExecEnv(LessContext ctx, FlexList<Block> initialStack, FlexList<String> warnings) {
     this.ctx = ctx;
     this.frames = initialStack;
     this.warnings = warnings;
   }
 
-  public Context context() {
+  public LessContext context() {
     return ctx;
   }
 

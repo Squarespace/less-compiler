@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * Represents all basic options for the compiler.
  */
-public class Options {
+public class LessOptions {
 
   public static final int DEFAULT_INDENT = 2;
 
@@ -43,15 +43,15 @@ public class Options {
 
   private int recursionLimit = DEFAULT_RECURSION_LIMIT;
 
-  public Options() {
+  public LessOptions() {
   }
 
-  public Options(int indent) {
+  public LessOptions(int indent) {
     compress(false);
     indent(indent);
   }
 
-  public Options(boolean compress) {
+  public LessOptions(boolean compress) {
     compress(compress);
   }
 

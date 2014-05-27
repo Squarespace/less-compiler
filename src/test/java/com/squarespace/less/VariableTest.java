@@ -127,7 +127,7 @@ public class VariableTest extends LessTestBase {
 
   @Test
   public void testNestedVariables() throws LessException {
-    Options opts = new Options(true);
+    LessOptions opts = new LessOptions(true);
     LessHarness h = new LessHarness();
 
     String str = "@a: 1px; .x { @b: #111; .y { .z { key: @a @b; } } }";

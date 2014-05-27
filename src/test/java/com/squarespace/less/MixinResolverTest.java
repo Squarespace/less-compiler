@@ -35,7 +35,7 @@ public class MixinResolverTest extends LessTestBase {
 
   @Test
   public void testResolver() throws LessException {
-    Context ctx = new Context();
+    LessContext ctx = new LessContext();
     ExecEnv env = ctx.newEnv();
     MixinCall call = mixincall(selector(element("#ns"), element(".m1")));
     MixinMatcher matcher = new MixinMatcher(env, call);
@@ -55,7 +55,7 @@ public class MixinResolverTest extends LessTestBase {
 //  @Test  // enable for performance testing and profiling
   public void testBindSpeed() throws Exception {
     int iters = 1000;
-    Context ctx = new Context();
+    LessContext ctx = new LessContext();
     ExecEnv env = ctx.newEnv();
     MixinCallArgs args = args(',', arg("a", dim(1)), arg("b", dim(2)), arg("c", dim(3)), arg(dim(17)));
     MixinCall call = mixincall(selector(element(".mixin")), args);

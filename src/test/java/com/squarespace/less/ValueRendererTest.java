@@ -102,7 +102,7 @@ public class ValueRendererTest extends LessTestBase {
   }
 
   private String render(Node node, boolean compress) throws LessException {
-    Context ctx = new Context(new Options(compress));
+    LessContext ctx = new LessContext(new LessOptions(compress));
     ExecEnv env = ctx.newEnv();
     return env.context().render(node);
   }

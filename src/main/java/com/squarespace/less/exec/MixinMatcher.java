@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Argument;
@@ -227,7 +227,7 @@ public class MixinMatcher {
     Node val2 = param.value();
     if (!val1.equals(val2)) {
       // If Node.equals() fails, try compare the rendered output.
-      Context ctx = callEnv.context();
+      LessContext ctx = callEnv.context();
       String v0 = ctx.render(val1);
       String v1 = ctx.render(val2);
       if (!v0.equals(v1)) {

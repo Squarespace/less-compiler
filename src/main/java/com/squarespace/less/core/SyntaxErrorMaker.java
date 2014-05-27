@@ -16,8 +16,8 @@
 
 package com.squarespace.less.core;
 
-import com.squarespace.less.ErrorInfo;
-import com.squarespace.less.ErrorType;
+import com.squarespace.less.LessErrorInfo;
+import com.squarespace.less.LessErrorType;
 import com.squarespace.less.SyntaxErrorType;
 
 
@@ -30,36 +30,36 @@ public class SyntaxErrorMaker {
   private SyntaxErrorMaker() {
   }
 
-  public static ErrorInfo alphaUnitsInvalid(Object arg) {
+  public static LessErrorInfo alphaUnitsInvalid(Object arg) {
     return error(SyntaxErrorType.ALPHA_UNITS_INVALID).arg0(arg);
   }
 
-  public static ErrorInfo expected(Object thing) {
+  public static LessErrorInfo expected(Object thing) {
     return error(SyntaxErrorType.EXPECTED).arg0(thing);
   }
 
-  public static ErrorInfo general(Object obj) {
+  public static LessErrorInfo general(Object obj) {
     return error(SyntaxErrorType.GENERAL).arg0(obj);
   }
 
-  public static ErrorInfo incompleteParse() {
+  public static LessErrorInfo incompleteParse() {
     return error(SyntaxErrorType.INCOMPLETE_PARSE);
   }
 
-  public static ErrorInfo javascriptDisabled() {
+  public static LessErrorInfo javascriptDisabled() {
     return error(SyntaxErrorType.JAVASCRIPT_DISABLED);
   }
 
-  public static ErrorInfo mixedDelimiters() {
+  public static LessErrorInfo mixedDelimiters() {
     return error(SyntaxErrorType.MIXED_DELIMITERS);
   }
 
-  public static ErrorInfo quotedBareLF() {
+  public static LessErrorInfo quotedBareLF() {
     return error(SyntaxErrorType.QUOTED_BARE_LF);
   }
 
-  private static ErrorInfo error(ErrorType type) {
-    ErrorInfo info = new ErrorInfo(type);
+  private static LessErrorInfo error(LessErrorType type) {
+    LessErrorInfo info = new LessErrorInfo(type);
     info.code(type);
     return info;
   }

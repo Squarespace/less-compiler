@@ -76,7 +76,7 @@ public class ArgSpecTest extends LessTestBase {
   }
 
   private ExecEnv env() {
-    return new Context().newEnv();
+    return new LessContext().newEnv();
   }
 
   private void valid(ArgSpec spec, Node ... nodes) throws LessException {

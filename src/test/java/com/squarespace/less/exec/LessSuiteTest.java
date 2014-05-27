@@ -32,12 +32,12 @@ import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.squarespace.less.Context;
-import com.squarespace.less.ErrorType;
+import com.squarespace.less.LessContext;
+import com.squarespace.less.LessErrorType;
 import com.squarespace.less.ExecuteErrorType;
 import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessException;
-import com.squarespace.less.Options;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.SyntaxErrorType;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.ErrorUtils;
@@ -116,7 +116,7 @@ public class LessSuiteTest {
     Path errorRoot = rootPath.resolve("error");
     PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.less");
     DirectoryStream<Path> dirStream = LessUtils.getMatchingFiles(errorRoot, matcher);
-    Context ctx = new Context();
+    LessContext ctx = new LessContext();
     for (Path lessPath : dirStream) {
       System.out.println("Executing test case 'error/" + lessPath.getFileName() + "'");
 
@@ -142,10 +142,10 @@ public class LessSuiteTest {
 
   private String compile(String source, Path importRoot) throws LessException {
     // Setup the compiler
-    Options opts = new Options();
+    LessOptions opts = new LessOptions();
     opts.addImportPath(importRoot.toString());
 
-    Context ctx = new Context(opts);
+    LessContext ctx = new LessContext(opts);
     LessCompiler compiler = new LessCompiler();
     ctx.setCompiler(compiler);
 
@@ -172,7 +172,7 @@ public class LessSuiteTest {
     }
 
     // Finally, compile and execute the stylesheet.
-    ctx = new Context(opts);
+    ctx = new LessContext(opts);
     ctx.setCompiler(compiler);
     String result = compiler.compile(source, ctx);
     ctx.sanityCheck();
@@ -228,7 +228,7 @@ public class LessSuiteTest {
         }
 
         // Read the test case's source
-        ErrorType errorType = resolveErrorType(parts[0]);
+        LessErrorType errorType = resolveErrorType(parts[0]);
         StringBuilder buf = new StringBuilder();
         i++;
         while (i < size) {
@@ -245,7 +245,7 @@ public class LessSuiteTest {
     return errorCases;
   }
 
-  private ErrorType resolveErrorType(String name) {
+  private LessErrorType resolveErrorType(String name) {
     int index = name.indexOf('.');
     if (index == -1) {
       throw new InvalidTestException("The ErrorType name must be of the form CLASS.MEMBER");
@@ -264,13 +264,13 @@ public class LessSuiteTest {
 
   private static class ErrorCase {
 
-    private ErrorType errorType;
+    private LessErrorType errorType;
 
     private String failMessage;
 
     private String source;
 
-    public ErrorCase(ErrorType errorType, String failMessage, String source) {
+    public ErrorCase(LessErrorType errorType, String failMessage, String source) {
       this.errorType = errorType;
       this.failMessage = failMessage;
       this.source = source;

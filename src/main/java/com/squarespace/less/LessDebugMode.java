@@ -22,7 +22,7 @@ import com.squarespace.less.core.LessUtils;
 /**
  * Enumerate flags telling the compiler to run using a particular debug mode.
  */
-public enum DebugMode {
+public enum LessDebugMode {
 
   CANONICAL
   ("Parses and emits the canonical representation of the parsed template"),
@@ -36,16 +36,16 @@ public enum DebugMode {
 
   private String description;
 
-  private DebugMode(String desc) {
+  private LessDebugMode(String desc) {
     this.description = desc;
   }
 
-  public static DebugMode fromString(String str) {
+  public static LessDebugMode fromString(String str) {
     return valueOf(str.toUpperCase());
   }
 
   public static String modes() {
-    return LessUtils.enumValueList(DebugMode.class, true);
+    return LessUtils.enumValueList(LessDebugMode.class, true);
   }
 
   public String description() {

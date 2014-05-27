@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
-import com.squarespace.less.Options;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.FlexList;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Block;
@@ -59,11 +59,11 @@ public class LessEvaluator {
 
   private static final Pattern IMPORT_CSS = Pattern.compile(".*css([\\?;].*)?$");
 
-  private final Context ctx;
+  private final LessContext ctx;
 
-  private final Options opts;
+  private final LessOptions opts;
 
-  public LessEvaluator(Context ctx) {
+  public LessEvaluator(LessContext ctx) {
     this.ctx = ctx;
     this.opts = ctx.options();
   }
@@ -437,7 +437,7 @@ public class LessEvaluator {
     }
 
     // Limits the overall depth if the mixin call stack.
-    Context ctx = env.context();
+    LessContext ctx = env.context();
     if (ctx.mixinDepth() >= opts.recursionLimit()) {
       throw new LessException(mixinRecurse(call.path(), opts.recursionLimit()));
     }
@@ -486,7 +486,7 @@ public class LessEvaluator {
     Ruleset ruleset = (Ruleset)match.mixin();
 
     // Limits the overall depth if the mixin call stack.
-    Context ctx = env.context();
+    LessContext ctx = env.context();
     if (ctx.mixinDepth() >= opts.recursionLimit()) {
       throw new LessException(mixinRecurse(call.path(), opts.recursionLimit()));
     }

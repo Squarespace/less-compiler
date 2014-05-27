@@ -30,7 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.core.LessUtils;
@@ -64,7 +64,7 @@ public class CssModel {
 
   private CssBlock current;
 
-  public CssModel(Context ctx) {
+  public CssModel(LessContext ctx) {
     buffer = ctx.newBuffer();
     current = new CssBlock(STYLESHEET);
   }

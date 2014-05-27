@@ -20,7 +20,7 @@ import static com.squarespace.less.core.ExecuteErrorMaker.varUndefined;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 import static com.squarespace.less.model.NodeType.VARIABLE;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
@@ -99,7 +99,7 @@ public class Variable extends BaseNode {
 
     // Render the node to obtain the new variable name and eval that. We render
     // the value as if it were inside a string.
-    Context ctx = env.context();
+    LessContext ctx = env.context();
     Buffer buf = ctx.newBuffer();
     buf.startDelim('"');
     ctx.render(buf, result);

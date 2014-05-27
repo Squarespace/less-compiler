@@ -20,7 +20,7 @@ import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import java.nio.file.Path;
 
-import com.squarespace.less.Context;
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.ExecEnv;
@@ -78,7 +78,7 @@ public class Import extends BaseNode {
       value = ((Url)value).value();
     }
 
-    Context ctx = env.context();
+    LessContext ctx = env.context();
     Quoted quoted = null;
     String rendered = null;
     if (value.is(NodeType.QUOTED)) {
