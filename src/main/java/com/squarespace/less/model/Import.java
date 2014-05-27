@@ -32,11 +32,13 @@ public class Import extends BaseNode {
 
   private final Features features;
 
+  private final boolean once;
+
+  private Block block;
+
   private Path rootPath;
 
   private Path fileName;
-
-  private final boolean once;
 
   public Import(Node path, Features features, boolean once) {
     this.path = path;
@@ -54,6 +56,14 @@ public class Import extends BaseNode {
 
   public boolean once() {
     return once;
+  }
+
+  public Block block() {
+    return block;
+  }
+
+  public void block(Block block) {
+    this.block = block;
   }
 
   public Path rootPath() {

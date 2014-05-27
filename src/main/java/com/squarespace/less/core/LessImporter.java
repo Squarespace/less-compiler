@@ -6,12 +6,18 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.squarespace.less.FilesystemLessLoader;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessLoader;
 import com.squarespace.less.exec.ImportRecord;
+import com.squarespace.less.model.Import;
+import com.squarespace.less.model.Node;
+import com.squarespace.less.model.NodeType;
+import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Stylesheet;
 
 
@@ -19,6 +25,10 @@ import com.squarespace.less.model.Stylesheet;
  * Handles importing and caching stylesheets.
  */
 public class LessImporter {
+
+  private static final Pattern IMPORT_EXT = Pattern.compile(".*(\\.[a-z]*$)|([\\?;].*)$");
+
+  private static final Pattern IMPORT_CSS = Pattern.compile(".*css([\\?;].*)?$");
 
   private final Map<Path, ImportRecord> importCache = new HashMap<>();
 
@@ -32,6 +42,15 @@ public class LessImporter {
     this.context = ctx;
     this.loader = (loader == null) ? new FilesystemLessLoader() : loader;
     this.preCache = (preCache == null) ? new HashMap<Path, Stylesheet>() : preCache;
+  }
+
+  /**
+   * Retrieves an external stylesheet and initializes the import node's block.
+   */
+  public void importStylesheet(Import importNode) throws LessException {
+    String rawPath = renderImportPath(importNode);
+    Stylesheet sheet = importStylesheet(rawPath, importNode.rootPath(), importNode.once());
+    importNode.block(sheet.block());
   }
 
   /**
@@ -131,6 +150,35 @@ public class LessImporter {
       }
     }
     return null;
+  }
+
+  /**
+   * Convert the import node's path into a String.
+   */
+  private String renderImportPath(Import importNode) throws LessException {
+    Node node = importNode.path();
+    if (node.is(NodeType.URL)) {
+      return null;
+    }
+    String path = null;
+    if (node.is(NodeType.QUOTED)) {
+      Quoted quoted = ((Quoted)node).copy();
+      quoted.setEscape(true);
+      node = quoted;
+    }
+    path = context.render(node);
+
+    Matcher matcher = IMPORT_EXT.matcher(path);
+    if (!matcher.matches()) {
+      // Append optional ".less" extension
+      path += ".less";
+    } else {
+      matcher = IMPORT_CSS.matcher(path);
+      if (matcher.matches()) {
+        return null;
+      }
+    }
+    return path;
   }
 
 }
