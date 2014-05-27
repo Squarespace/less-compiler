@@ -21,7 +21,9 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -37,13 +39,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-
 
 /**
  * Generic utility methods.
  */
 public class LessUtils {
+
+  private static final int COPY_BUFFER_SIZE = 1024 * 8;
 
   private LessUtils() {
   }
@@ -71,14 +73,16 @@ public class LessUtils {
   }
 
   public static String readFile(Path path) throws IOException {
-    try (InputStream input = Files.newInputStream(path)) {
-      return IOUtils.toString(input, Constants.UTF8);
+    try (InputStream file = Files.newInputStream(path)) {
+      try (InputStreamReader reader = new InputStreamReader(file, Constants.UTF8)) {
+        return readToString(reader);
+      }
     }
   }
 
   public static void writeFile(Path outPath, String data) throws IOException {
     try (OutputStream output = Files.newOutputStream(outPath, CREATE, TRUNCATE_EXISTING)) {
-      IOUtils.write(data, output, Constants.UTF8);
+      output.write(data.getBytes(Constants.UTF8));
     }
   }
 
@@ -129,6 +133,19 @@ public class LessUtils {
     }
 
     return buf.toString();
+  }
+
+  public static String readToString(Reader input) throws IOException {
+    StringBuilder output = new StringBuilder();
+    char[] temp = new char[COPY_BUFFER_SIZE];
+    for (;;) {
+      int n = input.read(temp);
+      if (n == -1) {
+        break;
+      }
+      output.append(temp, 0, n);
+    }
+    return output.toString();
   }
 
 }

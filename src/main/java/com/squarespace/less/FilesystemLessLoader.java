@@ -20,13 +20,14 @@ import static com.squarespace.less.core.ExecuteErrorMaker.importError;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
-import org.apache.commons.io.IOUtils;
-
 import com.squarespace.less.core.Constants;
+import com.squarespace.less.core.LessUtils;
 
 
 /**
@@ -46,7 +47,9 @@ public class FilesystemLessLoader implements LessLoader {
 
   private String readFile(Path path) throws LessException {
     try (InputStream input = Files.newInputStream(path)) {
-      return IOUtils.toString(input, Constants.UTF8);
+      try (Reader reader = new InputStreamReader(input, Constants.UTF8)) {
+        return LessUtils.readToString(reader);
+      }
 
     } catch (NoSuchFileException e) {
       throw new LessException(importError(path, "File cannot be found"));
