@@ -49,15 +49,15 @@ public class LessContext {
 
   private static final LessOptions DEFAULT_OPTS = new LessOptions();
 
+  private final BufferStack bufferStack = new BufferStack(this);
+
+  private final Map<Path, ImportRecord> importCache = new HashMap<>();
+
+  private final MixinResolver mixinResolver = new MixinResolver();
+
+  private final LessStats stats = new LessStats();
+
   private final LessOptions opts;
-
-  private final BufferStack bufferStack;
-
-  private final MixinResolver mixinResolver;
-
-  private final LessStats stats;
-
-  private final Map<Path, ImportRecord> importCache;
 
   private final Map<Path, Stylesheet> preCache;
 
@@ -83,10 +83,6 @@ public class LessContext {
 
   public LessContext(LessOptions opts, LessLoader loader, Map<Path, Stylesheet> preCache) {
     this.opts = opts;
-    this.bufferStack = new BufferStack(this);
-    this.mixinResolver = new MixinResolver();
-    this.stats = new LessStats();
-    this.importCache = new HashMap<>();
     this.preCache = preCache == null ? new HashMap<Path, Stylesheet>() : preCache;
     this.loader = loader == null ? new FilesystemLessLoader() : loader;
   }
@@ -106,10 +102,6 @@ public class LessContext {
   public void setCompiler(LessCompiler compiler) {
     this.compiler = compiler;
     this.functionTable = compiler.functionTable();
-  }
-
-  public void setFunctionTable(FunctionTable table) {
-    this.functionTable = table;
   }
 
   public Function findFunction(String symbol) {

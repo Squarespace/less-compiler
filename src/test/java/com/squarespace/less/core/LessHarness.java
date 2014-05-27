@@ -45,7 +45,7 @@ public class LessHarness {
     FUNCTIONS.register(new TestFunctions());
   }
 
-  private final LessCompiler compiler = new LessCompiler();
+  private final LessCompiler compiler = new LessCompiler(FUNCTIONS);
 
   private final GenericBlock defs;
 
@@ -69,14 +69,12 @@ public class LessHarness {
   }
 
   public LessContext context() {
-    LessContext ctx = new LessContext();
-    ctx.setFunctionTable(FUNCTIONS);
-    return ctx;
+    return context(null);
   }
 
   public LessContext context(LessOptions opts) {
-    LessContext ctx = new LessContext(opts);
-    ctx.setFunctionTable(FUNCTIONS);
+    LessContext ctx = (opts == null) ? new LessContext() : new LessContext(opts);
+    ctx.setCompiler(compiler);
     return ctx;
   }
 
@@ -85,9 +83,7 @@ public class LessHarness {
   }
 
   public String execute(String raw, LessOptions opts) throws LessException {
-    LessContext ctx = context(opts);
-    ctx.setCompiler(compiler);
-    return compiler.compile(raw, ctx);
+    return compiler.compile(raw, context(opts));
   }
 
   public void executeFails(String raw, LessErrorType expected) {
