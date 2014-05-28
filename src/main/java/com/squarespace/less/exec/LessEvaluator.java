@@ -69,7 +69,12 @@ public class LessEvaluator {
   }
 
   public Stylesheet evaluate(Stylesheet sheet) throws LessException {
-    return evaluateStylesheet(ctx.newEnv(), sheet);
+    ExecEnv env = ctx.newEnv();
+    Stylesheet result = evaluateStylesheet(env, sheet);
+    if (env.hasError()) {
+      throw env.error();
+    }
+    return result;
   }
 
   /**
@@ -219,11 +224,19 @@ public class LessEvaluator {
         }
 
       } catch (LessException e) {
-        e.push(node);
-        if (currentImport != null) {
-          e.push(currentImport);
+        if (!env.hasError()) {
+          env.error(e);
         }
-        throw e;
+      }
+
+      if (env.hasError()) {
+        // If an error occurred, capture the current stack and return.
+        LessException error = env.error();
+        error.push(node);
+        if (currentImport != null) {
+          error.push(currentImport);
+        }
+        return;
       }
 
       rules.set(i, node);

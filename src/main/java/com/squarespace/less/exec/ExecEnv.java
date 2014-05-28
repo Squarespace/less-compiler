@@ -35,6 +35,8 @@ public class ExecEnv {
 
   private FlexList<String> warnings;
 
+  private LessException error;
+
   public ExecEnv(LessContext ctx) {
     this(ctx, new FlexList<Block>(64), null);
   }
@@ -59,6 +61,18 @@ public class ExecEnv {
 
   public int depth() {
     return frames.size();
+  }
+
+  public boolean hasError() {
+    return error != null;
+  }
+
+  public LessException error() {
+    return error;
+  }
+
+  public void error(LessException exc) {
+    error = exc;
   }
 
   public void append(FlexList<Block> other) {
