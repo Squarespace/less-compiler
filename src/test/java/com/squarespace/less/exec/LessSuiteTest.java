@@ -16,8 +16,6 @@
 
 package com.squarespace.less.exec;
 
-import static org.testng.Assert.assertEquals;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.DirectoryStream;
@@ -32,10 +30,10 @@ import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.squarespace.less.LessContext;
-import com.squarespace.less.LessErrorType;
 import com.squarespace.less.ExecuteErrorType;
 import com.squarespace.less.LessCompiler;
+import com.squarespace.less.LessContext;
+import com.squarespace.less.LessErrorType;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.SyntaxErrorType;
@@ -79,17 +77,19 @@ public class LessSuiteTest {
     Path cssRoot = rootPath.resolve("css");
     PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.less");
     DirectoryStream<Path> dirStream = LessUtils.getMatchingFiles(lessRoot, matcher);
-    StringBuilder failures = new StringBuilder();
+    int failures = 0;
     for (Path lessPath : dirStream) {
-      System.out.println("Executing test case 'less/" + lessPath.getFileName() + "'");
+      String fileName = "less/" + lessPath.getFileName();
+      System.err.println("Executing test case '" + fileName + "'");
 
       // Read and compile the .less source
       String source = LessUtils.readFile(lessPath);
       String lessCompiled = null;
       try {
         lessCompiled = compile(source, lessRoot);
-      } catch (LessException e) {
-        failures.append("\nCompile error " + lessPath.getFileName() + "\n" + e.primaryError().getMessage());
+      } catch (LessException | RuntimeException e) {
+        logFailure("Test Suite", ++failures, "Error compiling", fileName);
+        e.printStackTrace();
         continue;
       }
 
@@ -100,13 +100,12 @@ public class LessSuiteTest {
 
       String result = diff(cssData, lessCompiled);
       if (result != null) {
-        failures.append("\nDifferences detected in compiled output for ");
-        failures.append(lessPath.getFileName() + "\n" + result);
+        logFailure("Test Suite", ++failures, "Differences detected in compiled output for ", fileName, "\n", result);
       }
     }
 
-    if (failures.length() > 0) {
-      Assert.fail(failures.toString());
+    if (failures > 0) {
+      Assert.fail(failures + " tests failed.");
     }
   }
 
@@ -117,16 +116,18 @@ public class LessSuiteTest {
     PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.less");
     DirectoryStream<Path> dirStream = LessUtils.getMatchingFiles(errorRoot, matcher);
     LessContext ctx = new LessContext();
+    int failures = 0;
     for (Path lessPath : dirStream) {
-      System.out.println("Executing test case 'error/" + lessPath.getFileName() + "'");
+      String fileName = "error/" + lessPath.getFileName();
+      System.err.println("Executing test case 'error/" + fileName + "'");
 
       String source = LessUtils.readFile(lessPath);
       List<ErrorCase> errorCases = parseErrorCases(source);
       for (ErrorCase errorCase : errorCases) {
         try {
           compile(errorCase.source, errorRoot);
-          Assert.fail("Expected a LessException for error '" + errorCase.failMessage + "' processing\n"
-              + errorCase.source);
+          logFailure("Error Suite", ++failures, "Expected a LessException for error test case '"
+              + errorCase.failMessage + "' processing:\n", errorCase.source);
 
         } catch (LessException e) {
           // Force generation of the error message, to cover that code
@@ -134,10 +135,28 @@ public class LessSuiteTest {
           if (VERBOSE) {
             System.err.println(msg);
           }
-          assertEquals(errorCase.errorType, e.primaryError().type());
+          if (!errorCase.errorType.equals(e.primaryError().type())) {
+            logFailure("Error Suite", ++failures, "Expected ", errorCase.errorType, " found ", e.primaryError().type(),
+                " processing error test case '" + errorCase.failMessage + "'");
+          }
+        } catch (RuntimeException e) {
+          logFailure("Error Suite", ++failures, "Unexpected runtime exception thrown processing error test case '"
+              + errorCase.failMessage + "'");
+          e.printStackTrace();
         }
       }
     }
+    if (failures > 0) {
+      Assert.fail(failures + " tests failed.");
+    }
+  }
+
+  private void logFailure(String header, int index, Object ... arguments) {
+    System.err.print(header + " failure " + index + ":");
+    for (Object arg : arguments) {
+      System.err.print(" " + arg.toString());
+    }
+    System.err.println();
   }
 
   private String compile(String source, Path importRoot) throws LessException {
