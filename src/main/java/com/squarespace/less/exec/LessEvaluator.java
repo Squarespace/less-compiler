@@ -21,8 +21,6 @@ import static com.squarespace.less.core.ExecuteErrorMaker.mixinRecurse;
 import static com.squarespace.less.core.ExecuteErrorMaker.mixinUndefined;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
@@ -54,10 +52,6 @@ import com.squarespace.less.model.Stylesheet;
  * mixins, imports, etc. This produces a tree that is ready to be rendered.
  */
 public class LessEvaluator {
-
-  private static final Pattern IMPORT_EXT = Pattern.compile(".*(\\.[a-z]*$)|([\\?;].*)$");
-
-  private static final Pattern IMPORT_CSS = Pattern.compile(".*css([\\?;].*)?$");
 
   private final LessContext ctx;
 
@@ -234,6 +228,7 @@ public class LessEvaluator {
         LessException error = env.error();
         error.push(node);
         if (currentImport != null) {
+          // Track when import boundaries are crossed
           error.push(currentImport);
         }
         return;
@@ -274,32 +269,16 @@ public class LessEvaluator {
   }
 
   private Block executeImport(ExecEnv env, Import imp) throws LessException {
-    imp = (Import)imp.eval(env);
-    String path = imp.renderPath(env);
-    Matcher matcher = IMPORT_EXT.matcher(path);
-    if (!matcher.matches()) {
-      path += ".less";
-    }
-    matcher = IMPORT_CSS.matcher(path);
-    if (matcher.matches()) {
-      return null;
-    }
-
-    Stylesheet stylesheet = null;
-    try {
-      stylesheet = ctx.importer().importStylesheet(path, imp.rootPath(), imp.once());
-    } catch (LessException e) {
-      e.push(imp);
-      throw e;
-    }
-
-    if (stylesheet == null) {
+    if (imp.suppress()) {
       return new Block(0);
+    }
+    Block block = imp.block();
+    if (block == null) {
+      return null;
     }
 
     // the parseImport method will have already returned a copy, so we're
     // free to modify this block;
-    Block block = stylesheet.block();
     expandImports(env, block);
 
     Features features = imp.features();

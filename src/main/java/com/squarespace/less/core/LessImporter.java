@@ -46,17 +46,25 @@ public class LessImporter {
 
   /**
    * Retrieves an external stylesheet and initializes the import node's block.
+   * If not already cached, parse it and cache it.
    */
   public void importStylesheet(Import importNode) throws LessException {
     String rawPath = renderImportPath(importNode);
-    Stylesheet sheet = importStylesheet(rawPath, importNode.rootPath(), importNode.once());
-    importNode.block(sheet.block());
+    if (rawPath == null) {
+      return;
+    }
+    Stylesheet sheet = importStylesheet(rawPath, importNode);
+    if (sheet != null) {
+      importNode.block(sheet.block());
+    }
   }
 
   /**
-   * Retrieves an external stylesheet. If not already cached, parse it and cache it.
+   * Retrieves an external stylesheet.
    */
-  public Stylesheet importStylesheet(String rawPath, Path rootPath, boolean once) throws LessException {
+  public Stylesheet importStylesheet(String rawPath, Import importNode) throws LessException {
+    Path rootPath = importNode.rootPath();
+    boolean once = importNode.once();
     List<Path> importPaths = context.options().importPaths();
     ImportRecord record = null;
     Path path = null;
@@ -82,15 +90,15 @@ public class LessImporter {
     // once and the flag is enforced.
     if (record != null) {
 
-      // Global "import once" flag. All imports are processed only once.
-      if (context.options().importOnce()) {
+      // If either the global or per-node "once" flag is set, suppress this import node
+      // in the output.
+      if (context.options().importOnce() || record.onlyOnce()) {
+        importNode.suppress(true);
         return null;
       }
 
-      if (!record.onlyOnce()) {
-        context.stats().importDone(true);
-      }
-      return record.onlyOnce() ? null : record.stylesheeet().copy();
+      context.stats().importDone(true);
+      return record.stylesheeet().copy();
     }
 
     // If a pre-populated parsed stylesheet cache has been provided, use it.

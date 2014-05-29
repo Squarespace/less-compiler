@@ -36,6 +36,8 @@ public class Import extends BaseNode {
 
   private Block block;
 
+  private boolean suppress;
+
   private Path rootPath;
 
   private Path fileName;
@@ -64,6 +66,14 @@ public class Import extends BaseNode {
 
   public void block(Block block) {
     this.block = block;
+  }
+
+  public boolean suppress() {
+    return suppress;
+  }
+
+  public void suppress(boolean flag) {
+    suppress = flag;
   }
 
   public Path rootPath() {
