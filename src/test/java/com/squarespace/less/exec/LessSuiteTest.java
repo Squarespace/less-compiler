@@ -80,7 +80,6 @@ public class LessSuiteTest {
     int failures = 0;
     for (Path lessPath : dirStream) {
       String fileName = "less/" + lessPath.getFileName();
-      System.err.println("Executing test case '" + fileName + "'");
 
       // Read and compile the .less source
       String source = LessUtils.readFile(lessPath);
@@ -118,9 +117,6 @@ public class LessSuiteTest {
     LessContext ctx = new LessContext();
     int failures = 0;
     for (Path lessPath : dirStream) {
-      String fileName = "error/" + lessPath.getFileName();
-      System.err.println("Executing test case 'error/" + fileName + "'");
-
       String source = LessUtils.readFile(lessPath);
       List<ErrorCase> errorCases = parseErrorCases(source);
       for (ErrorCase errorCase : errorCases) {
