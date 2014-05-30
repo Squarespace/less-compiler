@@ -16,9 +16,9 @@
 
 package com.squarespace.less.core;
 
+import com.squarespace.less.ExecuteErrorType;
 import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessErrorType;
-import com.squarespace.less.ExecuteErrorType;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Operator;
 
@@ -63,10 +63,6 @@ public class ExecuteErrorMaker {
 
   public static LessErrorInfo formatFunctionArgs(int needed, int actual) {
     return error(ExecuteErrorType.FORMAT_FUNCTION_ARGS).arg0(needed).arg1(actual);
-  }
-
-  public static LessErrorInfo importError(Object path, Object msg) {
-    return error(ExecuteErrorType.IMPORT_ERROR).arg0(path).arg1(msg);
   }
 
   public static LessErrorInfo incompatibleUnits(Object u0, Object u1) {

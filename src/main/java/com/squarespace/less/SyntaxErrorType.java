@@ -37,6 +37,9 @@ public enum SyntaxErrorType implements LessErrorType {
   GENERAL
   ("%(arg0)s"),
 
+  IMPORT_ERROR
+  ("An error occurred importing '%(arg0)s': %(arg1)s"),
+
   INCOMPLETE_PARSE
   ("Unable to complete parse."),
 

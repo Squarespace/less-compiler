@@ -16,7 +16,7 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.core.ExecuteErrorMaker.importError;
+import static com.squarespace.less.core.SyntaxErrorMaker.importError;
 
 import java.nio.file.Path;
 import java.util.Map;

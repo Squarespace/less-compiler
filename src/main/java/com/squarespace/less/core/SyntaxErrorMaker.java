@@ -42,6 +42,10 @@ public class SyntaxErrorMaker {
     return error(SyntaxErrorType.GENERAL).arg0(obj);
   }
 
+  public static LessErrorInfo importError(Object path, Object msg) {
+    return error(SyntaxErrorType.IMPORT_ERROR).arg0(path).arg1(msg);
+  }
+
   public static LessErrorInfo incompleteParse() {
     return error(SyntaxErrorType.INCOMPLETE_PARSE);
   }
