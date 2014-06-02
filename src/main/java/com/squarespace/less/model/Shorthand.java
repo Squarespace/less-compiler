@@ -82,6 +82,7 @@ public class Shorthand extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.incrIndent().append('\n').indent();
     left.modelRepr(buf);
     buf.append('\n').indent();

@@ -129,6 +129,7 @@ public class Variable extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ').append(indirect ? "@" + name : name);
     if (curly) {
       buf.append(" (curly)");

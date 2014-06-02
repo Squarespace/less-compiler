@@ -80,6 +80,7 @@ public class ValueElement extends Element {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ');
     buf.append(combinator == null ? "<null>" : combinator.toString());
     buf.append(' ');

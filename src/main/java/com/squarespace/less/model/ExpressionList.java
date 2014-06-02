@@ -115,6 +115,7 @@ public class ExpressionList extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append('\n');
     buf.incrIndent();
     ReprUtils.modelRepr(buf, "\n", true, values);

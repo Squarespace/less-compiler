@@ -137,6 +137,11 @@ public class Definition extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
+    bodyRepr(buf);
+  }
+
+  protected void bodyRepr(Buffer buf) {
     buf.append(' ').append(name).append('\n');
     if (value != null) {
       buf.incrIndent().indent();

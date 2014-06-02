@@ -84,6 +84,7 @@ public class Assignment extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(" name=").append(name).append('\n');
     if (value != null) {
       buf.incrIndent();

@@ -115,6 +115,7 @@ public class Operation extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ').append(operator.toString()).append('\n');
     buf.incrIndent();
     buf.indent();

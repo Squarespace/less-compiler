@@ -87,6 +87,7 @@ public class Dimension extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ').append(value);
     if (unit != null) {
       buf.append(' ').append(unit.toString());

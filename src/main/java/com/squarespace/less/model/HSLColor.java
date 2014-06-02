@@ -128,6 +128,7 @@ public class HSLColor extends BaseColor {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ').append(getColorspace().toString()).append(' ').append(hue).append(' ');
     buf.append(saturation).append(' ').append(lightness).append(' ').append(alpha);
   }

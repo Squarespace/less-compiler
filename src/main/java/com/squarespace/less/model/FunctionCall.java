@@ -141,6 +141,7 @@ public class FunctionCall extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(" name=").append(name);
     if (noimpl) {
       buf.append(" [no implementation]");

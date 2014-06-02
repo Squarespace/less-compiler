@@ -113,6 +113,7 @@ public class MixinCall extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ').append(important ? "important" : "");
     buf.append(' ').append(selectorPath.toString()).append('\n');
     buf.incrIndent().indent();

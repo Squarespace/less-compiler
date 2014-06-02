@@ -57,6 +57,7 @@ public class UnicodeRange extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append('(').append(value).append(')');
   }
 

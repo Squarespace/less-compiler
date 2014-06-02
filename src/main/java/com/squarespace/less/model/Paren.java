@@ -70,6 +70,7 @@ public class Paren extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append('\n');
     if (node != null) {
       buf.incrIndent();

@@ -92,6 +92,7 @@ public class Comment extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ').append(block ? "block" : "single line");
     buf.append(' ').append(newline ? "newline" : "inline").append('\n');
     buf.incrIndent();

@@ -144,6 +144,7 @@ public class Rule extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append('\n').incrIndent().indent();
     property.modelRepr(buf);
     if (important) {

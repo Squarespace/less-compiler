@@ -79,6 +79,7 @@ public class AttributeElement extends Element {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append('\n');
     buf.incrIndent();
     ReprUtils.modelRepr(buf, "\n", true, parts);

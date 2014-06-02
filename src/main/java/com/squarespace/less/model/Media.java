@@ -86,6 +86,7 @@ public class Media extends BlockNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append('\n');
     buf.incrIndent();
     if (features != null) {

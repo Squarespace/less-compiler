@@ -101,6 +101,7 @@ public class Guard extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append('\n');
     buf.incrIndent();
     if (conditions != null) {

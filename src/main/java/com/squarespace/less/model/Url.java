@@ -75,6 +75,7 @@ public class Url extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.incrIndent().append('\n');
     if (value != null) {
       buf.indent();

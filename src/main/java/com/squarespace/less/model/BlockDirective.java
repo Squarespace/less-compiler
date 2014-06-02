@@ -72,6 +72,7 @@ public class BlockDirective extends BlockNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ').append(name).append('\n');
     buf.incrIndent().indent();
     super.modelRepr(buf);

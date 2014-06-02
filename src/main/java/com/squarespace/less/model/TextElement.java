@@ -72,6 +72,7 @@ public class TextElement extends Element {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ');
     buf.append(combinator == null ? "<null>" : combinator.toString());
     buf.append(' ').append(name);

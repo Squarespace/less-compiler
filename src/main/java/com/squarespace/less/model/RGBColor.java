@@ -240,6 +240,7 @@ public class RGBColor extends BaseColor {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ').append(getColorspace().toString()).append(' ');
     buf.append(c0).append(' ').append(c1).append(' ').append(c2).append(' ').append(alpha);
     if (keyword) {

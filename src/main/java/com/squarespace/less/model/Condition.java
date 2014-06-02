@@ -101,6 +101,7 @@ public class Condition extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ').append(operator.toString());
     if (negate) {
       buf.append(" [negate]");

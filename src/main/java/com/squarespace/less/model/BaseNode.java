@@ -53,6 +53,9 @@ public abstract class BaseNode implements Node {
 
   public void typeRepr(Buffer buf) {
     buf.append(type().toString());
+  }
+
+  public void posRepr(Buffer buf) {
     buf.append(" [").append(lineOffset).append(',').append(charOffset).append("]");
   }
 
@@ -122,6 +125,7 @@ public abstract class BaseNode implements Node {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append("<not implemented>");
   }
 

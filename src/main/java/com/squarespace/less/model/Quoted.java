@@ -142,6 +142,7 @@ public class Quoted extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(" delim=").append(delim);
     if (escaped) {
       buf.append(" [escaped]");

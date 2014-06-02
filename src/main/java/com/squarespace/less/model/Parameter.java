@@ -113,6 +113,7 @@ public class Parameter extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.append(' ').append(name);
     if (variadic) {
       buf.append(" [variadic]");

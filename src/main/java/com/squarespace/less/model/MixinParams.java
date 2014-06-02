@@ -114,6 +114,7 @@ public class MixinParams extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
+    posRepr(buf);
     buf.incrIndent().append('\n');
     if (params == null || params.isEmpty()) {
       buf.indent().append("<empty>");
