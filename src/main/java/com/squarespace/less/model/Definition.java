@@ -55,6 +55,16 @@ public class Definition extends BaseNode {
     this.value = value;
   }
 
+  protected Definition(Definition orig, Node newValue) {
+    this(orig.name(), newValue);
+    this.fileName = orig.fileName;
+    copyPosition(orig);
+  }
+
+  public Definition copy(Node newValue) {
+    return new Definition(this, newValue);
+  }
+
   public String name() {
     return name;
   }

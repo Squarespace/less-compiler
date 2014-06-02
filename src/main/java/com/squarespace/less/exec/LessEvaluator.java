@@ -159,9 +159,7 @@ public class LessEvaluator {
 
           case DEFINITION:
             Definition def = (Definition)node;
-            Definition newDef = new Definition(def.name(), def.dereference(env));
-            newDef.copyPosition(def);
-            newDef.fileName(def.fileName());
+            Definition newDef = def.copy(def.dereference(env));
             newDef.warnings(env.warnings());
             node = newDef;
             break;
@@ -201,10 +199,7 @@ public class LessEvaluator {
             Rule rule = (Rule) node;
             Rule newRule = null;
             if (forceImportant && !rule.important()) {
-              newRule = new Rule(rule.property(), rule.value().eval(env), forceImportant);
-              newRule.copyPosition(rule);
-              newRule.fileName(rule.fileName());
-
+              newRule = rule.copy(rule.value().eval(env), forceImportant);
             } else {
               newRule = (Rule)rule.eval(env);
             }

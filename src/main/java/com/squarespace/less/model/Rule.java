@@ -48,6 +48,13 @@ public class Rule extends BaseNode {
     this.important = important;
   }
 
+  public Rule copy(Node newValue, boolean important) {
+    Rule result = new Rule(property, newValue, important);
+    result.copyPosition(this);
+    result.fileName(fileName);
+    return result;
+  }
+
   public Node property() {
     return property;
   }
