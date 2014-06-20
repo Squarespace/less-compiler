@@ -272,8 +272,7 @@ public class LessEvaluator {
       return null;
     }
 
-    // the parseImport method will have already returned a copy, so we're
-    // free to modify this block;
+    // When the import statement was parsed, we copied the block so its safe to recursively expand here.
     expandImports(env, block);
 
     Features features = imp.features();

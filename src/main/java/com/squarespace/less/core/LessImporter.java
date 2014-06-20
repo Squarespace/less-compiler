@@ -87,7 +87,7 @@ public class LessImporter {
 
     // If the stylesheet has been imported and the 'onlyOnce' flag is not set, return it.
     // Otherwise return null, indicating to the caller that it has already been imported
-    // once and the flag is enforced.
+    // once and the flag is being enforced.
     if (record != null) {
 
       // If either the global or per-node "once" flag is set, suppress this import node
