@@ -29,11 +29,11 @@ import com.squarespace.less.exec.SelectorUtils;
 
 public class Ruleset extends BlockNode {
 
-  private final Selectors selectors;
+  protected final Selectors selectors;
 
-  private boolean evaluating;
+  protected boolean evaluating;
 
-  private List<List<String>> mixinPaths;
+  protected List<List<String>> mixinPaths;
 
   public Ruleset() {
     this.selectors = new Selectors();

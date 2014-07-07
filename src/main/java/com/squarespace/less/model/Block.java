@@ -43,13 +43,13 @@ public class Block extends BaseNode {
 
   private static final int INITIAL_CAPACITY = 8;
 
-  private final FlexList<Node> rules;
+  protected final FlexList<Node> rules;
 
-  private Directive charset;
+  protected Directive charset;
 
-  private Map<String, Definition> variables;
+  protected Map<String, Definition> variables;
 
-  private byte flags = FLAG_REBUILD_VARS;
+  protected byte flags = FLAG_REBUILD_VARS;
 
   public Block() {
     this(INITIAL_CAPACITY);

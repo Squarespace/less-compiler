@@ -37,15 +37,15 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Mixin extends BlockNode {
 
-  private final String name;
+  protected final String name;
 
-  private final MixinParams params;
+  protected final MixinParams params;
 
-  private final Guard guard;
+  protected final Guard guard;
 
-  private ExecEnv closure;
+  protected ExecEnv closure;
 
-  private int entryCount;
+  protected int entryCount;
 
   public Mixin(String name, MixinParams params, Guard guard) {
     this(name, params, guard, new Block());

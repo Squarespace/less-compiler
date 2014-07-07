@@ -28,9 +28,9 @@ import java.nio.file.Path;
  */
 public class ParseError extends BaseNode {
 
-  private Path filePath;
+  protected Path filePath;
 
-  private String errorMessage;
+  protected String errorMessage;
 
   public Path filePath() {
     return filePath;

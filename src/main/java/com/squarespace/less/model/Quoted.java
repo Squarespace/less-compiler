@@ -32,13 +32,13 @@ public class Quoted extends BaseNode {
 
   private static final int DEFAULT_CAPACITY = 3;
 
-  private final char delim;
+  protected final char delim;
 
-  private List<Node> parts;
+  protected List<Node> parts;
 
-  private boolean escaped;
+  protected boolean escaped;
 
-  private boolean evaluate;
+  protected boolean evaluate;
 
   public Quoted(char delim) {
     this(delim, false);

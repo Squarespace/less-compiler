@@ -31,9 +31,9 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Features extends BaseNode {
 
-  private List<Node> features;
+  protected List<Node> features;
 
-  private boolean evaluate;
+  protected boolean evaluate;
 
   public void add(Node node) {
     features = LessUtils.initList(features, 2);

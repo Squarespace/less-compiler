@@ -25,11 +25,11 @@ import java.nio.file.Path;
  */
 public class MixinMarker extends BaseNode {
 
-  private final MixinCall call;
+  protected final MixinCall call;
 
-  private final boolean beginning;
+  protected final boolean beginning;
 
-  private Path fileName;
+  protected Path fileName;
 
   public MixinMarker(MixinCall call, boolean begin) {
     this.call = call;

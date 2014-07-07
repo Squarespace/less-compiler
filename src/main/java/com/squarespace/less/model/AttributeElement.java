@@ -30,7 +30,7 @@ import com.squarespace.less.core.LessUtils;
  */
 public class AttributeElement extends Element {
 
-  private List<Node> parts;
+  protected List<Node> parts;
 
   public AttributeElement(Combinator comb) {
     super(comb);

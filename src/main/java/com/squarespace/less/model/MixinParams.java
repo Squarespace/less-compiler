@@ -28,13 +28,13 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class MixinParams extends BaseNode {
 
-  private List<Parameter> params;
+  protected List<Parameter> params;
 
-  private boolean variadic;
+  protected boolean variadic;
 
-  private int required;
+  protected int required;
 
-  private boolean evaluate;
+  protected boolean evaluate;
 
   public void add(Parameter param) {
     params = LessUtils.initList(params, 3);

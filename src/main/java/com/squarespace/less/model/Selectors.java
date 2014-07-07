@@ -31,9 +31,9 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Selectors extends BaseNode {
 
-  private List<Selector> selectors;
+  protected List<Selector> selectors;
 
-  private boolean evaluate;
+  protected boolean evaluate;
 
   public Selectors() {
   }

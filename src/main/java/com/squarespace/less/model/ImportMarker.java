@@ -23,9 +23,9 @@ package com.squarespace.less.model;
  */
 public class ImportMarker extends BaseNode {
 
-  private final Import importStatement;
+  protected final Import importStatement;
 
-  private final boolean beginning;
+  protected final boolean beginning;
 
   public ImportMarker(Import imp, boolean begin) {
     this.importStatement = imp;

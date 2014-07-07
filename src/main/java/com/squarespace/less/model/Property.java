@@ -23,7 +23,7 @@ import com.squarespace.less.core.Buffer;
 
 public class Property extends BaseNode {
 
-  private final String name;
+  protected final String name;
 
   public Property(String name) {
     this.name = name;

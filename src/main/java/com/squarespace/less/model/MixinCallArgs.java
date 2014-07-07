@@ -29,11 +29,11 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class MixinCallArgs extends BaseNode {
 
-  private final char delimiter;
+  protected final char delimiter;
 
-  private List<Argument> args;
+  protected List<Argument> args;
 
-  private boolean evaluate;
+  protected boolean evaluate;
 
   public MixinCallArgs(char delimiter) {
     this.delimiter = delimiter;

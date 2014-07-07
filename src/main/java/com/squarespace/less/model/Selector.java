@@ -30,11 +30,11 @@ public class Selector extends BaseNode {
 
   private static final int DEFAULT_CAPACITY = 4;
 
-  private List<Element> elements;
+  protected List<Element> elements;
 
-  private boolean hasWildcard;
+  protected boolean hasWildcard;
 
-  private boolean evaluate;
+  protected boolean evaluate;
 
   public boolean hasWildcard() {
     return hasWildcard;

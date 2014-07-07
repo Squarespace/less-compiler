@@ -36,9 +36,9 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Dimension extends BaseNode {
 
-  private final double value;
+  protected final double value;
 
-  private final Unit unit;
+  protected final Unit unit;
 
   public Dimension(double value) {
     this(value, null);

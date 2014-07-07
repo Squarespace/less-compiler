@@ -31,13 +31,13 @@ import com.squarespace.less.exec.Function;
 
 public class FunctionCall extends BaseNode {
 
-  private final String name;
+  protected final String name;
 
-  private List<Node> args;
+  protected List<Node> args;
 
-  private boolean evaluate;
+  protected boolean evaluate;
 
-  private final boolean noimpl;
+  protected final boolean noimpl;
 
   public FunctionCall(String name) {
     this(name, null, false);

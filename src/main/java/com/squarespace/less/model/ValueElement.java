@@ -26,7 +26,7 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class ValueElement extends Element {
 
-  private final Node value;
+  protected final Node value;
 
   public ValueElement(Combinator comb, Node value) {
     super(comb);

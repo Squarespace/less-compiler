@@ -27,11 +27,11 @@ import com.squarespace.less.core.LessInternalException;
 
 public class Comment extends BaseNode {
 
-  private final String body;
+  protected final String body;
 
-  private final boolean block;
+  protected final boolean block;
 
-  private final boolean newline;
+  protected final boolean newline;
 
   public Comment(String body, boolean block) {
     this(body, block, false);

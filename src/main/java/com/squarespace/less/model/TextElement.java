@@ -23,9 +23,9 @@ import com.squarespace.less.core.Buffer;
 
 public class TextElement extends Element {
 
-  private final String name;
+  protected final String name;
 
-  private final boolean isWildcard;
+  protected final boolean isWildcard;
 
   public TextElement(Combinator comb) {
     super(comb);

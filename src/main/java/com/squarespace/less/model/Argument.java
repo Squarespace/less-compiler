@@ -26,9 +26,9 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Argument extends BaseNode {
 
-  private final String name;
+  protected final String name;
 
-  private final Node value;
+  protected final Node value;
 
   public Argument(Node value) {
     this(null, value);

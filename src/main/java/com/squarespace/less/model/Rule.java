@@ -28,15 +28,15 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Rule extends BaseNode {
 
-  private final Node property;
+  protected final Node property;
 
-  private final Node value;
+  protected final Node value;
 
-  private boolean important;
+  protected boolean important;
 
-  private Path fileName;
+  protected Path fileName;
 
-  private String warnings;
+  protected String warnings;
 
   public Rule(Node property, Node value) {
     this(property, value, false);

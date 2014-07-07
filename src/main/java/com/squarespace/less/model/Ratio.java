@@ -24,7 +24,7 @@ import com.squarespace.less.core.Buffer;
 
 public class Ratio extends BaseNode {
 
-  private final String value;
+  protected final String value;
 
   public Ratio(String value) {
     this.value = value;

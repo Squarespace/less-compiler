@@ -26,9 +26,9 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Shorthand extends BaseNode {
 
-  private final Node left;
+  protected final Node left;
 
-  private final Node right;
+  protected final Node right;
 
   public Shorthand(Node left, Node right) {
     this.left = left;

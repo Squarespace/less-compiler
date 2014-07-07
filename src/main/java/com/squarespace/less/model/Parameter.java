@@ -25,11 +25,11 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Parameter extends BaseNode {
 
-  private final String name;
+  protected final String name;
 
-  private final Node value;
+  protected final Node value;
 
-  private final boolean variadic;
+  protected final boolean variadic;
 
   public Parameter(String name) {
     this(name, null);

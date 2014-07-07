@@ -30,9 +30,9 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class ExpressionList extends BaseNode {
 
-  private List<Node> values;
+  protected List<Node> values;
 
-  private boolean evaluate;
+  protected boolean evaluate;
 
   public ExpressionList() {
   }

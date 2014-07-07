@@ -23,7 +23,7 @@ import com.squarespace.less.core.Buffer;
 
 public class BlockDirective extends BlockNode {
 
-  private final String name;
+  protected final String name;
 
   public BlockDirective(String name, Block block) {
     this.name = name;

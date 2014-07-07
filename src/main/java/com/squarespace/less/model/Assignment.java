@@ -26,9 +26,9 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Assignment extends BaseNode {
 
-  private final String name;
+  protected final String name;
 
-  private final Node value;
+  protected final Node value;
 
   public Assignment(String name, Node value) {
     if (name == null || value == null) {

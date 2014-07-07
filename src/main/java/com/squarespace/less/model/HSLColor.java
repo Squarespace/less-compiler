@@ -25,13 +25,13 @@ import com.squarespace.less.core.LessInternalException;
  */
 public class HSLColor extends BaseColor {
 
-  private final double hue;
+  protected final double hue;
 
-  private final double saturation;
+  protected final double saturation;
 
-  private final double lightness;
+  protected final double lightness;
 
-  private final double alpha;
+  protected final double alpha;
 
   public HSLColor(double hue, double saturation, double lightness) {
     this(hue, saturation, lightness, 1.0);

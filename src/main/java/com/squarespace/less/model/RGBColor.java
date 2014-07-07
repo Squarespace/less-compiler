@@ -32,17 +32,17 @@ public class RGBColor extends BaseColor {
     new int[] { 0, 1, 2 }
   };
 
-  private final int c0;
+  protected final int c0;
 
-  private final int c1;
+  protected final int c1;
 
-  private final int c2;
+  protected final int c2;
 
-  private final double alpha;
+  protected final double alpha;
 
-  private final boolean keyword;
+  protected final boolean keyword;
 
-  private boolean forceHex;
+  protected boolean forceHex;
 
   public RGBColor(double c0, double c1, double c2) {
     this(c0, c1, c2, 1.0);

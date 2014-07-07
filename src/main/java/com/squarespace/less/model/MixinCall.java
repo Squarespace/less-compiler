@@ -27,15 +27,15 @@ import com.squarespace.less.exec.SelectorUtils;
 
 public class MixinCall extends BaseNode {
 
-  private final Selector selector;
+  protected final Selector selector;
 
-  private final List<String> selectorPath;
+  protected final List<String> selectorPath;
 
-  private MixinCallArgs args;
+  protected MixinCallArgs args;
 
-  private final boolean important;
+  protected final boolean important;
 
-  private Path fileName;
+  protected Path fileName;
 
   public MixinCall(Selector selector, MixinCallArgs args, boolean important) {
     this.selector = selector;

@@ -24,7 +24,7 @@ import com.squarespace.less.core.Buffer;
 
 public class Keyword extends BaseNode {
 
-  private final String value;
+  protected final String value;
 
   public Keyword(String value) {
     this.value = value;

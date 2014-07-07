@@ -25,7 +25,7 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Paren extends BaseNode {
 
-  private final Node value;
+  protected final Node value;
 
   public Paren(Node value) {
     this.value = value;

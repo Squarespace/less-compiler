@@ -33,7 +33,7 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Guard extends BaseNode {
 
-  private List<Condition> conditions;
+  protected List<Condition> conditions;
 
   public Guard() {
   }

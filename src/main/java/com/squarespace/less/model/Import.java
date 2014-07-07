@@ -28,19 +28,19 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Import extends BaseNode {
 
-  private final Node path;
+  protected final Node path;
 
-  private final Features features;
+  protected final Features features;
 
-  private final boolean once;
+  protected final boolean once;
 
-  private Block block;
+  protected Block block;
 
-  private boolean suppress;
+  protected boolean suppress;
 
-  private Path rootPath;
+  protected Path rootPath;
 
-  private Path fileName;
+  protected Path fileName;
 
   public Import(Node path, Features features, boolean once) {
     this.path = path;

@@ -24,7 +24,7 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Media extends BlockNode {
 
-  private final Features features;
+  protected final Features features;
 
   public Media() {
     features = new Features();

@@ -34,13 +34,13 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Condition extends BaseNode {
 
-  private final Operator operator;
+  protected final Operator operator;
 
-  private final Node operand0;
+  protected final Node operand0;
 
-  private final Node operand1;
+  protected final Node operand1;
 
-  private final boolean negate;
+  protected final boolean negate;
 
   public Condition(Operator operator, Node operand0, Node operand1, boolean negate) {
     if (operator == null || operand0 == null || operand1 == null) {

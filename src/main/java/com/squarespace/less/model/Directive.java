@@ -26,11 +26,11 @@ import com.squarespace.less.core.LessInternalException;
 
 public class Directive extends BaseNode {
 
-  private final String name;
+  protected final String name;
 
-  private final Node value;
+  protected final Node value;
 
-  private Path fileName;
+  protected Path fileName;
 
   public Directive(String name, Node value) {
     if (name == null || value == null) {
