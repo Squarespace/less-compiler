@@ -25,19 +25,19 @@ import com.squarespace.less.exec.ExecEnv;
 
 public class Paren extends BaseNode {
 
-  private final Node node;
+  private final Node value;
 
-  public Paren(Node node) {
-    this.node = node;
+  public Paren(Node value) {
+    this.value = value;
   }
 
-  public Node node() {
-    return node;
+  public Node value() {
+    return value;
   }
 
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof Paren) ? safeEquals(node, ((Paren)obj).node) : false;
+    return (obj instanceof Paren) ? safeEquals(value, ((Paren)obj).value) : false;
   }
 
   @Override
@@ -52,18 +52,18 @@ public class Paren extends BaseNode {
 
   @Override
   public boolean needsEval() {
-    return node.needsEval();
+    return value.needsEval();
   }
 
   @Override
   public Node eval(ExecEnv env) throws LessException {
-    return node.needsEval() ? new Paren(node.eval(env)) : this;
+    return value.needsEval() ? new Paren(value.eval(env)) : this;
   }
 
   @Override
   public void repr(Buffer buf) {
     buf.append('(');
-    node.repr(buf);
+    value.repr(buf);
     buf.append(')');
   }
 
@@ -72,10 +72,10 @@ public class Paren extends BaseNode {
     typeRepr(buf);
     posRepr(buf);
     buf.append('\n');
-    if (node != null) {
+    if (value != null) {
       buf.incrIndent();
       buf.indent();
-      node.modelRepr(buf);
+      value.modelRepr(buf);
       buf.decrIndent();
     }
   }

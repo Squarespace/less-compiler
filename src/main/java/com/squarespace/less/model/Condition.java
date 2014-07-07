@@ -52,6 +52,14 @@ public class Condition extends BaseNode {
     this.negate = negate;
   }
 
+  public Node operand0() {
+    return operand0;
+  }
+
+  public Node operand1() {
+    return operand1;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Condition) {

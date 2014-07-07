@@ -60,7 +60,7 @@ public class MixinParselet implements Parselet {
       return null;
     }
 
-    Mixin mixin = new Mixin(name, params, guard, (Block)block);
+    Mixin mixin = stm.context().nodeBuilder().buildMixin(name, params, guard, (Block)block);
     mixin.markOriginal();
     return mixin;
   }

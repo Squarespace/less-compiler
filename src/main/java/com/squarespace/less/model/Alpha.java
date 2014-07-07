@@ -36,6 +36,10 @@ public class Alpha extends BaseNode {
     this.value = value;
   }
 
+  public Alpha copy() {
+    return new Alpha(value);
+  }
+
   public Node value() {
     return value;
   }

@@ -42,7 +42,7 @@ public class RulesetParselet implements Parselet {
       return null;
     }
 
-    Ruleset ruleset = new Ruleset(group, (Block)block);
+    Ruleset ruleset = stm.context().nodeBuilder().buildRuleset(group, (Block)block);
     ruleset.fileName(stm.fileName());
     return ruleset;
   }

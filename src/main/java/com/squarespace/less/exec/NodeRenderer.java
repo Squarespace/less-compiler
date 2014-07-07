@@ -236,7 +236,7 @@ public class NodeRenderer {
   /** Render a PAREN node. */
   private static void renderImpl(Buffer buf, Paren paren) throws LessException {
     buf.append('(');
-    render(buf, paren.node());
+    render(buf, paren.value());
     buf.append(')');
   }
 

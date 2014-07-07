@@ -70,10 +70,10 @@ public class MixinCallParselet implements Parselet {
     MixinCall call = null;
     if (ch == Chars.SEMICOLON) {
       stm.seek1();
-      call = new MixinCall(selector, args, important);
+      call = stm.context().nodeBuilder().buildMixinCall(selector, args, important);
 
     } else if (ch == Chars.RIGHT_CURLY_BRACKET || ch == Chars.EOF) {
-      call = new MixinCall(selector, args, important);
+      call = stm.context().nodeBuilder().buildMixinCall(selector, args, important);
     }
     if (call != null) {
       call.fileName(stm.fileName());

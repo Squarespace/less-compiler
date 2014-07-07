@@ -37,7 +37,7 @@ public class Definition extends BaseNode {
   private final Node value;
 
   // Flag to detect late-binding circular references and raise an error.
-  private boolean evaluating;
+  protected boolean evaluating;
 
   private Path fileName;
 
@@ -58,7 +58,7 @@ public class Definition extends BaseNode {
   protected Definition(Definition orig, Node newValue) {
     this(orig.name(), newValue);
     this.fileName = orig.fileName;
-    copyPosition(orig);
+    copyBase(orig);
   }
 
   public Definition copy(Node newValue) {

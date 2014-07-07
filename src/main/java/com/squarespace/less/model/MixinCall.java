@@ -46,7 +46,7 @@ public class MixinCall extends BaseNode {
 
   public MixinCall copy() {
     MixinCall result = new MixinCall(selector, args, important);
-    result.copyPosition(this);
+    result.copyBase(this);
     result.fileName = fileName;
     return result;
   }

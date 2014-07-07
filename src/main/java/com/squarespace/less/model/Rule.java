@@ -50,7 +50,7 @@ public class Rule extends BaseNode {
 
   public Rule copy(Node newValue, boolean important) {
     Rule result = new Rule(property, newValue, important);
-    result.copyPosition(this);
+    result.copyBase(this);
     result.fileName(fileName);
     return result;
   }
@@ -126,7 +126,7 @@ public class Rule extends BaseNode {
     }
     Rule result = new Rule(property, value.eval(env), important);
     result.fileName(fileName);
-    result.copyPosition(this);
+    result.copyBase(this);
     return result;
   }
 

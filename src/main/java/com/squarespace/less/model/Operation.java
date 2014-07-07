@@ -35,16 +35,24 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Operation extends BaseNode {
 
-  private final Operator operator;
+  protected final Operator operator;
 
-  private final Node operand0;
+  protected final Node left;
 
-  private final Node operand1;
+  protected final Node right;
 
-  public Operation(Operator operator, Node operand0, Node operand1) {
+  public Operation(Operator operator, Node left, Node right) {
     this.operator = operator;
-    this.operand0 = operand0;
-    this.operand1 = operand1;
+    this.left = left;
+    this.right = right;
+  }
+
+  public Node left() {
+    return left;
+  }
+
+  public Node right() {
+    return right;
   }
 
   @Override
@@ -52,8 +60,8 @@ public class Operation extends BaseNode {
     if (obj instanceof Operation) {
       Operation other = (Operation)obj;
       return operator == other.operator
-          && safeEquals(operand0, other.operand0)
-          && safeEquals(operand1, other.operand1);
+          && safeEquals(left, other.left)
+          && safeEquals(right, other.right);
     }
     return false;
   }
@@ -75,8 +83,8 @@ public class Operation extends BaseNode {
 
   @Override
   public Node eval(ExecEnv env) throws LessException {
-    Node op0 = operand0.needsEval() ? operand0.eval(env) : operand0;
-    Node op1 = operand1.needsEval() ? operand1.eval(env) : operand1;
+    Node op0 = left.needsEval() ? left.eval(env) : left;
+    Node op1 = right.needsEval() ? right.eval(env) : right;
 
     // Check if we can cast the node to a friendlier type.
     op0 = cast(op0);
@@ -106,9 +114,9 @@ public class Operation extends BaseNode {
   @Override
   public void repr(Buffer buf) {
     buf.append('(');
-    operand0.repr(buf);
+    left.repr(buf);
     buf.append(' ').append(operator.toString()).append(' ');
-    operand1.repr(buf);
+    right.repr(buf);
     buf.append(')');
   }
 
@@ -119,9 +127,9 @@ public class Operation extends BaseNode {
     buf.append(' ').append(operator.toString()).append('\n');
     buf.incrIndent();
     buf.indent();
-    operand0.modelRepr(buf);
+    left.modelRepr(buf);
     buf.append('\n').indent();
-    operand1.modelRepr(buf);
+    right.modelRepr(buf);
     buf.decrIndent();
   }
 

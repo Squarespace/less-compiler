@@ -29,6 +29,8 @@ public interface Node {
 
   int charOffset();
 
+  Object userData();
+
   /**
    * Outputs the original LESS representation of this node.
    */

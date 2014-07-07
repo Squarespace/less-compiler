@@ -45,6 +45,8 @@ public class LessContext {
 
   private static final LessOptions DEFAULT_OPTS = new LessOptions();
 
+  private static final NodeBuilder DEFAULT_NODE_BUILDER = new DefaultNodeBuilder();
+
   private final BufferStack bufferStack = new BufferStack(this);
 
   private final MixinResolver mixinResolver = new MixinResolver();
@@ -58,6 +60,8 @@ public class LessContext {
   private LessImporter importer;
 
   private FunctionTable functionTable;
+
+  private NodeBuilder nodeBuilder = DEFAULT_NODE_BUILDER;
 
   private int mixinDepth;
 
@@ -80,6 +84,14 @@ public class LessContext {
 
   public LessOptions options() {
     return opts;
+  }
+
+  public NodeBuilder nodeBuilder() {
+    return nodeBuilder;
+  }
+
+  public void setNodeBuilder(NodeBuilder builder) {
+    this.nodeBuilder = builder;
   }
 
   public MixinResolver mixinResolver() {

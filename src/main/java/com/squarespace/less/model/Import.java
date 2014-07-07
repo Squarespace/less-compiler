@@ -132,7 +132,7 @@ public class Import extends BaseNode {
     Import result = new Import(path.eval(env), features == null ? null : (Features)features.eval(env), once);
     result.rootPath(rootPath);
     result.fileName(fileName);
-    result.copyPosition(this);
+    result.copyBase(this);
     return result;
   }
 

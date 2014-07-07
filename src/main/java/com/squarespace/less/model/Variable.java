@@ -32,11 +32,11 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Variable extends BaseNode {
 
-  private final String name;
+  protected final String name;
 
-  private final boolean indirect;
+  protected final boolean indirect;
 
-  private final boolean curly;
+  protected final boolean curly;
 
   public Variable(String name) {
     this(name, false);
@@ -60,8 +60,27 @@ public class Variable extends BaseNode {
     return name;
   }
 
+  public boolean indirect() {
+    return indirect;
+  }
+
   public boolean curly() {
     return curly;
+  }
+
+  protected Node dereference(Definition def, ExecEnv env) throws LessException {
+    Node result = def.dereference(env);
+    if (!indirect) {
+      return result;
+    }
+
+    // Render the node to obtain the new variable name and eval that. We render
+    // the value as if it were inside a string.
+    LessContext ctx = env.context();
+    Buffer buf = ctx.newBuffer();
+    buf.startDelim('"');
+    ctx.render(buf, result);
+    return env.context().nodeBuilder().buildVariable("@" + buf.toString()).eval(env);
   }
 
   @Override
@@ -91,19 +110,7 @@ public class Variable extends BaseNode {
     if (def == null) {
       throw new LessException(varUndefined(name));
     }
-
-    Node result = def.dereference(env);
-    if (!indirect) {
-      return result;
-    }
-
-    // Render the node to obtain the new variable name and eval that. We render
-    // the value as if it were inside a string.
-    LessContext ctx = env.context();
-    Buffer buf = ctx.newBuffer();
-    buf.startDelim('"');
-    ctx.render(buf, result);
-    return new Variable("@" + buf.toString()).eval(env);
+    return dereference(def, env);
   }
 
   @Override

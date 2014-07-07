@@ -18,7 +18,6 @@ package com.squarespace.less.parse;
 
 import com.squarespace.less.core.CharPattern;
 import com.squarespace.less.core.Chars;
-import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Node;
 
 
@@ -60,7 +59,7 @@ public class CommentParselet implements Parselet {
       end = stm.index - pattern.length();
     }
 
-    return new Comment(stm.raw.substring(start, end), block, ruleLevel);
+    return stm.context().nodeBuilder().buildComment(stm.raw.substring(start, end), block, ruleLevel);
   }
 
 }

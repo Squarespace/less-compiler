@@ -18,7 +18,6 @@ package com.squarespace.less.parse;
 
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.Variable;
 
 
 /**
@@ -47,7 +46,7 @@ public class VariableParselet implements Parselet {
       return null;
     }
     String name = '@' + stm.token();
-    return new Variable(indirect ? '@' + name : name);
+    return stm.context().nodeBuilder().buildVariable(indirect ? '@' + name : name, false);
   }
 
 }

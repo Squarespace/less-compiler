@@ -30,7 +30,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Argument;
 import com.squarespace.less.model.Block;
-import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.Expression;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.MixinCall;
@@ -86,6 +85,8 @@ public class MixinMatcher {
     if (mixinParams.needsEval()) {
       throw new LessInternalException("Serious error: params must already be evaluated!");
     }
+
+    LessContext ctx = callEnv.context();
 
     List<Parameter> params = mixinParams.params();
     List<Argument> args = mixinArgs == null ? null : mixinArgs.args();
@@ -173,18 +174,18 @@ public class MixinMatcher {
     Block bindings = new Block(boundValues.size());
     for (Map.Entry<String, Node> entry : boundValues.entrySet()) {
       Node value = entry.getValue();
-      bindings.appendNode(new Definition(entry.getKey(), value));
+      bindings.appendNode(ctx.nodeBuilder().buildDefinition(entry.getKey(), value));
       arguments.add(value);
     }
     if (variadicName != null) {
-      bindings.appendNode(new Definition(variadicName, variadic));
+      bindings.appendNode(ctx.nodeBuilder().buildDefinition(variadicName, variadic));
     }
     if (variadic != null) {
       for (Node value : variadic.values()) {
         arguments.add(value);
       }
     }
-    bindings.appendNode(new Definition("@arguments", arguments));
+    bindings.appendNode(ctx.nodeBuilder().buildDefinition("@arguments", arguments));
     return new GenericBlock(bindings);
   }
 

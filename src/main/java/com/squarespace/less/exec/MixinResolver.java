@@ -36,17 +36,17 @@ import com.squarespace.less.model.Ruleset;
  */
 public class MixinResolver {
 
-  private List<MixinMatch> results;
+  protected List<MixinMatch> results;
 
-  private MixinMatcher matcher;
+  protected MixinMatcher matcher;
 
-  private MixinCallArgs args;
+  protected MixinCallArgs args;
 
-  private List<String> callPath;
+  protected List<String> callPath;
 
-  private int callPathSize;
+  protected int callPathSize;
 
-  private int maxIndex;
+  protected int maxIndex;
 
   // TODO: change how this is used, so we can avoid the default constructor / reset method. - phensley
 
@@ -70,7 +70,7 @@ public class MixinResolver {
     return match(0, block);
   }
 
-  private boolean match(int index, Block block) throws LessException {
+  protected boolean match(int index, Block block) throws LessException {
     if (index >= callPathSize) {
       return false;
     }
@@ -95,7 +95,7 @@ public class MixinResolver {
     return matched;
   }
 
-  private boolean matchRuleset(int index, Ruleset ruleset) throws LessException {
+  protected boolean matchRuleset(int index, Ruleset ruleset) throws LessException {
     Ruleset original = (Ruleset)ruleset.original();
     if (original.evaluating()) {
       return false;
@@ -156,7 +156,7 @@ public class MixinResolver {
     return matches;
   }
 
-  private int matchPath(int index, List<String> other) {
+  protected int matchPath(int index, List<String> other) {
     int currSize = callPathSize - index;
     int otherSize = other.size();
     if (otherSize == 0 || currSize < otherSize) {

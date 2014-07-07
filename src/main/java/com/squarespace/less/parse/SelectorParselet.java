@@ -44,7 +44,7 @@ public class SelectorParselet implements Parselet {
       stm.skipWs();
       if (stm.peek() == Chars.RIGHT_PARENTHESIS) {
         stm.seek1();
-        selector = new Selector();
+        selector = stm.context().nodeBuilder().buildSelector();
         selector.add(new ValueElement(Combinator.DESC, value));
         return selector;
       }
@@ -54,7 +54,7 @@ public class SelectorParselet implements Parselet {
     Node elem = null;
     while ((elem = stm.parse(ELEMENT)) != null) {
       if (selector == null) {
-        selector = new Selector();
+        selector = stm.context().nodeBuilder().buildSelector();
       }
       selector.add((Element)elem);
       stm.parse(COMMENT);

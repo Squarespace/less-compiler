@@ -94,7 +94,7 @@ public class FunctionCall extends BaseNode {
       }
 
       // If we get null, fall through. Its a way for a function impl to signal
-      // that it should be emitted, not executed. This hapepns in the context()
+      // that it should be emitted, not executed. This happens in the context()
       // function -- it checks its args, and if the first arg is not of the expected
       // type, it returns null, indicating that the function call's repr should
       // be emitted, not an evaluated result.

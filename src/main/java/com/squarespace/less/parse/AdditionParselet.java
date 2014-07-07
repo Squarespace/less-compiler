@@ -21,7 +21,6 @@ import static com.squarespace.less.parse.Parselets.MULTIPLICATION;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.CharClass;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.Operation;
 import com.squarespace.less.model.Operator;
 
 
@@ -45,7 +44,7 @@ public class AdditionParselet implements Parselet {
       if (operand1 == null) {
         break;
       }
-      operation = new Operation(operator, operation, operand1);
+      operation = stm.context().nodeBuilder().buildOperation(operator, operation, operand1);
     }
     return operation;
   }
