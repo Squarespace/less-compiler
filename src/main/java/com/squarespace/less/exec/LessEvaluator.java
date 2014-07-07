@@ -442,8 +442,8 @@ public class LessEvaluator {
       if (opts.tracing()) {
         MixinCall actualCall = call.copy();
         actualCall.args(matcher.mixinArgs());
-        block.prependNode(new MixinMarker(actualCall, true));
-        block.appendNode(new MixinMarker(actualCall, false));
+        block.prependNode(new MixinMarker(actualCall, original, true));
+        block.appendNode(new MixinMarker(actualCall, original, false));
       }
 
       evaluateRules(env, block, call.important());
@@ -482,8 +482,8 @@ public class LessEvaluator {
 
     Block block = result.block();
     if (opts.tracing()) {
-      block.prependNode(new MixinMarker(call, true));
-      block.appendNode(new MixinMarker(call, false));
+      block.prependNode(new MixinMarker(call, ruleset, true));
+      block.appendNode(new MixinMarker(call, ruleset, false));
     }
     collector.appendBlock(block);
     return true;

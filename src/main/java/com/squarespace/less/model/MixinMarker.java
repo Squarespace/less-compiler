@@ -27,17 +27,24 @@ public class MixinMarker extends BaseNode {
 
   protected final MixinCall call;
 
+  protected final BlockNode definition;
+
   protected final boolean beginning;
 
   protected Path fileName;
 
-  public MixinMarker(MixinCall call, boolean begin) {
+  public MixinMarker(MixinCall call, BlockNode definition, boolean begin) {
     this.call = call;
+    this.definition = definition;
     this.beginning = begin;
   }
 
   public MixinCall mixinCall() {
     return call;
+  }
+
+  public BlockNode mixinDefinition() {
+    return definition;
   }
 
   public Path fileName() {
