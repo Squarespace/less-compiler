@@ -126,8 +126,6 @@ public class LessC extends LessBaseCommand {
     try {
       cmd.parse(args);
     } catch (ParameterException e) {
-      System.err.println("HERE");
-      e.printStackTrace();
       System.err.println(e.getMessage());
       System.exit(1);
     }
