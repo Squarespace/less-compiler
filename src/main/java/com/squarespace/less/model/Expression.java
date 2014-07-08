@@ -99,12 +99,14 @@ public class Expression extends BaseNode {
 
   @Override
   public void repr(Buffer buf) {
-    int size = values.size();
-    for (int i = 0; i < size; i++) {
-      if (i > 0) {
-        buf.append(' ');
+    if (values != null) {
+      int size = values.size();
+      for (int i = 0; i < size; i++) {
+        if (i > 0) {
+          buf.append(' ');
+        }
+        values.get(i).repr(buf);
       }
-      values.get(i).repr(buf);
     }
   }
 
