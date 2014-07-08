@@ -14,7 +14,11 @@ import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessLoader;
 import com.squarespace.less.exec.ImportRecord;
+import com.squarespace.less.model.Block;
+import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Import;
+import com.squarespace.less.model.ImportMarker;
+import com.squarespace.less.model.Media;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Quoted;
@@ -48,15 +52,28 @@ public class LessImporter {
    * Retrieves an external stylesheet and initializes the import node's block.
    * If not already cached, parse it and cache it.
    */
-  public void importStylesheet(Import importNode) throws LessException {
+  public Node importStylesheet(Import importNode) throws LessException {
     String rawPath = renderImportPath(importNode);
     if (rawPath == null) {
-      return;
+      return importNode;
     }
     Stylesheet sheet = importStylesheet(rawPath, importNode);
-    if (sheet != null) {
-      importNode.block(sheet.block());
+    if (sheet == null) {
+      // When import-once is used, we disappear the import node.
+      return new Block(0);
     }
+    Block block = sheet.block();
+    Features features = importNode.features();
+    if (features != null && !features.isEmpty()) {
+      Media media = new Media(features, block);
+      block = new Block();
+      block.appendNode(media);
+    }
+    if (context.options().tracing()) {
+      block.prependNode(new ImportMarker(importNode, true));
+      block.appendNode(new ImportMarker(importNode, false));
+    }
+    return block;
   }
 
   /**

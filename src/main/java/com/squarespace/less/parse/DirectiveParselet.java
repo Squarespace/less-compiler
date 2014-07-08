@@ -160,8 +160,7 @@ public class DirectiveParselet implements Parselet {
       Import importNode = new Import(path, features, once);
       importNode.rootPath(stm.rootPath());
       importNode.fileName(stm.fileName());
-      stm.context().importer().importStylesheet(importNode);
-      return importNode;
+      return stm.context().importer().importStylesheet(importNode);
     }
     return null;
   }
