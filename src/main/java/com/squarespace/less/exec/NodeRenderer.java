@@ -34,6 +34,7 @@ import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.Element;
 import com.squarespace.less.model.Expression;
 import com.squarespace.less.model.ExpressionList;
+import com.squarespace.less.model.Feature;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Node;
@@ -108,6 +109,10 @@ public class NodeRenderer {
 
       case EXPRESSION_LIST:
         renderImpl(buf, (ExpressionList)node);
+        break;
+
+      case FEATURE:
+        renderImpl(buf, (Feature)node);
         break;
 
       case FEATURES:
@@ -205,6 +210,12 @@ public class NodeRenderer {
       }
       render(buf, expns.get(i));
     }
+  }
+
+  public static void renderImpl(Buffer buf, Feature feature) throws LessException {
+    render(buf, feature.property());
+    buf.ruleSep();
+    render(buf, feature.value());
   }
 
   private static void renderImpl(Buffer buf, Features features) throws LessException {

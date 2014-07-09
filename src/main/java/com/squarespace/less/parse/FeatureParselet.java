@@ -23,10 +23,10 @@ import static com.squarespace.less.parse.Parselets.PROPERTY;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Expression;
+import com.squarespace.less.model.Feature;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Paren;
 import com.squarespace.less.model.Property;
-import com.squarespace.less.model.Rule;
 
 
 /**
@@ -61,7 +61,7 @@ public class FeatureParselet implements Parselet {
       stm.skipWs();
       if (stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
         if (prop != null && node != null) {
-          return new Paren(new Rule(prop, node));
+          return new Paren(new Feature(prop, node));
 
         } else if (node != null) {
           return new Paren(node);

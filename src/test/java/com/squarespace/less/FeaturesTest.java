@@ -43,22 +43,22 @@ public class FeaturesTest extends LessTestBase {
     Variable vb = var("@b");
     h.parseEquals("@a, @b", features(va, vb));
 
-    Paren ruleAB = paren(rule(prop("a"), kb));
-    h.parseEquals("(a: b)", features(expn(ruleAB)));
+    Paren featureAB = paren(feature(prop("a"), kb));
+    h.parseEquals("(a: b)", features(expn(featureAB)));
 
-    Paren ruleAVB = paren(rule(prop("a"), vb));
-    h.parseEquals("(a: @b)", features(expn(ruleAVB)));
-    h.parseEquals("(a: @b) and b", features(expn(ruleAVB, and, kb)));
-    h.parseEquals("(a: b), (a: @b)", features(expn(ruleAB), expn(ruleAVB)));
+    Paren featureAVB = paren(feature(prop("a"), vb));
+    h.parseEquals("(a: @b)", features(expn(featureAVB)));
+    h.parseEquals("(a: @b) and b", features(expn(featureAVB, and, kb)));
+    h.parseEquals("(a: b), (a: @b)", features(expn(featureAB), expn(featureAVB)));
 
     h.parseEquals("handheld", features(expn(kwd("handheld"))));
     h.parseEquals("(screen)", features(expn(paren(kwd("screen")))));
 
     h.parseEquals("(min-width: @width)",
-        features(expn(paren(rule(prop("min-width"), var("@width"))))));
+        features(expn(paren(feature(prop("min-width"), var("@width"))))));
 
     h.parseEquals("a and (b: 12px) and c",
-        features(expn(kwd("a"), kwd("and"), paren(rule(prop("b"), dim(12, Unit.PX))), kwd("and"), kwd("c"))));
+        features(expn(kwd("a"), kwd("and"), paren(feature(prop("b"), dim(12, Unit.PX))), kwd("and"), kwd("c"))));
   }
 
 }

@@ -38,6 +38,7 @@ import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.Element;
 import com.squarespace.less.model.Expression;
 import com.squarespace.less.model.ExpressionList;
+import com.squarespace.less.model.Feature;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.GenericBlock;
@@ -232,6 +233,10 @@ public class LessMaker {
     return res;
   }
 
+  public Feature feature(Node property, Node value) {
+    return new Feature(property, value);
+  }
+
   public Features features(Node ... elems) {
     Features features = new Features();
     for (Node elem : elems) {
@@ -319,8 +324,6 @@ public class LessMaker {
   public Property prop(String name) {
     return new Property(name);
   }
-
-
 
   public Quoted quoted(char delim, boolean escape, Object ... elems) {
     Quoted result = new Quoted(delim, escape);
