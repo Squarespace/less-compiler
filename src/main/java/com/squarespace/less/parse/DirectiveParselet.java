@@ -138,7 +138,7 @@ public class DirectiveParselet implements Parselet {
     if (block == null) {
       return null;
     }
-    Media media = new Media(features, (Block)block);
+    Media media = stm.context().nodeBuilder().buildMedia(features, (Block)block);
     media.fileName(stm.fileName());
     return media;
   }

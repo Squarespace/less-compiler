@@ -19,7 +19,9 @@ package com.squarespace.less;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Definition;
+import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Guard;
+import com.squarespace.less.model.Media;
 import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.MixinCall;
 import com.squarespace.less.model.MixinCallArgs;
@@ -46,6 +48,8 @@ public interface NodeBuilder {
   Definition buildDefinition(Variable variable, Node value);
 
   Definition buildDefinition(String name, Node value);
+
+  Media buildMedia(Features features, Block block);
 
   Mixin buildMixin(String name, MixinParams params, Guard guard);
 
