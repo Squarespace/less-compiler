@@ -31,6 +31,8 @@ public interface Node {
 
   Object userData();
 
+  void userData(Object obj);
+
   /**
    * Outputs the original LESS representation of this node.
    */
