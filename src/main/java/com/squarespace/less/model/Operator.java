@@ -22,7 +22,7 @@ public enum Operator {
   ADD ("+", "add"),
   AND ("and", "and"),
   DIVIDE ("/", "divide"),
-  EQUAL ("==", "equal to"),
+  EQUAL ("=", "equal to"),
   GREATER_THAN (">", "greater than"),
   GREATER_THAN_OR_EQUAL (">=", "greater than or equal to"),
   LESS_THAN ("<", "less than"),

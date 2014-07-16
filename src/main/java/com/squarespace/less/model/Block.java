@@ -183,6 +183,9 @@ public class Block extends BaseNode {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node rule = rules.get(i);
+      if (rule == null) {
+        continue;
+      }
       buf.indent();
       rule.repr(buf);
     }

@@ -74,7 +74,14 @@ public class ValueElement extends Element {
 
   @Override
   public void repr(Buffer buf) {
+    boolean quoted = (value instanceof Quoted);
+    if (quoted) {
+      buf.append('(');
+    }
     value.repr(buf);
+    if (quoted) {
+      buf.append(')');
+    }
   }
 
   @Override

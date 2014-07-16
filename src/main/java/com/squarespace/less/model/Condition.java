@@ -99,11 +99,16 @@ public class Condition extends BaseNode {
     if (negate) {
       buf.append("not ");
     }
-    buf.append('(');
+    boolean nested = (operand0.is(NodeType.CONDITION) || operand1.is(NodeType.CONDITION));
+    if (!nested) {
+      buf.append('(');
+    }
     operand0.repr(buf);
     buf.append(' ').append(operator.toString()).append(' ');
     operand1.repr(buf);
-    buf.append(')');
+    if (!nested) {
+      buf.append(')');
+    }
   }
 
   @Override
