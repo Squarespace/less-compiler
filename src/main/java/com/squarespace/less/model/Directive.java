@@ -82,6 +82,7 @@ public class Directive extends BaseNode {
       buf.append(' ');
       value.repr(buf);
     }
+    buf.append(";\n");
   }
 
   @Override

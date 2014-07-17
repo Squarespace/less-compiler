@@ -22,7 +22,6 @@ import java.util.List;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.SelectorUtils;
 
@@ -33,7 +32,7 @@ public class Ruleset extends BlockNode {
 
   protected boolean evaluating;
 
-  protected List<List<String>> mixinPaths;
+  protected boolean hasMixinPath;
 
   public Ruleset() {
     this.selectors = new Selectors();
@@ -51,7 +50,6 @@ public class Ruleset extends BlockNode {
 
   public Ruleset copy(ExecEnv env) throws LessException {
     Ruleset result = new Ruleset((Selectors) selectors.eval(env), block.copy());
-    result.mixinPaths = mixinPaths;
     result.fileName = fileName;
     if (originalBlockNode != null) {
       result.originalBlockNode = originalBlockNode;
@@ -63,8 +61,8 @@ public class Ruleset extends BlockNode {
     return selectors;
   }
 
-  public List<List<String>> mixinPaths() {
-    return LessUtils.safeList(mixinPaths);
+  public boolean hasMixinPath() {
+    return hasMixinPath;
   }
 
   public void enter() {
@@ -141,13 +139,9 @@ public class Ruleset extends BlockNode {
   private void addMixinPaths(Selector selector) {
     List<String> path = SelectorUtils.renderMixinSelector(selector);
     if (path != null) {
-      addMixinPath(path);
+      selector.mixinPath(path);
+      hasMixinPath = true;
     }
-  }
-
-  private void addMixinPath(List<String> path) {
-    mixinPaths = LessUtils.initList(mixinPaths, 2);
-    mixinPaths.add(path);
   }
 
 }

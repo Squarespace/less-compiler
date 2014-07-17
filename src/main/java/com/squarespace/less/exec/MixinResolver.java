@@ -28,6 +28,8 @@ import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Ruleset;
+import com.squarespace.less.model.Selector;
+import com.squarespace.less.model.Selectors;
 
 
 /**
@@ -96,18 +98,17 @@ public class MixinResolver {
   }
 
   protected boolean matchRuleset(int index, Ruleset ruleset) throws LessException {
+    if (!ruleset.hasMixinPath()) {
+      return false;
+    }
     Ruleset original = (Ruleset)ruleset.original();
     if (original.evaluating()) {
       return false;
     }
 
-    List<List<String>> paths = ruleset.mixinPaths();
-    if (paths.isEmpty()) {
-      return false;
-    }
-
-    // Try each of the ruleset's mixin paths
-    for (List<String> path : paths) {
+    Selectors selectors = ruleset.selectors();
+    for (Selector selector : selectors.selectors()) {
+      List<String> path = selector.mixinPath();
       int remaining = matchPath(index, path);
       if (remaining < 0) {
         continue;

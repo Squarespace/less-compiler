@@ -32,6 +32,8 @@ public class Selector extends BaseNode {
 
   protected List<Element> elements;
 
+  protected List<String> mixinPath;
+
   protected boolean hasWildcard;
 
   protected boolean evaluate;
@@ -51,6 +53,14 @@ public class Selector extends BaseNode {
 
   public List<Element> elements() {
     return LessUtils.safeList(elements);
+  }
+
+  public List<String> mixinPath() {
+    return mixinPath;
+  }
+
+  public void mixinPath(List<String> mixinPath) {
+    this.mixinPath = mixinPath;
   }
 
   public int size() {
@@ -91,6 +101,11 @@ public class Selector extends BaseNode {
   @Override
   public NodeType type() {
     return NodeType.SELECTOR;
+  }
+
+  @Override
+  public void repr(Buffer buf) {
+    Selectors.reprSelector(buf, this);
   }
 
   @Override

@@ -91,11 +91,16 @@ public class Selectors extends BaseNode {
   @Override
   public void repr(Buffer buf) {
     int size1 = selectors.size();
+    boolean emitted = false;
     for (int i = 0; i < size1; i++) {
-      if (i > 0) {
+      if (emitted) {
         buf.append(",\n").indent();
       }
-      reprSelector(buf, selectors.get(i));
+      Selector selector = selectors.get(i);
+      if (selector != null) {
+        emitted = true;
+        reprSelector(buf, selector);
+      }
     }
   }
 
