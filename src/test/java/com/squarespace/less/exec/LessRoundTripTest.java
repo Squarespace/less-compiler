@@ -8,7 +8,6 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.ErrorUtils;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Stylesheet;
@@ -24,7 +23,7 @@ public class LessRoundTripTest extends LessSuiteBase {
     for (Path lessPath : LessUtils.getMatchingFiles(lessRoot, GLOB_LESS)) {
       String fileName = "less/" + lessPath.getFileName();
       String source = LessUtils.readFile(lessPath);
-      String result = null;
+      boolean result = false;
       try {
         result = process(source, lessRoot);
       } catch (LessException e) {
@@ -35,7 +34,7 @@ public class LessRoundTripTest extends LessSuiteBase {
         logFailure("RoundTrip Test", ++failures, "Error processing", fileName);
         e.printStackTrace();
       }
-      if (result != null) {
+      if (!result) {
         logFailure("RoundTrip Test", ++failures, "Differences detected in roundtrip output for ", fileName);
       }
     }
@@ -44,20 +43,24 @@ public class LessRoundTripTest extends LessSuiteBase {
     }
   }
 
-  private String process(String source, Path importRoot) throws LessException {
-    Stylesheet sheetOne = parse(source, importRoot);
-    String sourceOne = render(sheetOne);
+  private boolean process(String source, Path importRoot) throws LessException {
+    Stylesheet original = parse(source, importRoot);
 
-    Stylesheet sheetTwo = parse(sourceOne, importRoot);
-    String sourceTwo = render(sheetTwo);
+    String sourceOne = original.repr();
+    Stylesheet sheetOne = parse(sourceOne, importRoot);
 
-    return diff(sourceOne, sourceTwo);
-  }
+    String sourceTwo = sheetOne.repr();
+    Stylesheet sheetTwo = parse(sourceTwo, importRoot);
 
-  private String render(Stylesheet sheet) {
-    Buffer buf = new Buffer(4, false);
-    sheet.repr(buf);
-    return buf.toString();
+    if (!sheetOne.equals(sheetTwo)) {
+      System.err.println("sheets not equal");
+      return false;
+    }
+    if (diff(sourceOne, sourceTwo) != null) {
+      System.err.println("diff not equal");
+      return false;
+    }
+    return true;
   }
 
 }

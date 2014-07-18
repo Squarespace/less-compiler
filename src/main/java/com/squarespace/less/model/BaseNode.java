@@ -123,7 +123,7 @@ public abstract class BaseNode implements Node {
 
   @Override
   public String repr() {
-    Buffer buf = new Buffer(0);
+    Buffer buf = new Buffer(2);
     repr(buf);
     return buf.toString();
   }
