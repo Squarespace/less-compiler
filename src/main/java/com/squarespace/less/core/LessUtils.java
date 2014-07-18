@@ -88,15 +88,15 @@ public class LessUtils {
 
   public static List<Path> getMatchingFiles(final Path rootPath, String globPattern, boolean recursive)
       throws IOException {
-    final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(globPattern);
     final List<Path> result = new ArrayList<>();
     if (!recursive) {
-      DirectoryStream<Path> dirStream = getMatchingFiles(rootPath, matcher);
+      DirectoryStream<Path> dirStream = getMatchingFiles(rootPath, globPattern);
       for (Path path : dirStream) {
         result.add(path);
       }
 
     } else {
+      final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(globPattern);
       FileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attribs) {
@@ -111,7 +111,8 @@ public class LessUtils {
     return result;
   }
 
-  public static DirectoryStream<Path> getMatchingFiles(Path root, final PathMatcher matcher) throws IOException {
+  public static DirectoryStream<Path> getMatchingFiles(Path root, String pattern) throws IOException {
+    final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(pattern);
     return Files.newDirectoryStream(root, new DirectoryStream.Filter<Path>() {
       @Override
       public boolean accept(Path entry) throws IOException {
