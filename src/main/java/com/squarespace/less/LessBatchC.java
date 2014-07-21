@@ -153,13 +153,13 @@ public class LessBatchC extends LessBaseCommand {
     boolean error = false;
     try {
       log("beginning parse and pre-cache:\n");
-      LessContext ctx = new LessContext(options);
-      ctx.setCompiler(COMPILER);
       lessPaths = LessUtils.getMatchingFiles(inputPath, GLOB_LESS, true);
       for (Path path : lessPaths) {
         Path realPath = inputPath.resolve(path).toAbsolutePath().normalize();
         String data = LessUtils.readFile(realPath);
         Stylesheet stylesheet = null;
+        LessContext ctx = new LessContext(options);
+        ctx.setCompiler(COMPILER);
         try {
           log("parsing " + path + " ");
           long start = System.nanoTime();
@@ -196,6 +196,7 @@ public class LessBatchC extends LessBaseCommand {
           System.exit(1);
         }
 
+        LessContext ctx = new LessContext(options, null, preCache);
         try {
           String[] fileParts = path.getFileName().toString().split("\\.(?=[^\\.]+$)");
           Path parentPath = path.getParent();
@@ -210,7 +211,6 @@ public class LessBatchC extends LessBaseCommand {
           Path cssPath = realPath.resolve(fileParts[0] + ".css").normalize();
           log("compiling to " + cssPath);
           long start = System.nanoTime();
-          ctx = new LessContext(options, null, preCache);
           ctx.setCompiler(COMPILER);
           String cssData = COMPILER.render(stylesheet.copy(), ctx);
           writeFile(cssPath, cssData);
