@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.squarespace.less</groupId>
   <artifactId>less-compiler</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4-SNAPSHOT</version>
   <packaging>jar</packaging>
   <url>https://github.com/squarespace/squarespace-less</url>
   <description>Squarespace LESS (to CSS) Compiler</description>
@@ -43,7 +43,7 @@
     <connection>scm:git:https://github.com/squarespace/squarespace-less.git</connection>
     <developerConnection>scm:git:git@github.com:squarespace/squarespace-less.git</developerConnection>
     <url>https://github.com/squarespace/squarespace-less.git</url>
-    <tag>v1.0.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <developers>
