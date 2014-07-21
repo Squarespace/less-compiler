@@ -158,8 +158,11 @@ public class MixinResolver {
   }
 
   protected int matchPath(int index, List<String> other) {
-    int currSize = callPathSize - index;
+    if (other == null) {
+      return -1;
+    }
     int otherSize = other.size();
+    int currSize = callPathSize - index;
     if (otherSize == 0 || currSize < otherSize) {
       return -1;
     }
