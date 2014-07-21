@@ -19,6 +19,7 @@ package com.squarespace.less;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Definition;
+import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.Media;
@@ -48,6 +49,8 @@ public interface NodeBuilder {
   Definition buildDefinition(Variable variable, Node value);
 
   Definition buildDefinition(String name, Node value);
+
+  Directive buildDirective(String name, Node value);
 
   Media buildMedia(Features features, Block block);
 

@@ -161,8 +161,12 @@ public class LessEvaluator {
 
           case DIRECTIVE:
             Directive directive = (Directive)node;
-            if (directive.name().equals("@charset") && block.charset() == null) {
-              block.charset(directive);
+            if (directive.name().equals("@charset")) {
+              if (block.charset() == null) {
+                block.charset(directive);
+              }
+            } else {
+              node = directive.eval(env);
             }
             break;
 

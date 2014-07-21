@@ -28,7 +28,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockDirective;
-import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Import;
 import com.squarespace.less.model.Media;
@@ -124,7 +123,7 @@ public class DirectiveParselet implements Parselet {
     } else {
       Node value = parseRest(stm, hasExpression);
       if (value != null) {
-        return new Directive(name, value);
+        return stm.context().nodeBuilder().buildDirective(name, value);
       }
     }
 

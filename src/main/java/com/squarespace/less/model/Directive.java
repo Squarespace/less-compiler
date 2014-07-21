@@ -20,8 +20,10 @@ import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import java.nio.file.Path;
 
+import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
+import com.squarespace.less.exec.ExecEnv;
 
 
 public class Directive extends BaseNode {
@@ -54,6 +56,11 @@ public class Directive extends BaseNode {
 
   public void fileName(Path path) {
     this.fileName = path;
+  }
+
+  @Override
+  public Node eval(ExecEnv env) throws LessException {
+    return new Directive(name, value.eval(env));
   }
 
   @Override

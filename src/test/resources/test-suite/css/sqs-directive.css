@@ -9,3 +9,6 @@
 .ruleset-namespace {
   @namespace sqs url('http://squarespace.com');
 }
+.ruleset-namespace-dynamic {
+  @namespace foo url('http://squarespace.com');
+}

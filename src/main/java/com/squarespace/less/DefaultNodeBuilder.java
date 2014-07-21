@@ -19,6 +19,7 @@ package com.squarespace.less;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Definition;
+import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.Media;
@@ -56,6 +57,11 @@ public class DefaultNodeBuilder implements NodeBuilder {
   @Override
   public Definition buildDefinition(Variable variable, Node value) {
     return new Definition(variable, value);
+  }
+
+  @Override
+  public Directive buildDirective(String name, Node value) {
+    return new Directive(name, value);
   }
 
   @Override
