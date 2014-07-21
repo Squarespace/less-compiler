@@ -49,6 +49,8 @@ public class LessBatchC extends LessBaseCommand {
 
   private static final String IMPLNAME = "(LESS Batch Compiler) [Java, Squarespace]";
 
+  private static final LessCompiler COMPILER = new LessCompiler();
+
   private final LessOptions options = new LessOptions();
 
   @Parameter(description = "LESS_DIR [OUTPUT_DIR]")
@@ -152,7 +154,7 @@ public class LessBatchC extends LessBaseCommand {
     try {
       log("beginning parse and pre-cache:\n");
       LessContext ctx = new LessContext(options);
-      LessCompiler compiler = new LessCompiler();
+      ctx.setCompiler(COMPILER);
       lessPaths = LessUtils.getMatchingFiles(inputPath, GLOB_LESS, true);
       for (Path path : lessPaths) {
         Path realPath = inputPath.resolve(path).toAbsolutePath().normalize();
@@ -161,7 +163,7 @@ public class LessBatchC extends LessBaseCommand {
         try {
           log("parsing " + path + " ");
           long start = System.nanoTime();
-          stylesheet = compiler.parse(data, ctx, realPath.getParent(), realPath.getFileName());
+          stylesheet = COMPILER.parse(data, ctx, realPath.getParent(), realPath.getFileName());
           double elapsed = (System.nanoTime() - start) / 1000000.0;
           System.err.printf("  %.3fms\n", elapsed);
           preCache.put(realPath, stylesheet);
@@ -209,8 +211,8 @@ public class LessBatchC extends LessBaseCommand {
           log("compiling to " + cssPath);
           long start = System.nanoTime();
           ctx = new LessContext(options, null, preCache);
-          ctx.setCompiler(compiler);
-          String cssData = compiler.render(stylesheet.copy(), ctx);
+          ctx.setCompiler(COMPILER);
+          String cssData = COMPILER.render(stylesheet.copy(), ctx);
           writeFile(cssPath, cssData);
           double elapsed = (System.nanoTime() - start) / 1000000.0;
           System.err.printf("  %.3fms\n", elapsed);
