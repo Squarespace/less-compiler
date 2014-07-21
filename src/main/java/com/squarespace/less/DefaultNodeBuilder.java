@@ -17,6 +17,7 @@
 package com.squarespace.less;
 
 import com.squarespace.less.model.Block;
+import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.Directive;
@@ -34,10 +35,16 @@ import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
+import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Variable;
 
 
 public class DefaultNodeBuilder implements NodeBuilder {
+
+  @Override
+  public BlockDirective buildBlockDirective(String name, Block block) {
+    return new BlockDirective(name, block);
+  }
 
   @Override
   public Comment buildComment(String body, boolean block) {
@@ -107,6 +114,11 @@ public class DefaultNodeBuilder implements NodeBuilder {
   @Override
   public Selector buildSelector() {
     return new Selector();
+  }
+
+  @Override
+  public Stylesheet buildStylesheet(Block block) {
+    return new Stylesheet(block);
   }
 
   @Override

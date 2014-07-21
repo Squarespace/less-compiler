@@ -18,6 +18,7 @@ package com.squarespace.less.exec;
 
 import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
+import com.squarespace.less.model.Selector;
 
 
 /**
@@ -27,15 +28,22 @@ public class MixinMatch {
 
   private final Node mixin;
 
+  private final Selector selector;
+
   private final MixinParams params;
 
-  public MixinMatch(Node mixin, MixinParams params) {
+  public MixinMatch(Node mixin, Selector selector, MixinParams params) {
     this.mixin = mixin;
+    this.selector = selector;
     this.params = params;
   }
 
   public Node mixin() {
     return mixin;
+  }
+
+  public Selector selector() {
+    return selector;
   }
 
   public MixinParams params() {

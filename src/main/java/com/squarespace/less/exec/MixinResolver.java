@@ -117,7 +117,7 @@ public class MixinResolver {
       // Full match.. add this to the results.
       if (remaining == 0) {
         if (args == null || args.isEmpty()) {
-          results.add(new MixinMatch(ruleset, null));
+          results.add(new MixinMatch(ruleset, selector, null));
           return true;
         }
 
@@ -152,7 +152,7 @@ public class MixinResolver {
     boolean matches = matcher.patternMatch(params);
 
     if (matches) {
-      results.add(new MixinMatch(mixin, params));
+      results.add(new MixinMatch(mixin, null, params));
     }
     return matches;
   }

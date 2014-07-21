@@ -115,7 +115,7 @@ public class DirectiveParselet implements Parselet {
     if (hasBlock) {
       Node block = stm.parse(BLOCK);
       if (block != null) {
-        BlockDirective directive = new BlockDirective(name, (Block)block);
+        BlockDirective directive = stm.context().nodeBuilder().buildBlockDirective(name, (Block)block);
         directive.fileName(stm.fileName());
         return directive;
       }

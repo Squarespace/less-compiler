@@ -29,8 +29,7 @@ public class StylesheetParselet implements Parselet {
   @Override
   public Node parse(LessStream stm) throws LessException {
     Node block = stm.parse(PRIMARY);
-    Stylesheet sheet = new Stylesheet((Block)block);
-
+    Stylesheet sheet = stm.context().nodeBuilder().buildStylesheet((Block)block);
     stm.checkComplete();
     return sheet;
   }

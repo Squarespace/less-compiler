@@ -17,6 +17,7 @@
 package com.squarespace.less;
 
 import com.squarespace.less.model.Block;
+import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.Directive;
@@ -34,6 +35,7 @@ import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
+import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Variable;
 
 
@@ -41,6 +43,8 @@ import com.squarespace.less.model.Variable;
  * Allows clients to substitute custom implementations of nodes.
  */
 public interface NodeBuilder {
+
+  BlockDirective buildBlockDirective(String name, Block block);
 
   Comment buildComment(String body, boolean block);
 
@@ -69,6 +73,8 @@ public interface NodeBuilder {
   Ruleset buildRuleset(Selectors group, Block block);
 
   Selector buildSelector();
+
+  Stylesheet buildStylesheet(Block block);
 
   Variable buildVariable(String name);
 
