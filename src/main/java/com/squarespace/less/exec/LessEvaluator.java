@@ -160,14 +160,13 @@ public class LessEvaluator {
             break;
 
           case DIRECTIVE:
-            Directive directive = (Directive)node;
+            Directive directive = (Directive)(node.eval(env));
             if (directive.name().equals("@charset")) {
               if (block.charset() == null) {
                 block.charset(directive);
               }
-            } else {
-              node = directive.eval(env);
             }
+            node = directive;
             break;
 
           case IMPORT_MARKER:
