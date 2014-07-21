@@ -57,6 +57,11 @@ public class Directive extends BaseNode {
   }
 
   @Override
+  public boolean needsEval() {
+    return value.needsEval();
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (obj instanceof Directive) {
       Directive other = (Directive)obj;
