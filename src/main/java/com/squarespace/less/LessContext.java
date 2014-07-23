@@ -20,7 +20,6 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.core.LessImporter;
 import com.squarespace.less.exec.BufferStack;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
@@ -30,6 +29,7 @@ import com.squarespace.less.exec.NodeRenderer;
 import com.squarespace.less.exec.RenderEnv;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Stylesheet;
+import com.squarespace.less.parse.LessImporter;
 
 
 /**

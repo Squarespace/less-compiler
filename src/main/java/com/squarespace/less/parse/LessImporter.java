@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.squarespace.less.core;
+package com.squarespace.less.parse;
 
 import static com.squarespace.less.core.SyntaxErrorMaker.importError;
 
