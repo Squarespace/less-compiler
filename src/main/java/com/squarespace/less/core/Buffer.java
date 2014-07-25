@@ -24,7 +24,7 @@ import com.squarespace.less.LessOptions;
  */
 public class Buffer {
 
-  private final StringBuilder buf;
+  private final StringBuilder buf = new StringBuilder();
 
   private final int indentSize;
 
@@ -41,17 +41,12 @@ public class Buffer {
   }
 
   public Buffer(int indentSize) {
-    this(indentSize, false, new StringBuilder());
+    this(indentSize, false);
   }
 
   public Buffer(int indentSize, boolean compress) {
-    this(indentSize, compress, new StringBuilder());
-  }
-
-  private Buffer(int indentSize, boolean compress, StringBuilder buf) {
     this.indentSize = indentSize;
     this.compress = compress;
-    this.buf = buf;
   }
 
   /**
