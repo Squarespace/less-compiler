@@ -203,9 +203,9 @@ public class Block extends BaseNode {
   }
 
   private void setFlags(Node node) {
-    if (node.type() == NodeType.IMPORT) {
+    if (node instanceof Import) {
       flags |= FLAG_HAS_IMPORTS;
-    } else if (node.type() == NodeType.MIXIN_CALL) {
+    } else if (node instanceof MixinCall) {
       flags |= FLAG_HAS_MIXIN_CALLS;
     }
   }

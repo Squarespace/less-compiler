@@ -271,16 +271,12 @@ public class Condition extends BaseNode {
   }
 
   private String render(ExecEnv env, Node arg) throws LessException {
-    switch (arg.type()) {
-      case ANONYMOUS:
-        return ((Anonymous)arg).value();
-
-      case KEYWORD:
-        return ((Keyword)arg).value();
-
-      default:
-        return env.context().render(arg);
+    if (arg instanceof Anonymous) {
+      return ((Anonymous)arg).value();
+    } else if (arg instanceof Keyword) {
+      return ((Keyword)arg).value();
     }
+    return env.context().render(arg);
   }
 
   private int compareTo(String left, String right) {

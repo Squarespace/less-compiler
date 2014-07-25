@@ -134,15 +134,12 @@ public class Operation extends BaseNode {
   }
 
   private Node cast(Node node) {
-    switch (node.type()) {
-      case KEYWORD:
-        Keyword kwd = (Keyword)node;
-        RGBColor color = RGBColor.fromName(kwd.value());
-        return color == null ? kwd : color;
-
-      default:
-        return node;
+    if (node instanceof Keyword) {
+      Keyword kwd = (Keyword)node;
+      RGBColor color = RGBColor.fromName(kwd.value());
+      return color == null ? kwd : color;
     }
+    return node;
   }
 
 }

@@ -244,19 +244,13 @@ public class LessEvaluator {
     // Use of rules.size() intentional since the list size can change during iteration.
     for (int i = 0; i < rules.size(); i++) {
       Node node = rules.get(i);
-      switch (node.type()) {
-
-        case MIXIN_CALL:
-          Block mixinResult = executeMixinCall(env, (MixinCall)node);
-          FlexList<Node> other = mixinResult.rules();
-          rules.splice(i, 1, other);
-          i += other.size() - 1;
-          block.resetCache();
-          block.orFlags(mixinResult);
-          break;
-
-        default:
-          break;
+      if (node instanceof MixinCall) {
+        Block mixinResult = executeMixinCall(env, (MixinCall)node);
+        FlexList<Node> other = mixinResult.rules();
+        rules.splice(i, 1, other);
+        i += other.size() - 1;
+        block.resetCache();
+        block.orFlags(mixinResult);
       }
     }
   }
@@ -284,22 +278,14 @@ public class LessEvaluator {
     int calls = 0;
     for (MixinMatch match : matches) {
       Node node = match.mixin();
-      switch (node.type()) {
-
-        case MIXIN:
-          if (executeMixin(env, results, matcher, match)) {
-            calls++;
-          }
-          break;
-
-        case RULESET:
-          if (executeRulesetMixin(env, results, matcher, match)) {
-            calls++;
-          }
-          break;
-
-        default:
-          break;
+      if (node instanceof Mixin) {
+        if (executeMixin(env, results, matcher, match)) {
+          calls++;
+        }
+      } else if (node instanceof Ruleset) {
+        if (executeRulesetMixin(env, results, matcher, match)) {
+          calls++;
+        }
       }
     }
 
