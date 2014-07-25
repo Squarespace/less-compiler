@@ -36,28 +36,28 @@ public class Condition extends BaseNode {
 
   protected final Operator operator;
 
-  protected final Node operand0;
+  protected final Node left;
 
-  protected final Node operand1;
+  protected final Node right;
 
   protected final boolean negate;
 
-  public Condition(Operator operator, Node operand0, Node operand1, boolean negate) {
-    if (operator == null || operand0 == null || operand1 == null) {
+  public Condition(Operator operator, Node left, Node right, boolean negate) {
+    if (operator == null || left == null || right == null) {
       throw new LessInternalException("Serious error: operator/operands cannot be null.");
     }
     this.operator = operator;
-    this.operand0 = operand0;
-    this.operand1 = operand1;
+    this.left = left;
+    this.right = right;
     this.negate = negate;
   }
 
   public Node operand0() {
-    return operand0;
+    return left;
   }
 
   public Node operand1() {
-    return operand1;
+    return right;
   }
 
   @Override
@@ -66,8 +66,8 @@ public class Condition extends BaseNode {
       Condition other = (Condition)obj;
       boolean res = operator == other.operator
           && negate == other.negate
-          && safeEquals(operand0, other.operand0)
-          && safeEquals(operand1, other.operand1);
+          && safeEquals(left, other.left)
+          && safeEquals(right, other.right);
       return res;
     }
     return false;
@@ -99,13 +99,13 @@ public class Condition extends BaseNode {
     if (negate) {
       buf.append("not ");
     }
-    boolean nested = (operand0.is(NodeType.CONDITION) || operand1.is(NodeType.CONDITION));
+    boolean nested = (left.is(NodeType.CONDITION) || right.is(NodeType.CONDITION));
     if (!nested) {
       buf.append('(');
     }
-    operand0.repr(buf);
+    left.repr(buf);
     buf.append(' ').append(operator.toString()).append(' ');
-    operand1.repr(buf);
+    right.repr(buf);
     if (!nested) {
       buf.append(')');
     }
@@ -120,15 +120,15 @@ public class Condition extends BaseNode {
       buf.append(" [negate]");
     }
     buf.append('\n').incrIndent().indent();
-    operand0.modelRepr(buf);
+    left.modelRepr(buf);
     buf.append('\n').indent();
-    operand1.modelRepr(buf);
+    right.modelRepr(buf);
     buf.append('\n').decrIndent();
   }
 
   private boolean compare(ExecEnv env) throws LessException {
-    Node left = operand0.needsEval() ? operand0.eval(env) : operand0;
-    Node right = operand1.needsEval() ? operand1.eval(env) : operand1;
+    Node op0 = left.needsEval() ? left.eval(env) : left;
+    Node op1 = right.needsEval() ? right.eval(env) : right;
 
     switch (operator) {
       case ADD:
@@ -138,38 +138,38 @@ public class Condition extends BaseNode {
         throw new LessException(ExecuteErrorMaker.expectedBoolOp(operator));
 
       case AND:
-        return conjunction(env, left, right);
+        return conjunction(env, op0, op1);
 
       case OR:
-        return disjunction(env, left, right);
+        return disjunction(env, op0, op1);
 
       default:
         break;
     }
 
-    NodeType type = left.type();
+    NodeType type = op0.type();
     int result = -1;
     switch (type) {
       case ANONYMOUS:
-        result = compare(env, (Anonymous)left, right);
+        result = compare(env, (Anonymous)op0, op1);
         break;
 
       case COLOR:
-        result = compare((BaseColor)left, right);
+        result = compare((BaseColor)op0, op1);
         break;
 
       case DIMENSION:
-        result = compare((Dimension)left, right);
+        result = compare((Dimension)op0, op1);
         break;
 
       case KEYWORD:
       case TRUE:
       case FALSE:
-        result = compare((Keyword)left, right);
+        result = compare((Keyword)op0, op1);
         break;
 
       case QUOTED:
-        result = compare(env, (Quoted)left, right);
+        result = compare(env, (Quoted)op0, op1);
         break;
 
       default:
