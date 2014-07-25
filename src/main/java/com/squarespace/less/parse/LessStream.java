@@ -90,15 +90,15 @@ public class LessStream extends Stream {
 
   private final LessContext context;
 
+  private final Path rootPath;
+
+  private final Path fileName;
+
   private int matchEnd = -1;
 
   private Mark tokenPosition = new Mark();
 
   private String token;
-
-  private Path rootPath;
-
-  private Path fileName;
 
   private Mark position = new Mark();
 
