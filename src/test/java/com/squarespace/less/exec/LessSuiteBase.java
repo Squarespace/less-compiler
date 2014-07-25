@@ -41,6 +41,9 @@ import difflib.DiffUtils;
 import difflib.Patch;
 
 
+/**
+ * Routines shared among multiple unit test classes.
+ */
 public class LessSuiteBase {
 
   protected static final String GLOB_LESS = "glob:*.less";

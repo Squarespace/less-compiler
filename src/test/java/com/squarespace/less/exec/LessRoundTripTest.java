@@ -29,6 +29,10 @@ import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Stylesheet;
 
 
+/**
+ * Ensures that a parsed LESS file that is repr()-ed back into LESS produces the
+ * equivalent syntax tree and LESS output (round-tripping).
+ */
 public class LessRoundTripTest extends LessSuiteBase {
 
   @Test
