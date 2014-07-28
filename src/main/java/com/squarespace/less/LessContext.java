@@ -132,7 +132,7 @@ public class LessContext {
   }
 
   public Buffer newBuffer() {
-    return new Buffer(opts);
+    return new Buffer(opts.indent(), opts.compress());
   }
 
   public ExecEnv newEnv() {

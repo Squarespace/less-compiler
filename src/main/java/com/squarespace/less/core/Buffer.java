@@ -16,7 +16,6 @@
 
 package com.squarespace.less.core;
 
-import com.squarespace.less.LessOptions;
 
 
 /**
@@ -35,10 +34,6 @@ public class Buffer {
   private char prev = Chars.LINE_FEED;
 
   private int indentCurr;
-
-  public Buffer(LessOptions opts) {
-    this(opts.indent(), opts.compress());
-  }
 
   public Buffer(int indentSize) {
     this(indentSize, false);
