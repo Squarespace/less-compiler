@@ -46,7 +46,7 @@ public class MixinParamsParselet implements Parselet {
       stm.parse(COMMENT);
       if (matchVariadic(stm)) {
         stm.seek(3);
-        params.add(new Parameter(null, true));
+        params.add(stm.context().nodeBuilder().buildParameter(null, true));
         break;
       }
 
@@ -79,7 +79,7 @@ public class MixinParamsParselet implements Parselet {
       return null;
     }
     if (!temp.is(NodeType.VARIABLE)) {
-      return new Parameter(null, temp);
+      return stm.context().nodeBuilder().buildParameter(null, temp);
     }
 
     Variable var = (Variable)temp;
@@ -91,14 +91,14 @@ public class MixinParamsParselet implements Parselet {
       if (value == null) {
         throw stm.parseError(new LessException(expected("an expression")));
       }
-      return new Parameter(var.name(), value);
+      return stm.context().nodeBuilder().buildParameter(var.name(), value);
 
     } else if (matchVariadic(stm)) {
       stm.seek(3);
-      return new Parameter(var.name(), true);
+      return stm.context().nodeBuilder().buildParameter(var.name(), true);
     }
 
-    return new Parameter(var.name());
+    return stm.context().nodeBuilder().buildParameter(var.name());
   }
 
   private boolean matchVariadic(LessStream stm) throws LessException {

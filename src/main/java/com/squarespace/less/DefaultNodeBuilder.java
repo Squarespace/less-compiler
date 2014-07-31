@@ -31,6 +31,7 @@ import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Operation;
 import com.squarespace.less.model.Operator;
+import com.squarespace.less.model.Parameter;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
@@ -94,6 +95,21 @@ public class DefaultNodeBuilder implements NodeBuilder {
   @Override
   public Operation buildOperation(Operator operator, Node operand0, Node operand1) {
     return new Operation(operator, operand0, operand1);
+  }
+
+  @Override
+  public Parameter buildParameter(String name) {
+    return new Parameter(name);
+  }
+
+  @Override
+  public Parameter buildParameter(String name, Node value) {
+    return new Parameter(name, value);
+  }
+
+  @Override
+  public Parameter buildParameter(String name, boolean variadic) {
+    return new Parameter(name, variadic);
   }
 
   @Override

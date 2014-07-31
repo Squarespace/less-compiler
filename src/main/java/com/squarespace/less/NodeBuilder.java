@@ -31,6 +31,7 @@ import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Operation;
 import com.squarespace.less.model.Operator;
+import com.squarespace.less.model.Parameter;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
@@ -65,6 +66,12 @@ public interface NodeBuilder {
   MixinCall buildMixinCall(Selector selector, MixinCallArgs args, boolean important);
 
   Operation buildOperation(Operator operator, Node operand0, Node operand1);
+
+  Parameter buildParameter(String name);
+
+  Parameter buildParameter(String name, Node value);
+
+  Parameter buildParameter(String name, boolean variadic);
 
   Rule buildRule(Node property, Node value);
 
