@@ -2,6 +2,9 @@
 /.classpath
 /.project
 /.settings
+/.gradle
+
+/build
 /target
 /test-output
 
