@@ -16,3 +16,6 @@
 .ruleset-font-6 {
   font: italic;
 }
+.ruleset-font-7 {
+  font: 400 12px / 14px 'proxima-nova';
+}

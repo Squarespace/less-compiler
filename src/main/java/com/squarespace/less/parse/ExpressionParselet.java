@@ -39,10 +39,10 @@ public class ExpressionParselet implements Parselet {
     }
 
     List<Node> entities = new ArrayList<>();
-    while (node != null) {
+    do {
       entities.add(node);
       node = stm.parse(EXPRESSION_SUB);
-    }
+    } while (node != null);
     return entities.size() == 1 ? entities.get(0) : new Expression(entities);
   }
 
