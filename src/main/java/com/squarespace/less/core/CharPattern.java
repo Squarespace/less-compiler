@@ -49,7 +49,6 @@ public class CharPattern {
 
   /**
    * Returns the character pattern.
-   * @return
    */
   public char[] pattern() {
     return chars;
