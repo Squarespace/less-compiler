@@ -131,10 +131,10 @@ public class VariableTest extends LessTestBase {
     LessHarness h = new LessHarness();
 
     String str = "@a: 1px; .x { @b: #111; .y { .z { key: @a @b; } } }";
-    assertEquals(h.execute(str, opts), ".x .y .z{key:1px #111;}");
+    assertEquals(h.execute(str, opts), ".x .y .z{key:1px #111}");
 
     str = "@a: 1; .x { @a: 2; .y { @a: 3; .z { key: @a; } } }";
-    assertEquals(h.execute(str, opts), ".x .y .z{key:3;}");
+    assertEquals(h.execute(str, opts), ".x .y .z{key:3}");
   }
 
 }
