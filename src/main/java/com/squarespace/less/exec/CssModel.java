@@ -235,6 +235,11 @@ public class CssModel {
       while (iter.hasNext()) {
         CssNode node = iter.next();
         node.render(buf);
+        // If we're adding a rule, and we're not compressed or this is not the last
+        // rule in the ruleset, append the semicolon.
+        if (node instanceof CssValue && (!buf.compress() || iter.hasNext())) {
+          buf.ruleEnd();
+        }
       }
       if (!headers.isEmpty()) {
         buf.blockClose();
@@ -264,7 +269,6 @@ public class CssModel {
     public void render(Buffer buf) {
       buf.indent();
       buf.append(value);
-      buf.ruleEnd();
     }
 
   }
