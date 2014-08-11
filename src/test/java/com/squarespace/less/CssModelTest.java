@@ -45,8 +45,8 @@ public class CssModelTest {
     model.value("background-color:black");
     model.pop();
 
-    String expected = "@media foo and bar{font-size:10px;color:#fff;.foo,.bar{color:white;margin:12px;}\n"
-        + "background-color:black;}\n";
+    String expected = "@media foo and bar{font-size:10px;color:#fff;.foo,.bar{color:white;margin:12px;}"
+        + "background-color:black;}";
     Assert.assertEquals(model.render(), expected);
   }
 

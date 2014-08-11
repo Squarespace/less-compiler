@@ -154,11 +154,13 @@ public class Buffer {
   }
 
   public void blockClose() {
-    if (!compress) {
+    if (compress) {
+      append('}');
+    } else {
       decrIndent();
       indent();
+      append("}\n");
     }
-    append("}\n");
   }
 
   public Buffer listSep() {

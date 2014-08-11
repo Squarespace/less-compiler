@@ -41,7 +41,7 @@ public class LessImporterTest extends LessTestBase {
     String source = "@import 'base.less'; .ruleset { color: @color; font-size: @size; }";
     String result = COMPILER.compile(source, ctx, Paths.get("."), null);
 
-    assertEquals(result, ".child{font-size:12px;}\n.ruleset{color:#abc;font-size:12px;}\n");
+    assertEquals(result, ".child{font-size:12px;}.ruleset{color:#abc;font-size:12px;}");
   }
 
   private static Path path(String path) {
