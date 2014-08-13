@@ -90,11 +90,14 @@ public class Selectors extends BaseNode {
 
   @Override
   public void repr(Buffer buf) {
-    int size1 = selectors.size();
+    int size = selectors.size();
     boolean emitted = false;
-    for (int i = 0; i < size1; i++) {
+    for (int i = 0; i < size; i++) {
       if (emitted) {
-        buf.append(",\n").indent();
+        buf.append(',');
+        if (!buf.compress()) {
+          buf.append('\n').indent();
+        }
       }
       Selector selector = selectors.get(i);
       if (selector != null) {
@@ -122,14 +125,14 @@ public class Selectors extends BaseNode {
           buf.append(ch);
         }
       } else {
-        if (!isDescendant) {
+        if (!buf.compress() && !isDescendant) {
           buf.append(' ');
         }
         if (!isDescendant || !CharClass.whitespace(buf.prevChar())) {
           buf.append(ch);
         }
       }
-      if (!element.isWildcard() && !CharClass.whitespace(buf.prevChar())) {
+      if (!buf.compress() && !element.isWildcard() && !CharClass.whitespace(buf.prevChar())) {
         buf.append(' ');
       }
     }

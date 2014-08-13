@@ -103,7 +103,10 @@ public class MixinCallArgs extends BaseNode {
       int size = args.size();
       for (int i = 0; i < size; i++) {
         if (i > 0) {
-          buf.append(delimiter).append(' ');
+          buf.append(delimiter);
+          if (!buf.compress()) {
+            buf.append(' ');
+          }
         }
         args.get(i).repr(buf);
       }

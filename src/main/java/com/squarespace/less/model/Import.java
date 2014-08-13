@@ -164,7 +164,6 @@ public class Import extends BaseNode {
       buf.append(" ");
       features.repr(buf);
     }
-    buf.append(";\n");
   }
 
   @Override

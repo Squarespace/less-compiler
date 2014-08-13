@@ -111,11 +111,19 @@ public class Ruleset extends BlockNode {
   @Override
   public void repr(Buffer buf) {
     selectors.repr(buf);
-    buf.append(" {\n");
+    if (buf.compress()) {
+      buf.append('{');
+    } else {
+      buf.append(" {\n");
+    }
     buf.incrIndent();
     block.repr(buf);
     buf.decrIndent();
-    buf.indent().append("}\n");
+    if (buf.compress()) {
+      buf.append('}');
+    } else {
+      buf.indent().append("}\n");
+    }
   }
 
   @Override

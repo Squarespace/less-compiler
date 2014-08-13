@@ -76,11 +76,19 @@ public class Media extends BlockNode {
       features.repr(buf);
       buf.append(' ');
     }
-    buf.append("{\n");
+    if (buf.compress()) {
+      buf.append('{');
+    } else {
+      buf.append("{\n");
+    }
     buf.incrIndent();
     block.repr(buf);
     buf.decrIndent();
-    buf.indent().append("}\n");
+    if (buf.compress()) {
+      buf.append('}');
+    } else {
+      buf.indent().append("}\n");
+    }
   }
 
   @Override

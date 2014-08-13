@@ -79,13 +79,15 @@ public class Comment extends BaseNode {
 
   @Override
   public void repr(Buffer buf) {
-    if (block) {
-      buf.append("/*").append(body).append("*/");
-    } else {
-      buf.append("//").append(body);
-    }
-    if (newline) {
-      buf.append("\n");
+    if (!buf.compress()) {
+      if (block) {
+        buf.append("/*").append(body).append("*/");
+      } else {
+        buf.append("//").append(body);
+      }
+      if (newline) {
+        buf.append("\n");
+      }
     }
   }
 

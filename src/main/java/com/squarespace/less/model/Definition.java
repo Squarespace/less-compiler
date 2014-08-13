@@ -131,7 +131,6 @@ public class Definition extends BaseNode {
   public void repr(Buffer buf) {
     buf.append(name).append(": ");
     value.repr(buf);
-    buf.append(";\n");
   }
 
   @Override

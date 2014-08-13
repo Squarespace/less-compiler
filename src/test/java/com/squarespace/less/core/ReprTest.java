@@ -21,6 +21,7 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.model.Node;
 
 
 public class ReprTest extends LessTestBase {
@@ -35,6 +36,21 @@ public class ReprTest extends LessTestBase {
     buf.reset();
     quoted('"', true, var("@@foo", true)).repr(buf);
     assertEquals(buf.toString(), "~\"@@{foo}\"");
+  }
+
+  @Test
+  public void testCompressed() throws LessException {
+    LessHarness h = new LessHarness();
+    Node sheet = h.parse(".p{color:#f00;font-size:1px;.c, .d{color:grey;font-size:2px;}color:green}");
+    assertEquals(compressRepr(sheet), ".p{color:red;font-size:1px;.c,.d{color:grey;font-size:2px}color:green}");
+    sheet = h.parse(".m(@a, @b) when (@a > 1) { color:#f00; }");
+    assertEquals(compressRepr(sheet), ".m(@a, @b) when (@a > 1){color:red}");
+  }
+
+  private String compressRepr(Node node) {
+    Buffer buf = new Buffer(4, true);
+    node.repr(buf);
+    return buf.toString();
   }
 
 }

@@ -105,7 +105,7 @@ public class ExpressionList extends BaseNode {
     int size = values.size();
     for (int i = 0; i < size; i++) {
       if (i > 0) {
-        buf.append(',');
+        buf.listSep();
       }
       values.get(i).repr(buf);
     }

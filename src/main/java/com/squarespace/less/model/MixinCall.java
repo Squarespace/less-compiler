@@ -107,7 +107,6 @@ public class MixinCall extends BaseNode {
     if (args != null) {
       args.repr(buf);
     }
-    buf.append(";\n");
   }
 
   @Override

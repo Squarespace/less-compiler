@@ -130,7 +130,7 @@ public class FunctionCall extends BaseNode {
       int size = args.size();
       for (int i = 0; i < size; i++) {
         if (i > 0) {
-          buf.append(", ");
+          buf.listSep();
         }
         args.get(i).repr(buf);
       }

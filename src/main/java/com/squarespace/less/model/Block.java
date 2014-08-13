@@ -186,8 +186,18 @@ public class Block extends BaseNode {
       if (rule == null) {
         continue;
       }
-      buf.indent();
+      if (!buf.compress()) {
+        buf.indent();
+      }
       rule.repr(buf);
+      if (!(rule instanceof BlockNode) && !(rule instanceof Comment)) {
+        if (!buf.compress() || i + 1 < size) {
+          buf.append(';');
+        }
+        if (!buf.compress()) {
+          buf.append('\n');
+        }
+      }
     }
   }
 

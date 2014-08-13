@@ -133,12 +133,14 @@ public class Rule extends BaseNode {
   @Override
   public void repr(Buffer buf) {
     property.repr(buf);
-    buf.append(": ");
+    buf.append(':');
+    if (!buf.compress()) {
+      buf.append(' ');
+    }
     value.repr(buf);
     if (important) {
       buf.append(" !important");
     }
-    buf.append(";\n");
   }
 
   @Override
