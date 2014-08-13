@@ -168,7 +168,7 @@ public class LessRenderer {
 
         case COMMENT:
           Comment comment = (Comment)node;
-          if (!opts.compress() && comment.block()) {
+          if (comment.block() && (!opts.compress() || comment.hasBang())) {
             model.comment(ctx.render(comment));
           }
           break;

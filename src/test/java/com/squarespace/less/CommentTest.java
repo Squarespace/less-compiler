@@ -50,4 +50,11 @@ public class CommentTest extends LessTestBase {
     h.parseEquals("// a //", comment(" a //", false));
   }
 
+  @Test
+  public void testBangComment() throws LessException {
+    LessHarness h = new LessHarness(Parselets.STYLESHEET);
+    String actual = h.execute("/* foo *//*! bar *//* foo */", new LessOptions(true));
+    assertEquals(actual, "/*! bar */\n");
+  }
+
 }

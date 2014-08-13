@@ -22,6 +22,7 @@ import static com.squarespace.less.model.NodeType.COMMENT;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.squarespace.less.core.Buffer;
+import com.squarespace.less.core.Chars;
 import com.squarespace.less.core.LessInternalException;
 
 
@@ -58,6 +59,10 @@ public class Comment extends BaseNode {
     return newline;
   }
 
+  public boolean hasBang() {
+    return !body.isEmpty() && body.charAt(0) == Chars.EXCLAMATION_MARK;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Comment) {
@@ -79,7 +84,9 @@ public class Comment extends BaseNode {
 
   @Override
   public void repr(Buffer buf) {
-    if (!buf.compress()) {
+    // Emit comments if we're not compressing the output, or if this is a block comment
+    // that starts with an exclamation point.
+    if (!buf.compress() || (block && hasBang())) {
       if (block) {
         buf.append("/*").append(body).append("*/");
       } else {
