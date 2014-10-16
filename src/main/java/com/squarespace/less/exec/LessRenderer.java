@@ -63,7 +63,7 @@ public class LessRenderer {
 
   private int warningId;
 
-  public LessRenderer(LessContext context, Stylesheet stylesheet) {
+  protected LessRenderer(LessContext context, Stylesheet stylesheet) {
     this.ctx = context;
     this.stylesheet = stylesheet;
     this.env = context.newRenderEnv();

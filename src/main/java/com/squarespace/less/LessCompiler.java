@@ -78,7 +78,7 @@ public class LessCompiler {
   public String render(Stylesheet stylesheet, LessContext ctx) throws LessException {
     LessEvaluator engine = new LessEvaluator(ctx);
     Stylesheet expanded = engine.evaluate(stylesheet);
-    return new LessRenderer(ctx, expanded).render();
+    return LessRenderer.render(ctx, expanded);
   }
 
   public Stylesheet expand(Stylesheet stylesheet, LessContext ctx) throws LessException {
