@@ -47,6 +47,15 @@
       box-shadow+: 0 0 20px black;
     }
 
+* Default mixins (see default() in functions)
+
+    .mixin(blue) {
+        ..
+    }
+    .mixin(red) when (default()) {
+        ..
+    }
+
 
 Completed
 -----
