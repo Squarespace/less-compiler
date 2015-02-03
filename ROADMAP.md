@@ -7,6 +7,7 @@
    can catch some invalid syntax before runtime does.
  * Optional plugins for JavaScript support, via Rhino and Java 8's JS engine.
  * Scalability tests.
+ * Interface for detailed parse, compile / evaluation phase timings.
  * Optional collection and reporting of parse/compile statistics.
 
 
