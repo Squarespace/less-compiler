@@ -23,7 +23,9 @@ import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
 import com.squarespace.less.exec.SymbolTable;
+import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Dimension;
+import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Unit;
 
@@ -61,9 +63,21 @@ public class MathFunctions implements Registry<Function> {
     }
   };
 
-  // TODO: MAX
+  public static final Function MAX = new Function("max", "*.") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      Dimension result = calculateMinOrMax(args, false);
+      return (result == null) ? renderFunctionCall("max", args) : result;
+    }
+  };
 
-  // TODO: MIN
+  public static final Function MIN = new Function("min", "*.") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      Node result = calculateMinOrMax(args, true);
+      return (result == null) ? renderFunctionCall("min", args) : result;
+    }
+  };
 
   // TODO: MOD
 
@@ -103,6 +117,41 @@ public class MathFunctions implements Registry<Function> {
   @Override
   public void registerTo(SymbolTable<Function> table) {
    // NO-OP
+  }
+
+  private static Anonymous renderFunctionCall(String name, List<Node> args) {
+    String repr = new FunctionCall(name, args).repr();
+    return new Anonymous(repr);
+  }
+
+  private static Dimension calculateMinOrMax(List<Node> args, boolean minimum) throws LessException {
+    // These will be set to value of first argument.
+    double value = 0.0;
+    Unit unit = null;
+
+    int size = args.size();
+    for (int i = 0; i < size; i++) {
+      Node node = args.get(i);
+      if (!(node instanceof Dimension)) {
+        // Non-dimension is invalid. Bail out and return static representation of function call.
+        return null;
+      }
+
+      Dimension dim = (Dimension)node;
+      if (i == 0) {
+        value = dim.value();
+        unit = dim.unit();
+
+      } else if (dim.unit() != unit) {
+        // Mixed units are invalid. Bail out and return static representation of function call
+        return null;
+
+      } else {
+        value = (minimum) ? Math.min(value, dim.value()) : Math.max(value, dim.value());
+      }
+
+    }
+    return new Dimension(value, unit);
   }
 
 }

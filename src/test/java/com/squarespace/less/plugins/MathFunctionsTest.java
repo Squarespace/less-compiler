@@ -16,7 +16,9 @@
 
 package com.squarespace.less.plugins;
 
+import static com.squarespace.less.ExecuteErrorType.ARG_COUNT;
 import static com.squarespace.less.ExecuteErrorType.INVALID_ARG;
+import static com.squarespace.less.model.Unit.PX;
 
 import org.testng.annotations.Test;
 
@@ -61,9 +63,44 @@ public class MathFunctionsTest extends LessTestBase {
     h.evalFails("floor('dim')", INVALID_ARG);
   }
 
-  // TODO: testMax
+  @Test
+  public void testMax() throws LessException {
+    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 
-  // TODO: testMin
+    // Expects at least 1 arg
+    h.evalFails("max()", ARG_COUNT);
+
+    h.evalEquals("max(1)", dim(1));
+    h.evalEquals("max(1px)", dim(1, PX));
+
+    h.evalEquals("max(1, 2)", dim(2));
+    h.evalEquals("max(2, 1)", dim(2));
+
+    h.evalEquals("max(-100, -50, 50, -25)", dim(50));
+    h.evalEquals("max(3px, 2px, 1px)", dim(3, PX));
+
+    h.evalEquals("max(1px, 2turn)", anon("max(1px, 2turn)"));
+    h.evalEquals("max(red, 1, blue)", anon("max(red, 1, blue)"));
+  }
+
+  @Test
+  public void testMin() throws LessException {
+    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+
+    h.evalFails("min()", ARG_COUNT);
+
+    h.evalEquals("min(1)", dim(1));
+    h.evalEquals("min(1px)", dim(1, PX));
+
+    h.evalEquals("min(1, 2)", dim(1));
+    h.evalEquals("min(2, 1)", dim(1));
+
+    h.evalEquals("min(-100, -50, 50, -25)", dim(-100));
+    h.evalEquals("min(3px, 2px, 1px)", dim(1, PX));
+
+    h.evalEquals("min(1px, 2turn)", anon("min(1px, 2turn)"));
+    h.evalEquals("min(red, 1, blue)", anon("min(red, 1, blue)"));
+  }
 
   // TODO: testMod
 
