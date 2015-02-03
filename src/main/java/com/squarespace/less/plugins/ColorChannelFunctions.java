@@ -25,25 +25,22 @@ import com.squarespace.less.exec.Registry;
 import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.RGBColor;
+import com.squarespace.less.model.Unit;
 
 
-public class ColorRGBFunctions implements Registry<Function> {
+/**
+ * Color channel function implementations.
+ *
+ * http://lesscss.org/functions/#color-channel
+ */
+public class ColorChannelFunctions implements Registry<Function> {
 
   public static final Function ALPHA = new Function("alpha", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       RGBColor color = rgb(args.get(0));
       return new Dimension(color.alpha());
-    }
-  };
-
-  public static final Function ARGB = new Function("argb", "c") {
-    @Override
-    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      RGBColor color = rgb(args.get(0));
-      return color.toARGB();
     }
   };
 
@@ -55,22 +52,32 @@ public class ColorRGBFunctions implements Registry<Function> {
     }
   };
 
-  public static final Function COLOR = new Function("color", "s") {
-    @Override
-    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      Quoted str = (Quoted)args.get(0);
-      str = str.copy();
-      str.setEscape(true);
-      String repr = env.context().render(str);
-      return RGBColor.fromHex(repr);
-    }
-  };
-
   public static final Function GREEN = new Function("green", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       RGBColor color = rgb(args.get(0));
       return new Dimension(color.green());
+    }
+  };
+
+  public static final Function HUE = new Function("hue", "c") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      return new Dimension(hsl(args.get(0)).hue());
+    }
+  };
+
+  public static final Function LIGHTNESS = new Function("lightness", "c") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      return new Dimension(Math.round(hsl(args.get(0)).lightness() * 100.0), Unit.PERCENTAGE);
+    }
+  };
+
+  public static final Function LUMA = new Function("luma", "c") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      return new Dimension(Math.round(rgb(args.get(0)).luma() * 100.0), Unit.PERCENTAGE);
     }
   };
 
@@ -82,24 +89,10 @@ public class ColorRGBFunctions implements Registry<Function> {
     }
   };
 
-  public static final Function RGB = new Function("rgb", "ppp") {
+  public static final Function SATURATION = new Function("saturation", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      double red = scaled(args.get(0), 256);
-      double green = scaled(args.get(1), 256);
-      double blue = scaled(args.get(2), 256);
-      return new RGBColor(red, green, blue);
-    }
-  };
-
-  public static final Function RGBA = new Function("rgba", "pppp") {
-    @Override
-    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      double red = scaled(args.get(0), 256);
-      double green = scaled(args.get(1), 256);
-      double blue = scaled(args.get(2), 256);
-      double alpha = percent(args.get(3));
-      return new RGBColor(red, green, blue, alpha);
+      return new Dimension(Math.round(hsl(args.get(0)).saturation() * 100.0), Unit.PERCENTAGE);
     }
   };
 

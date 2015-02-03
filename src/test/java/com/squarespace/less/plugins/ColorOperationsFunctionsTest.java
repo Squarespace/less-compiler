@@ -24,22 +24,46 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.parse.Parselets;
 
 
-public class GeneralFunctionsTest extends LessTestBase {
+public class ColorOperationsFunctionsTest extends LessTestBase {
 
   @Test
-  public void testFunctions() throws LessException {
+  public void testContrast() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 
-    h.evalEquals("e('foo')", anon("foo"));
-    h.evalEquals("e('-moz-foo-bar')", anon("-moz-foo-bar"));
-
-    // Escape
-    h.evalEquals("escape(' (hi) ')", anon("%20%28hi%29%20"));
-
-    // Format
-    h.evalEquals("%('%s, %s', 12px, 'foo')", quoted('\'', false, anon("12px, foo")));
-    h.evalEquals("%('%s %A', '()', #ff1133)", quoted('\'', false, anon("() %23f13")));
-    h.evalEquals("%('%s %A', '()', #f00)", quoted('\'', false, anon("() %23f00")));
+    h.evalEquals("contrast(#fff, #111, #999, .5)", color("#111"));
+    h.evalEquals("contrast(#222, #111, #999, .5)", color("#999"));
   }
+
+  @Test
+  public void testDarken() throws LessException {
+    LessHarness h = new LessHarness(Parselets.ADDITION);
+
+    h.evalEquals("darken(#888, 50%) + #000", color("#080808"));
+    h.evalEquals("darken(#f00, 40%) + #000", color("#330000"));
+    h.evalEquals("darken(#fff, 5) + #000", color("#f2f2f2"));
+    h.evalEquals("darken(darken(#fff, 0), 5) + #000", color("#f2f2f2"));
+  }
+
+  // TODO: testDesaturate
+
+  // TODO: testFade
+
+  // TODO: testFadeIn
+
+  // TODO: testFadeOut
+
+  // TODO: testGreyscale
+
+  // TODO: testLighten
+
+  // TODO: testMix
+
+  // TODO: testSaturate
+
+  // TODO: testShade
+
+  // TODO: testSpin
+
+  // TODO: testTint
 
 }

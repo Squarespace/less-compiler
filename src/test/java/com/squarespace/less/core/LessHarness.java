@@ -31,7 +31,7 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.parse.LessStream;
 import com.squarespace.less.parse.Parselet;
 import com.squarespace.less.parse.Parselets;
-import com.squarespace.less.plugins.TestFunctions;
+import com.squarespace.less.plugins.DummyFunctions;
 
 
 /**
@@ -42,7 +42,7 @@ public class LessHarness {
   private static final FunctionTable FUNCTIONS = LessCompiler.defaultFunctionTable();
 
   static {
-    FUNCTIONS.register(new TestFunctions());
+    FUNCTIONS.register(new DummyFunctions());
   }
 
   private final LessCompiler compiler = new LessCompiler(FUNCTIONS);

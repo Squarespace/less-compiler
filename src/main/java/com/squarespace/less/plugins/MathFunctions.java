@@ -16,8 +16,6 @@
 
 package com.squarespace.less.plugins;
 
-import static com.squarespace.less.core.ExecuteErrorMaker.unknownUnit;
-
 import java.util.List;
 
 import com.squarespace.less.LessException;
@@ -26,14 +24,24 @@ import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
 import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
-import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
-import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Unit;
 
 
-public class NumericFunctions implements Registry<Function> {
+/**
+ * Math function implementations.
+ *
+ * http://lesscss.org/functions/#math-functions
+ */
+public class MathFunctions implements Registry<Function> {
+
+  // TODO: ABS
+
+  // TODO: ASIN
+
+  // TODO: ACOS
+
+  // TODO: ATAN
 
   public static final Function CEIL = new Function("ceil", "d") {
     @Override
@@ -43,6 +51,8 @@ public class NumericFunctions implements Registry<Function> {
     }
   };
 
+  // TODO: COS
+
   public static final Function FLOOR = new Function("floor", "d") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -51,6 +61,12 @@ public class NumericFunctions implements Registry<Function> {
     }
   };
 
+  // TODO: MAX
+
+  // TODO: MIN
+
+  // TODO: MOD
+
   public static final Function PERCENTAGE = new Function("percentage", "d") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -58,6 +74,11 @@ public class NumericFunctions implements Registry<Function> {
       return new Dimension(dim.value() * 100, Unit.PERCENTAGE);
     }
   };
+
+  // TODO: PI
+
+  // TODO: POW
+
 
   public static final Function ROUND = new Function("round", "d:n") {
     @Override
@@ -73,31 +94,11 @@ public class NumericFunctions implements Registry<Function> {
     }
   };
 
-  public static final Function UNIT = new Function("unit", "d:*") {
-    @Override
-    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      Dimension dim = (Dimension)args.get(0);
-      Unit unit = null;
-      if (args.size() >= 2) {
-        Node node = args.get(1);
-        if (node.is(NodeType.KEYWORD)) {
-          Keyword word = (Keyword)node;
-          unit = Unit.get(word.value());
+  // TODO: SIN
 
-        } else if (node.is(NodeType.QUOTED)) {
-          Quoted quoted = (Quoted)node;
-          quoted = new Quoted(quoted.delimiter(), true, quoted.parts());
-          String repr = env.context().render(quoted);
-          unit = Unit.get(repr);
+  // TODO: SQRT
 
-        }
-        if (unit == null) {
-          throw new LessException(unknownUnit(node.repr()));
-        }
-      }
-      return new Dimension(dim.value(), unit);
-    }
-  };
+  // TODO: TAN
 
   @Override
   public void registerTo(SymbolTable<Function> table) {

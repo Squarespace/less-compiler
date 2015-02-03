@@ -24,18 +24,30 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.parse.Parselets;
 
 
-public class ColorCombinationFunctionsTest extends LessTestBase {
+public class ColorBlendingFunctionsTest extends LessTestBase {
 
   @Test
-  public void testFunctions() throws LessException {
+  public void testAverage() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
-
-    // Tests to ensure that the functions in this package basically work.
-    // The deeper testing for these functions is moved into the external
-    // test suite files (LessTestSuite)
 
     h.evalEquals("average(#888, #444)", color("#666"));
     h.evalEquals("difference(#888, #444)", color("#444"));
   }
+
+  // TODO: testDifference
+
+  // TODO: testExclusion
+
+  // TODO: testHardlight
+
+  // TODO: testMultiply
+
+  // TODO: testNegation
+
+  // TODO: testOverlay
+
+  // TODO: testScreen
+
+  // TODO: testSoftlight
 
 }

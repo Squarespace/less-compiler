@@ -27,10 +27,12 @@ import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
 
 
-public class TestFunctions implements Registry<Function> {
+/**
+ * Dummy functions, only used for testing the general Function framework.
+ */
+public class DummyFunctions implements Registry<Function> {
 
   public static final Function DUMMY3 = new Function("dummy3", "nnn") {
-
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       double n0 = number(args.get(0));
@@ -38,7 +40,6 @@ public class TestFunctions implements Registry<Function> {
       double n2 = number(args.get(2));
       return new Dimension(n0 + n1 + n2);
     }
-
   };
 
   @Override

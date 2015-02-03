@@ -25,12 +25,14 @@ import com.squarespace.less.exec.LessEvaluator;
 import com.squarespace.less.exec.LessRenderer;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.parse.LessStream;
-import com.squarespace.less.plugins.ColorAdjustmentFunctions;
-import com.squarespace.less.plugins.ColorCombinationFunctions;
-import com.squarespace.less.plugins.ColorHSLFunctions;
-import com.squarespace.less.plugins.ColorRGBFunctions;
-import com.squarespace.less.plugins.GeneralFunctions;
-import com.squarespace.less.plugins.NumericFunctions;
+import com.squarespace.less.plugins.ColorBlendingFunctions;
+import com.squarespace.less.plugins.ColorChannelFunctions;
+import com.squarespace.less.plugins.ColorDefinitionFunctions;
+import com.squarespace.less.plugins.ColorOperationsFunctions;
+import com.squarespace.less.plugins.ListFunctions;
+import com.squarespace.less.plugins.MathFunctions;
+import com.squarespace.less.plugins.MiscFunctions;
+import com.squarespace.less.plugins.StringFunctions;
 import com.squarespace.less.plugins.TypeFunctions;
 
 
@@ -107,12 +109,14 @@ public class LessCompiler {
    */
   public static FunctionTable defaultFunctionTable() {
     FunctionTable table = new FunctionTable();
-    table.register(new ColorAdjustmentFunctions());
-    table.register(new ColorCombinationFunctions());
-    table.register(new ColorHSLFunctions());
-    table.register(new ColorRGBFunctions());
-    table.register(new GeneralFunctions());
-    table.register(new NumericFunctions());
+    table.register(new ColorBlendingFunctions());
+    table.register(new ColorChannelFunctions());
+    table.register(new ColorDefinitionFunctions());
+    table.register(new ColorOperationsFunctions());
+    table.register(new ListFunctions());
+    table.register(new MathFunctions());
+    table.register(new MiscFunctions());
+    table.register(new StringFunctions());
     table.register(new TypeFunctions());
     return table;
   }

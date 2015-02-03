@@ -36,17 +36,12 @@ import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.RGBColor;
 
 
-public class GeneralFunctions implements Registry<Function> {
-
-  private static String asString(ExecEnv env, Node node, boolean escape) throws LessException {
-    if (escape && node.is(NodeType.QUOTED)) {
-      Quoted str = (Quoted)node;
-      str = str.copy();
-      str.setEscape(true);
-      node = str;
-    }
-    return env.context().render(node);
-  }
+/**
+ * String function implementations.
+ *
+ * http://lesscss.org/functions/#string-functions
+ */
+public class StringFunctions implements Registry<Function> {
 
   public static final Function E = new Function("e", "s") {
     @Override
@@ -131,9 +126,21 @@ public class GeneralFunctions implements Registry<Function> {
     }
   };
 
+  // TODO: REPLACE
+
   @Override
   public void registerTo(SymbolTable<Function> table) {
     // NO-OP
+  }
+
+  private static String asString(ExecEnv env, Node node, boolean escape) throws LessException {
+    if (escape && node.is(NodeType.QUOTED)) {
+      Quoted str = (Quoted)node;
+      str = str.copy();
+      str.setEscape(true);
+      node = str;
+    }
+    return env.context().render(node);
   }
 
 }

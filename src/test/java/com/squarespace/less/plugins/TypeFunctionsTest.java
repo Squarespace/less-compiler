@@ -31,60 +31,92 @@ import com.squarespace.less.parse.Parselets;
 public class TypeFunctionsTest extends LessTestBase {
 
   @Test
-  public void testFunctions() throws LessException {
-    GenericBlock defs = defs(
-        def("@color", color("#aaa")),
-        def("@number", dim(12)),
-        def("@string", quoted('"', false, "foo"))
-    );
+  public void testIsColor() throws LessException {
+    LessHarness h = harness();
 
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL, defs);
-
-    // Colors
     h.evalEquals("iscolor(#123)", TRUE);
     h.evalEquals("iscolor(rgb(1, 2, 3))", TRUE);
     h.evalEquals("iscolor(@color)", TRUE);
     h.evalEquals("iscolor('foo')", FALSE);
     h.evalEquals("iscolor(@number)", FALSE);
+  }
 
-    // Keywords
+  @Test
+  public void testIsEm() throws LessException {
+    LessHarness h = harness();
+
+    h.evalEquals("isem(12.3em)", TRUE);
+    h.evalEquals("isem(12.3)", FALSE);
+    h.evalEquals("isem(1dpi)", FALSE);
+    h.evalEquals("isem('foo')", FALSE);
+  }
+
+@Test
+  public void testIsKeyword() throws LessException {
+    LessHarness h = harness();
+
     h.evalEquals("iskeyword(foo)", TRUE);
     h.evalEquals("iskeyword(true)", TRUE);
     h.evalEquals("iskeyword(false)", TRUE);
     h.evalEquals("iskeyword(blue)", FALSE);
     h.evalEquals("iskeyword('abc')", FALSE);
     h.evalEquals("iskeyword(@color)", FALSE);
+  }
 
-    // Numbers
+  @Test
+  public void testIsNumber() throws LessException {
+    LessHarness h = harness();
+
     h.evalEquals("isnumber(3.14)", TRUE);
     h.evalEquals("isnumber(10px)", TRUE);
     h.evalEquals("isnumber('foo')", FALSE);
     h.evalEquals("isnumber(@number)", TRUE);
     h.evalEquals("isnumber(@color)", FALSE);
+  }
 
-    // Ems
-    h.evalEquals("isem(12.3em)", TRUE);
-    h.evalEquals("isem(12.3)", FALSE);
-    h.evalEquals("isem(1dpi)", FALSE);
-    h.evalEquals("isem('foo')", FALSE);
+  // TODO: testIsPercentage
 
-    // Pixels
+  @Test
+  public void testIsPixel() throws LessException {
+    LessHarness h = harness();
+
     h.evalEquals("ispixel(1px)", TRUE);
     h.evalEquals("ispixel(3.14px)", TRUE);
     h.evalEquals("ispixel(3)", FALSE);
     h.evalEquals("ispixel('foo')", FALSE);
+  }
 
-    // Strings
+  // TODO: testIsRuleset
+
+  @Test
+  public void testIsString() throws LessException {
+    LessHarness h = harness();
+
     h.evalEquals("isstring('foo')", TRUE);
     h.evalEquals("isstring(@string)", TRUE);
     h.evalEquals("isstring(12)", FALSE);
     h.evalEquals("isstring(@number)", FALSE);
+  }
 
-    // Urls
+  // TODO: testIsUnit
+
+  @Test
+  public void testIsUrl() throws LessException {
+    LessHarness h = harness();
+
     h.evalEquals("isurl(url('foo'))", TRUE);
     h.evalEquals("isurl(url(http://foo.com/))", TRUE);
     h.evalEquals("isurl(xurl(foo))", FALSE);
     h.evalEquals("isurl(1)", FALSE);
+  }
+
+  private LessHarness harness() {
+    GenericBlock defs = defs(
+        def("@color", color("#aaa")),
+        def("@number", dim(12)),
+        def("@string", quoted('"', false, "foo"))
+    );
+    return new LessHarness(Parselets.FUNCTION_CALL, defs);
   }
 
 }

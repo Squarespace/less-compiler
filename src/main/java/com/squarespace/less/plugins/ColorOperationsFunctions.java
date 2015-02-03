@@ -32,7 +32,12 @@ import com.squarespace.less.model.RGBColor;
 import com.squarespace.less.model.Unit;
 
 
-public class ColorAdjustmentFunctions implements Registry<Function> {
+/**
+ * Color operations function implementations.
+ *
+ * http://lesscss.org/functions/#color-operations
+ */
+public class ColorOperationsFunctions implements Registry<Function> {
 
   public static final Function CONTRAST = new Function("contrast", "*:ccp") {
     @Override
@@ -118,12 +123,35 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     }
   };
 
+  public static final Function MIX = new Function("mix", "cc:d") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      RGBColor c1 = rgb(args.get(0));
+      RGBColor c2 = rgb(args.get(1));
+      double weight = 0.5;
+      if (args.size() == 3) {
+        weight = number(args.get(2)) / 100.0;
+      }
+      return ColorOperationsFunctions.mix(c1, c2, weight);
+    }
+  };
+
   public static final Function SATURATE = new Function("saturate", "cp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       HSLColor hsl = hsl(args.get(0));
       double value = number(args.get(1)) * 0.01;
       return new HSLColor(hsl.hue() / 360.0, hsl.saturation() + value, hsl.lightness(), hsl.alpha());
+    }
+  };
+
+  // Deprecated from upstream
+  public static final Function SHADE = new Function("shade", "cd") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      RGBColor c1 = rgb(args.get(0));
+      Dimension dim = (Dimension)args.get(1);
+      return mix(Colors.BLACK, c1, dim.value() / 100.0);
     }
   };
 
@@ -143,9 +171,33 @@ public class ColorAdjustmentFunctions implements Registry<Function> {
     }
   };
 
+  // Deprecated from upstream
+  public static final Function TINT = new Function("tint", "cd") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      RGBColor c1 = rgb(args.get(0));
+      Dimension dim = (Dimension)args.get(1);
+      double weight = dim.value() / 100.0;
+      return mix(Colors.WHITE, c1, weight);
+    }
+  };
+
   @Override
   public void registerTo(SymbolTable<Function> table) {
     // TO-DO
+  }
+
+  private static RGBColor mix(RGBColor c1, RGBColor c2, double weight) {
+    double p = weight;
+    double w = p * 2 - 1;
+    double a = c1.toHSL().alpha() - c2.toHSL().alpha();
+    double w1 = (((w * a == -1) ? w : (w + a) / (1 + w * a)) + 1) / 2.0;
+    double w2 = 1 - w1;
+    double red = c1.red() * w1 + c2.red() * w2;
+    double green = c1.green() * w1 + c2.green() * w2;
+    double blue = c1.blue() * w1 + c2.blue() * w2;
+    double alpha = c1.alpha() * p + c2.alpha() * (1 - p);
+    return new RGBColor(red, green, blue, alpha);
   }
 
 }

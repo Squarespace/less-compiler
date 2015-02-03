@@ -33,6 +33,11 @@ import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Unit;
 
 
+/**
+ * Type function implementations.
+ *
+ * http://lesscss.org/functions/#type-functions
+ */
 public class TypeFunctions implements Registry<Function> {
 
   public static final Function ISCOLOR = new Function("iscolor", "*") {
@@ -41,6 +46,8 @@ public class TypeFunctions implements Registry<Function> {
       return args.get(0).is(NodeType.COLOR) ? TRUE : FALSE;
     }
   };
+
+  public static final Function ISEM = new DimensionUnitFunction("isem", Unit.EM);
 
   public static final Function ISKEYWORD = new Function("iskeyword", "*") {
     @Override
@@ -63,6 +70,12 @@ public class TypeFunctions implements Registry<Function> {
     }
   };
 
+  public static final Function ISPERCENTAGE = new DimensionUnitFunction("ispercentage", Unit.PERCENTAGE);
+
+  public static final Function ISPIXEL = new DimensionUnitFunction("ispixel", Unit.PX);
+
+  // TODO: ISRULESET
+
   public static final Function ISSTRING = new Function("isstring", "*") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -70,12 +83,19 @@ public class TypeFunctions implements Registry<Function> {
     }
   };
 
+  // TODO: ISUNIT
+
   public static final Function ISURL = new Function("isurl", "*") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       return args.get(0).is(NodeType.URL) ? TRUE : FALSE;
     }
   };
+
+  @Override
+  public void registerTo(SymbolTable<Function> table) {
+    // NO-OP
+  }
 
   private static class DimensionUnitFunction extends Function {
 
@@ -95,17 +115,6 @@ public class TypeFunctions implements Registry<Function> {
       }
       return FALSE;
     }
-  }
-
-  public static final Function ISEM = new DimensionUnitFunction("isem", Unit.EM);
-
-  public static final Function ISPERCENTAGE = new DimensionUnitFunction("ispercentage", Unit.PERCENTAGE);
-
-  public static final Function ISPIXEL = new DimensionUnitFunction("ispixel", Unit.PX);
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-    // NO-OP
   }
 
 }

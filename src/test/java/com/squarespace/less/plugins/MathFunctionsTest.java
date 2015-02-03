@@ -17,7 +17,6 @@
 package com.squarespace.less.plugins;
 
 import static com.squarespace.less.ExecuteErrorType.INVALID_ARG;
-import static com.squarespace.less.ExecuteErrorType.UNKNOWN_UNIT;
 
 import org.testng.annotations.Test;
 
@@ -28,10 +27,18 @@ import com.squarespace.less.model.Unit;
 import com.squarespace.less.parse.Parselets;
 
 
-public class NumericFunctionsTest extends LessTestBase {
+public class MathFunctionsTest extends LessTestBase {
+
+  // TODO: testAbs
+
+  // TODO: testASin
+
+  // TODO: testACos
+
+  // TODO: testATan
 
   @Test
-  public void testFunctions() throws LessException {
+  public void testCeil() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 
     // Ceiling / floor
@@ -39,17 +46,45 @@ public class NumericFunctionsTest extends LessTestBase {
     h.evalEquals("ceil(1.9)", dim(2));
     h.evalEquals("ceil(-1.1)", dim(-1));
     h.evalEquals("ceil(-1.9)", dim(-1));
+  }
+
+  // TODO: testCos
+
+  @Test
+  public void testFloor() throws LessException {
+    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+
     h.evalEquals("floor(1.1)", dim(1));
     h.evalEquals("floor(1.9)", dim(1));
     h.evalEquals("floor(-1.1)", dim(-2));
     h.evalEquals("floor(-1.9)", dim(-2));
     h.evalFails("floor('dim')", INVALID_ARG);
+  }
+
+  // TODO: testMax
+
+  // TODO: testMin
+
+  // TODO: testMod
+
+  @Test
+  public void testPercentage() throws LessException {
+    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 
     // Decimal to percentage
     h.evalEquals("percentage(1)", dim(100, Unit.PERCENTAGE));
     h.evalEquals("percentage(.25)", dim(25, Unit.PERCENTAGE));
     h.evalEquals("percentage(0.0)", dim(0, Unit.PERCENTAGE));
     h.evalEquals("percentage(-2)", dim(-200, Unit.PERCENTAGE));
+  }
+
+  // TODO: testPi
+
+  // TODO: testPow
+
+  @Test
+  public void testRound() throws LessException {
+    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 
     // Rounding
     h.evalEquals("round(-12.2)", dim(-12));
@@ -64,14 +99,12 @@ public class NumericFunctionsTest extends LessTestBase {
     h.evalEquals("round(-2.55, 1)", dim(-2.5));
     h.evalEquals("round(-2.52, 1)", dim(-2.5));
     h.evalEquals("round(12.123%, 1)", dim(12.1, Unit.PERCENTAGE));
-
-    // Unit changes
-    h.evalEquals("unit(1, px)", dim(1, Unit.PX));
-    h.evalEquals("unit(3em, pt)", dim(3, Unit.PT));
-    h.evalEquals("unit(3em)", dim(3));
-    h.evalFails("unit('foo', px)", INVALID_ARG);
-    h.evalFails("unit(3em, quark)", UNKNOWN_UNIT);
-
   }
+
+  // TODO: testSIn
+
+  // TODO: testSqrt
+
+  // TODO: testTan
 
 }

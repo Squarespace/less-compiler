@@ -28,7 +28,7 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.parse.Parselets;
 
 
-public class TestFunctionsTest extends LessTestBase {
+public class DummyFunctionsTest extends LessTestBase {
 
   @Test
   public void testFunction() throws LessException {
