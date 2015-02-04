@@ -67,7 +67,7 @@ public class Dimension extends BaseNode {
       } else if (Double.isInfinite(value) && Double.isInfinite(other.value)) {
         return unitEqual;
       }
-      return value == other.value;
+      return unitEqual && value == other.value;
     }
     return false;
   }
