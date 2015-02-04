@@ -21,7 +21,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.HSLColor;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.RGBColor;
@@ -104,10 +103,5 @@ public class ColorDefinitionFunctions implements Registry<Function> {
       return RGBColor.fromHSVA(hue % 360 / 360.0, saturation, value, alpha);
     }
   };
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-    // NO-OP
-  }
 
 }

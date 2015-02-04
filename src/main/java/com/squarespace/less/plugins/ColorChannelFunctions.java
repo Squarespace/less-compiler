@@ -22,7 +22,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.RGBColor;
@@ -95,10 +94,5 @@ public class ColorChannelFunctions implements Registry<Function> {
       return new Dimension(Math.round(hsl(args.get(0)).saturation() * 100.0), Unit.PERCENTAGE);
     }
   };
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-    // NO-OP
-  }
 
 }

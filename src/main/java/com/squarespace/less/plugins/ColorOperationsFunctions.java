@@ -22,7 +22,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Colors;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.HSLColor;
@@ -181,11 +180,6 @@ public class ColorOperationsFunctions implements Registry<Function> {
       return mix(Colors.WHITE, c1, weight);
     }
   };
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-    // TO-DO
-  }
 
   private static RGBColor mix(RGBColor c1, RGBColor c2, double weight) {
     double p = weight;

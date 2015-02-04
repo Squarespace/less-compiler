@@ -22,7 +22,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.ExpressionList;
 import com.squarespace.less.model.FunctionCall;
@@ -77,10 +76,5 @@ public class ListFunctions implements Registry<Function> {
       return list.expressions().get((int)index);
     }
   };
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-    // NO-OP
-  }
 
 }

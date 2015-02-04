@@ -22,7 +22,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
 
@@ -41,10 +40,5 @@ public class DummyFunctions implements Registry<Function> {
       return new Dimension(n0 + n1 + n2);
     }
   };
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-    // NO-OP
-  }
 
 }

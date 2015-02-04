@@ -26,7 +26,6 @@ import com.squarespace.less.core.Constants;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Node;
@@ -97,6 +96,8 @@ public class TypeFunctions implements Registry<Function> {
       Node node = args.get(1);
       Unit unit = null;
 
+      // TODO: generalize this keyword/quoted/anonymous parsing into a utility method.
+
       if (node instanceof Keyword) {
         String value = ((Keyword)node).value();
         unit = Unit.get(value);
@@ -119,11 +120,6 @@ public class TypeFunctions implements Registry<Function> {
       return args.get(0).is(NodeType.URL) ? TRUE : FALSE;
     }
   };
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-    // NO-OP
-  }
 
   private static class DimensionUnitFunction extends Function {
 

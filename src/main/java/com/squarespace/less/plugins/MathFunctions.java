@@ -22,7 +22,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.FunctionCall;
@@ -182,11 +181,6 @@ public class MathFunctions implements Registry<Function> {
       return trigResult(TrigFunction.TAN, args.get(0));
     }
   };
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-   // NO-OP
-  }
 
   private static Anonymous renderFunctionCall(String name, List<Node> args) {
     String repr = new FunctionCall(name, args).repr();

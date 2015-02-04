@@ -25,7 +25,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Keyword;
@@ -97,10 +96,5 @@ public class MiscFunctions implements Registry<Function> {
       return new Dimension(dim.value(), unit);
     }
   };
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-    // NO-OP
-  }
 
 }

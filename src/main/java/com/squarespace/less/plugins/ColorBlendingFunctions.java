@@ -22,7 +22,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.RGBColor;
 
@@ -141,11 +140,6 @@ public class ColorBlendingFunctions implements Registry<Function> {
       return new RGBColor(red, green, blue);
     }
   };
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-    // NO-OP
-  }
 
   private static double exclusion(double c1, double c2) {
     return (c1 + c2 * (255 - c1 - c1) / 255.0);

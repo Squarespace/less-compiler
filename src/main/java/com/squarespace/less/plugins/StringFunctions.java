@@ -27,7 +27,6 @@ import com.squarespace.less.core.EncodeUtils;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.Node;
@@ -127,11 +126,6 @@ public class StringFunctions implements Registry<Function> {
   };
 
   // TODO: REPLACE
-
-  @Override
-  public void registerTo(SymbolTable<Function> table) {
-    // NO-OP
-  }
 
   private static String asString(ExecEnv env, Node node, boolean escape) throws LessException {
     if (escape && node.is(NodeType.QUOTED)) {
