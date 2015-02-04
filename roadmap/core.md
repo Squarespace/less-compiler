@@ -2,13 +2,13 @@
 2.x Core Checklist
 ---------
 
-* Ensure all @import keywords work (inline, once, etc)
+Ensure all @import keywords work (inline, once, etc)
 
-* Variable references in import paths:
+Variable references in import paths:
 
     @import "@{var}/foo.less";
 
-* Variables in property names:
+Variables in property names:
 
     @foo: 'font-size';
     @bar: 'color';
@@ -17,7 +17,7 @@
         background-@{bar}: red;
     }
 
-* Extend pseudo-class:
+Extend pseudo-class:
 
     nav ul {
       &:extend(.inline);
@@ -27,7 +27,7 @@
       color: red;
     }
 
-* Detached rulesets.
+Detached rulesets.
 
     // declare detached ruleset
     @detached-ruleset: { background: red; };
@@ -37,7 +37,7 @@
         @detached-ruleset(); 
     }
 
-* Merging property values by comma or space:
+Merging property values by comma or space:
 
     .mixin() {
       box-shadow+: inset 0 0 10px #555;
@@ -47,7 +47,7 @@
       box-shadow+: 0 0 20px black;
     }
 
-* Default mixins (see default() in functions)
+Default mixins (see default() in functions)
 
     .mixin(blue) {
         ..
@@ -60,7 +60,7 @@
 Completed
 -----
 
-* Variable references in selectors.
+Variable references in selectors.
 
     .@{path} {
         ...
