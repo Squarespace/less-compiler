@@ -89,6 +89,7 @@ public class MiscFunctions implements Registry<Function> {
           unit = Unit.get(repr);
 
         }
+
         if (unit == null) {
           throw new LessException(unknownUnit(node.repr()));
         }

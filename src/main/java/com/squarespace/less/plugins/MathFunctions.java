@@ -240,8 +240,9 @@ public class MathFunctions implements Registry<Function> {
         result = Math.tan(result);
         break;
 
+      // Checkstyle-enforced, reducing our code coverage percentage
       default:
-        break;
+        throw new RuntimeException("unsupported enum value " + function);
     }
     return new Dimension(result);
   }

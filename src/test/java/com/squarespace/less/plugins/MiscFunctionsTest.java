@@ -52,6 +52,7 @@ public class MiscFunctionsTest extends LessTestBase {
 
     h.evalEquals("get-unit(1px)", kwd("px"));
     h.evalEquals("get-unit(1%)", quoted('"', false, "%"));
+    h.evalEquals("get-unit(1)", anon(""));
 
     // Composing unit-oriented function calls
     h.evalEquals("isunit(unit(1, get-unit(1%)), '%')", TRUE);
@@ -64,10 +65,12 @@ public class MiscFunctionsTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 
     h.evalEquals("unit(1, px)", dim(1, Unit.PX));
+    h.evalEquals("unit(1, 'px')", dim(1, Unit.PX));
     h.evalEquals("unit(3em, pt)", dim(3, Unit.PT));
     h.evalEquals("unit(3em)", dim(3));
 
     h.evalFails("unit('foo', px)", INVALID_ARG);
+    h.evalFails("unit(1px, #f00)", UNKNOWN_UNIT);
     h.evalFails("unit(3em, quark)", UNKNOWN_UNIT);
   }
 
