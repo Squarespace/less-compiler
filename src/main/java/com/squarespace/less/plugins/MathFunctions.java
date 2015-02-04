@@ -16,8 +16,6 @@
 
 package com.squarespace.less.plugins;
 
-import static com.squarespace.less.model.Unit.RAD;
-
 import java.util.List;
 
 import com.squarespace.less.LessException;
@@ -252,10 +250,6 @@ public class MathFunctions implements Registry<Function> {
         break;
     }
     return new Dimension(result);
-  }
-
-  private static Node asRadians(double value) {
-    return (Double.isNaN(value)) ? new Anonymous("NaNrad") : new Dimension(value, RAD);
   }
 
 }
