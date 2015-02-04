@@ -18,6 +18,7 @@ package com.squarespace.less.plugins;
 
 import static com.squarespace.less.ExecuteErrorType.INVALID_ARG;
 import static com.squarespace.less.ExecuteErrorType.UNKNOWN_UNIT;
+import static com.squarespace.less.core.Constants.TRUE;
 
 import org.testng.annotations.Test;
 
@@ -45,10 +46,20 @@ public class MiscFunctionsTest extends LessTestBase {
 
   // TODO: testDefault
 
-  // TODO: testGetUnit
+  @Test
+  public void testGetUnit() throws LessException {
+    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+
+    h.evalEquals("get-unit(1px)", kwd("px"));
+    h.evalEquals("get-unit(1%)", quoted('"', false, "%"));
+
+    // Composing unit-oriented function calls
+    h.evalEquals("isunit(unit(1, get-unit(1%)), '%')", TRUE);
+  }
 
   // TODO: testSvgGradient
 
+  @Test
   public void testUnit() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 

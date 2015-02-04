@@ -129,6 +129,8 @@ public class TypeFunctionsTest extends LessTestBase {
     h.evalEquals("isunit(1234, em)", FALSE);
     h.evalEquals("isunit(#ff0, pt)", FALSE);
     h.evalEquals("isunit('mm', mm)", FALSE);
+
+    h.evalEquals("isunit(1px, #f00)", FALSE);
   }
 
   @Test

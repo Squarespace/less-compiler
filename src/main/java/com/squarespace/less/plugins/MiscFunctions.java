@@ -18,6 +18,7 @@ package com.squarespace.less.plugins;
 
 import static com.squarespace.less.core.ExecuteErrorMaker.unknownUnit;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.squarespace.less.LessException;
@@ -25,10 +26,10 @@ import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
 import com.squarespace.less.exec.SymbolTable;
+import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.RGBColor;
 import com.squarespace.less.model.Unit;
@@ -56,7 +57,19 @@ public class MiscFunctions implements Registry<Function> {
 
   // TODO: DEFAULT (? maybe a special, since only used in guard expressions)
 
-  // TODO: GET-UNIT
+  public static final Function GET_UNIT = new Function("get-unit", "d") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      Dimension dim = (Dimension)args.get(0);
+      Unit unit = dim.unit();
+      if (unit == null) {
+        return new Anonymous("");
+      } else if (unit == Unit.PERCENTAGE) {
+        return new Quoted('"', false, Arrays.<Node>asList(new Anonymous("%")));
+      }
+      return new Keyword(unit.repr());
+    }
+  };
 
   // TODO: SVG-GRADIENT
 
@@ -67,11 +80,10 @@ public class MiscFunctions implements Registry<Function> {
       Unit unit = null;
       if (args.size() >= 2) {
         Node node = args.get(1);
-        if (node.is(NodeType.KEYWORD)) {
-          Keyword word = (Keyword)node;
-          unit = Unit.get(word.value());
+        if (node instanceof Keyword) {
+          unit = Unit.get(((Keyword)node).value());
 
-        } else if (node.is(NodeType.QUOTED)) {
+        } else if (node instanceof Quoted) {
           Quoted quoted = (Quoted)node;
           quoted = new Quoted(quoted.delimiter(), true, quoted.parts());
           String repr = env.context().render(quoted);
@@ -88,7 +100,7 @@ public class MiscFunctions implements Registry<Function> {
 
   @Override
   public void registerTo(SymbolTable<Function> table) {
-   // NO-OP
+    // NO-OP
   }
 
 }
