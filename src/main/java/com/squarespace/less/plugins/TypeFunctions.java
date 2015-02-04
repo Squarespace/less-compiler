@@ -28,8 +28,10 @@ import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
 import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
+import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
+import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Unit;
 
 
@@ -83,7 +85,33 @@ public class TypeFunctions implements Registry<Function> {
     }
   };
 
-  // TODO: ISUNIT
+  public static final Function ISUNIT = new Function("isunit", "**") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      Node arg = args.get(0);
+      if (!(arg instanceof Dimension)) {
+        return FALSE;
+      }
+
+      Dimension dim = (Dimension) args.get(0);
+      Node node = args.get(1);
+      Unit unit = null;
+
+      if (node instanceof Keyword) {
+        String value = ((Keyword)node).value();
+        unit = Unit.get(value);
+
+      } else if (node instanceof Quoted) {
+        Quoted temp = (Quoted) node;
+        Quoted string = new Quoted(temp.delimiter(), true, temp.parts());
+        unit = Unit.get(env.context().render(string));
+
+      } else {
+        return FALSE;
+      }
+      return (unit == dim.unit()) ? TRUE : FALSE;
+    }
+  };
 
   public static final Function ISURL = new Function("isurl", "*") {
     @Override

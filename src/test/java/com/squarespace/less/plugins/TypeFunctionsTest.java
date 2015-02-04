@@ -16,6 +16,7 @@
 
 package com.squarespace.less.plugins;
 
+import static com.squarespace.less.ExecuteErrorType.ARG_COUNT;
 import static com.squarespace.less.core.Constants.FALSE;
 import static com.squarespace.less.core.Constants.TRUE;
 
@@ -74,7 +75,18 @@ public class TypeFunctionsTest extends LessTestBase {
     h.evalEquals("isnumber(@color)", FALSE);
   }
 
-  // TODO: testIsPercentage
+  @Test
+  public void testIsPercentage() throws LessException {
+    LessHarness h = harness();
+
+    h.evalFails("ispercentage()", ARG_COUNT);
+
+    h.evalEquals("ispercentage(1%)", TRUE);
+    h.evalEquals("ispercentage(-10.79%)", TRUE);
+
+    h.evalEquals("ispercentage(1)", FALSE);
+    h.evalEquals("ispercentage(#ff0)", FALSE);
+  }
 
   @Test
   public void testIsPixel() throws LessException {
@@ -98,7 +110,26 @@ public class TypeFunctionsTest extends LessTestBase {
     h.evalEquals("isstring(@number)", FALSE);
   }
 
-  // TODO: testIsUnit
+  @Test
+  public void testIsUnit() throws LessException {
+    LessHarness h = harness();
+
+    h.evalFails("isunit()", ARG_COUNT);
+    h.evalFails("isunit(11px)", ARG_COUNT);
+    h.evalFails("isunit(11px)", ARG_COUNT);
+
+    h.evalEquals("isunit(11px, px)", TRUE);
+    h.evalEquals("isunit(11px, 'px')", TRUE);
+    h.evalEquals("isunit(4rem, rem)", TRUE);
+    h.evalEquals("isunit(7.8%, '%')", TRUE);
+
+    h.evalEquals("isunit(2.2%, px)", FALSE);
+    h.evalEquals("isunit(33px, rem)", FALSE);
+    h.evalEquals("isunit(56px, '%')", FALSE);
+    h.evalEquals("isunit(1234, em)", FALSE);
+    h.evalEquals("isunit(#ff0, pt)", FALSE);
+    h.evalEquals("isunit('mm', mm)", FALSE);
+  }
 
   @Test
   public void testIsUrl() throws LessException {
