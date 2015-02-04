@@ -3,40 +3,16 @@
 ---------
 
 Misc 
-* [color]
 * [convert]
 * [default]
-* [get-unit]
 * [svg-gradient]
 
 String
 
 * [replace]
 
-List
-
-* [length]
-* [extract]
-
-Math
-
-* [sqrt]
-* [abs]
-* [sin]
-* [asin]
-* [cos]
-* [acos]
-* [tan]
-* [atan]
-* [pi]
-* [pow]
-* [mod]
-* [min]
-* [max]
-
 Type
 
-* [isunit]
 * [isruleset]
 
 Color Channel
@@ -63,6 +39,8 @@ Completed, verify no changes are needed.
 
 Misc
 
+* [color]
+* [get-unit]
 * [unit]
 
 String
@@ -71,12 +49,30 @@ String
 * [e]
 * [format](%)
 
+List
+
+* [length]
+* [extract]
+
 Math
 
+* [abs]
+* [acos]
+* [asin]
+* [atan]
 * [ceil]
+* [cos]
 * [floor]
+* [mod]
+* [min]
+* [max]
 * [percentage]
+* [pi]
+* [pow]
 * [round]
+* [sin]
+* [sqrt]
+* [tan]
 
 Type 
 
@@ -88,6 +84,7 @@ Type
 * [ispixel]
 * [isem]
 * [ispercentage]
+* [isunit]
 
 Color Definition
 
