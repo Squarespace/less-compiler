@@ -61,6 +61,9 @@ public class CharPattern {
     return next;
   }
 
+  /**
+   * Returns the number of characters in the pattern.
+   */
   public int length() {
     return chars.length;
   }

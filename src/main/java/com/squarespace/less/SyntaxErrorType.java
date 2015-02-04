@@ -24,7 +24,7 @@ import com.squarespace.less.core.MapFormat;
 
 
 /**
- * Errors thrown during the parse phase of the compile are syntax errors.
+ * Errors thrown during the parse phase are syntax errors.
  */
 public enum SyntaxErrorType implements LessErrorType {
 

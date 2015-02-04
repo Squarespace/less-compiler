@@ -23,14 +23,22 @@ import java.util.regex.Pattern;
 
 
 /**
- * Forces all imports to be resolved against a jailed root. No import
- * will be allowed to read files above this path. It also restricts the
- * file extensions of imports to those matching the "\.(less|css)$" regex.
+ * Forces all imports to be children of a given filesystem root.
+ *
+ * No {@link Import} instruction will be allowed to read files outside this root.
+ * It also restricts the file extensions of imports to those matching the "\.(less|css)$"
+ * pattern.
  */
 public class JailedFilesystemLessLoader extends FilesystemLessLoader {
 
+  /**
+   * Pattern to ensure import paths end in a legal extension.
+   */
   private static final Pattern ACCEPT_IMPORT = Pattern.compile(".*\\.(less|css)$");
 
+  /**
+   * Parent path. All imported paths must be children of this path.
+   */
   private final Path jailRoot;
 
   public JailedFilesystemLessLoader(Path jailRoot) {

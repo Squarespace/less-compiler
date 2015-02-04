@@ -24,10 +24,14 @@ import java.nio.file.Path;
  */
 public interface LessLoader {
 
-  /** Peek to see if the target file exists before trying to load it */
+  /**
+   * Peek to see if the target file exists before trying to load it.
+   */
   boolean exists(Path path);
 
-  /** Load the target file */
+  /**
+   * Load the target file
+   */
   String load(Path path) throws LessException;
 
 }

@@ -31,7 +31,7 @@ import com.squarespace.less.core.LessUtils;
 
 
 /**
- * Loads the raw data for a given path, using the filesystem.
+ * Loads the raw data for a given path from the filesystem.
  */
 public class FilesystemLessLoader implements LessLoader {
 

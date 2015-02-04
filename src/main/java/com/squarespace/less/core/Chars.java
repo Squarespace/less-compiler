@@ -18,7 +18,7 @@ package com.squarespace.less.core;
 
 
 /**
- * Character definitions. Useful when you want a readable character name in code.
+ * Character definitions. Maps the formal name to each character.
  */
 public class Chars {
 
@@ -134,6 +134,9 @@ public class Chars {
   // and is reserved for application internal use. We use it to indicate EOF on a stream.
   public static final char EOF = '\uFFFF';
 
+  /**
+   * Returns the base-10 integer value of a hexadecimal character.
+   */
   public static int hexvalue(char ch) {
     if (ch >= '0' && ch <= '9') {
       return ch - '0';
@@ -145,6 +148,9 @@ public class Chars {
     return 0;
   }
 
+  /**
+   * Returns the hexadecimal character representation of an integer.
+   */
   public static char hexchar(int v) {
     if (v >= 0 && v <= 9) {
       return (char)('0' + v);

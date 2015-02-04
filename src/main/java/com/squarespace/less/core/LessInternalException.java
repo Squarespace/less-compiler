@@ -18,7 +18,7 @@ package com.squarespace.less.core;
 
 
 /**
- * Represents a serious invalid code exception, indicating a likely bug within
+ * Represents a serious internal exception, indicating a probable bug within
  * the framework itself.
  */
 public class LessInternalException extends RuntimeException {

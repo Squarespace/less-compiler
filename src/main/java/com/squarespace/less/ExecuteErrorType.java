@@ -24,7 +24,7 @@ import com.squarespace.less.core.MapFormat;
 
 
 /**
- * Errors thrown in the execute phase of the compile are execute errors.
+ * Definitions for the errors thrown in the execute phase of the compile.
  */
 public enum ExecuteErrorType implements LessErrorType {
 

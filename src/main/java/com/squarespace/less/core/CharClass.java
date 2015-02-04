@@ -24,33 +24,52 @@ package com.squarespace.less.core;
  */
 public class CharClass {
 
-  public static final int DIGIT = 0x01;
-  public static final int LOWERCASE = 0x02;
-  public static final int UPPERCASE = 0x04;
-  public static final int KEYWORD_START = 0x08;
-  public static final int DIMENSION_START = 0x10;
-  public static final int NONASCII = 0x20;
-  public static final int NONPRINTABLE = 0x40;
-  // 0x80
-  public static final int CALL_START = 0x100;
-  public static final int COMBINATOR = 0x200;
-  public static final int SELECTOR_END = 0x400;
-  public static final int PROPERTY_START = 0x800;
-  public static final int VARIABLE_START = 0x1000;
-  // 0x2000
-  public static final int ENCODE_URI = 0x4000;
-  public static final int ENCODE_URI_COMPONENT = 0x8000;
-  public static final int ESCAPE = 0x10000;
+  // Character class bits that can be set/cleared in a bit mask
 
-  // The characters we care about all live below this limit.
+  public static final int DIGIT = 0x01;
+
+  public static final int LOWERCASE = 0x02;
+
+  public static final int UPPERCASE = 0x04;
+
+  public static final int KEYWORD_START = 0x08;
+
+  public static final int DIMENSION_START = 0x10;
+
+  public static final int NONASCII = 0x20;
+
+  public static final int NONPRINTABLE = 0x40;
+
+  public static final int CALL_START = 0x80;
+
+  public static final int COMBINATOR = 0x100;
+
+  public static final int SELECTOR_END = 0x200;
+
+  public static final int PROPERTY_START = 0x400;
+
+  public static final int VARIABLE_START = 0x800;
+
+  public static final int ENCODE_URI = 0x1000;
+
+  public static final int ENCODE_URI_COMPONENT = 0x2000;
+
+  public static final int ESCAPE = 0x4000;
+
+  /**
+   * The characters we care about all live below this limit.
+   */
   private static final int LIMIT = 0x80;
 
-  private static final int[] CLASSES = new int[LIMIT];
+  /**
+   * Table of character codes, where the value is a bit mask indicating which
+   * classes that character belongs to.
+   */
+  private static final int[] CHARACTER_CLASSES = new int[LIMIT];
 
-  // Build a table for classification
   static {
     for (int i = 0; i < LIMIT; i++) {
-      CLASSES[i] = classify((char)i);
+      CHARACTER_CLASSES[i] = classify((char)i);
     }
   }
 
@@ -114,7 +133,7 @@ public class CharClass {
   }
 
   public static boolean isMember(char ch, int cls) {
-    return (ch >= LIMIT) ? false : (CLASSES[ch] & cls) > 0;
+    return (ch >= LIMIT) ? false : (CHARACTER_CLASSES[ch] & cls) > 0;
   }
 
   /**
