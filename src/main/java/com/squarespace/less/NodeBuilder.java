@@ -38,10 +38,15 @@ import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Variable;
+import com.squarespace.less.parse.LessStream;
 
 
 /**
- * Allows clients to substitute custom implementations of nodes.
+ * Allows clients to substitute custom implementations of nodes constructed
+ * by {@link LessStream#parse}.
+ *
+ * For example, when the parser needs to construct a Comment, it will
+ * call {@link #buildComment}.
  */
 public interface NodeBuilder {
 

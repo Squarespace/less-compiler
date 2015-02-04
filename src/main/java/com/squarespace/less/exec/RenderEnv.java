@@ -28,39 +28,65 @@ import com.squarespace.less.model.Selectors;
 
 
 /**
- * Manages an implicit stack of RenderFrame instances, used during LESS rendering.
+ * Manages an implicit stack of {@link RenderFrame} instances, used during rendering.
  */
 public class RenderEnv {
 
+  /**
+   * Reference to the current {@link LessContext}
+   */
   private final LessContext ctx;
 
+  /**
+   * Current {@link RenderFrame} we're pointing to in the implicit stack.
+   */
   private RenderFrame frame;
 
+  /**
+   * Current stack depth.
+   */
   private int depth;
 
+  /**
+   * Builds an empty {@code RenderEnv} instance with the given context.
+   */
   public RenderEnv(LessContext ctx) {
     this(ctx, null);
   }
 
+  /**
+   * Builds a {@code RenderEnv} instance pointing to the given {@link RenderFrame}
+   * with the given context.
+   */
   public RenderEnv(LessContext ctx, RenderFrame frame) {
     this.ctx = ctx;
     this.frame = frame;
   }
 
+  /**
+   * Returns the {@link LessContext}.
+   */
   public LessContext context() {
     return ctx;
   }
 
+  /**
+   * Returns the current {@link RenderFrame}.
+   */
   public RenderFrame frame() {
     return frame;
   }
 
+  /**
+   * Pushes a {@link BlockNode} onto the render stack.
+   */
   public void push(BlockNode blockNode) throws LessException {
     if (blockNode == null) {
       throw new LessInternalException("Serious error: blockNode cannot be null.");
     }
 
     // Ensure that selectors / features are evaluated outside the block they're attached to.
+    // Otherwise they may bind to variables from nested scopes.
     Selectors selectors = null;
     Features features = null;
     if (blockNode != null) {
@@ -83,6 +109,10 @@ public class RenderEnv {
     }
   }
 
+  /**
+   * Removes the current {@link BlockNode} from the render stack, replacing
+   * it with its parent.
+   */
   public void pop() {
     if (frame == null) {
       throw new LessInternalException("Serious error: popped past the last frame!");

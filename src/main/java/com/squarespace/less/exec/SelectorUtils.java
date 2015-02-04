@@ -23,11 +23,15 @@ import java.util.List;
 import com.squarespace.less.core.CartesianProduct;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Element;
+import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
 import com.squarespace.less.model.TextElement;
 
 
+/**
+ * Utility methods for manipulating {@link Selectors}.
+ */
 public class SelectorUtils {
 
   private SelectorUtils() {
@@ -78,8 +82,8 @@ public class SelectorUtils {
   }
 
   /**
-   * Generate a cartesian product from 'selectors' and append the flattened selectors
-   * to 'result'.
+   * Generates a cartesian product from {@code selectors} and appends the flattened
+   * selectors {@code result}.
    */
   public static void flatten(List<List<Selector>> selectors, Selectors result) {
     CartesianProduct<Selector> product = new CartesianProduct<>(selectors);
@@ -95,7 +99,7 @@ public class SelectorUtils {
   }
 
   /**
-   * Constructs a list of strings from a selector, to enable simpler mixin matching.
+   * Constructs a list of strings from a selector, to enable simpler {@link Mixin} matching.
    */
   public static List<String> renderMixinSelector(Selector selector) {
     List<Element> elements = selector.elements();

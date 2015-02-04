@@ -23,7 +23,8 @@ import com.squarespace.less.model.Node;
 
 
 /**
- * Utility methods to help in generating and selecting lines from a Node instances repr() value.
+ * Utility methods for generating and selecting lines from {@link Node} instance's
+ * {@link Node#repr()} value.
  */
 public class ReprUtils {
 

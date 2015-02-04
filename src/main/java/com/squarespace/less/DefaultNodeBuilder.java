@@ -40,6 +40,9 @@ import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Variable;
 
 
+/**
+ * Default implementation of {@link NodeBuilder}.
+ */
 public class DefaultNodeBuilder implements NodeBuilder {
 
   @Override

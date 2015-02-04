@@ -20,12 +20,15 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Features;
+import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selectors;
 
 
 /**
- * Rendering stack frame.  Tracks the current combined selector and media feature sets
- * as we drill deeper into RULESET and MEDIA nodes.
+ * A stack frame used for rendering.
+ *
+ * It tracks the current combined {@link Selector} and media {@link Feature} sets
+ * as we drill deeper into nested {@link Ruleset} and {@link Media} nodes.
  */
 public class RenderFrame {
 
@@ -62,7 +65,7 @@ public class RenderFrame {
   }
 
   /**
-   * Returns the current selectors for this stack frame.
+   * Returns the current {@link Selectors} for this stack frame.
    */
   public Selectors selectors() {
     if (selectors != null) {
@@ -72,7 +75,7 @@ public class RenderFrame {
   }
 
   /**
-   * Returns the current media features for this stack frame.
+   * Returns the current media {@link Features} for this stack frame.
    */
   public Features features() {
     if (features != null) {
@@ -82,7 +85,7 @@ public class RenderFrame {
   }
 
   /**
-   * Combines this set of ruleset/mixin selectors with its parent's.
+   * Combines this set of {@link Selectors} with its parent's.
    */
   public void mergeSelectors(Selectors current) {
     Selectors ancestors = (parent == null) ? Constants.EMPTY_SELECTORS : parent.selectors();

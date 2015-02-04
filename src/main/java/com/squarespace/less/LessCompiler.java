@@ -41,8 +41,14 @@ import com.squarespace.less.plugins.TypeFunctions;
  */
 public class LessCompiler {
 
+  /**
+   * Current LESS language compatibility level of this compiler.
+   */
   public static final String LESSJS_VERSION = "1.3.3";
 
+  /**
+   * Table of function implementations that will be used by the compiler.
+   */
   private final FunctionTable functionTable;
 
   public LessCompiler() {
@@ -102,9 +108,9 @@ public class LessCompiler {
   }
 
   /**
-   * Build the core function table.  The functions are stateless so this table
+   * Builds the default function table.  Functions are stateless so this table
    * can be shared among many instances of the compiler.  This method provides
-   * a convenient core table, which can be extended by registering further
+   * a convenient starting point which can be extended by registering additional
    * function packages.
    */
   public static FunctionTable defaultFunctionTable() {
