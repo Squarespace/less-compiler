@@ -16,6 +16,8 @@
 
 package com.squarespace.less.plugins;
 
+import static com.squarespace.less.model.Unit.RAD;
+
 import java.util.List;
 
 import com.squarespace.less.LessException;
@@ -28,6 +30,7 @@ import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.UnitConversions;
 
 
 /**
@@ -37,13 +40,37 @@ import com.squarespace.less.model.Unit;
  */
 public class MathFunctions implements Registry<Function> {
 
-  // TODO: ABS
 
-  // TODO: ASIN
+  public static final Function ABS = new Function("abs", "d") {
+    public Node invoke(ExecEnv env, java.util.List<Node> args) throws LessException {
+      Dimension dim = (Dimension)args.get(0);
+      return new Dimension(Math.abs(dim.value()), dim.unit());
+    };
+  };
 
-  // TODO: ACOS
+  public static final Function ASIN = new Function("asin", "d") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      double value = Math.asin(((Dimension)args.get(0)).value());
+      return new Dimension(value, Unit.RAD);
+    }
+  };
 
-  // TODO: ATAN
+  public static final Function ACOS = new Function("acos", "d") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      double value = Math.acos(((Dimension)args.get(0)).value());
+      return new Dimension(value, Unit.RAD);
+    }
+  };
+
+  public static final Function ATAN = new Function("atan", "d") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      double value = Math.atan(((Dimension)args.get(0)).value());
+      return new Dimension(value, Unit.RAD);
+    }
+  };
 
   public static final Function CEIL = new Function("ceil", "d") {
     @Override
@@ -53,7 +80,12 @@ public class MathFunctions implements Registry<Function> {
     }
   };
 
-  // TODO: COS
+  public static final Function COS = new Function("cos", "d") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      return trigResult(TrigFunction.COS, args.get(0));
+    }
+  };
 
   public static final Function FLOOR = new Function("floor", "d") {
     @Override
@@ -79,7 +111,18 @@ public class MathFunctions implements Registry<Function> {
     }
   };
 
-  // TODO: MOD
+  public static final Function MOD = new Function("mod", "dd") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      Dimension dividend = (Dimension)args.get(0);
+      double divisor = ((Dimension)args.get(1)).value();
+      double result = Double.NaN;
+      if (divisor != 0.0) {
+        result = dividend.value() % divisor;
+      }
+      return new Dimension(result, dividend.unit());
+    }
+  };
 
   public static final Function PERCENTAGE = new Function("percentage", "d") {
     @Override
@@ -89,10 +132,22 @@ public class MathFunctions implements Registry<Function> {
     }
   };
 
-  // TODO: PI
+  public static final Function PI = new Function("pi", "") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      return new Dimension(Math.PI);
+    }
+  };
 
-  // TODO: POW
-
+  public static final Function POW = new Function("pow", "dd") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      Dimension base = (Dimension)args.get(0);
+      Dimension exp = (Dimension)args.get(1);
+      double value = Math.pow(base.value(), exp.value());
+      return new Dimension(value, base.unit());
+    }
+  };
 
   public static final Function ROUND = new Function("round", "d:n") {
     @Override
@@ -108,11 +163,27 @@ public class MathFunctions implements Registry<Function> {
     }
   };
 
-  // TODO: SIN
+  public static final Function SIN = new Function("sin", "d") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      return trigResult(TrigFunction.SIN, args.get(0));
+    }
+  };
 
-  // TODO: SQRT
+  public static final Function SQRT = new Function("sqrt", "d") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      Dimension dim = (Dimension)args.get(0);
+      return new Dimension(Math.sqrt(dim.value()), dim.unit());
+    }
+  };
 
-  // TODO: TAN
+  public static final Function TAN = new Function("tan", "d") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      return trigResult(TrigFunction.TAN, args.get(0));
+    }
+  };
 
   @Override
   public void registerTo(SymbolTable<Function> table) {
@@ -152,6 +223,39 @@ public class MathFunctions implements Registry<Function> {
 
     }
     return new Dimension(value, unit);
+  }
+
+  private enum TrigFunction {
+    SIN,
+    COS,
+    TAN
+  }
+
+  private static Node trigResult(TrigFunction function, Node argument) {
+    Dimension dim = (Dimension)argument;
+    double factor = UnitConversions.factor(dim.unit(), Unit.RAD);
+    double result = dim.value() * factor;
+    switch (function) {
+      case SIN:
+        result = Math.sin(result);
+        break;
+
+      case COS:
+        result = Math.cos(result);
+        break;
+
+      case TAN:
+        result = Math.tan(result);
+        break;
+
+      default:
+        break;
+    }
+    return new Dimension(result);
+  }
+
+  private static Node asRadians(double value) {
+    return (Double.isNaN(value)) ? new Anonymous("NaNrad") : new Dimension(value, RAD);
   }
 
 }

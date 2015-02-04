@@ -61,7 +61,13 @@ public class Dimension extends BaseNode {
   public boolean equals(Object obj) {
     if (obj instanceof Dimension) {
       Dimension other = (Dimension)obj;
-      return value == other.value && unit == other.unit;
+      boolean unitEqual = unit == other.unit;
+      if (Double.isNaN(value) && Double.isNaN(other.value)) {
+        return unitEqual;
+      } else if (Double.isInfinite(value) && Double.isInfinite(other.value)) {
+        return unitEqual;
+      }
+      return value == other.value;
     }
     return false;
   }
