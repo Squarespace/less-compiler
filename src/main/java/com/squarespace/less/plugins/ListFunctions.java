@@ -24,7 +24,6 @@ import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.ExpressionList;
-import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Node;
 
 
@@ -64,14 +63,14 @@ public class ListFunctions implements Registry<Function> {
       Node arg2 = args.get(1);
       if (!(arg1 instanceof ExpressionList) || !(arg2 instanceof Dimension)) {
         // Bail out and emit literal representation of function call.
-        return new FunctionCall(name, args);
+        return null;
       }
       ExpressionList list = (ExpressionList) arg1;
       int size = list.size();
       double index = ((Dimension) arg2).value();
       if (index != Math.round(index) || index < 0 || index >= size) {
         // Bail out and emit literal representation of function call.
-        return new FunctionCall(name, args);
+        return null;
       }
       return list.expressions().get((int)index);
     }

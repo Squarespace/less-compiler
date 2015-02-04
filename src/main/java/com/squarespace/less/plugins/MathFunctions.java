@@ -22,9 +22,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
-import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Dimension;
-import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.UnitConversions;
@@ -96,7 +94,7 @@ public class MathFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Dimension result = calculateMinOrMax(args, false);
-      return (result == null) ? renderFunctionCall("max", args) : result;
+      return (result == null) ? null : result;
     }
   };
 
@@ -104,7 +102,7 @@ public class MathFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Node result = calculateMinOrMax(args, true);
-      return (result == null) ? renderFunctionCall("min", args) : result;
+      return (result == null) ? null : result;
     }
   };
 
@@ -181,11 +179,6 @@ public class MathFunctions implements Registry<Function> {
       return trigResult(TrigFunction.TAN, args.get(0));
     }
   };
-
-  private static Anonymous renderFunctionCall(String name, List<Node> args) {
-    String repr = new FunctionCall(name, args).repr();
-    return new Anonymous(repr);
-  }
 
   private static Dimension calculateMinOrMax(List<Node> args, boolean minimum) throws LessException {
     // These will be set to value of first argument.
