@@ -76,6 +76,9 @@ public enum ExecuteErrorType implements LessErrorType {
   MIXIN_UNDEFINED
   ("Failed to locate a mixin using selector %(arg0)s"),
 
+  PATTERN_COMPILE
+  ("Regular expression pattern compilation failed: %(arg0)s"),
+
   PERCENT_MATH_ORDER
   ("The value %(arg0)s cannot be added to or subtracted from a percentage."),
 

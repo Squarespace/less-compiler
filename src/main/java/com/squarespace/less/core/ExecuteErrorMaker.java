@@ -89,6 +89,9 @@ public class ExecuteErrorMaker {
     return error(ExecuteErrorType.MIXIN_UNDEFINED).arg0(selector);
   }
 
+  public static LessErrorInfo patternCompile(String msg) {
+    return error(ExecuteErrorType.PATTERN_COMPILE).arg0(msg);
+  }
   public static LessErrorInfo percentMathOrder(Object dim) {
     return error(ExecuteErrorType.PERCENT_MATH_ORDER).arg0(dim);
   }

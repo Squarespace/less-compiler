@@ -32,6 +32,7 @@ import com.squarespace.less.parse.LessStream;
 import com.squarespace.less.parse.Parselet;
 import com.squarespace.less.parse.Parselets;
 import com.squarespace.less.plugins.DummyFunctions;
+import com.squarespace.less.plugins.ext.ExtStringFunctions;
 
 
 /**
@@ -43,6 +44,7 @@ public class LessHarness {
 
   static {
     FUNCTIONS.register(new DummyFunctions());
+    FUNCTIONS.register(new ExtStringFunctions());
   }
 
   private final LessCompiler compiler = new LessCompiler(FUNCTIONS);

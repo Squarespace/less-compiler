@@ -20,6 +20,7 @@ import static com.squarespace.less.ExecuteErrorType.ARG_COUNT;
 import static com.squarespace.less.ExecuteErrorType.INVALID_ARG;
 import static com.squarespace.less.model.Unit.PX;
 import static com.squarespace.less.model.Unit.RAD;
+import static com.squarespace.less.model.Unit.TURN;
 
 import org.testng.annotations.Test;
 
@@ -135,8 +136,8 @@ public class MathFunctionsTest extends LessTestBase {
     h.evalEquals("max(-100, -50, 50, -25)", dim(50));
     h.evalEquals("max(3px, 2px, 1px)", dim(3, PX));
 
-    h.evalEquals("max(1px, 2turn)", anon("max(1px, 2turn)"));
-    h.evalEquals("max(red, 1, blue)", anon("max(red, 1, blue)"));
+    h.evalEquals("max(1px, 2turn)", call("max", dim(1, PX), dim(2, TURN)));
+    h.evalEquals("max(red, 1, blue)", call("max", color("red"), dim(1), color("blue")));
   }
 
   @Test
@@ -154,8 +155,8 @@ public class MathFunctionsTest extends LessTestBase {
     h.evalEquals("min(-100, -50, 50, -25)", dim(-100));
     h.evalEquals("min(3px, 2px, 1px)", dim(1, PX));
 
-    h.evalEquals("min(1px, 2turn)", anon("min(1px, 2turn)"));
-    h.evalEquals("min(red, 1, blue)", anon("min(red, 1, blue)"));
+    h.evalEquals("min(1px, 2turn)", call("min", dim(1, PX), dim(2, TURN)));
+    h.evalEquals("min(red, 1, blue)", call("min", color("red"), dim(1), color("blue")));
   }
 
   @Test

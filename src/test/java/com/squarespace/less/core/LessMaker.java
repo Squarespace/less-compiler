@@ -152,7 +152,7 @@ public class LessMaker {
   public RGBColor color(String raw) {
     int[] comp = Colors.nameToRGB(raw);
     if (comp != null) {
-      return new RGBColor(comp[0], comp[1], comp[2]);
+      return new RGBColor(comp[0], comp[1], comp[2], true);
     }
     return RGBColor.fromHex(raw);
   }

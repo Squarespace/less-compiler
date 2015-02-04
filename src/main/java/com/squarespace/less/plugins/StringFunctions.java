@@ -35,6 +35,7 @@ import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.RGBColor;
 
 
+
 /**
  * String function implementations.
  *
@@ -124,8 +125,6 @@ public class StringFunctions implements Registry<Function> {
       return result;
     }
   };
-
-  // TODO: REPLACE
 
   private static String asString(ExecEnv env, Node node, boolean escape) throws LessException {
     if (escape && node.is(NodeType.QUOTED)) {
