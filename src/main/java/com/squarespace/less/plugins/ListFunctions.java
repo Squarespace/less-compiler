@@ -16,9 +16,17 @@
 
 package com.squarespace.less.plugins;
 
+import java.util.List;
+
+import com.squarespace.less.LessException;
+import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
 import com.squarespace.less.exec.SymbolTable;
+import com.squarespace.less.model.Dimension;
+import com.squarespace.less.model.ExpressionList;
+import com.squarespace.less.model.FunctionCall;
+import com.squarespace.less.model.Node;
 
 
 /**
@@ -28,9 +36,47 @@ import com.squarespace.less.exec.SymbolTable;
  */
 public class ListFunctions implements Registry<Function> {
 
-  // TODO: LENGTH
+  public static final Function LENGTH = new Function("length", "*.") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      Node node = args.get(0);
+      int size = 1;
+      if (node instanceof ExpressionList) {
+        ExpressionList list = (ExpressionList) node;
+        size = list.size();
+      }
+      return new Dimension(size);
+    }
+  };
 
-  // TODO: EXTRACT
+  /**
+   * Note: I'm not satisfied with the vague behavior exhibited by the upstream
+   * JS compiler. If length() is called with 2 or more arguments of the wrong
+   * type, it tends to output the literal function call as a default,
+   * rather than emitting a warning, or better and error.
+   *
+   * In order to maintain compatibility with upstream I've replicated this
+   * behavior.
+   */
+  public static final Function EXTRACT = new Function("extract", "**.") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      Node arg1 = args.get(0);
+      Node arg2 = args.get(1);
+      if (!(arg1 instanceof ExpressionList) || !(arg2 instanceof Dimension)) {
+        // Bail out and emit literal representation of function call.
+        return new FunctionCall(name, args);
+      }
+      ExpressionList list = (ExpressionList) arg1;
+      int size = list.size();
+      double index = ((Dimension) arg2).value();
+      if (index != Math.round(index) || index < 0 || index >= size) {
+        // Bail out and emit literal representation of function call.
+        return new FunctionCall(name, args);
+      }
+      return list.expressions().get((int)index);
+    }
+  };
 
   @Override
   public void registerTo(SymbolTable<Function> table) {
