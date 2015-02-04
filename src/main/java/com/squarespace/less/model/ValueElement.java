@@ -40,6 +40,9 @@ public class ValueElement extends Element {
     return value;
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return value.needsEval();

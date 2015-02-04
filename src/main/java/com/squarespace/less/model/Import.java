@@ -94,14 +94,14 @@ public class Import extends BaseNode {
 
   public String renderPath(ExecEnv env) throws LessException {
     Node value = path;
-    if (value.is(NodeType.URL)) {
+    if (value instanceof Url) {
       value = ((Url)value).value();
     }
 
     LessContext ctx = env.context();
     Quoted quoted = null;
     String rendered = null;
-    if (value.is(NodeType.QUOTED)) {
+    if (value instanceof Quoted) {
 
       // Strip quote delimiters and render inner string. This technique allows
       // for variable substitution inside @import paths, which may or may not
@@ -119,11 +119,17 @@ public class Import extends BaseNode {
     return rendered;
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return path.needsEval() || (features != null && features.needsEval());
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv env)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!needsEval()) {

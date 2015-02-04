@@ -27,7 +27,6 @@ import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.ExpressionList;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Property;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Variable;
@@ -49,7 +48,7 @@ public class RuleParselet implements Parselet {
     }
 
     String name = null;
-    if (key.is(NodeType.PROPERTY)) {
+    if (key instanceof Property) {
       name = ((Property)key).name();
     } else {
       name = ((Variable)key).name();
@@ -88,7 +87,7 @@ public class RuleParselet implements Parselet {
 
     // Only emit a rule if we've parsed a value and found the rule ending.
     if (value != null && end(stm)) {
-      if (key.is(NodeType.VARIABLE)) {
+      if (key instanceof Variable) {
         // Note that !important is ingored for definitions.
         Definition def = stm.context().nodeBuilder().buildDefinition(name, value);
         def.fileName(stm.fileName());

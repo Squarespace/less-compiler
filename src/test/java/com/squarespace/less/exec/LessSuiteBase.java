@@ -32,7 +32,6 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Stylesheet;
 
 import difflib.Chunk;
@@ -90,7 +89,7 @@ public class LessSuiteBase {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node rule = rules.get(i);
-      if (rule.is(NodeType.COMMENT)) {
+      if (rule instanceof Comment) {
         Comment comment = (Comment)rule;
         if (comment.body().trim().equals("strict=false")) {
           opts.strict(false);

@@ -29,15 +29,32 @@ import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 
 
+/**
+ * Calls a named {@link Function}, if one has been defined, or just
+ * emits something that looks like a function call.
+ */
 public class FunctionCall extends BaseNode {
 
+  /**
+   * Name of the function.
+   */
   protected final String name;
 
+  /**
+   * Arguments to the function.
+   */
   protected List<Node> args;
 
+  /**
+   * Flag indicating whether
+   */
   protected boolean evaluate;
 
-  protected final boolean noimpl;
+  /**
+   * Flag indicating whether or not this function is implemented in the
+   * current compiler instance.
+   */
+  protected final boolean noImplementation;
 
   public FunctionCall(String name) {
     this(name, null, false);
@@ -47,13 +64,18 @@ public class FunctionCall extends BaseNode {
     this(name, args, false);
   }
 
-  public FunctionCall(String name, List<Node> args, boolean noimpl) {
+  public FunctionCall(String name, List<Node> args, boolean noImplementation) {
     if (name == null) {
       throw new LessInternalException("Serious error: name cannot be null");
     }
     this.name = name;
     this.args = args;
-    this.noimpl = noimpl;
+    this.noImplementation = noImplementation;
+    if (args != null) {
+      for (Node arg : args) {
+        evaluate |= arg.needsEval();
+      }
+    }
   }
 
   public String name() {
@@ -70,14 +92,17 @@ public class FunctionCall extends BaseNode {
     evaluate |= arg.needsEval();
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
-    return !noimpl || evaluate;
+    return !noImplementation || evaluate;
   }
 
   @Override
   public Node eval(ExecEnv env) throws LessException {
-    if (noimpl) {
+    if (noImplementation) {
       return evaluate ? new FunctionCall(name, evalArgs(env), true) : this;
     }
 
@@ -93,11 +118,8 @@ public class FunctionCall extends BaseNode {
         return result;
       }
 
-      // If we get null, fall through. Its a way for a function impl to signal
-      // that it should be emitted, not executed. This happens in the context()
-      // function -- it checks its args, and if the first arg is not of the expected
-      // type, it returns null, indicating that the function call's repr should
-      // be emitted, not an evaluated result.
+      // If we get null, fall through. Its a way for a function to signal
+      // that its representation should be emitted, not executed.
     }
 
     // Function is not a built-in so render the function and its args.
@@ -143,7 +165,7 @@ public class FunctionCall extends BaseNode {
     typeRepr(buf);
     posRepr(buf);
     buf.append(" name=").append(name);
-    if (noimpl) {
+    if (noImplementation) {
       buf.append(" [no implementation]");
     }
     buf.append('\n').incrIndent();

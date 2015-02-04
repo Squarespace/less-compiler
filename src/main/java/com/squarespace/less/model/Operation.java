@@ -91,7 +91,7 @@ public class Operation extends BaseNode {
     op1 = cast(op1);
 
     LessOptions opts = env.context().options();
-    if (op0.is(NodeType.DIMENSION) && op1.is(NodeType.COLOR)) {
+    if ((op0 instanceof Dimension) && (op1 instanceof BaseColor)) {
       if (operator == Operator.MULTIPLY || operator == Operator.ADD) {
         Node temp = op0;
         op0 = op1;

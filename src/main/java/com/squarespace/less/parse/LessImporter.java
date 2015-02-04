@@ -36,9 +36,9 @@ import com.squarespace.less.model.Import;
 import com.squarespace.less.model.ImportMarker;
 import com.squarespace.less.model.Media;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Stylesheet;
+import com.squarespace.less.model.Url;
 
 
 /**
@@ -198,17 +198,18 @@ public class LessImporter {
    */
   private String renderImportPath(Import importNode) throws LessException {
     Node node = importNode.path();
-    if (node.is(NodeType.URL)) {
+    if (node instanceof Url) {
       return null;
     }
+
     String path = null;
-    if (node.is(NodeType.QUOTED)) {
+    if (node instanceof Quoted) {
       Quoted quoted = ((Quoted)node).copy();
       quoted.setEscape(true);
       node = quoted;
     }
-    path = context.render(node);
 
+    path = context.render(node);
     Matcher matcher = IMPORT_EXT.matcher(path);
     if (!matcher.matches()) {
       // Append optional ".less" extension

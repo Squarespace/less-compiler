@@ -38,7 +38,7 @@ public class AlphaParselet implements Parselet {
     }
 
     Node value = stm.parse(ALPHA_SUB);
-    if (value != null && value.is(NodeType.DIMENSION)) {
+    if (value != null && value.type().equals(NodeType.DIMENSION)) {
       Dimension dim = (Dimension)value;
       if (dim.unit() != null) {
         throw stm.parseError(new LessException(alphaUnitsInvalid(dim)));

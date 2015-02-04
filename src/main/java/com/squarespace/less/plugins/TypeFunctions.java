@@ -26,12 +26,13 @@ import com.squarespace.less.core.Constants;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Url;
 
 
 /**
@@ -44,7 +45,7 @@ public class TypeFunctions implements Registry<Function> {
   public static final Function ISCOLOR = new Function("iscolor", "*") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      return args.get(0).is(NodeType.COLOR) ? TRUE : FALSE;
+      return (args.get(0) instanceof BaseColor) ? TRUE : FALSE;
     }
   };
 
@@ -67,7 +68,7 @@ public class TypeFunctions implements Registry<Function> {
   public static final Function ISNUMBER = new Function("isnumber", "*") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      return args.get(0).is(NodeType.DIMENSION) ? TRUE : FALSE;
+      return (args.get(0) instanceof Dimension) ? TRUE : FALSE;
     }
   };
 
@@ -80,7 +81,7 @@ public class TypeFunctions implements Registry<Function> {
   public static final Function ISSTRING = new Function("isstring", "*") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      return args.get(0).is(NodeType.QUOTED) ? TRUE : FALSE;
+      return (args.get(0) instanceof Quoted) ? TRUE : FALSE;
     }
   };
 
@@ -117,7 +118,7 @@ public class TypeFunctions implements Registry<Function> {
   public static final Function ISURL = new Function("isurl", "*") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      return args.get(0).is(NodeType.URL) ? TRUE : FALSE;
+      return (args.get(0) instanceof Url) ? TRUE : FALSE;
     }
   };
 
@@ -133,7 +134,7 @@ public class TypeFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Node arg = args.get(0);
-      if (arg.is(NodeType.DIMENSION)) {
+      if (arg instanceof Dimension) {
         Dimension dim = (Dimension)arg;
         return dim.unit() == unit ? TRUE : FALSE;
       }

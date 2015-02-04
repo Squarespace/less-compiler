@@ -30,7 +30,6 @@ import com.squarespace.less.exec.Registry;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.RGBColor;
 
@@ -102,7 +101,7 @@ public class StringFunctions implements Registry<Function> {
         }
 
         Node arg = args.get(j);
-        if (arg.is(NodeType.COLOR)) {
+        if (arg instanceof BaseColor) {
           // Force representation of this color to always be hex, not keyword.
           RGBColor color = ((BaseColor)arg).toRGB().copy();
           color.forceHex(true);
@@ -127,7 +126,7 @@ public class StringFunctions implements Registry<Function> {
   };
 
   private static String asString(ExecEnv env, Node node, boolean escape) throws LessException {
-    if (escape && node.is(NodeType.QUOTED)) {
+    if (escape && (node instanceof Quoted)) {
       Quoted str = (Quoted)node;
       str = str.copy();
       str.setEscape(true);

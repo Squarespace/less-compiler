@@ -75,7 +75,7 @@ public class Guard extends BaseNode {
     Node result = FALSE;
     for (Condition condition : conditions()) {
       result = condition.eval(env);
-      if (result.is(NodeType.TRUE)) {
+      if (result instanceof True) {
         break;
       }
     }

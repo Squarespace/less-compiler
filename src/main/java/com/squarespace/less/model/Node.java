@@ -51,8 +51,6 @@ public interface Node {
    */
   Node eval(ExecEnv env) throws LessException;
 
-  boolean is(NodeType type);
-
   /**
    * Optimization to avoid eval() when the node is an Atom or a composite
    * that contains no variable references.

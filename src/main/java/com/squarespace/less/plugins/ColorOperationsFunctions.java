@@ -22,11 +22,11 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.Colors;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.HSLColor;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.RGBColor;
 import com.squarespace.less.model.Unit;
 
@@ -42,7 +42,7 @@ public class ColorOperationsFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Node arg = args.get(0);
-      if (!arg.is(NodeType.COLOR)) {
+      if (!(arg instanceof BaseColor)) {
         return null;
       }
       RGBColor color = rgb(arg);

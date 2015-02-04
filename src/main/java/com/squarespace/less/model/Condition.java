@@ -78,6 +78,9 @@ public class Condition extends BaseNode {
     return super.hashCode();
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return true;
@@ -99,7 +102,7 @@ public class Condition extends BaseNode {
     if (negate) {
       buf.append("not ");
     }
-    boolean nested = (left.is(NodeType.CONDITION) || right.is(NodeType.CONDITION));
+    boolean nested = (left instanceof Condition) || (right instanceof Condition);
     if (!nested) {
       buf.append('(');
     }
@@ -218,14 +221,14 @@ public class Condition extends BaseNode {
   }
 
   private int compare(BaseColor color, Node arg) throws LessException {
-    if (arg.is(NodeType.KEYWORD)) {
+    if (arg instanceof Keyword) {
       Keyword kwd = (Keyword)arg;
       RGBColor tmp = RGBColor.fromName(kwd.value());
       if (tmp != null) {
         arg = tmp;
       }
     }
-    if (!arg.is(NodeType.COLOR)) {
+    if (!(arg instanceof BaseColor)) {
       return -1;
     }
     RGBColor color0 = color.toRGB();

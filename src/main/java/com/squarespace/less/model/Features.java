@@ -57,6 +57,9 @@ public class Features extends BaseNode {
     return features == null ? true : features.isEmpty();
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return evaluate;

@@ -93,7 +93,7 @@ public class Ruleset extends BlockNode {
 
   @Override
   public void add(Node node) {
-    if (node.is(NodeType.SELECTOR)) {
+    if (node instanceof Selector) {
       Selector selector = (Selector)node;
       selectors.add(selector);
       addMixinPaths(selector);

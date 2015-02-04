@@ -26,7 +26,6 @@ import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
@@ -86,10 +85,10 @@ public class MixinResolver {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node node = rules.get(i);
-      if (node.is(NodeType.RULESET)) {
+      if (node instanceof Ruleset) {
         matched |= matchRuleset(index, (Ruleset)node);
 
-      } else if (node.is(NodeType.MIXIN)) {
+      } else if (node instanceof Mixin) {
         matched |= matchMixin(index, (Mixin)node);
       }
     }

@@ -63,6 +63,9 @@ public class Directive extends BaseNode {
     return new Directive(name, value.eval(env));
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return value.needsEval();

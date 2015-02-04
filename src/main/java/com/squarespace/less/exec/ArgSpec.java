@@ -18,6 +18,10 @@ package com.squarespace.less.exec;
 
 import static com.squarespace.less.core.ExecuteErrorMaker.argCount;
 import static com.squarespace.less.core.ExecuteErrorMaker.invalidArg;
+import static com.squarespace.less.model.NodeType.COLOR;
+import static com.squarespace.less.model.NodeType.DIMENSION;
+import static com.squarespace.less.model.NodeType.KEYWORD;
+import static com.squarespace.less.model.NodeType.QUOTED;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,13 +31,14 @@ import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.model.Dimension;
+import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Unit;
 
 
 /**
- * Defines a function's signature.
+ * Defines a {@link FunctionCall}'s signature.
  */
 public class ArgSpec {
 
@@ -157,13 +162,13 @@ public class ArgSpec {
   private static NodeType fromChar(char ch) {
     switch (ch) {
       case 'c':
-        return NodeType.COLOR;
+        return COLOR;
       case 'd':
-        return NodeType.DIMENSION;
+        return DIMENSION;
       case 'k':
-        return NodeType.KEYWORD;
+        return KEYWORD;
       case 's':
-        return NodeType.QUOTED;
+        return QUOTED;
       default:
         break;
     }
@@ -180,7 +185,7 @@ public class ArgSpec {
 
     @Override
     public void validate(int index, Node arg) throws LessException {
-      if (!arg.is(type)) {
+      if (arg.type() != type) {
         throw new LessException(invalidArg(index + 1, type, arg.type()));
       }
     }
@@ -197,8 +202,8 @@ public class ArgSpec {
   private static final ArgValidator ARG_NUMBER = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {
-      if (!arg.is(NodeType.DIMENSION)) {
-        throw new LessException(invalidArg(index + 1, NodeType.DIMENSION, arg.type()));
+      if (arg.type() != DIMENSION) {
+        throw new LessException(invalidArg(index + 1, DIMENSION, arg.type()));
       }
       Dimension dim = (Dimension)arg;
       if (dim.unit() == null) {
@@ -211,8 +216,8 @@ public class ArgSpec {
   private static final ArgValidator ARG_PERCENTAGE = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {
-      if (!arg.is(NodeType.DIMENSION)) {
-        throw new LessException(invalidArg(index + 1, NodeType.DIMENSION, arg.type()));
+      if (arg.type() != DIMENSION) {
+        throw new LessException(invalidArg(index + 1, DIMENSION, arg.type()));
       }
       Dimension dim = (Dimension)arg;
       if (dim.unit() == null || dim.unit() == Unit.PERCENTAGE) {

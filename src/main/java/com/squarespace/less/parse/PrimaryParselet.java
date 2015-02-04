@@ -21,7 +21,6 @@ import static com.squarespace.less.parse.Parselets.PRIMARY_SUB;
 import com.squarespace.less.LessException;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 
 
 public class PrimaryParselet implements Parselet {
@@ -40,7 +39,7 @@ public class PrimaryParselet implements Parselet {
       node.setCharOffset(position.charOffset);
 
       // Importing a stylesheet can return a block, so we need to expand it here.
-      if (node.is(NodeType.BLOCK)) {
+      if (node instanceof Block) {
         block.appendBlock((Block)node);
       } else {
         block.appendNode(node);

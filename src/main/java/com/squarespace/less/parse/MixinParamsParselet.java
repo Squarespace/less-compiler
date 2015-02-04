@@ -25,7 +25,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Parameter;
 import com.squarespace.less.model.Variable;
 
@@ -78,7 +77,7 @@ public class MixinParamsParselet implements Parselet {
     if (temp == null) {
       return null;
     }
-    if (!temp.is(NodeType.VARIABLE)) {
+    if (!(temp instanceof Variable)) {
       return stm.context().nodeBuilder().buildParameter(null, temp);
     }
 

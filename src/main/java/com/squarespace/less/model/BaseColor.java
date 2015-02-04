@@ -64,10 +64,11 @@ public abstract class BaseColor extends BaseNode {
   @Override
   public Node operate(ExecEnv env, Operator op, Node arg) throws LessException {
     LessOptions opts = env.context().options();
-    if (arg.is(NodeType.COLOR)) {
+    NodeType argType = arg.type();
+    if (argType.equals(NodeType.COLOR)) {
       return operate(op, this, (BaseColor)arg);
 
-    } else if (arg.is(NodeType.DIMENSION)) {
+    } else if (argType.equals(NodeType.DIMENSION)) {
       // Dimensions that have units cannot be added/multiplied with a color.
       Dimension dim = (Dimension)arg;
       if (dim.unit() != null) {

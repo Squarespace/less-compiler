@@ -65,6 +65,9 @@ public class Assignment extends BaseNode {
     return super.hashCode();
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return value.needsEval();

@@ -44,6 +44,9 @@ public class Alpha extends BaseNode {
     return value;
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return value.needsEval();

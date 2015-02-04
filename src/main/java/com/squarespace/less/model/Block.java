@@ -119,7 +119,7 @@ public class Block extends BaseNode {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node node = rules.get(i);
-      if (!node.is(NodeType.DEFINITION)) {
+      if (!node.type().equals(NodeType.DEFINITION)) {
         continue;
       }
       Definition def = (Definition)node;
@@ -146,7 +146,7 @@ public class Block extends BaseNode {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node node = rules.get(i);
-      if (node.is(NodeType.DEFINITION)) {
+      if (node.type().equals(NodeType.DEFINITION)) {
         String repr = node.toString().replaceAll("\\s+", " ");
         buf.indent().append(repr).append('\n');
         output = true;

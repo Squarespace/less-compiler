@@ -99,19 +99,20 @@ public abstract class BaseNode implements Node {
     throw new LessException(ExecuteErrorMaker.invalidOperation(op, type(), argType));
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return false;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv env)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     return this;
-  }
-
-  @Override
-  public boolean is(NodeType type) {
-    return type == type();
   }
 
   @Override

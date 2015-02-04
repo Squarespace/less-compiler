@@ -89,10 +89,11 @@ public class RenderEnv {
     // Otherwise they may bind to variables from nested scopes.
     Selectors selectors = null;
     Features features = null;
+    NodeType blockType = blockNode.type();
     if (blockNode != null) {
-      if (blockNode.is(NodeType.RULESET)) {
+      if (blockType.equals(NodeType.RULESET)) {
         selectors = ((Ruleset)blockNode).selectors();
-      } else if (blockNode.is(NodeType.MEDIA)) {
+      } else if (blockType.equals(NodeType.MEDIA)) {
         features = ((Media)blockNode).features();
       }
     }
@@ -100,7 +101,7 @@ public class RenderEnv {
     depth++;
     frame = new RenderFrame(frame, blockNode, depth);
 
-    if (blockNode.is(NodeType.BLOCK_DIRECTIVE)) {
+    if (blockType.equals(NodeType.BLOCK_DIRECTIVE)) {
       frame.pushEmptySelectors();
     } else if (selectors != null) {
       frame.mergeSelectors(selectors);

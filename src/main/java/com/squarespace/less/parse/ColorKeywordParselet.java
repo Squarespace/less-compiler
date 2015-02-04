@@ -19,8 +19,8 @@ package com.squarespace.less.parse;
 import static com.squarespace.less.parse.Parselets.KEYWORD;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 
 
 /**
@@ -32,7 +32,7 @@ public class ColorKeywordParselet implements Parselet {
   public Node parse(LessStream stm) throws LessException {
     Mark mark = stm.mark();
     Node node = stm.parse(KEYWORD);
-    if (node != null && node.is(NodeType.COLOR)) {
+    if (node instanceof BaseColor) {
       return node;
     }
     stm.restore(mark);

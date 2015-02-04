@@ -26,7 +26,6 @@ import com.squarespace.less.model.Argument;
 import com.squarespace.less.model.ExpressionList;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Variable;
 
 
@@ -57,7 +56,7 @@ public class MixinCallArgsParselet implements Parselet {
       // Examples:   (@x, @y)      - both @x and @y are pass-by-reference
       //             (@x: 1, @y)   - @x is pass-by-value named argument, @y is pass-by-reference
       //
-      if (node.is(NodeType.VARIABLE)) {
+      if (node instanceof Variable) {
         Variable var = (Variable)node;
         Node temp = parseVarArg(stm);
         if (temp != null) {

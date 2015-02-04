@@ -33,7 +33,6 @@ import com.squarespace.less.model.Media;
 import com.squarespace.less.model.MixinCall;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.ParseError;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
@@ -85,7 +84,7 @@ public class StackFormatter {
     int skipped = 0;
     while (i < size) {
       Node node = iter.next();
-      if (i < frameWindow || i > limit || node.is(NodeType.IMPORT)) {
+      if (i < frameWindow || i > limit || (node instanceof Import)) {
         if (skipped > 0) {
           result.add(renderSkipped(skipped));
           skipped = 0;
@@ -143,7 +142,7 @@ public class StackFormatter {
   }
 
   private void render(Node node) {
-    if (node.is(NodeType.PARSE_ERROR)) {
+    if (node instanceof ParseError) {
       ParseError error = (ParseError)node;
       Path filePath = error.filePath();
       if (filePath != null) {
