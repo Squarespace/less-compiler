@@ -32,6 +32,7 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.RGBColor;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.UnitConversions;
 
 
 /**
@@ -49,6 +50,16 @@ public class MiscFunctions implements Registry<Function> {
       str.setEscape(true);
       String repr = env.context().render(str);
       return RGBColor.fromHex(repr);
+    }
+  };
+
+  public static final Function CONVERT = new Function("convert", "d*") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      Dimension dim = (Dimension)args.get(0);
+      Unit destUnit = toUnit(env, args.get(1));
+      double factor = UnitConversions.factor(dim.unit(), destUnit);
+      return new Dimension(dim.value() * factor, destUnit);
     }
   };
 
@@ -77,25 +88,29 @@ public class MiscFunctions implements Registry<Function> {
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Dimension dim = (Dimension)args.get(0);
       Unit unit = null;
-      if (args.size() >= 2) {
-        Node node = args.get(1);
-        if (node instanceof Keyword) {
-          unit = Unit.get(((Keyword)node).value());
-
-        } else if (node instanceof Quoted) {
-          Quoted quoted = (Quoted)node;
-          quoted = new Quoted(quoted.delimiter(), true, quoted.parts());
-          String repr = env.context().render(quoted);
-          unit = Unit.get(repr);
-
-        }
-
-        if (unit == null) {
-          throw new LessException(unknownUnit(node.repr()));
-        }
+      if (args.size() == 2) {
+        unit = toUnit(env, args.get(1));
       }
       return new Dimension(dim.value(), unit);
     }
   };
+
+  private static Unit toUnit(ExecEnv env, Node node) throws LessException {
+    Unit unit = null;
+    if (node instanceof Keyword) {
+      unit = Unit.get(((Keyword)node).value());
+
+    } else if (node instanceof Quoted) {
+      Quoted quoted = (Quoted)node;
+      quoted = new Quoted(quoted.delimiter(), true, quoted.parts());
+      String repr = env.context().render(quoted);
+      unit = Unit.get(repr);
+    }
+
+    if (unit == null) {
+      throw new LessException(unknownUnit(node.repr()));
+    }
+    return unit;
+  }
 
 }

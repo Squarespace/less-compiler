@@ -16,9 +16,12 @@
 
 package com.squarespace.less.plugins;
 
+import static com.squarespace.less.ExecuteErrorType.ARG_COUNT;
 import static com.squarespace.less.ExecuteErrorType.INVALID_ARG;
 import static com.squarespace.less.ExecuteErrorType.UNKNOWN_UNIT;
 import static com.squarespace.less.core.Constants.TRUE;
+import static com.squarespace.less.model.Unit.MM;
+import static com.squarespace.less.model.Unit.PT;
 
 import org.testng.annotations.Test;
 
@@ -36,10 +39,21 @@ public class MiscFunctionsTest extends LessTestBase {
   public void testColor() throws LessException {
     LessHarness h = harness();
 
-    // Color hex parsing
     h.evalEquals("color('#fff')", color("#fff"));
     h.evalEquals("color('#010203')", color("#010203"));
     h.evalEquals("color('#aabbcc')", rgb(0xaa, 0xbb, 0xcc));
+  }
+
+  @Test
+  public void testConvert() throws LessException {
+    LessHarness h = harness();
+
+    h.evalFails("convert()", ARG_COUNT);
+    h.evalFails("convert(1)", ARG_COUNT);
+    h.evalFails("convert('foo', 1)", INVALID_ARG);
+
+    h.evalEquals("convert(1cm, mm)", dim(1000, MM));
+    h.evalEquals("convert(10px, pt)", dim(7.5, PT));
   }
 
   // TODO: testDataUri

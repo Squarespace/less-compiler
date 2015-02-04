@@ -3,7 +3,6 @@
 ---------
 
 Misc 
-* [convert]
 * [default]
 * [svg-gradient]
 
@@ -40,6 +39,7 @@ Completed, verify no changes are needed.
 Misc
 
 * [color]
+* [convert]
 * [get-unit]
 * [unit]
 
