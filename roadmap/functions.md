@@ -9,7 +9,7 @@ Misc
 
 String
 
-* [replace]
+* [replace] - adding to extension package, due to unconstrained regex evaluation.
 
 Type
 
