@@ -42,8 +42,8 @@ Squarespace LESS:
 
 less.js:
 
-    % lessc-1.7.0 sqs-comment.less
-    ParseError: Unrecognised input in sqs-comment.less on line 24, column 12:
+    % lessc-1.7.0 comment.less
+    ParseError: Unrecognised input in comment.less on line 24, column 12:
     23
     24 h1 /* a */ span:hover /* b */ {
     25     color: /* c */ red;

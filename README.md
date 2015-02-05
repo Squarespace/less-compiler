@@ -5,9 +5,9 @@ A Java implementation of the LESS CSS preprocessor language.
 
 Current [Less.js][lessjs] compatibility level: 1.3.3
 
-License: [Apache 2.0](LICENSE) ([tl;dr][license-tldr])
+License: [Apache 2.0](LICENSE.txt) ([summary][license-tldr])
 
-Copyright (c) 2014 SQUARESPACE, Inc.
+Copyright (c) 2014 Squarespace, Inc.
 
 ## Project Goals
 
