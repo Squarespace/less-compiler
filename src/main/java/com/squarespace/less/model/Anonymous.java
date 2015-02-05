@@ -26,7 +26,13 @@ import com.squarespace.less.core.LessInternalException;
 
 public class Anonymous extends BaseNode {
 
+  private static final String EMPTY = "";
+
   protected final String value;
+
+  public Anonymous() {
+    this.value = EMPTY;
+  }
 
   public Anonymous(String value) {
     if (value == null) {

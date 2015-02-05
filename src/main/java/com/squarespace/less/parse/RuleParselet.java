@@ -82,7 +82,7 @@ public class RuleParselet implements Parselet {
         value = new Anonymous(stm.token().trim());
       }
     } else if (value == null) {
-      value = new Anonymous("");
+      value = new Anonymous();
     }
 
     // Only emit a rule if we've parsed a value and found the rule ending.

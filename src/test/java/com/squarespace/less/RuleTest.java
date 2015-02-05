@@ -69,7 +69,7 @@ public class RuleTest extends LessTestBase {
     h = new LessHarness(Parselets.STYLESHEET);
 
     Stylesheet exp = stylesheet();
-    exp.add(rule(prop("foo"), anon("")));
+    exp.add(rule(prop("foo"), anon()));
     exp.add(rule(prop("bar"), color("#123")));
     h.parseEquals("foo: ;\nbar: #123;", exp);
   }

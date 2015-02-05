@@ -84,6 +84,10 @@ public class LessMaker {
     return alpha(anon(raw));
   }
 
+  public Anonymous anon() {
+    return new Anonymous();
+  }
+
   public Anonymous anon(String raw) {
     return new Anonymous(raw);
   }

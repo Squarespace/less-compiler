@@ -52,7 +52,7 @@ public class AlphaParselet implements Parselet {
         throw stm.parseError(new LessException(expected("right parenthesis ')' to end alpha")));
       }
     }
-    return new Alpha(value == null ? new Anonymous("") : value);
+    return new Alpha(value == null ? new Anonymous() : value);
   }
 
 }

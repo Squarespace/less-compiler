@@ -66,7 +66,7 @@ public class MiscFunctionsTest extends LessTestBase {
 
     h.evalEquals("get-unit(1px)", kwd("px"));
     h.evalEquals("get-unit(1%)", quoted('"', false, "%"));
-    h.evalEquals("get-unit(1)", anon(""));
+    h.evalEquals("get-unit(1)", anon());
 
     // Composing unit-oriented function calls
     h.evalEquals("isunit(unit(1, get-unit(1%)), '%')", TRUE);

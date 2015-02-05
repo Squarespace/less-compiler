@@ -28,7 +28,7 @@ public class AnoymousTest extends LessTestBase {
 
   @Test
   public void testEquals() throws LessException {
-    assertEquals(anon(""), anon(""));
+    assertEquals(anon(), anon());
     assertEquals(anon("foo"), anon("foo"));
 
     assertNotEquals(anon("foo"), null);
