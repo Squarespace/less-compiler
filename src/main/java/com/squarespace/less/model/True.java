@@ -17,10 +17,22 @@
 package com.squarespace.less.model;
 
 
+/**
+ * Special keyword that represents the boolean value of {@code true}
+ * in the syntax tree.
+ */
 public class True extends Keyword {
 
   public True() {
     super("true");
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return NodeType.TRUE;
   }
 
   @Override
@@ -31,11 +43,6 @@ public class True extends Keyword {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return NodeType.TRUE;
   }
 
 }

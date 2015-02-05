@@ -33,22 +33,99 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Guard extends BaseNode {
 
+  /**
+   * List of conditions to be evaluated.
+   */
   protected List<Condition> conditions;
 
+  /**
+   * Constructs a guard with no conditions.
+   */
   public Guard() {
   }
 
+  /**
+   * Adds a condition to the guard expression.
+   */
   public void add(Condition cond) {
     conditions = LessUtils.initList(conditions, 2);
     conditions.add(cond);
   }
 
+  /**
+   * Adds all the given conditions to the guard expression.
+   */
   public void addAll(Condition ... elements) {
     conditions = Arrays.asList(elements);
   }
 
+  /**
+   * Returns the list of conditions in the guard expression.
+   */
   public List<Condition> conditions() {
     return LessUtils.safeList(conditions);
+  }
+
+  /**
+   * See {@link Node#needsEval()}
+   */
+  @Override
+  public boolean needsEval() {
+    return true;
+  }
+
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
+  @Override
+  public Node eval(ExecEnv env) throws LessException {
+    Node result = FALSE;
+    for (Condition condition : conditions()) {
+      result = condition.eval(env);
+      if (result instanceof True) {
+        break;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return NodeType.GUARD;
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    int size = conditions.size();
+    for (int i = 0; i < size; i++) {
+      if (i > 0) {
+        buf.append(", ");
+      }
+      conditions.get(i).repr(buf);
+    }
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append('\n');
+    buf.incrIndent();
+    if (conditions != null) {
+      ReprUtils.modelRepr(buf, "\n", true, conditions);
+    } else {
+      buf.append("<null>");
+    }
+    buf.decrIndent();
   }
 
   @Override
@@ -63,53 +140,6 @@ public class Guard extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public boolean needsEval() {
-    return true;
-  }
-
-  @Override
-  public Node eval(ExecEnv env) throws LessException {
-    Node result = FALSE;
-    for (Condition condition : conditions()) {
-      result = condition.eval(env);
-      if (result instanceof True) {
-        break;
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public NodeType type() {
-    return NodeType.GUARD;
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    int size = conditions.size();
-    for (int i = 0; i < size; i++) {
-      if (i > 0) {
-        buf.append(", ");
-      }
-      conditions.get(i).repr(buf);
-    }
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append('\n');
-    buf.incrIndent();
-    if (conditions != null) {
-      ReprUtils.modelRepr(buf, "\n", true, conditions);
-    } else {
-      buf.append("<null>");
-    }
-    buf.decrIndent();
   }
 
 }

@@ -16,6 +16,8 @@
 
 package com.squarespace.less.model;
 
+import static com.squarespace.less.core.LessUtils.safeEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,23 +28,39 @@ import com.squarespace.less.exec.ExecEnv;
 
 
 /**
- * Represents a comma-separated list of Expression.
+ * Represents a comma-separated list of {@link Expression} nodes.
  */
 public class ExpressionList extends BaseNode {
 
+  /**
+   * List of values in the expression list.
+   */
   protected List<Node> values;
 
+  /**
+   * Flag indicating whether any of the values require evaluation.
+   */
   protected boolean evaluate;
 
+  /**
+   * Constructs an empty expression list.
+   */
   public ExpressionList() {
   }
 
+  /**
+   * Constructs an expression list with a single initial value.
+   */
   public ExpressionList(Node node) {
     this.values = new ArrayList<>(2);
     this.values.add(node);
     evaluate |= node.needsEval();
   }
 
+  /**
+   * Constructs an expression list with the given initial values.
+   * @param expressions
+   */
   public ExpressionList(List<Node> expressions) {
     this.values = expressions;
     for (Node node : expressions) {
@@ -50,28 +68,47 @@ public class ExpressionList extends BaseNode {
     }
   }
 
-  public boolean isEmpty() {
-    return size() == 0;
-  }
-
+  /**
+   * Returns the number of values in the expression list.
+   */
   public int size() {
     return values == null ? 0 : values.size();
   }
 
+  /**
+   * Adds a value to the expression list.
+   */
   public void add(Node node) {
     values = LessUtils.initList(values, 2);
     this.values.add(node);
   }
 
+  /**
+   * Returns the list of values in the expression list.
+   */
   public List<Node> expressions() {
     return LessUtils.safeList(values);
   }
 
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return NodeType.EXPRESSION_LIST;
+  }
+
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return evaluate;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!needsEval()) {
@@ -84,22 +121,9 @@ public class ExpressionList extends BaseNode {
     return result;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return (obj instanceof ExpressionList)
-        ? LessUtils.safeEquals(values, ((ExpressionList)obj).values) : false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return NodeType.EXPRESSION_LIST;
-  }
-
+  /**
+   * See {@link Node#repr()}
+   */
   @Override
   public void repr(Buffer buf) {
     int size = values.size();
@@ -109,9 +133,11 @@ public class ExpressionList extends BaseNode {
       }
       values.get(i).repr(buf);
     }
-
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -121,6 +147,16 @@ public class ExpressionList extends BaseNode {
     ReprUtils.modelRepr(buf, "\n", true, values);
     buf.decrIndent();
     buf.indent().append("\n");
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof ExpressionList) ? safeEquals(values, ((ExpressionList)obj).values) : false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

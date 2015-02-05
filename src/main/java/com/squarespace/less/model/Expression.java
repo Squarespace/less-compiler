@@ -28,50 +28,70 @@ import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * A space-separated list of values.
+ */
 public class Expression extends BaseNode {
 
+  /**
+   * List of values that make up the expression.
+   */
   protected List<Node> values;
 
+  /**
+   * Flag indicating whether one or more of the values needs to be evaluated.
+   */
   protected boolean evaluate;
 
+  /**
+   * Constructs an empty expression.
+   */
   public Expression() {
   }
 
-  public Expression(List<Node> entities) {
-    for (Node node : entities) {
+  /**
+   * Constructs an empty expression with a list of starting values.
+   */
+  public Expression(List<Node> values) {
+    for (Node node : values) {
       add(node);
     }
   }
 
+  /**
+   * Adds a node to the list of values.
+   */
   public void add(Node node) {
     values = LessUtils.initList(values, 2);
     values.add(node);
     evaluate |= node.needsEval();
   }
 
-  public int size() {
-    return (values == null) ? 0 : values.size();
-  }
-
+  /**
+   * Returns the values in the expression.
+   */
   public List<Node> values() {
     return LessUtils.safeList(values);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return (obj instanceof Expression) ? safeEquals(values, ((Expression)obj).values) : false;
+  /**
+   * Returns the number of values in the expression.
+   */
+  public int size() {
+    return (values == null) ? 0 : values.size();
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return EXPRESSION;
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return evaluate;
@@ -79,6 +99,8 @@ public class Expression extends BaseNode {
 
   /**
    * Called when an expression is part of a variable definition.
+   *
+   * See {@link Node#eval(ExecEnv)}
    */
   @Override
   public Node eval(ExecEnv env) throws LessException {
@@ -97,6 +119,9 @@ public class Expression extends BaseNode {
     return new Expression(result);
   }
 
+  /**
+   * See {@link Node#repr()}
+   */
   @Override
   public void repr(Buffer buf) {
     if (values != null) {
@@ -110,6 +135,9 @@ public class Expression extends BaseNode {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -118,6 +146,16 @@ public class Expression extends BaseNode {
     buf.incrIndent();
     ReprUtils.modelRepr(buf, "\n", true, values);
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof Expression) ? safeEquals(values, ((Expression)obj).values) : false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

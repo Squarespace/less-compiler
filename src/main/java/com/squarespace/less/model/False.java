@@ -17,10 +17,22 @@
 package com.squarespace.less.model;
 
 
+/**
+ * Special keyword that represents the boolean value of {@code false}
+ * in the syntax tree.
+ */
 public class False extends Keyword {
 
   public False() {
     super("false");
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return NodeType.FALSE;
   }
 
   @Override
@@ -31,11 +43,6 @@ public class False extends Keyword {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return NodeType.FALSE;
   }
 
 }

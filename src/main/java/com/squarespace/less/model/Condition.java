@@ -32,16 +32,35 @@ import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Represents one conditional clause in a {@link Guard}.
+ */
 public class Condition extends BaseNode {
 
+  /**
+   * Operator to apply to the left and right operands.
+   */
   protected final Operator operator;
 
+  /**
+   * Left operand.
+   */
   protected final Node left;
 
+  /**
+   * Right operand.
+   */
   protected final Node right;
 
+  /**
+   * Whether to negate the result of the evaluation.
+   */
   protected final boolean negate;
 
+  /**
+   * Constructs a conditional clause, applying the boolean operator to the left
+   * and right operands.  Negates the result if the {@code negate} flag is set.
+   */
   public Condition(Operator operator, Node left, Node right, boolean negate) {
     if (operator == null || left == null || right == null) {
       throw new LessInternalException("Serious error: operator/operands cannot be null.");
@@ -50,14 +69,6 @@ public class Condition extends BaseNode {
     this.left = left;
     this.right = right;
     this.negate = negate;
-  }
-
-  public Node operand0() {
-    return left;
-  }
-
-  public Node operand1() {
-    return right;
   }
 
   @Override
@@ -86,17 +97,26 @@ public class Condition extends BaseNode {
     return true;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     boolean result = negate ? !compare(env) : compare(env);
     return result ? Constants.TRUE : Constants.FALSE;
   }
 
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.CONDITION;
   }
 
+  /**
+   * See {@link Node#repr()}
+   */
   @Override
   public void repr(Buffer buf) {
     if (negate) {
@@ -114,6 +134,9 @@ public class Condition extends BaseNode {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -129,6 +152,9 @@ public class Condition extends BaseNode {
     buf.append('\n').decrIndent();
   }
 
+  /**
+   * Executes the comparison of the operands.
+  */
   private boolean compare(ExecEnv env) throws LessException {
     Node op0 = left.needsEval() ? left.eval(env) : left;
     Node op1 = right.needsEval() ? right.eval(env) : right;
@@ -191,19 +217,31 @@ public class Condition extends BaseNode {
     }
   }
 
+  /**
+   * Logical AND of the two operands.
+   */
   private boolean conjunction(ExecEnv env, Node left, Node right) throws LessException {
     return truthValue(env, left) && truthValue(env, right);
   }
 
+  /**
+   * Logical OR of the two operands.
+   */
   private boolean disjunction(ExecEnv env, Node left, Node right) throws LessException {
     return truthValue(env, left) || truthValue(env, right);
   }
 
+  /**
+   * Compares an {@link Anonymous} node to another node.
+   */
   private int compare(ExecEnv env, Anonymous anon, Node arg) throws LessException {
     String value = env.context().render(arg);
     return anon.value().compareTo(value);
   }
 
+  /**
+   * Maps node types to a truth value based on LESS notion of "truthiness".
+   */
   private boolean truthValue(ExecEnv env, Node node) throws LessException {
     switch (node.type()) {
 
@@ -220,6 +258,9 @@ public class Condition extends BaseNode {
     }
   }
 
+  /**
+   * Compares a {@link BaseColor} to another node.
+   */
   private int compare(BaseColor color, Node arg) throws LessException {
     if (arg instanceof Keyword) {
       Keyword kwd = (Keyword)arg;
@@ -239,6 +280,9 @@ public class Condition extends BaseNode {
         && color0.alpha() == color1.alpha() ? 0 : -1;
   }
 
+  /**
+   * Compares a {@link Dimension} to another node.
+   */
   private int compare(Dimension dim0, Node arg) throws LessException {
     if (arg instanceof Dimension) {
       Dimension dim1 = (Dimension)arg;
@@ -262,6 +306,9 @@ public class Condition extends BaseNode {
     return -1;
   }
 
+  /**
+   * Compares a {@link Keyword} to another node.
+   */
   private int compare(Keyword keyword, Node arg) throws LessException {
     if (arg instanceof Keyword) {
       return compareTo(keyword.value(), ((Keyword)arg).value());
@@ -269,10 +316,16 @@ public class Condition extends BaseNode {
     return -1;
   }
 
+  /**
+   * Compares a {@link Quoted} to another node.
+  */
   private int compare(ExecEnv env, Quoted quoted, Node arg) throws LessException {
     return compareTo(render(env, quoted), render(env, arg));
   }
 
+  /**
+   * Renders a node to get its string representation, for comparison purposes.
+   */
   private String render(ExecEnv env, Node arg) throws LessException {
     if (arg instanceof Anonymous) {
       return ((Anonymous)arg).value();
@@ -282,6 +335,9 @@ public class Condition extends BaseNode {
     return env.context().render(arg);
   }
 
+  /**
+   * Compares two strings.
+   */
   private int compareTo(String left, String right) {
     int res = left.compareTo(right);
     return res < 0 ? -1 : (res > 0) ? 1 : 0;

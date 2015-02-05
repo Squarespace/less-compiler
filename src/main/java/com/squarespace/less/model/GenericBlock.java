@@ -22,10 +22,16 @@ package com.squarespace.less.model;
  */
 public class GenericBlock extends BlockNode {
 
+  /**
+   * Constructs a generic block that wraps {@code block}
+   */
   public GenericBlock(Block block) {
     super(block);
   }
 
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.GENERIC_BLOCK;

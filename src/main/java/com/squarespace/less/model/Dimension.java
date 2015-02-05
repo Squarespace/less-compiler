@@ -36,23 +36,41 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Dimension extends BaseNode {
 
+  /**
+   * Numeric value of the dimension.
+   */
   protected final double value;
 
+  /**
+   * Optional unit (null == no unit)
+   */
   protected final Unit unit;
 
+  /**
+   * Construct a dimension with the given value and no unit specified.
+   */
   public Dimension(double value) {
     this(value, null);
   }
 
+  /**
+   * Construct a dimension with the given value and unit.
+   */
   public Dimension(double value, Unit unit) {
     this.value = value;
     this.unit = unit;
   }
 
+  /**
+   * Return the value for this dimension.
+   */
   public double value() {
     return value;
   }
 
+  /**
+   * Return the unit for this dimension.
+   */
   public Unit unit() {
     return unit;
   }
@@ -77,11 +95,17 @@ public class Dimension extends BaseNode {
     return super.hashCode();
   }
 
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.DIMENSION;
   }
 
+  /**
+   * See {@link Node#repr()}
+   */
   @Override
   public void repr(Buffer buf) {
     formatDouble(buf, value);
@@ -90,6 +114,9 @@ public class Dimension extends BaseNode {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -100,6 +127,10 @@ public class Dimension extends BaseNode {
     }
   }
 
+  /**
+   * Apply an operation where the current instance is the left operand,
+   * and the {@code node} argument is the right.
+   */
   @Override
   public Node operate(ExecEnv env, Operator op, Node node) throws LessException {
     if (!(node instanceof Dimension)) {

@@ -56,14 +56,24 @@ public class FunctionCall extends BaseNode {
    */
   protected final boolean noImplementation;
 
+  /**
+   * Constructs a call to the function {@code name} with no arguments.
+   */
   public FunctionCall(String name) {
     this(name, null, false);
   }
 
+  /**
+   * Constructs a call to the function {@code name} with the given {@code args}
+   */
   public FunctionCall(String name, List<Node> args) {
     this(name, args, false);
   }
 
+  /**
+   * Constructs a call to the function {@code name} with the given {@code args}
+   * and indicates that it is known the function has no implementation.
+   */
   public FunctionCall(String name, List<Node> args, boolean noImplementation) {
     if (name == null) {
       throw new LessInternalException("Serious error: name cannot be null");
@@ -78,14 +88,23 @@ public class FunctionCall extends BaseNode {
     }
   }
 
+  /**
+   * Returns the name of the function to call.
+   */
   public String name() {
     return name;
   }
 
+  /**
+   * Returns the arguments to the function call.
+   */
   public List<Node> args() {
     return LessUtils.safeList(args);
   }
 
+  /**
+   * Adds an argument to the function call.
+   */
   public void add(Node arg) {
     args = LessUtils.initList(args, 3);
     args.add(arg);
@@ -100,6 +119,9 @@ public class FunctionCall extends BaseNode {
     return !noImplementation || evaluate;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (noImplementation) {
@@ -126,25 +148,17 @@ public class FunctionCall extends BaseNode {
     return evaluate ? new FunctionCall(name, evalArgs(env), true) : this;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof FunctionCall) {
-      FunctionCall other = (FunctionCall)obj;
-      return safeEquals(name, other.name) && safeEquals(args, other.args);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.FUNCTION_CALL;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append(name).append('(');
@@ -160,6 +174,9 @@ public class FunctionCall extends BaseNode {
     buf.append(')');
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -173,6 +190,9 @@ public class FunctionCall extends BaseNode {
     buf.decrIndent();
   }
 
+  /**
+   * Evaluates the arguments to the function call.
+   */
   private List<Node> evalArgs(ExecEnv env) throws LessException {
     List<Node> tempArgs = args();
     if (tempArgs.isEmpty()) {
@@ -186,6 +206,20 @@ public class FunctionCall extends BaseNode {
       res.add(arg);
     }
     return res;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof FunctionCall) {
+      FunctionCall other = (FunctionCall)obj;
+      return safeEquals(name, other.name) && safeEquals(args, other.args);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

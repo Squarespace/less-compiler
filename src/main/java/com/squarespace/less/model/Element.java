@@ -19,19 +19,42 @@ package com.squarespace.less.model;
 import com.squarespace.less.core.LessInternalException;
 
 
+/**
+ * Base class for all elements, which are building blocks of {@link Selector}.
+ */
 public abstract class Element extends BaseNode {
 
+  /**
+   * The element's combinator character.
+   */
   protected final Combinator combinator;
 
+  /**
+   * Constructs an element with the given combinator character.
+   */
   public Element(Combinator comb) {
     this.combinator = comb;
   }
 
+  /**
+   * Returns the combinator character for this element.
+   */
   public Combinator combinator() {
     return combinator;
   }
 
+  /**
+   * Indicates whether this element is a wildcard.
+   */
   public abstract boolean isWildcard();
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return NodeType.ELEMENT;
+  }
 
   @Override
   public boolean equals(Object obj) {
@@ -41,11 +64,6 @@ public abstract class Element extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return NodeType.ELEMENT;
   }
 
 }

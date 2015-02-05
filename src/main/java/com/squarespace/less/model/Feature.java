@@ -23,23 +23,94 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Represents a property / value pair in a media feature.
+ */
 public class Feature extends BaseNode {
 
+  /**
+   * Feature property node.
+   */
   private final Node property;
 
+  /**
+   * Feature value node.
+   */
   private final Node value;
 
+  /**
+   * Constructs a media feature with the given property and value.
+   */
   public Feature(Node property, Node value) {
     this.property = property;
     this.value = value;
   }
 
+  /**
+   * Returns the property node for the feature.
+   */
   public Node property() {
     return property;
   }
 
+  /**
+   * Returns the value node for the feature.
+   */
   public Node value() {
     return value;
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return NodeType.FEATURE;
+  }
+
+  /**
+   * See {@link Node#needsEval()}
+   */
+  @Override
+  public boolean needsEval() {
+    return property.needsEval() || value.needsEval();
+  }
+
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
+  @Override
+  public Node eval(ExecEnv env) throws LessException {
+    if (!needsEval()) {
+      return this;
+    }
+    Feature result = new Feature(property.eval(env), value.eval(env));
+    result.copyBase(this);
+    return result;
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    property.repr(buf);
+    buf.append(": ");
+    value.repr(buf);
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append('\n').incrIndent().indent();
+    property.modelRepr(buf);
+    buf.append('\n');
+    value.modelRepr(buf);
+    buf.decrIndent();
   }
 
   @Override
@@ -54,44 +125,6 @@ public class Feature extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return NodeType.FEATURE;
-  }
-
-  @Override
-  public boolean needsEval() {
-    return property.needsEval() || value.needsEval();
-  }
-
-  @Override
-  public Node eval(ExecEnv env) throws LessException {
-    if (!needsEval()) {
-      return this;
-    }
-    Feature result = new Feature(property.eval(env), value.eval(env));
-    result.copyBase(this);
-    return result;
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    property.repr(buf);
-    buf.append(": ");
-    value.repr(buf);
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append('\n').incrIndent().indent();
-    property.modelRepr(buf);
-    buf.append('\n');
-    value.modelRepr(buf);
-    buf.decrIndent();
   }
 
 }

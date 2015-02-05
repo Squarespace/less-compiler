@@ -32,21 +32,41 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Definition extends BaseNode {
 
+  /**
+   * Name of the variable definition.
+   */
   protected final String name;
 
+  /**
+   * Value of the variable definition.
+   */
   protected final Node value;
 
-  // Flag to detect late-binding circular references and raise an error.
+  /**
+   * Flag to detect circular references and raise an error.
+   */
   protected boolean evaluating;
 
+  /**
+   * Filename in which this variable is defined.
+   */
   protected Path fileName;
 
+  /**
+   * Warnings associated with this variable definition.
+   */
   protected String warnings;
 
+  /**
+   * Constructs a definition with the {@code variable}'s name and the given value.
+   */
   public Definition(Variable variable, Node value) {
     this(variable.name(), value);
   }
 
+  /**
+   * Constructs a definition with the given name and value.
+   */
   public Definition(String name, Node value) {
     if (name == null || value == null) {
       throw new LessInternalException("Serious error: name/value cannot be null.");
@@ -55,12 +75,18 @@ public class Definition extends BaseNode {
     this.value = value;
   }
 
+  /**
+   * Constructs a definition by copying {@code orig} and substituting a new value
+   */
   protected Definition(Definition orig, Node newValue) {
     this(orig.name(), newValue);
     this.fileName = orig.fileName;
     copyBase(orig);
   }
 
+  /**
+   * Creates a copy of this definition, substituting a new value.
+   */
   public Definition copy(Node newValue) {
     return new Definition(this, newValue);
   }
@@ -116,23 +142,35 @@ public class Definition extends BaseNode {
     return super.hashCode();
   }
 
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.DEFINITION;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     // Late binding. Definitions must be explicitly dereferenced to evaluate them.
     return this;
   }
 
+  /**
+   * See {@link Node#repr()}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append(name).append(": ");
     value.repr(buf);
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -140,6 +178,9 @@ public class Definition extends BaseNode {
     bodyRepr(buf);
   }
 
+  /**
+   * Constructs the body of the definition, used in {@link #modelRepr(Buffer)}
+   */
   protected void bodyRepr(Buffer buf) {
     buf.append(' ').append(name).append('\n');
     if (value != null) {

@@ -26,14 +26,29 @@ import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * A named CSS directive.
+ */
 public class Directive extends BaseNode {
 
+  /**
+   * Name of the directive.
+   */
   protected final String name;
 
+  /**
+   * Value for this directive.
+   */
   protected final Node value;
 
+  /**
+   * Filename this directive was defined in.
+   */
   protected Path fileName;
 
+  /**
+   * Construct a directive with the given name and value.
+   */
   public Directive(String name, Node value) {
     if (name == null || value == null) {
       throw new LessInternalException("Serious error: name/value cannot be null.");
@@ -42,22 +57,37 @@ public class Directive extends BaseNode {
     this.value = value;
   }
 
+  /**
+   * Return the name of this directive.
+   */
   public String name() {
     return name;
   }
 
+  /**
+   * Return the value for this directive.
+   */
   public Node value() {
     return this.value;
   }
 
+  /**
+   * Return the path to the filename in which this directive was defined.
+   */
   public Path fileName() {
     return fileName;
   }
 
+  /**
+   * Set the path to the filename in which this directive was defined.
+   */
   public void fileName(Path path) {
     this.fileName = path;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     return new Directive(name, value.eval(env));
@@ -69,6 +99,39 @@ public class Directive extends BaseNode {
   @Override
   public boolean needsEval() {
     return value.needsEval();
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return NodeType.DIRECTIVE;
+  }
+
+  /**
+   * See {@link Node#repr()}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    buf.append(name);
+    if (value != null) {
+      buf.append(' ');
+      value.repr(buf);
+    }
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append(' ').append(name).append('\n');
+    buf.incrIndent().indent();
+    value.modelRepr(buf);
+    buf.decrIndent();
   }
 
   @Override
@@ -83,30 +146,6 @@ public class Directive extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return NodeType.DIRECTIVE;
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    buf.append(name);
-    if (value != null) {
-      buf.append(' ');
-      value.repr(buf);
-    }
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append(' ').append(name).append('\n');
-    buf.incrIndent().indent();
-    value.modelRepr(buf);
-    buf.decrIndent();
   }
 
 }
