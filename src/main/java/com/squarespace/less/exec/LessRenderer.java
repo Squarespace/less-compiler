@@ -49,18 +49,39 @@ import com.squarespace.less.model.Stylesheet;
  */
 public class LessRenderer {
 
+  /**
+   * Context for the current compile.
+   */
   private final LessContext ctx;
 
+  /**
+   * {@link Stylesheet} instance to render.
+   */
   private final Stylesheet stylesheet;
 
+  /**
+   * Rendering enviromment.
+   */
   private final RenderEnv env;
 
+  /**
+   * Options for the current compile.
+   */
   private final LessOptions opts;
 
+  /**
+   * CSS model to build.
+   */
   private final CssModel model;
 
+  /**
+   * Sequence for generating trace identifiers.
+   */
   private int traceId;
 
+  /**
+   * Sequence for generating warning identifiers.
+   */
   private int warningId;
 
   protected LessRenderer(LessContext context, Stylesheet stylesheet) {
@@ -75,6 +96,10 @@ public class LessRenderer {
     return new LessRenderer(context, sheet).render();
   }
 
+  /**
+   * Render the {@link Stylesheet} to the {@link CssModel} and return the
+   * rendered output.
+   */
   public String render() throws LessException {
     env.push(stylesheet);
     Block block = stylesheet.block();
@@ -89,6 +114,9 @@ public class LessRenderer {
     return model.render();
   }
 
+  /**
+   * Render a {@link Ruleset}
+   */
   private void renderRuleset(Ruleset ruleset) throws LessException {
     env.push(ruleset);
     model.push(NodeType.RULESET);
@@ -110,6 +138,9 @@ public class LessRenderer {
     env.pop();
   }
 
+  /**
+   * Render a {@link Media}
+   */
   private void renderMedia(Media media) throws LessException {
     env.push(media);
     model.push(NodeType.MEDIA);
@@ -124,6 +155,9 @@ public class LessRenderer {
     env.pop();
   }
 
+  /**
+   * Render a {@link BlockDirective}
+   */
   private void renderBlockDirective(BlockDirective directive) throws LessException {
     env.push(directive);
     model.push(NodeType.BLOCK_DIRECTIVE);
@@ -135,6 +169,9 @@ public class LessRenderer {
     env.pop();
   }
 
+  /**
+   * Render all {@Import} rules found in the given block.
+   */
   private void renderImports(Block block) throws LessException {
     if (!block.hasImports()) {
       return;
@@ -155,6 +192,10 @@ public class LessRenderer {
     }
   }
 
+  /**
+   * Render all children for the given {@link Block}, optionally including
+   * imports.
+   */
   private void renderBlock(Block block, boolean includeImports) throws LessException {
     FlexList<Node> rules = block.rules();
     int size = rules.size();
@@ -220,6 +261,9 @@ public class LessRenderer {
     }
   }
 
+  /**
+   * Render a {@link Definition}.
+   */
   private void renderDefinition(Definition def) throws LessException {
     String warnings = def.warnings();
     if (warnings != null) {
@@ -241,6 +285,9 @@ public class LessRenderer {
     }
   }
 
+  /**
+   * Render an {@link Import}
+   */
   private void renderImport(Import imp) throws LessException {
     Buffer buf = new Buffer(0);
     buf.append("@import ");
@@ -253,6 +300,9 @@ public class LessRenderer {
     model.value(buf.toString());
   }
 
+  /**
+   * Render an {@link ImportMarker}
+   */
   private void renderImportMarker(ImportMarker marker) throws LessException {
     Import imp = marker.importStatement();
     String repr = imp.repr().trim();
@@ -265,6 +315,9 @@ public class LessRenderer {
     }
   }
 
+  /**
+   * Render a {@link MixinMarker}
+   */
   private void renderMixinMarker(MixinMarker marker) throws LessException {
     MixinCall call = marker.mixinCall();
     String repr = call.repr().trim();
@@ -298,10 +351,16 @@ public class LessRenderer {
     ctx.returnBuffer();
   }
 
+  /**
+   * Emit a tracing comment.
+   */
   private void emitTrace(String what) {
     model.comment("/* TRACE[" + (++traceId) + "]: " + what + " */\n");
   }
 
+  /**
+   * Emit a warning comment.
+   */
   private void emitWarnings(String what, String warnings) {
     if (warnings != null) {
       // Build a comment containing all of the warnings.

@@ -22,14 +22,24 @@ import com.squarespace.less.model.Stylesheet;
 
 
 /**
- * Associates an imported stylesheet with the 'onlyOnce' flag value set when it was imported.
+ * Associates an imported {@link Stylesheet} with the {@code onlyOnce}
+ * flag value set when it was imported.
  */
 public class ImportRecord {
 
+  /**
+   * Exact filesystem path for the file to import.
+   */
   private final Path exactPath;
 
+  /**
+   * {@link Stylesheet} that was imported.
+   */
   private final Stylesheet stylesheet;
 
+  /**
+   * Whether this file can only be imported once per compile.
+   */
   private final boolean onlyOnce;
 
   public ImportRecord(Path exactPath, Stylesheet stylesheet, boolean onlyOnce) {

@@ -26,6 +26,9 @@ import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Node;
 
 
+/**
+ * Utility methods for working with media {@link Features}.
+ */
 public class FeatureUtils {
 
   private FeatureUtils() {

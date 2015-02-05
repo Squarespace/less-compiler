@@ -52,8 +52,14 @@ import com.squarespace.less.model.Stylesheet;
  */
 public class LessEvaluator {
 
+  /**
+   * Context for the current compile.
+   */
   private final LessContext ctx;
 
+  /**
+   * Options for the current compile.
+   */
   private final LessOptions opts;
 
   public LessEvaluator(LessContext ctx) {
@@ -61,6 +67,10 @@ public class LessEvaluator {
     this.opts = ctx.options();
   }
 
+  /**
+   * Evaluate the {@link Stylesheet}, producing a new instance where all variable references,
+   * mixins, imports, etc have been evaluated and expanded.
+   */
   public Stylesheet evaluate(Stylesheet sheet) throws LessException {
     ExecEnv env = ctx.newEnv();
     Stylesheet result = evaluateStylesheet(env, sheet);

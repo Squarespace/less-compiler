@@ -29,56 +29,103 @@ import com.squarespace.less.model.Definition;
  */
 public class ExecEnv {
 
+  /**
+   * Context for the current compile.
+   */
   private final LessContext ctx;
 
+  /**
+   * Stack frames for execution.
+   */
   private final FlexList<Block> frames;
 
+  /**
+   * List of warnings emitted during execution.
+   */
   private FlexList<String> warnings;
 
+  /**
+   * Exception that terminated execution, if any.
+   */
   private LessException error;
 
+  /**
+   * Constructs an instance associated with the given compile context.
+   */
   public ExecEnv(LessContext ctx) {
     this(ctx, new FlexList<Block>(64), null);
   }
 
+  /**
+   * Constructs an instance associated with the given compile context and
+   * initial stack contents.
+   */
   public ExecEnv(LessContext ctx, FlexList<Block> initialStack) {
     this(ctx, initialStack, null);
   }
 
+  /**
+   * Constructs an instance associated with the given compile context,
+   * initial stack contents, and warning list.
+   */
   public ExecEnv(LessContext ctx, FlexList<Block> initialStack, FlexList<String> warnings) {
     this.ctx = ctx;
     this.frames = initialStack;
     this.warnings = warnings;
   }
 
+  /**
+   * Returns the context associated with this compile.
+   */
   public LessContext context() {
     return ctx;
   }
 
+  /**
+   * Returns a new {@link ExecEnv} instance with a copy of the stack frames and warnings.
+   */
   public ExecEnv copy() {
     return new ExecEnv(ctx, frames.copy(), warnings);
   }
 
+  /**
+   * Current stack depth.
+   */
   public int depth() {
     return frames.size();
   }
 
+  /**
+   * Indicates an error has been produced.
+   */
   public boolean hasError() {
     return error != null;
   }
 
+  /**
+   * Returns the execution error, if any.
+   */
   public LessException error() {
     return error;
   }
 
+  /**
+   * Sets the execution error.
+   */
   public void error(LessException exc) {
     error = exc;
   }
 
+  /**
+   * Pushes a list of frames onto the stack.
+   */
   public void append(FlexList<Block> other) {
     frames.append(other);
   }
 
+  /**
+   * Adds a warning to the list.
+   */
   public void addWarning(String warning) {
     if (warnings == null) {
       warnings = new FlexList<>();
@@ -86,6 +133,9 @@ public class ExecEnv {
     warnings.append(warning);
   }
 
+  /**
+   * Return the formatted list of warnings.
+   */
   public String warnings() {
     if (warnings == null || warnings.isEmpty()) {
       return null;
@@ -102,6 +152,9 @@ public class ExecEnv {
     return buf.toString();
   }
 
+  /**
+   * Returns the stack frames.
+  */
   public FlexList<Block> frames() {
     return frames;
   }

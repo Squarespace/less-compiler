@@ -16,8 +16,10 @@
 
 package com.squarespace.less.exec;
 
+import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
+import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
 
 
@@ -26,10 +28,19 @@ import com.squarespace.less.model.Selector;
  */
 public class MixinMatch {
 
+  /**
+   * The mixin being matched. This can be either a {@link Ruleset} or {@link Mixin}.
+   */
   private final Node mixin;
 
+  /**
+   * {@link Selector} we're matching.
+   */
   private final Selector selector;
 
+  /**
+   * Parameters for the {@link Mixin}.
+   */
   private final MixinParams params;
 
   public MixinMatch(Node mixin, Selector selector, MixinParams params) {

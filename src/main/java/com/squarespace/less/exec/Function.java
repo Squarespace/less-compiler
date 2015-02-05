@@ -33,49 +33,86 @@ import com.squarespace.less.model.Unit;
  */
 public abstract class Function {
 
+  /**
+   * Name of the function. This gets added to a symbol table so the function
+   * implementation can be resolved at execution time.
+   */
   protected final String name;
 
+  /**
+   * Specification of the arguments this function accepts.
+   */
   protected final ArgSpec spec;
 
+  /**
+   * Construct a function named {@code name} with the raw argument specification.
+   */
   public Function(String name, String spec) {
     this.name = name;
     this.spec = ArgSpec.fromString(spec);
   }
 
+  /**
+   * Construct a function named {@code name} with the parsed argument specification.
+   */
   public Function(String name, ArgSpec spec) {
     this.name = name;
     this.spec = spec;
   }
 
+  /**
+   * Returns the name of the function.
+   */
   public String name() {
     return name;
   }
 
+  /**
+   * Returns the argument specification for the function.
+   */
   public ArgSpec spec() {
     return spec;
   }
 
+  /**
+   * Invokes the functions with the given execution environment and arguments.
+   */
   public abstract Node invoke(ExecEnv env, List<Node> args) throws LessException;
 
+  /**
+   * Converts a {@link Dimension} value to a percentage.
+   */
   public static double percent(Node node) throws LessException {
     Dimension dim = (Dimension)node;
     return (dim.unit() == Unit.PERCENTAGE) ? dim.value() * 0.01 : dim.value();
   }
 
+  /**
+   * Returns the value from a {@link Dimension} argument.
+   */
   public static double number(Node node) throws LessException {
     return ((Dimension)node).value();
   }
 
+  /**
+   * Returns a {@link Dimension} value scaled by the given amount.
+   */
   public static double scaled(Node node, double scale) throws LessException {
     Dimension dim = (Dimension)node;
     double value = number(node);
     return dim.unit() == Unit.PERCENTAGE ? (value * .01) * scale : value;
   }
 
+  /**
+   * Casts the argument to an HSL color.
+   */
   public static HSLColor hsl(Node node) throws LessException {
     return ((BaseColor)node).toHSL();
   }
 
+  /**
+   * Casts the argument to an RGB color.
+   */
   public static RGBColor rgb(Node node) throws LessException {
     return ((BaseColor)node).toRGB();
   }
