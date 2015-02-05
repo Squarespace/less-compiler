@@ -50,14 +50,23 @@ public class LessUtils {
   private LessUtils() {
   }
 
+  /**
+   * Null checks the object references before calling {@link Object#equals(Object)}.
+   */
   public static boolean safeEquals(Object o1, Object o2) {
     return (o1 == null) ? (o1 == o2) : o1.equals(o2);
   }
 
+  /**
+   * Ensures that a valid list instance is always returned.
+   */
   public static <T> List<T> safeList(List<T> list) {
     return list == null ? Collections.<T>emptyList() : list;
   }
 
+  /**
+   * Initializes a list if necessary, with {@code initialSize}.
+   */
   public static <T> List<T> initList(List<T> list, int initialSize) {
     if (list == null) {
       list = new ArrayList<T>(initialSize);
@@ -65,6 +74,9 @@ public class LessUtils {
     return list;
   }
 
+  /**
+   * Initializes a map if necessary, with {@code initialSize}.
+   */
   public static <K, V> Map<K, V> initHashMap(Map<K, V> map, int initialSize) {
     if (map == null) {
       map = new HashMap<K, V>(initialSize);
@@ -72,6 +84,9 @@ public class LessUtils {
     return map;
   }
 
+  /**
+   * Reads a UTF8-encoded file into a string.
+   */
   public static String readFile(Path path) throws IOException {
     try (InputStream file = Files.newInputStream(path)) {
       try (InputStreamReader reader = new InputStreamReader(file, Constants.UTF8)) {
@@ -80,12 +95,19 @@ public class LessUtils {
     }
   }
 
+  /**
+   * Writes a string to a file using UTF8 encoding.
+   */
   public static void writeFile(Path outPath, String data) throws IOException {
     try (OutputStream output = Files.newOutputStream(outPath, CREATE, TRUNCATE_EXISTING)) {
       output.write(data.getBytes(Constants.UTF8));
     }
   }
 
+  /**
+   * Returns a list of all files matching the given pattern. If {@code recursive} is true
+   * will recurse into all directories below {@code rootPath}.
+   */
   public static List<Path> getMatchingFiles(final Path rootPath, String globPattern, boolean recursive)
       throws IOException {
     final List<Path> result = new ArrayList<>();
@@ -121,6 +143,9 @@ public class LessUtils {
     });
   }
 
+  /**
+   * Builds a string containing the names of all enumerated values of the given type.
+   */
   public static <T extends Enum<T>> String enumValueList(Class<T> enumType, boolean lowercase) {
     StringBuilder buf = new StringBuilder();
     T[] constants = enumType.getEnumConstants();
@@ -136,6 +161,9 @@ public class LessUtils {
     return buf.toString();
   }
 
+  /**
+   * Read data from the {@code input} into a string.
+   */
   public static String readToString(Reader input) throws IOException {
     StringBuilder output = new StringBuilder();
     char[] temp = new char[COPY_BUFFER_SIZE];

@@ -20,6 +20,9 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 
+/**
+ * Helper for accessing the runtime type of a type parameter.
+ */
 public class TypeRef<T> {
 
   private final Type type;

@@ -26,23 +26,39 @@ import static com.squarespace.less.core.CharClass.UPPERCASE;
 /**
  * Implements the encodeURI and encodeURIComponent functions, which are available
  * as built-ins for JavaScript, but which no efficient version could be found for
- * Java.  Simple, straightforward implementation following the V8 engine, with
- * one exception: this avoids raising an error for invalid Unicode chars, choosing
- * instead to ignore them.
+ * Java.
+ *
+ * Straightforward implementation following the V8 engine, with one exception:
+ * this avoids raising an error for invalid Unicode character sequences, choosing
+ * instead to ignore and skip over them.
  */
 public class EncodeUtils {
 
+  /**
+   * Defines the character classes that are transformed by the
+   * {@link #encodeURI(String)} method.
+   */
   private static final int ENCODE_URI_CLASS = ENCODE_URI | LOWERCASE | UPPERCASE | DIGIT;
 
+  /**
+   * Defines the character classes that are transformed by the
+   * {@link #encodeURIComponent(String)} method.
+   */
   private static final int ENCODE_URI_COMPONENT_CLASS = ENCODE_URI_COMPONENT | LOWERCASE | UPPERCASE | DIGIT;
 
   private EncodeUtils() {
   }
 
+  /**
+   * Interface for testing a character's membership in a class.
+   */
   private interface CharTest {
     boolean member(char ch);
   }
 
+  /**
+   * Tests character membership for {@link #encodeURI(String)}
+   */
   private static final CharTest ENCODE_URI_TEST = new CharTest() {
     @Override
     public boolean member(char ch) {
@@ -50,6 +66,9 @@ public class EncodeUtils {
     }
   };
 
+  /**
+   * Tests character membership for {@link #encodeURIComponent(String)}
+   */
   private static final CharTest ENCODE_URI_COMPONENT_TEST = new CharTest() {
     @Override
     public boolean member(char ch) {
@@ -57,6 +76,9 @@ public class EncodeUtils {
     }
   };
 
+  /**
+   * Tests character membership for {@link #escape(String)}
+   */
   private static final CharTest ESCAPE_TEST = new CharTest() {
     @Override
     public boolean member(char ch) {
@@ -154,6 +176,9 @@ public class EncodeUtils {
     return buf.toString();
   }
 
+  /**
+   * Appends a hexadecimal encoding of the character code.
+   */
   private static void hexoctet(StringBuilder buf, int octet) {
     buf.append('%').append(Chars.hexchar(octet >> 4)).append(Chars.hexchar(octet & 0xF));
   }

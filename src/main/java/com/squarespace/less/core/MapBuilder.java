@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * Wrapper to populate the key/values of a map using method chaining.
+ */
 public class MapBuilder<K, V> {
 
   private final Map<K, V> map = new HashMap<>();

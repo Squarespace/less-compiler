@@ -36,17 +36,33 @@ import java.util.NoSuchElementException;
  */
 public class CartesianProduct<T> implements Iterator<List<T>> {
 
+  /**
+   * List of lists, used to produce the permutations.
+   */
   private final List<List<T>> lists;
 
+  /**
+   * Tracks the current index in each list.
+   */
   private final int[] indices;
 
+  /**
+   * Length of each list.
+   */
   private final int[] lengths;
 
+  /**
+   * Iterator has at least one more element to produce.
+   */
   private boolean hasNext;
 
+  /**
+   * Constructs an iterator that will produce the cartesian product of the
+   * elements in the given lists.
+   */
   public CartesianProduct(List<List<T>> lists) {
     this.lists = lists;
-    if (lists != null && lists.size() != 0) {
+    if (lists != null && !lists.isEmpty()) {
       int size = lists.size();
       lengths = new int[size];
       indices = new int[size];
@@ -93,9 +109,12 @@ public class CartesianProduct<T> implements Iterator<List<T>> {
 
   @Override
   public void remove() {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("remove() is not a supported method");
   }
 
+  /**
+   * Move the indices to the next position, set the internal iteration state.
+   */
   private void incrIndices() {
     for (int i = indices.length - 1; i >= 0; i--) {
       if (lengths[i] == 0) {

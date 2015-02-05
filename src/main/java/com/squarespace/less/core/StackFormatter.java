@@ -45,22 +45,44 @@ import com.squarespace.less.model.Selectors;
  */
 public class StackFormatter {
 
+  /**
+   * Stack to be formatted.
+   */
   private final Deque<Node> stack;
 
+  /**
+   * Internal buffer to build up the error message.
+   */
   private final Buffer buf;
 
+  /**
+   * Number of spaces to use for indentation.
+   */
   private final int indentIncr;
 
+  /**
+   * Number of stack frames to show on either side of the error message.
+   */
   private final int frameWindow;
 
+  /**
+   * List of {@link Entry} used to produce the final error message.
+   */
   private List<Entry> result;
 
+  /**
+   * Current level of indentation.
+   */
   private int indentLevel;
 
   private int col1Width = 0;
 
   private int col2Width = 0;
 
+  /**
+   * Construct a formatter for the given stack, indentation, and stack frame
+   * window size.
+   */
   public StackFormatter(Deque<Node> stack, int indent, int frameWindow) {
     this.stack = stack;
     this.buf = new Buffer(0);
@@ -68,10 +90,17 @@ public class StackFormatter {
     this.frameWindow = frameWindow;
   }
 
+  /**
+   * Iterate over the stack and format each line of the error message.
+   * Two branches can be taken, depending on if the stack size is smaller
+   * or larger than double the {@link #frameWindow}
+   */
   public String format() {
     result = new ArrayList<>();
     int size = stack.size();
     Iterator<Node> iter = stack.iterator();
+
+    // Stack is smaller than 2x the window size, so we use it all.
     if (size <= (frameWindow * 2)) {
       while (iter.hasNext()) {
         render(iter.next());
@@ -79,6 +108,8 @@ public class StackFormatter {
       return format(result, col1Width, col2Width);
     }
 
+    // Some frames need to be skipped to zero in on the relevant part
+    // surrounding the frame in which the error occurred.
     int i = 0;
     int limit = size - frameWindow - 1;
     int skipped = 0;
@@ -98,6 +129,9 @@ public class StackFormatter {
     return format(result, col1Width, col2Width);
   }
 
+  /**
+   * Format the accumulated {@link Entry} list into the final error message.
+   */
   private String format(List<Entry> entries, int col1, int col2) {
     buf.reset();
     String head = "Line";
@@ -129,18 +163,27 @@ public class StackFormatter {
     return buf.toString();
   }
 
+  /**
+   * Indent the internal buffer to the current {@link #indentLevel}.
+   */
   private void indent() {
     for (int i = 0; i < indentLevel; i++) {
       indent(indentIncr);
     }
   }
 
+  /**
+   * Append {@code size} spaces to the internal buffer.
+   */
   private void indent(int size) {
     for (int i = 0; i < size; i++) {
       buf.append(' ');
     }
   }
 
+  /**
+   * Render the {@link Node} in a form appropriate for error messages.
+   */
   private void render(Node node) {
     if (node instanceof ParseError) {
       ParseError error = (ParseError)node;
@@ -167,6 +210,9 @@ public class StackFormatter {
     indentLevel++;
   }
 
+  /**
+   * Render the {@link Node} in a form appropriate for error messages.
+   */
   private Entry renderEntry(Node node) {
     buf.reset();
     indent();
@@ -231,6 +277,9 @@ public class StackFormatter {
     }
   }
 
+  /**
+   * Append the lines to the internal buffer, separated using the given delimiter string.
+   */
   private void append(List<String> lines, String delim) {
     int size = lines.size();
     for (int i = 0; i < size; i++) {
@@ -241,10 +290,16 @@ public class StackFormatter {
     }
   }
 
+  /**
+   * Create an entry indicating the number of stack frames skipped.
+   */
   private Entry renderSkipped(int skipped) {
     return new Entry(null, null, "\n.. skipped " + skipped + " frames\n");
   }
 
+  /**
+   * Represents a line of an error message.
+   */
   private static class Entry {
 
     public final String fileName;

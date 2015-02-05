@@ -23,7 +23,7 @@ import com.squarespace.less.SyntaxErrorType;
 
 /**
  * Builds error messages for parse phase of the compile, implemented as
- * static methods to reduce code clutter somewhat.
+ * static methods for concision.
  */
 public class SyntaxErrorMaker {
 

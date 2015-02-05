@@ -22,8 +22,14 @@ import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 
 
+/**
+ * Utility methods for error handling, formatting, etc.
+ */
 public class ErrorUtils {
 
+  /**
+   * Default amount of the stack frame to show in an error message.
+   */
   private static final int STACK_FRAME_WINDOW = 6;
 
   private ErrorUtils() {

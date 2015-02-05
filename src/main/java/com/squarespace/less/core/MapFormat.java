@@ -31,25 +31,50 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 public class MapFormat {
 
+  /**
+   * Pattern used to extract the keys from the format string. These will end
+   * up being the keys in the resulting map.
+   */
   private static final Pattern KEY_ESCAPE = Pattern.compile("%\\([a-zA-Z][a-zA-Z0-9]*\\)");
 
+  /**
+   * Default for {@link #nullPlaceholder}
+   */
   private static final String EMPTY_STRING = "";
 
+  /**
+   * Keys in the map.
+   */
   private final List<String> keys = new ArrayList<>();
 
+  /**
+   * Format string used to construct the message. See {@link #apply(Map)}
+   */
   private final String format;
 
+  /**
+   * String to be emitted if a value is {@code null}
+   */
   private final String nullPlaceholder;
 
+  /**
+   * Constructs an instance using the given format string.
+   */
   public MapFormat(String raw) {
     this(raw, EMPTY_STRING);
   }
 
+  /**
+   * Constructs an instance using the given format string and null placeholder.
+   */
   public MapFormat(String raw, String nullPlaceholder) {
     this.nullPlaceholder = nullPlaceholder;
     this.format = init(raw);
   }
 
+  /**
+   * Extracts the keys from the pattern and generates the format string.
+   */
   private String init(String raw) {
     StringBuffer buf = new StringBuffer();
     Matcher matcher = KEY_ESCAPE.matcher(raw);
@@ -70,10 +95,16 @@ public class MapFormat {
     return buf.toString();
   }
 
+  /**
+   * Returns the internal format string.
+   */
   public String getFormat() {
     return format;
   }
 
+  /**
+   * Applies the {@code params} to producing the formatted message.
+   */
   public String apply(Map<String, Object> params) {
     List<Object> values = new ArrayList<>(params.size());
     for (String key : keys) {

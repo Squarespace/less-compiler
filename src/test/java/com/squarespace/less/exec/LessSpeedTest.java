@@ -25,8 +25,13 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 
 
+/**
+ * TODO: Move these test cases into an external file.
+ *
+ * This performance testing isn't rigorous, just more of a "feel" thing
+ * at the moment.
+ */
 public class LessSpeedTest extends LessTestBase {
-
 
   private static final List<String> SCRIPTS = Arrays.asList(
       ".m(@arg) { @a: @arg + 1; .foo { a: @arg + 1; } } .rule { @a: 3; .m(10); @a: 4; a: @a }",

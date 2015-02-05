@@ -30,8 +30,8 @@ import com.squarespace.less.model.Stylesheet;
 
 
 /**
- * Ensures that a parsed LESS file that is repr()-ed back into LESS produces the
- * equivalent syntax tree and LESS output (round-tripping).
+ * Ensures that a parsed LESS file that is {@link Node#repr()}-ed back into
+ * LESS produces the equivalent syntax tree and LESS output.
  */
 public class LessRoundTripTest extends LessSuiteBase {
 
@@ -63,6 +63,9 @@ public class LessRoundTripTest extends LessSuiteBase {
     }
   }
 
+  /**
+   * Return a boolean indicating whether the round-tripped source is valid.
+   */
   private boolean process(String source, Path importRoot) throws LessException {
     Stylesheet original = parse(source, importRoot);
 

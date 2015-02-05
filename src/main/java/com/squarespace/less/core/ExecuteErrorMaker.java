@@ -25,7 +25,7 @@ import com.squarespace.less.model.Operator;
 
 /**
  * Builds error messages for execute phase of the compile, implemented as
- * static methods to reduce code clutter somewhat.
+ * static methods for concision.
  */
 public class ExecuteErrorMaker {
 
