@@ -33,7 +33,6 @@ public interface Node {
 
   /**
    * Line offset from start of the file for this node's definition.
-   * @return
    */
   int lineOffset();
 

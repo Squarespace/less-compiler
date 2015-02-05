@@ -21,6 +21,8 @@ import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.squarespace.less.model.Import;
+
 
 /**
  * Forces all imports to be children of a given filesystem root.

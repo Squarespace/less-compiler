@@ -19,8 +19,11 @@ package com.squarespace.less.exec;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.model.BlockNode;
+import com.squarespace.less.model.Feature;
 import com.squarespace.less.model.Features;
+import com.squarespace.less.model.Media;
 import com.squarespace.less.model.Ruleset;
+import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
 
 
