@@ -16,8 +16,10 @@
 
 package com.squarespace.less;
 
+import static com.squarespace.less.ExecuteErrorType.EXPECTED_BOOLOP;
 import static com.squarespace.less.core.Constants.FALSE;
 import static com.squarespace.less.core.Constants.TRUE;
+import static com.squarespace.less.model.Operator.ADD;
 import static com.squarespace.less.model.Operator.AND;
 import static com.squarespace.less.model.Operator.EQUAL;
 import static com.squarespace.less.model.Operator.GREATER_THAN;
@@ -86,6 +88,10 @@ public class ConditionTest extends LessTestBase {
     compare(true, cond(OR, bareTrue, FALSE));
     compare(true, cond(OR, two, TRUE));
 
+    // Anonymous
+    compare(true, cond(EQUAL, anon(), anon()));
+    compare(false, cond(EQUAL, anon(), anon("x")));
+
     // Unit-less values
     compare(true, cond(EQUAL, two, two));
     compare(true, cond(NOT_EQUAL, two, four));
@@ -130,6 +136,14 @@ public class ConditionTest extends LessTestBase {
     // Negation
     compare(true, cond(NOT_EQUAL, two, two, true));
     compare(false, cond(EQUAL, two, two, true));
+
+    // Nesting
+    Condition true1 = cond(EQUAL, twoS, twoS);
+    Condition false1 = cond(EQUAL, fourS, twoS);
+    compare(true, cond(EQUAL, true1, TRUE));
+    compare(true, cond(EQUAL, true1, cond(EQUAL, false1, false1)));
+    compare(false, cond(EQUAL, true1, false1));
+    compare(false, cond(NOT_EQUAL, true1, true1));
   }
 
   @Test
@@ -161,6 +175,8 @@ public class ConditionTest extends LessTestBase {
     h.parseEquals("(1px!=2px)", cond(NOT_EQUAL, dim(1, Unit.PX), dim(2, Unit.PX)));
     h.parseEquals("('foo'<='bar')", cond(LESS_THAN_OR_EQUAL, quoted('\'', false, "foo"), quoted('\'', false, "bar")));
     h.parseEquals("(xyz<>abc)", cond(NOT_EQUAL, kwd("xyz"), kwd("abc")));
+
+    h.evalFails(cond(ADD, dim(1), dim(2)), EXPECTED_BOOLOP);
   }
 
   private void compare(boolean expected, Condition ... conditions) throws LessException {

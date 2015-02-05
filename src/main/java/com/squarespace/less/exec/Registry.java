@@ -17,6 +17,9 @@
 package com.squarespace.less.exec;
 
 
+/**
+ * Marker interface for plugin registry packages.
+ */
 public interface Registry<V> {
 
 }

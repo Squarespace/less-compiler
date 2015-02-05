@@ -126,9 +126,23 @@ public class LessHarness {
     assertEquals(res, expected, raw);
   }
 
+  public void evalEquals(Node input, Node expected) throws LessException {
+    Node result = evaluate(input, define(defs));
+    assertEquals(result, expected, input.repr());
+  }
+
   public void evalFails(String raw, LessErrorType expected) throws LessException {
     try {
       evaluate(raw, parselet, define(defs));
+      fail("Expected LessException of type " + expected);
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), expected);
+    }
+  }
+
+  public void evalFails(Node node, LessErrorType expected) throws LessException {
+    try {
+      evaluate(node, define(defs));
       fail("Expected LessException of type " + expected);
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), expected);

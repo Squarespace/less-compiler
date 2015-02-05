@@ -27,6 +27,9 @@ public class CharPattern {
 
   private final int[] next;
 
+  /**
+   * Constructs a K-M-P 'next' table for the list of characters.
+   */
   public CharPattern(char ... chars) {
     this.chars = chars;
     int len = chars.length;
