@@ -26,28 +26,53 @@ import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.SelectorUtils;
 
 
+/**
+ * A set of rules nested under one or more {@link Selector}s.
+ */
 public class Ruleset extends BlockNode {
 
+  /**
+   * Selector set for this ruleset.
+   */
   protected final Selectors selectors;
 
+  /**
+   * Flag indicating this ruleset is being evaluated. Helps detect recursion.
+   */
   protected boolean evaluating;
 
+  /**
+   * Indicates whether this ruleset has at least one mixin path.
+   */
   protected boolean hasMixinPath;
 
+  /**
+   * Constructs an empty ruleset with empty selectors.
+   */
   public Ruleset() {
     this.selectors = new Selectors();
   }
 
+  /**
+   * Constructs an empty ruleset with the initial selector set.
+   */
   public Ruleset(Selectors selectors) {
     this(selectors, new Block());
   }
 
+  /**
+   * Constructs an empty ruleset with the initial selector set, and an
+   * initial block.
+   */
   public Ruleset(Selectors selectors, Block block) {
     super(block);
     this.selectors = selectors;
     addMixinPaths(selectors);
   }
 
+  /**
+   * Evaluates the ruleset's selectors and returns a copy.
+   */
   public Ruleset copy(ExecEnv env) throws LessException {
     Ruleset result = new Ruleset((Selectors) selectors.eval(env), block.copy());
     result.fileName = fileName;
@@ -57,40 +82,44 @@ public class Ruleset extends BlockNode {
     return result;
   }
 
+  /**
+   * Returns the ruleset's selector set.
+   */
   public Selectors selectors() {
     return selectors;
   }
 
+  /**
+   * Indicates whether the ruleset's selectors has at least one mixin path.
+   */
   public boolean hasMixinPath() {
     return hasMixinPath;
   }
 
+  /**
+   * Marks the ruleset as being evaluated.
+   */
   public void enter() {
     evaluating = true;
   }
 
+  /**
+   * Clears the ruleset's evaluation flag.
+   */
   public void exit() {
     evaluating = false;
   }
 
+  /**
+   * Indicates if the ruleset is currently being evaluated.
+   */
   public boolean evaluating() {
     return evaluating;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Ruleset) {
-      Ruleset other = (Ruleset)obj;
-      return safeEquals(selectors, other.selectors) && super.equals(obj);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * Add a node to the ruleset.
+   */
   @Override
   public void add(Node node) {
     if (node instanceof Selector) {
@@ -103,11 +132,17 @@ public class Ruleset extends BlockNode {
     }
   }
 
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.RULESET;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     selectors.repr(buf);
@@ -126,6 +161,9 @@ public class Ruleset extends BlockNode {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -138,12 +176,32 @@ public class Ruleset extends BlockNode {
     buf.decrIndent().append('\n');
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Ruleset) {
+      Ruleset other = (Ruleset)obj;
+      return safeEquals(selectors, other.selectors) && super.equals(obj);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  /**
+   * Attach the mixin paths to the corresponding selectors.
+   */
   private void addMixinPaths(Selectors selectors) {
     for (Selector selector : selectors.selectors()) {
       addMixinPaths(selector);
     }
   }
 
+  /**
+   * Render the mixin selector path and attach it to the corresponding selector.
+   */
   private void addMixinPaths(Selector selector) {
     List<String> path = SelectorUtils.renderMixinSelector(selector);
     if (path != null) {

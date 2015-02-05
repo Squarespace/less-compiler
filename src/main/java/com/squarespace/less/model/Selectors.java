@@ -27,40 +27,67 @@ import com.squarespace.less.exec.ExecEnv;
 
 /**
  * Represents a comma-separated list of Selector nodes that forms
- * the header of a Ruleset.
+ * the header of a {@link Ruleset}.
  */
 public class Selectors extends BaseNode {
 
+  /**
+   * List of {@link Selector} nodes in this set.
+   */
   protected List<Selector> selectors;
 
+  /**
+   * Indicates whether one or more of the selectors requires evaluation.
+   */
   protected boolean evaluate;
 
+  /**
+   * Constructs an empty selector set.
+   */
   public Selectors() {
   }
 
+  /**
+   * Constructs a selector set with the given starting selectors.
+   */
   public Selectors(List<Selector> selectors) {
     this.selectors = selectors;
   }
 
+  /**
+   * Indicates whether this selector set is empty.
+   */
   public boolean isEmpty() {
     return selectors == null ? true : selectors.isEmpty();
   }
 
+  /**
+   * Adds a selector to the set.
+   */
   public void add(Selector selector) {
     selectors = LessUtils.initList(selectors, 2);
     selectors.add(selector);
     evaluate |= selector.needsEval();
   }
 
+  /**
+   * Returns the list of selectors in the set.
+   */
   public List<Selector> selectors() {
     return LessUtils.safeList(selectors);
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return evaluate;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!evaluate) {
@@ -73,21 +100,17 @@ public class Selectors extends BaseNode {
     return result;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return (obj instanceof Selectors) ? LessUtils.safeEquals(selectors, ((Selectors)obj).selectors) : false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.SELECTORS;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     int size = selectors.size();
@@ -107,6 +130,9 @@ public class Selectors extends BaseNode {
     }
   }
 
+  /**
+   * Renders the {@link Node#repr()} for the list of elements in the selector.
+   */
   public static void reprSelector(Buffer buf, Selector selector) {
     List<Element> elements = selector.elements();
     int size = elements.size();
@@ -115,6 +141,9 @@ public class Selectors extends BaseNode {
     }
   }
 
+  /**
+   * Renders the {@link Element}'s {@link Node#repr()} to the buffer.
+   */
   private static void reprElement(Buffer buf, Element element, boolean isFirst) {
     Combinator combinator = element.combinator();
     if (combinator != null) {
@@ -139,6 +168,9 @@ public class Selectors extends BaseNode {
     element.repr(buf);
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -147,6 +179,16 @@ public class Selectors extends BaseNode {
     buf.incrIndent();
     ReprUtils.modelRepr(buf, "\n", true, selectors);
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof Selectors) ? LessUtils.safeEquals(selectors, ((Selectors)obj).selectors) : false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

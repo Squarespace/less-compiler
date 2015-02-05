@@ -21,8 +21,14 @@ import static com.squarespace.less.core.Chars.hexchar;
 import com.squarespace.less.core.Buffer;
 
 
+/**
+ * A color in the RGB colorspace.
+ */
 public class RGBColor extends BaseColor {
 
+  /**
+   * Permutation values used for HSV to RGB conversion.
+   */
   private static final int[][] HSV_PERMUTATIONS = new int[][] {
     new int[] { 0, 3, 1 },
     new int[] { 2, 0, 1 },
@@ -32,96 +38,171 @@ public class RGBColor extends BaseColor {
     new int[] { 0, 1, 2 }
   };
 
-  protected final int c0;
+  /**
+   * Red color channel, 8-bit.
+   */
+  protected final int red;
 
-  protected final int c1;
+  /**
+   * Green color channel, 8-bit
+   */
+  protected final int green;
 
-  protected final int c2;
+  /**
+   * Blue color channel, 8-bit.
+   */
+  protected final int blue;
 
+  /**
+   * Alpha channel, 0 - 1.0
+   */
   protected final double alpha;
 
-  protected final boolean keyword;
+  /**
+   * Color was constructed from a keyword.
+   */
+  protected final boolean fromKeyword;
 
+  /**
+   * Force hex representation with output.
+   */
   protected boolean forceHex;
 
-  public RGBColor(double c0, double c1, double c2) {
-    this(c0, c1, c2, 1.0);
+  /**
+   * Constructs an RGB color from double values.
+   */
+  public RGBColor(double red, double green, double blue) {
+    this(red, green, blue, 1.0);
   }
 
-  public RGBColor(double c0, double c1, double c2, double alpha) {
-    this((int)Math.round(c0), (int)Math.round(c1), (int)Math.round(c2), alpha);
+  /**
+   * Constructs an RGB color from double values, with an alpha channel.
+   */
+  public RGBColor(double red, double green, double blue, double alpha) {
+    this((int)Math.round(red), (int)Math.round(green), (int)Math.round(blue), alpha);
   }
 
-  public RGBColor(int c0, int c1, int c2) {
-    this(c0, c1, c2, 1.0);
+  /**
+   * Constructs an RGB color from integer values.
+   */
+  public RGBColor(int red, int green, int blue) {
+    this(red, green, blue, 1.0);
   }
 
-  public RGBColor(int c0, int c1, int c2, boolean keyword) {
-    this(c0, c1, c2, 1.0, keyword);
+  /**
+   * Constructs an RGB color from integer values, setting the flag indicating
+   * whether this color was defined by a keyword.
+   */
+  public RGBColor(int red, int green, int blue, boolean fromKeyword) {
+    this(red, green, blue, 1.0, fromKeyword);
   }
 
-  public RGBColor(int c0, int c1, int c2, double alpha) {
-    this(c0, c1, c2, alpha, false);
+  /**
+   * Constructs an RGB color from integer values, with an alpha channel.
+   */
+  public RGBColor(int red, int green, int blue, double alpha) {
+    this(red, green, blue, alpha, false);
   }
 
-  public RGBColor(int c0, int c1, int c2, double alpha, boolean keyword) {
-    this.c0 = (int)clamp(c0, 0, 255);
-    this.c1 = (int)clamp(c1, 0, 255);
-    this.c2 = (int)clamp(c2, 0, 255);
+  /**
+   * Constructs an RGB color from integer values, with an alpha channel,
+   * setting the flag indicating whether this color was defined by a keyword.
+   */
+  public RGBColor(int red, int green, int blue, double alpha, boolean fromKeyword) {
+    this.red = (int)clamp(red, 0, 255);
+    this.green = (int)clamp(green, 0, 255);
+    this.blue = (int)clamp(blue, 0, 255);
     this.alpha = clamp(alpha, 0.0, 1.0);
-    this.keyword = keyword;
+    this.fromKeyword = fromKeyword;
   }
 
+  /**
+   * Copy the color.
+   */
   public RGBColor copy() {
-    return new RGBColor(c0, c1, c2, alpha, keyword);
+    return new RGBColor(red, green, blue, alpha, fromKeyword);
   }
 
+  /**
+   * Return the color's colorspace.
+   */
   public Colorspace getColorspace() {
     return Colorspace.RGB;
   }
 
+  /**
+   * Return the value for the red channel.
+   */
   public int red() {
-    return c0;
+    return red;
   }
 
+  /**
+   * Return the value for the green channel.
+   */
   public int green() {
-    return c1;
+    return green;
   }
 
+  /**
+   * Return the value for the blue channel.
+   */
   public int blue() {
-    return c2;
+    return blue;
   }
 
+  /**
+   * Return the value for the alpha channel.
+   */
   public double alpha() {
     return alpha;
   }
 
+  /**
+   * Compute the luma value for this color.
+   */
   public double luma() {
-    return (0.2126 * (c0 / 255.0) + 0.7152 * (c1 / 255.0) + 0.0722 * (c2 / 255.0)) * alpha;
+    return (0.2126 * (red / 255.0) + 0.7152 * (green / 255.0) + 0.0722 * (blue / 255.0)) * alpha;
   }
 
-  public boolean keyword() {
-    return keyword && alpha == 1.0;
+  /**
+   * Indicates whether this color was defined by a keyword.
+   */
+  public boolean fromKeyword() {
+    return fromKeyword && alpha == 1.0;
   }
 
+  /**
+   * Indicates whether this color's output should be forced to hexadecimal.
+   */
   public boolean forceHex() {
     return forceHex && alpha == 1.0;
   }
 
+  /**
+   * Sets the flag indicating whether this color's output should be forced to
+   * hexadecimal.
+   */
   public void forceHex(boolean flag) {
     this.forceHex = flag;
   }
 
+  /**
+   * Converts this color to RGB colorspace.
+   */
   @Override
   public RGBColor toRGB() {
     return this;
   }
 
+  /**
+   * Converts this color to the HSL colorspace.
+   */
   @Override
   public HSLColor toHSL() {
-    double r = c0 / 255.0;
-    double g = c1 / 255.0;
-    double b = c2 / 255.0;
+    double r = red / 255.0;
+    double g = green / 255.0;
+    double b = blue / 255.0;
 
     double max = Math.max(Math.max(r, g), b);
     double min = Math.min(Math.min(r, g), b);
@@ -146,21 +227,30 @@ public class RGBColor extends BaseColor {
     return new HSLColor(h, s, l, alpha);
   }
 
+  /**
+   * Converts this color to ARGB representation.
+   */
   public Anonymous toARGB() {
     StringBuilder buf = new StringBuilder();
     int alpha = (int)Math.round(this.alpha * 255);
     buf.append('#');
     hexdigit(buf, alpha);
-    hexdigit(buf, c0);
-    hexdigit(buf, c1);
-    hexdigit(buf, c2);
+    hexdigit(buf, red);
+    hexdigit(buf, green);
+    hexdigit(buf, blue);
     return new Anonymous(buf.toString());
   }
 
+  /**
+   * Appends a hexadecimal digit to the given buffer.
+   */
   private static void hexdigit(StringBuilder buf, int num) {
     buf.append(hexchar(num >> 4)).append(hexchar(num & 0x0F));
-
   }
+
+  /**
+   * Constructs an RGB color instance from HSVA values.
+   */
   public static RGBColor fromHSVA(double hue, double saturation, double value, double alpha) {
     hue *= 360;
     int i = (int)Math.floor((hue / 60) % 6);
@@ -177,54 +267,44 @@ public class RGBColor extends BaseColor {
     return new RGBColor(red, green, blue, alpha);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof RGBColor) {
-      RGBColor other = (RGBColor)obj;
-      return c0 == other.c0
-          && c1 == other.c1
-          && c2 == other.c2
-          && alpha == other.alpha
-          && keyword == other.keyword;
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * Emits the color's representation, which may be in compressed or expanded
+   * hexadecimal form, or a keyword.
+   *
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
 
     if (alpha < 1.0) {
-      buf.append("rgba(").append(c0).listSep();
-      buf.append(c1).listSep();
-      buf.append(c2).listSep();
+      buf.append("rgba(").append(red).listSep();
+      buf.append(green).listSep();
+      buf.append(blue).listSep();
       formatDouble(buf, alpha);
       buf.append(')');
 
     } else {
-      char r0 = hexchar(c0 >> 4);
-      char r1 = hexchar(c0 & 0x0F);
-      char g0 = hexchar(c1 >> 4);
-      char g1 = hexchar(c1 & 0x0F);
-      char b0 = hexchar(c2 >> 4);
-      char b1 = hexchar(c2 & 0x0F);
+      char r0 = hexchar(red >> 4);
+      char r1 = hexchar(red & 0x0F);
+      char g0 = hexchar(green >> 4);
+      char g1 = hexchar(green & 0x0F);
+      char b0 = hexchar(blue >> 4);
+      char b1 = hexchar(blue & 0x0F);
 
       // Check if the color can be emitted as a 3-character hex sequence.
       boolean hex3 = (r0 == r1 && g0 == g1 && b0 == b1);
 
-      // Check if an equivalent color keyword exists that is shorter
-      // than its hex string. Some examples: red < #f00 beige < #f5f5dc.
-      // If so, we output the keyword.
-      String name = Colors.colorToName(this);
-      if (!forceHex && name != null) {
-        int len = name.length();
-        if ((hex3 && len <= 4) || (!hex3 && len <= 7)) {
-          buf.append(name);
-          return;
+      if (!forceHex) {
+        // Check if an equivalent color keyword exists that is shorter
+        // than its hex string. Some examples: red < #f00 beige < #f5f5dc.
+        // If so, we output the keyword.
+        String name = Colors.colorToName(this);
+        if (name != null) {
+          int len = name.length();
+          if ((hex3 && len <= 4) || (!hex3 && len <= 7)) {
+            buf.append(name);
+            return;
+          }
         }
       }
 
@@ -237,15 +317,37 @@ public class RGBColor extends BaseColor {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   * @param buf
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
     buf.append(' ').append(getColorspace().toString()).append(' ');
-    buf.append(c0).append(' ').append(c1).append(' ').append(c2).append(' ').append(alpha);
-    if (keyword) {
+    buf.append(red).append(' ').append(green).append(' ').append(blue).append(' ').append(alpha);
+    if (fromKeyword) {
       buf.append(" [from keyword]");
     }
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof RGBColor) {
+      RGBColor other = (RGBColor)obj;
+      return red == other.red
+          && green == other.green
+          && blue == other.blue
+          && alpha == other.alpha
+          && fromKeyword == other.fromKeyword;
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

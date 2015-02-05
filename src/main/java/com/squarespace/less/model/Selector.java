@@ -26,22 +26,46 @@ import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Represents one selector in a selector set.
+ */
 public class Selector extends BaseNode {
 
+  /**
+   * Default capacity for the selector's element list.
+   */
   private static final int DEFAULT_CAPACITY = 4;
 
+  /**
+   * List of elements in this selector.
+   */
   protected List<Element> elements;
 
+  /**
+   * {@link Mixin} path this selector maps to.
+   */
   protected List<String> mixinPath;
 
+  /**
+   * Indicates whether this selector list contains a wildcard element.
+   */
   protected boolean hasWildcard;
 
+  /**
+   * Indicates whether one of the elements in the list requires evaluation.
+   */
   protected boolean evaluate;
 
+  /**
+   * Indicates whether the selector list contains a wildcard element.
+   */
   public boolean hasWildcard() {
     return hasWildcard;
   }
 
+  /**
+   * Adds an element to the selector.
+   */
   public void add(Element element) {
     elements = LessUtils.initList(elements, DEFAULT_CAPACITY);
     elements.add(element);
@@ -51,31 +75,52 @@ public class Selector extends BaseNode {
     }
   }
 
+  /**
+   * Returns the list of elements in this selector.
+   */
   public List<Element> elements() {
     return LessUtils.safeList(elements);
   }
 
+  /**
+   * Returns the segmented {@link Mixin} path corresponding to this selector.
+   */
   public List<String> mixinPath() {
     return mixinPath;
   }
 
+  /**
+   * Sets the segmented {@link Mixin} path corresponding to this selector.
+   */
   public void mixinPath(List<String> mixinPath) {
     this.mixinPath = mixinPath;
   }
 
+  /**
+   * Number of elements in the selector.
+   */
   public int size() {
     return (elements == null) ? 0 : elements.size();
   }
 
+  /**
+   * Indicates whether the selector has no elements.
+   */
   public boolean isEmpty() {
-    return elements == null || (elements.size() == 0);
+    return elements == null || elements.isEmpty();
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return evaluate;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!evaluate) {
@@ -88,26 +133,25 @@ public class Selector extends BaseNode {
     return result;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return (obj instanceof Selector) ? safeEquals(elements, ((Selector)obj).elements) : false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.SELECTOR;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     Selectors.reprSelector(buf, this);
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -116,6 +160,16 @@ public class Selector extends BaseNode {
     buf.incrIndent();
     ReprUtils.modelRepr(buf, "\n", true, elements);
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof Selector) ? safeEquals(elements, ((Selector)obj).elements) : false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }
