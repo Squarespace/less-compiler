@@ -24,8 +24,14 @@ import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * An {@link Element} which wraps a value.
+ */
 public class ValueElement extends Element {
 
+  /**
+   * The element's value.
+   */
   protected final Node value;
 
   public ValueElement(Combinator comb, Node value) {
@@ -36,6 +42,9 @@ public class ValueElement extends Element {
     this.value = value;
   }
 
+  /**
+   * Returns the element's value.
+   */
   public Node value() {
     return value;
   }
@@ -48,6 +57,9 @@ public class ValueElement extends Element {
     return value.needsEval();
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!needsEval()) {
@@ -56,9 +68,40 @@ public class ValueElement extends Element {
     return new ValueElement(combinator(), value.eval(env));
   }
 
+  /**
+   * See {@link Element#isWildcard()}
+   */
   @Override
   public boolean isWildcard() {
     return false;
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    boolean quoted = (value instanceof Quoted);
+    if (quoted) {
+      buf.append('(');
+    }
+    value.repr(buf);
+    if (quoted) {
+      buf.append(')');
+    }
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append(' ');
+    buf.append(combinator == null ? "<null>" : combinator.toString());
+    buf.append(' ');
+    value.modelRepr(buf);
   }
 
   @Override
@@ -73,28 +116,6 @@ public class ValueElement extends Element {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    boolean quoted = (value instanceof Quoted);
-    if (quoted) {
-      buf.append('(');
-    }
-    value.repr(buf);
-    if (quoted) {
-      buf.append(')');
-    }
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append(' ');
-    buf.append(combinator == null ? "<null>" : combinator.toString());
-    buf.append(' ');
-    value.modelRepr(buf);
   }
 
 }

@@ -21,31 +21,74 @@ import static com.squarespace.less.core.LessUtils.safeEquals;
 import com.squarespace.less.core.Buffer;
 
 
+/**
+ * A textual {@link Element}.
+ */
 public class TextElement extends Element {
 
+  /**
+   * Name of the element.
+   */
   protected final String name;
 
+  /**
+   * Flag indicating whether this is a wildcard.
+   */
   protected final boolean isWildcard;
 
+  /**
+   * Constructs an empty text element.
+   */
   public TextElement(Combinator comb) {
     super(comb);
     this.name = null;
     this.isWildcard = false;
   }
 
+  /**
+   * Constructs a text element.
+   */
   public TextElement(Combinator comb, String name) {
     super(comb);
     this.name = name;
     this.isWildcard = name.equals("&");
   }
 
+  /**
+   * Returns the text element's name.
+   */
   public String name() {
     return name;
   }
 
+  /**
+   * See {@link Element#isWildcard()}
+   */
   @Override
   public boolean isWildcard() {
     return isWildcard;
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    if (name != null) {
+      buf.append(name);
+    }
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append(' ');
+    buf.append(combinator == null ? "<null>" : combinator.toString());
+    buf.append(' ').append(name);
   }
 
   @Override
@@ -60,22 +103,6 @@ public class TextElement extends Element {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    if (name != null) {
-      buf.append(name);
-    }
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append(' ');
-    buf.append(combinator == null ? "<null>" : combinator.toString());
-    buf.append(' ').append(name);
   }
 
 }

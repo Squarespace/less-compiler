@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * Represents the unit in a {@link Dimension}.
+ */
 public enum Unit {
 
   PERCENTAGE ("%", "percentage"),
@@ -98,42 +101,68 @@ public enum Unit {
   // Turns
   TURN ("turn", "turns");
 
-  // Keep this sorted roughly by most-used first
-  // NOTE: 'vm' is not a real unit, but is added here since less.js thinks its real.
+  /**
+   * Regular expression to match a unit identifier.
+   *
+   * NOTE: Keep this sorted roughly by most-frequently-used first
+   * NOTE: 'vm' is not a real unit, but is added here since less.js references it
+   */
   public static final String REGEX =
       "px|%|em|pc|ex|in|deg|s|ms|pt|cm|mm|rad|grad|turn|dpi|dpcm|dppx|rem|vw|vh|vmin|vmax|ch|hz|khz|vm";
 
+  /**
+   * Mapping from a unit's representation to its value.
+   */
   private static final Map<String, Unit> UNIT_MAP = new HashMap<>();
 
+  // Build up the mapping from a unit's representation to its enumerated value.
   static {
     for (Unit unit : Unit.values()) {
       UNIT_MAP.put(unit.repr(), unit);
     }
   }
 
+  /**
+   * Representation of the unit, e.g. "px".
+   */
   private final String repr;
 
+  /**
+   * Human-readable representation for the unit, e.g. "pixels".
+   */
   private final String humanRepr;
 
+  /**
+   * Construct a unit with the given representations.
+   */
   private Unit(String repr, String humanRepr) {
     this.repr = repr;
     this.humanRepr = humanRepr;
   }
 
+  /**
+   * Return the shorthand representation.
+   */
   public String repr() {
     return repr;
   }
 
+  /**
+   * Return the human-readable representation.
+   */
   public String humanRepr() {
     return humanRepr;
   }
 
+  /**
+   * Get the unit for a given raw string.
+   */
   public static Unit get(String raw) {
     return UNIT_MAP.get(raw.toLowerCase());
   }
 
   /**
-   * Format a double to a unit-specific level of precision.
+   * TODO: Format a double to a unit-specific level of precision.
    */
   public String format(double val) {
     // XXX: precision

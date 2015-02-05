@@ -30,41 +30,52 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Url extends BaseNode {
 
+  /**
+   * Value representing the URL's location.
+   */
   protected final Node value;
 
+  /**
+   * Constructs a URL with the given location value.
+   */
   public Url(Node value) {
     this.value = value;
   }
 
+  /**
+   * Returns the URL's location value.
+   */
   public Node value() {
     return value;
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return value.needsEval();
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     return needsEval() ? new Url(value.eval(env)) : this;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return (obj instanceof Url) ? safeEquals(value, ((Url)obj).value) : false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.URL;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append("url(");
@@ -72,6 +83,9 @@ public class Url extends BaseNode {
     buf.append(')');
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -82,6 +96,16 @@ public class Url extends BaseNode {
       value.modelRepr(buf);
     }
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof Url) ? safeEquals(value, ((Url)obj).value) : false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

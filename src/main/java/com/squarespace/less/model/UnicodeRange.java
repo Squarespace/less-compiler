@@ -22,16 +22,55 @@ import static com.squarespace.less.model.NodeType.UNICODE_RANGE;
 import com.squarespace.less.core.Buffer;
 
 
+/**
+ * A wrapper around a CSS Unicode character range.
+ */
 public class UnicodeRange extends BaseNode {
 
+  /**
+   * String representing the Unicode character range.
+   */
   protected final String value;
 
+  /**
+   * Constructs a Unicode range node wrapping the given string.
+   * @param value
+   */
   public UnicodeRange(String value) {
     this.value = value;
   }
 
+  /**
+   * Returns the Unicode range string.
+   */
   public String value() {
     return value;
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return UNICODE_RANGE;
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    buf.append(value);
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append('(').append(value).append(')');
   }
 
   @Override
@@ -42,23 +81,6 @@ public class UnicodeRange extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return UNICODE_RANGE;
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    buf.append(value);
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append('(').append(value).append(')');
   }
 
 }

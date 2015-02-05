@@ -41,8 +41,15 @@ import static com.squarespace.less.model.Unit.TURN;
  */
 public class UnitConversions {
 
+  /**
+   * Table of conversion factors between units.
+   */
   private static final double[][] CONVERSIONS;
 
+  /**
+   * Constructs a 2-way conversion between the {@code from} and {@code to} units
+   * with the given factor.
+   */
   private static void create(Unit from, Unit to, double factor) {
     int i0 = from.ordinal();
     int i1 = to.ordinal();
@@ -50,6 +57,9 @@ public class UnitConversions {
     CONVERSIONS[i1][i0] = 1.0 / factor;
   }
 
+  /**
+   * Builds the conversion table.
+   */
   static {
     Unit[] values = Unit.values();
     int sz = values.length;

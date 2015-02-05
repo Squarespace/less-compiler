@@ -32,16 +32,32 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Variable extends BaseNode {
 
+  /**
+   * Name of the variable.
+   */
   protected final String name;
 
+  /**
+   * Indicates whether the variable is an indirect reference.
+   */
   protected final boolean indirect;
 
+  /**
+   * Indicates whether this variable reference is inside a {@link Quoted}.
+   */
   protected final boolean curly;
 
+  /**
+   * Construct a variable reference with the given name.
+   */
   public Variable(String name) {
     this(name, false);
   }
 
+  /**
+   * Construct a variable reference with the given name, and indicate whether
+   * it is inside a {@link Quoted} string.
+   */
   public Variable(String name, boolean curly) {
     if (name == null) {
       throw new LessInternalException("Serious error: name cannot be null");
@@ -56,18 +72,30 @@ public class Variable extends BaseNode {
     this.curly = curly;
   }
 
+  /**
+   * Return the name of the variable reference.
+   */
   public String name() {
     return name;
   }
 
+  /**
+   * Indicates whether this is an indirect reference.
+   */
   public boolean indirect() {
     return indirect;
   }
 
+  /**
+   * Indicates whether this variable reference is inside a {@link Quoted} string.
+   */
   public boolean curly() {
     return curly;
   }
 
+  /**
+   * Traverses the variable reference, to get its value.
+   */
   protected Node dereference(Definition def, ExecEnv env) throws LessException {
     Node result = def.dereference(env);
     if (!indirect) {
@@ -81,6 +109,65 @@ public class Variable extends BaseNode {
     buf.startDelim('"');
     ctx.render(buf, result);
     return env.context().nodeBuilder().buildVariable("@" + buf.toString()).eval(env);
+  }
+
+  /**
+   * See {@link Node#needsEval()}
+   */
+  @Override
+  public boolean needsEval() {
+    return true;
+  }
+
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
+  @Override
+  public Node eval(ExecEnv env) throws LessException {
+    Definition def = env.resolveDefinition(name);
+    if (def == null) {
+      throw new LessException(varUndefined(name));
+    }
+    return dereference(def, env);
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return VARIABLE;
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    if (indirect) {
+      buf.append('@');
+    }
+    buf.append('@');
+    if (curly) {
+      buf.append('{');
+    }
+    buf.append(name.substring(1));
+    if (curly) {
+      buf.append('}');
+    }
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append(' ').append(indirect ? "@" + name : name);
+    if (curly) {
+      buf.append(" (curly)");
+    }
   }
 
   @Override
@@ -97,50 +184,6 @@ public class Variable extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public boolean needsEval() {
-    return true;
-  }
-
-  @Override
-  public Node eval(ExecEnv env) throws LessException {
-    Definition def = env.resolveDefinition(name);
-    if (def == null) {
-      throw new LessException(varUndefined(name));
-    }
-    return dereference(def, env);
-  }
-
-  @Override
-  public NodeType type() {
-    return VARIABLE;
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    if (indirect) {
-      buf.append('@');
-    }
-    buf.append('@');
-    if (curly) {
-      buf.append('{');
-    }
-    buf.append(name.substring(1));
-    if (curly) {
-      buf.append('}');
-    }
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append(' ').append(indirect ? "@" + name : name);
-    if (curly) {
-      buf.append(" (curly)");
-    }
   }
 
 }
