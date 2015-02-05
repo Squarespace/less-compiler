@@ -17,28 +17,52 @@
 package com.squarespace.less.core;
 
 
-
 /**
- * General-purpose buffer. Wraps a StringBuilder with some custom LESS-related output methods.
+ * General-purpose buffer. Wraps a {@link StringBuilder} with some
+ * LESS-specific methods.
  */
 public class Buffer {
 
+  /**
+   * Internal buffer.
+   */
   private final StringBuilder buf = new StringBuilder();
 
+  /**
+   * Number of spaces of indent.
+   */
   private final int indentSize;
 
+  /**
+   * Flag to remove unnecessary whitespace, e.g. "minify".
+   */
   private final boolean compress;
 
+  /**
+   * Delimiter used for start/end of escaped output.
+   */
   private char delim = Chars.EOF;
 
+  /**
+   * Previous character in the buffer.
+   */
   private char prev = Chars.LINE_FEED;
 
+  /**
+   * Current block nesting level.
+   */
   private int indentCurr;
 
+  /**
+   * Constructs a buffer with the given indent size, with whitespace compression disabled.
+   */
   public Buffer(int indentSize) {
     this(indentSize, false);
   }
 
+  /**
+   * Constructs a buffer with the given indent size and whitespace compression.
+   */
   public Buffer(int indentSize, boolean compress) {
     this.indentSize = indentSize;
     this.compress = compress;
@@ -51,14 +75,23 @@ public class Buffer {
     return new Buffer(indentSize, compress);
   }
 
+  /**
+   * Indicates if whitespace compression is enabled.
+   */
   public boolean compress() {
     return compress;
   }
 
+  /**
+   * Current length of the internal buffer.
+   */
   public int length() {
     return buf.length();
   }
 
+  /**
+   * Resets the buffer to the initial state.
+   */
   public void reset() {
     if (buf.length() != 0) {
       buf.setLength(0);
@@ -67,29 +100,47 @@ public class Buffer {
     prev = Chars.LINE_FEED;
   }
 
+  /**
+   * Increments the indentation level.
+   */
   public Buffer incrIndent() {
     this.indentCurr += indentSize;
     return this;
   }
 
+  /**
+   * Decrements the indentation level.
+   */
   public Buffer decrIndent() {
     this.indentCurr -= indentSize;
     return this;
   }
 
+  /**
+   * Resets the indentation level to zero.
+   */
   public Buffer resetIndent() {
     this.indentCurr = 0;
     return this;
   }
 
+  /**
+   * Indicates if the buffer is in escape mode.
+   */
   public boolean inEscape() {
     return delim != Chars.EOF;
   }
 
+  /**
+   * Returns the previous character in the buffer.
+   */
   public char prevChar() {
     return prev;
   }
 
+  /**
+   * Emits whitespace to indent the next line of output.
+   */
   public Buffer indent() {
     for (int i = 0; i < indentCurr; i++) {
       buf.append(' ');
@@ -100,6 +151,9 @@ public class Buffer {
     return this;
   }
 
+  /**
+   * Enter escape mode with the given delimiter.
+   */
   public Buffer startDelim(char ch) {
     if (inEscape()) {
       throw new LessInternalException("Serious error: buffer already in escape mode for " + delim);
@@ -108,29 +162,44 @@ public class Buffer {
     return this;
   }
 
+  /**
+   * Exits escape mode.
+   */
   public Buffer endDelim() {
     this.delim = Chars.EOF;
     return this;
   }
 
+  /**
+   * Appends a {@code long} to the buffer.
+   */
   public Buffer append(long num) {
     buf.append(num);
     prev = buf.charAt(buf.length() - 1);
     return this;
   }
 
+  /**
+   * Appends a {@code double} to the buffer.
+   */
   public Buffer append(double num) {
     buf.append(num);
     prev = buf.charAt(buf.length() - 1);
     return this;
   }
 
+  /**
+   * Appends a single {@code char} to the buffer.
+   */
   public Buffer append(char ch) {
     buf.append(ch);
     prev = ch;
     return this;
   }
 
+  /**
+   * Appends a {@code String} to the buffer.
+   */
   public Buffer append(String str) {
     if (str == null) {
       return this;
@@ -144,6 +213,9 @@ public class Buffer {
     return this;
   }
 
+  /**
+   * Opens a nested block (left curly bracket) with optional whitespace suppression.
+   */
   public void blockOpen() {
     if (compress) {
       append('{');
@@ -153,6 +225,9 @@ public class Buffer {
     }
   }
 
+  /**
+   * Closes a nested block (right curly bracket) with optional whitespace suppression.
+   */
   public void blockClose() {
     if (compress) {
       append('}');
@@ -163,6 +238,9 @@ public class Buffer {
     }
   }
 
+  /**
+   * Emits a list separator (comma) with optional whitespace suppression.
+   */
   public Buffer listSep() {
     if (compress) {
       append(',');
@@ -172,6 +250,9 @@ public class Buffer {
     return this;
   }
 
+  /**
+   * Emits the character that ends a rule (semicolon) with optional whitespace suppression.
+   */
   public void ruleEnd() {
     append(';');
     if (!compress) {
@@ -179,6 +260,10 @@ public class Buffer {
     }
   }
 
+  /**
+   * Emits the separator between a property and value in a rule (colon) with optional
+   * whitespace suppression.
+   */
   public void ruleSep() {
     if (compress) {
       append(':');
@@ -187,6 +272,9 @@ public class Buffer {
     }
   }
 
+  /**
+   * Emits a selector separator (comma) with optional whitespace suppression.
+   */
   public void selectorSep() {
     if (compress) {
       append(',');
