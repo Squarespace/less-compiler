@@ -30,6 +30,7 @@ import java.util.List;
 import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
+import com.squarespace.less.model.Argument;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Node;
@@ -42,28 +43,58 @@ import com.squarespace.less.model.Unit;
  */
 public class ArgSpec {
 
+  /**
+   * Validate the arguments before invoking a function.
+   */
   private final List<ArgValidator> validators;
 
+  /**
+   * Minimum number of arguments required.
+   */
   private final int minArgs;
 
+  /**
+   * Whether the function accepts a variable number of arguments.
+   */
   private final boolean variadic;
 
+  /**
+   * Constructs an instance which ensures that the arguments are of the
+   * given {@code types}.
+   */
   public ArgSpec(NodeType ... types) {
     this(types.length, types);
   }
 
+  /**
+   * Like {@link ArgSpec#ArgSpec(NodeType...)} but ensures that at least
+   * {@code minArgs} are passed.
+   */
   public ArgSpec(int minArgs, NodeType ... types) {
     this(minArgs, build(types));
  }
 
+  /**
+   * Constructs an instance which ensures that the arguments are valid,
+   * using the given {@code validators}. Each {@link ArgValidator}
+   * validates the argument in the corresponding position.
+   */
   public ArgSpec(ArgValidator ... validators) {
     this(validators.length, validators);
   }
 
+  /**
+   * Like {@link ArgSpec#ArgSpec(ArgValidator...)} but ensures that at least
+   * {@code minArgs} are passed.
+   */
   public ArgSpec(int minArgs, ArgValidator ... validators) {
     this(minArgs, Arrays.asList(validators), false);
   }
 
+  /**
+   * Like {@link ArgSpec#ArgSpec(int, ArgValidator...)} with variable argument
+   * support.
+   */
   public ArgSpec(int minArgs, List<ArgValidator> validators, boolean variadic) {
     if (!variadic && validators.size() < minArgs) {
       throw new IllegalArgumentException("minArgs cannot be < zero or exceed types.length");
@@ -73,10 +104,16 @@ public class ArgSpec {
     this.variadic = variadic;
   }
 
+  /**
+   * Builds validators which ensure that the arguments are of the given {@code types}.
+   */
   private static ArgValidator[] build(NodeType ... types) {
     return build(Arrays.asList(types));
   }
 
+  /**
+   * Builds validators which ensure that the arguments are of the given {@code types}.
+   */
   private static ArgValidator[] build(List<NodeType> types) {
     int size = types.size();
     ArgValidator[] validators = new ArgValidator[size];
@@ -86,10 +123,16 @@ public class ArgSpec {
     return validators;
   }
 
+  /**
+   * Validates the arguments.
+   */
   public boolean validate(ExecEnv env, Function func, Node ... args) throws LessException {
     return validate(env, func, Arrays.asList(args));
   }
 
+  /**
+   * Validates the arguments.
+   */
   public boolean validate(ExecEnv env, Function func, List<Node> args) throws LessException {
     int size = args.size();
     if (size < minArgs) {
@@ -116,7 +159,10 @@ public class ArgSpec {
     return true;
   }
 
-  public static ArgSpec parseSpec(String raw) {
+  /**
+   * Parses the specification string into an {@link ArgSpec} instance.
+   */
+  public static ArgSpec fromString(String raw) {
     List<ArgValidator> validators = new ArrayList<>();
     int minArgs = -1;
     int size = raw.length();
@@ -159,6 +205,9 @@ public class ArgSpec {
     return new ArgSpec(minArgs, validators, variadic);
   }
 
+  /**
+   * Maps the specification character to a node type.
+   */
   private static NodeType fromChar(char ch) {
     switch (ch) {
       case 'c':
@@ -175,6 +224,9 @@ public class ArgSpec {
     throw new IllegalArgumentException("Unknown type ch: '" + ch + "'");
   }
 
+  /**
+   * Validates an {@link Argument} by its {@link Node#type()}.
+   */
   static class ArgTypeValidator extends ArgValidator {
 
     private final NodeType type;
@@ -192,6 +244,9 @@ public class ArgSpec {
 
   }
 
+  /**
+   * Validator which accepts any node type.
+   */
   private static final ArgValidator ARG_ANY = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {
@@ -199,6 +254,9 @@ public class ArgSpec {
     };
   };
 
+  /**
+   * Validator which only accepts a unit-less number.
+   */
   private static final ArgValidator ARG_NUMBER = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {
@@ -213,6 +271,9 @@ public class ArgSpec {
     }
   };
 
+  /**
+   * Validator which only accepts numbers in percentage units.
+   */
   private static final ArgValidator ARG_PERCENTAGE = new ArgValidator() {
     @Override
     public void validate(int index, Node arg) throws LessException {

@@ -26,16 +26,32 @@ import com.squarespace.less.core.LessInternalException;
 
 /**
  * Holds a list of reusable buffer instances. Callers must acquire and
- * then return a buffer.
+ * then immediately return buffers for this to work.
+ *
+ * When processing a stylesheet, many nodes need to be rendered to an
+ * intermediate buffer which is then copied to the main stream. Rather
+ * than construct these on the fly this stack keeps reusable instances.
  */
 public class BufferStack {
 
+  /**
+   * List of buffers that have been allocated.
+   */
   private final List<Buffer> bufferList = new ArrayList<>();
 
+  /**
+   * Context used to create new {@link Buffer} instances.
+   */
   private final LessContext ctx;
 
+  /**
+   * Index of the buffer currently in use.
+   */
   private int index;
 
+  /**
+   * Constructs a stack with the given context.
+   */
   public BufferStack(LessContext ctx) {
     this.ctx = ctx;
   }
@@ -60,10 +76,16 @@ public class BufferStack {
     return buf;
   }
 
+  /**
+   * Return a buffer to the list.
+   */
   public void returnBuffer() {
     index--;
   }
 
+  /**
+   * Asserts that the internal stack's state is valid.
+   */
   public void sanityCheck() {
     if (index != 0) {
       throw new LessInternalException("Serious error: buffer stack was not returned to zero: " + index);

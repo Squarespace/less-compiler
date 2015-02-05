@@ -39,7 +39,7 @@ public abstract class Function {
 
   public Function(String name, String spec) {
     this.name = name;
-    this.spec = ArgSpec.parseSpec(spec);
+    this.spec = ArgSpec.fromString(spec);
   }
 
   public Function(String name, ArgSpec spec) {

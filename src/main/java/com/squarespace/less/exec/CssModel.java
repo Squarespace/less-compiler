@@ -34,7 +34,9 @@ import com.squarespace.less.LessContext;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.core.LessUtils;
+import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.NodeType;
+import com.squarespace.less.model.Ruleset;
 
 /**
  * Extremely simplistic model for CSS structure. Allows the LESS renderer
@@ -44,35 +46,58 @@ import com.squarespace.less.model.NodeType;
  */
 public class CssModel {
 
+  /**
+   * Set of node types that can be children of a {@link Stylesheet}.
+   */
   private static final EnumSet<NodeType> STYLESHEET_ACCEPT = EnumSet.of(
       STYLESHEET, RULESET, MEDIA, BLOCK_DIRECTIVE
       );
 
+  /**
+   * Set of node types that can be children of a {@link Media} node.
+   */
   private static final EnumSet<NodeType> MEDIA_ACCEPT = EnumSet.of(
       BLOCK_DIRECTIVE, RULESET
       );
 
+  /**
+   * Set of node types that can be children of a {@link BlockDirective} node.
+   */
   private static final EnumSet<NodeType> BLOCK_DIRECTIVE_ACCEPT = EnumSet.of(
       BLOCK_DIRECTIVE, RULESET
       );
 
+  /**
+   * Set of node types that can be children of a {@link Ruleset} node.
+   */
   private static final EnumSet<NodeType> RULESET_ACCEPT = EnumSet.noneOf(NodeType.class);
 
+  /**
+   * Stack of CSS blocks.
+   */
   private final Deque<CssBlock> stack = new ArrayDeque<>();
 
+  /**
+   * Internal buffer for rendering the CSS output.
+   */
   private final Buffer buffer;
 
+  /**
+   * Current block being operated on.
+   */
   private CssBlock current;
 
+  /**
+   * Constructs a CSS model with the given context.
+   */
   public CssModel(LessContext ctx) {
     buffer = ctx.newBuffer();
     current = new CssBlock(STYLESHEET);
   }
 
-  public void reset() {
-    current = new CssBlock(STYLESHEET);
-  }
-
+  /**
+   * Renders the CSS model into text form.
+   */
   public String render() {
     if (current.type() != STYLESHEET) {
       throw new LessInternalException("Serious error: stack was not fully popped.");
@@ -82,16 +107,25 @@ public class CssModel {
     return buffer.toString();
   }
 
+  /**
+   * Appends a value to the current block.
+   */
   public CssModel value(String value) {
     current.add(new CssValue(value));
     return this;
   }
 
+  /**
+   * Appends a comment to the current block.
+   */
   public CssModel comment(String value) {
     current.add(new CssComment(value));
     return this;
   }
 
+  /**
+   * Add raw strings to the header of the current block.
+   */
   public CssModel header(String ... strings) {
     for (String raw : strings) {
       current.add(raw);
@@ -99,6 +133,9 @@ public class CssModel {
     return this;
   }
 
+  /**
+   * Pushes an empty block onto the stack and associates it with the given node type.
+   */
   public CssModel push(NodeType type) {
     stack.push(current);
     CssBlock child = new CssBlock(type);
@@ -107,6 +144,10 @@ public class CssModel {
     return this;
   }
 
+  /**
+   * Pops a block from the top of the stack, setting flags indicating whether
+   * anything was appended to the block.  This is used to prune empty blocks.
+   */
   public CssModel pop() {
     CssBlock parent = current.parent();
     parent.populated |= current.populated;
@@ -115,7 +156,7 @@ public class CssModel {
   }
 
   /**
-   * Push this block up the stack until it finds its proper home.
+   * Push this block up the stack until it finds its proper parent.
    */
   private void defer(CssBlock block) {
     if (current.accept(block)) {
@@ -131,6 +172,9 @@ public class CssModel {
     throw new LessInternalException("Serious error: no block accepted " + block.type());
   }
 
+  /**
+   * Represents a CSS block that can contain other nodes and blocks.
+   */
   static class CssBlock extends CssNode {
 
     private final List<String> headers = new ArrayList<>();
@@ -170,6 +214,10 @@ public class CssModel {
       }
     }
 
+    /**
+     * Determines if this block can accept a block of the given type as a
+     * child.
+     */
     public boolean accept(CssBlock block) {
       if (acceptFilter.contains(block.type())) {
         add(block);
@@ -247,6 +295,9 @@ public class CssModel {
     }
   }
 
+  /**
+   * Represents a simple value in a CSS model.
+   */
   static class CssValue extends CssNode {
 
     private final String value;
@@ -273,6 +324,9 @@ public class CssModel {
 
   }
 
+  /**
+   * Represents a comment in a CSS model.
+   */
   static class CssComment extends CssNode {
 
     private final String value;
@@ -298,6 +352,9 @@ public class CssModel {
 
   }
 
+  /**
+   * Abstract node in a CSS model.
+   */
   static abstract class CssNode {
 
     public boolean isValue() {

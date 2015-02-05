@@ -109,7 +109,7 @@ public class LessMaker {
   }
 
   public ArgSpec argspec(String spec) {
-    return ArgSpec.parseSpec(spec);
+    return ArgSpec.fromString(spec);
   }
 
   public ArgSpec argspec(NodeType ... types) {

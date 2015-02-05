@@ -17,9 +17,13 @@
 package com.squarespace.less.exec;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.model.Argument;
 import com.squarespace.less.model.Node;
 
 
+/**
+ * Base class for all {@link Argument} validators.
+ */
 public abstract class ArgValidator {
 
   public abstract void validate(int index, Node arg) throws LessException;
