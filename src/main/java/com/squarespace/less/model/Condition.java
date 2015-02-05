@@ -71,22 +71,18 @@ public class Condition extends BaseNode {
     this.negate = negate;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Condition) {
-      Condition other = (Condition)obj;
-      boolean res = operator == other.operator
-          && negate == other.negate
-          && safeEquals(left, other.left)
-          && safeEquals(right, other.right);
-      return res;
-    }
-    return false;
+  /**
+   * Returns the left operand.
+   */
+  public Node left() {
+    return left;
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
+  /**
+   * Returns the right operand.
+   */
+  public Node right() {
+    return right;
   }
 
   /**
@@ -150,6 +146,24 @@ public class Condition extends BaseNode {
     buf.append('\n').indent();
     right.modelRepr(buf);
     buf.append('\n').decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Condition) {
+      Condition other = (Condition)obj;
+      boolean res = operator == other.operator
+          && negate == other.negate
+          && safeEquals(left, other.left)
+          && safeEquals(right, other.right);
+      return res;
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
   /**
