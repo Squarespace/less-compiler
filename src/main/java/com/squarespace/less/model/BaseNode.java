@@ -24,6 +24,9 @@ import com.squarespace.less.core.ExecuteErrorMaker;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Common behaviors for all nodes.
+ */
 public abstract class BaseNode implements Node {
 
   protected int lineOffset;
@@ -88,11 +91,21 @@ public abstract class BaseNode implements Node {
     }
   }
 
+  /**
+   * Raises an exception, as nodes are not currently hashable.
+   *
+   * @throws  UnsupportedOperationException
+   */
   @Override
   public int hashCode() {
     throw new UnsupportedOperationException("Serious error: model objects are not designed to be hashed.");
   }
 
+  /**
+   * Implemented by nodes that participate in operations. Throws an exception otherwise.
+   *
+   * See {@link Node#operate(ExecEnv, Operator, Node)}
+   */
   @Override
   public Node operate(ExecEnv env, Operator op, Node arg) throws LessException {
     NodeType argType = (arg == null) ? null : arg.type();
@@ -116,29 +129,35 @@ public abstract class BaseNode implements Node {
   }
 
   @Override
-  public String toString() {
-    Buffer buf = new Buffer(4);
-    modelRepr(buf);
-    return buf.toString();
-  }
-
-  @Override
   public String repr() {
     Buffer buf = new Buffer(2);
     repr(buf);
     return buf.toString();
   }
 
+  /**
+   * See {@link Node#repr()}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append("<no repr for " + type().toString() + ">");
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
     buf.append("<not implemented>");
+  }
+
+  @Override
+  public String toString() {
+    Buffer buf = new Buffer(4);
+    modelRepr(buf);
+    return buf.toString();
   }
 
 }

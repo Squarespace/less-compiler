@@ -26,16 +26,35 @@ import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Represents all parameters for a {@link Mixin} definition.
+ */
 public class MixinParams extends BaseNode {
 
+  /**
+   * List of parameters in this group.
+   */
   protected List<Parameter> params;
 
+  /**
+   * Whether the {@link Mixin} is variadic.
+   */
   protected boolean variadic;
 
+  /**
+   * Number of required parameters.
+   */
   protected int required;
 
+  /**
+   * Indicates at least one of the parameters needs to be evaluated.
+   */
   protected boolean evaluate;
 
+  /**
+   * Appends a parameter to the list, and sets our internal state based on its
+   * properties.
+   */
   public void add(Parameter param) {
     params = LessUtils.initList(params, 3);
     params.add(param);
@@ -49,27 +68,53 @@ public class MixinParams extends BaseNode {
     }
   }
 
+  /**
+   * List of parameters.
+   */
   public List<Parameter> params() {
     return LessUtils.safeList(params);
   }
 
+  /**
+   * Number of parameters.
+   */
   public int arity() {
     return params().size();
   }
 
+  /**
+   * Number of required parameters.
+   */
   public int required() {
     return required;
   }
 
+  /**
+   * Whether the {@link Mixin} is variadic.
+   */
   public boolean variadic() {
     return variadic;
   }
 
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return NodeType.MIXIN_PARAMS;
+  }
+
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return evaluate;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!needsEval()) {
@@ -82,21 +127,9 @@ public class MixinParams extends BaseNode {
     return result;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return (obj instanceof MixinParams) ? safeEquals(params, ((MixinParams)obj).params) : false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return NodeType.MIXIN_PARAMS;
-  }
-
+  /**
+   * See {@link Node#repr()}
+   */
   @Override
   public void repr(Buffer buf) {
     if (params == null) {
@@ -111,6 +144,9 @@ public class MixinParams extends BaseNode {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -122,6 +158,16 @@ public class MixinParams extends BaseNode {
       ReprUtils.modelRepr(buf, "\n", true, params);
     }
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof MixinParams) ? safeEquals(params, ((MixinParams)obj).params) : false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

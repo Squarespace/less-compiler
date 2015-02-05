@@ -249,7 +249,7 @@ public class LessEvaluator {
         FlexList<Node> other = mixinResult.rules();
         rules.splice(i, 1, other);
         i += other.size() - 1;
-        block.resetCache();
+        block.resetVariableCache();
         block.orFlags(mixinResult);
       }
     }

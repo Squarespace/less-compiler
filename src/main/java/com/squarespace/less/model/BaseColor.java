@@ -26,6 +26,9 @@ import com.squarespace.less.LessOptions;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Base class for all color nodes.
+ */
 public abstract class BaseColor extends BaseNode {
 
   public abstract Colorspace getColorspace();

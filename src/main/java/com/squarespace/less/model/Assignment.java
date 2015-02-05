@@ -51,20 +51,6 @@ public class Assignment extends BaseNode {
     return NodeType.ASSIGNMENT;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Assignment) {
-      Assignment other = (Assignment)obj;
-      return safeEquals(name, other.name) && safeEquals(value, other.value);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
   /**
    * See {@link Node#needsEval()}
    */
@@ -78,6 +64,9 @@ public class Assignment extends BaseNode {
     return value.needsEval() ? new Assignment(name, value.eval(env)) : this;
   }
 
+  /**
+   * See {@link Node#repr()}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append(name).append('=');
@@ -95,6 +84,23 @@ public class Assignment extends BaseNode {
       value.modelRepr(buf);
       buf.decrIndent();
     }
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Assignment) {
+      Assignment other = (Assignment)obj;
+      return safeEquals(name, other.name) && safeEquals(value, other.value);
+    }
+    return false;
+  }
+
+  /**
+   * See {@link BaseNode#hashCode()}
+   */
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

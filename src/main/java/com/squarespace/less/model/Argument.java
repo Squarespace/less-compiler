@@ -24,6 +24,9 @@ import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Represents an argument to a {@link MixinCall}
+ */
 public class Argument extends BaseNode {
 
   protected final String name;

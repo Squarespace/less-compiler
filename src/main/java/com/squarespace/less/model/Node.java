@@ -21,24 +21,56 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Methods common to all nodes.
+ */
 public interface Node {
 
+  /**
+   * The enumerated type of this node.
+   */
   NodeType type();
 
+  /**
+   * Line offset from start of the file for this node's definition.
+   * @return
+   */
   int lineOffset();
 
+  /**
+   * Character offset for the current line for this node's definition.
+   */
   int charOffset();
 
+  /**
+   * Sets the line offset. Typically this will only used by the parser.
+   */
+  void setLineOffset(int offset);
+
+  /**
+   * Sets the character offset. Typically this will only be used by the parser.
+   */
+  void setCharOffset(int offset);
+
+  /**
+   * Returns the opaque object associated with this node.
+   */
   Object userData();
 
+  /**
+   * Associates an opaque object with this node.
+   */
   void userData(Object obj);
 
   /**
-   * Outputs the original LESS representation of this node.
+   * Returns the original LESS representation of this node as a string.
+   */
+  String repr();
+
+  /**
+   * Writes the original LESS representation of this node to the given {@link Buffer}.
    */
   void repr(Buffer buf);
-
-  String repr();
 
   /**
    * Outputs a human-readable representation of the model node.
@@ -61,9 +93,5 @@ public interface Node {
    * Called when a node participates on an operation.
    */
   Node operate(ExecEnv env, Operator op, Node arg) throws LessException;
-
-  void setLineOffset(int offset);
-
-  void setCharOffset(int offset);
 
 }
