@@ -17,6 +17,9 @@
 package com.squarespace.less.model;
 
 
+/**
+ * Holds the set of all known operators. This includes both logical and mathematical.
+ */
 public enum Operator {
 
   ADD ("+", "add"),
@@ -32,23 +35,35 @@ public enum Operator {
   OR ("or", "or"),
   SUBTRACT ("-", "subtract");
 
+  /**
+   * Shorthand representation for the operator.
+   */
   private final String repr;
 
+  /**
+   * Longer name for the operator.
+   */
   private final String humanRepr;
 
+  /**
+   * Constructs an operator with the given representations.
+   */
   private Operator(String repr, String humanRepr) {
     this.repr = repr;
     this.humanRepr = humanRepr;
   }
 
+  /**
+   * Returns the long name for the operator.
+   */
   public String humanRepr() {
     return humanRepr;
   }
 
-  public String toString() {
-    return repr;
-  }
-
+  /**
+   * Returns the operator value associated with the given character.
+   * Used when dealing with a single character.
+   */
   public static Operator fromChar(char ch) {
     switch (ch) {
       case '+': return ADD;
@@ -64,6 +79,9 @@ public enum Operator {
     return null;
   }
 
+  /**
+   * Returns the operator value associated with the given string.
+   */
   public static Operator fromString(String str) {
     if (str.length() == 1) {
       return fromChar(str.charAt(0));
@@ -89,6 +107,11 @@ public enum Operator {
         break;
     }
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return repr;
   }
 
 }

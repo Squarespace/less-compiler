@@ -28,26 +28,47 @@ import java.nio.file.Path;
  */
 public class ParseError extends BaseNode {
 
+  /**
+   * Path of the file in which this parse error occurred.
+   */
   protected Path filePath;
 
+  /**
+   * Error message.
+   */
   protected String errorMessage;
 
+  /**
+   * Path to the file in which this parse error occurred.
+   */
   public Path filePath() {
     return filePath;
   }
 
+  /**
+   * Error message.
+   */
   public String errorMessage() {
     return errorMessage;
   }
 
+  /**
+   * Sets the path to the file in which the error occurred.
+   */
   public void filePath(Path path) {
     this.filePath = path;
   }
 
+  /**
+   * Sets the error message.
+   */
   public void errorMessage(String message) {
     this.errorMessage = message;
   }
 
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.PARSE_ERROR;

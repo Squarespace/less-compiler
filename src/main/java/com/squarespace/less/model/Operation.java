@@ -26,61 +26,67 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.ExecEnv;
 
 /**
- * TODO: when javascript output is implemented, expressions, operations and function calls
- * should be translated into javascript calls so that they can be evaluated late.
- * Ex:
- *   ['font', [dim(12, 'px') + tweak('@fontIncrease'), tweak('@backgroundColor'), ] ]
- *
- * produces:   font: 14px #ff0301;
+ * Represents an operator being applied to a pair of operands.
  */
 public class Operation extends BaseNode {
 
+  /**
+   * Operator to be applied to the operands.
+   */
   protected final Operator operator;
 
+  /**
+   * Left-hand operand.
+   */
   protected final Node left;
 
+  /**
+   * Right-hand operand.
+   */
   protected final Node right;
 
+  /**
+   * Constructs an operation for the given operator and operands.
+   */
   public Operation(Operator operator, Node left, Node right) {
     this.operator = operator;
     this.left = left;
     this.right = right;
   }
 
+  /**
+   * Returns the left-hand operand.
+   */
   public Node left() {
     return left;
   }
 
+  /**
+   * Returns the right-hand operand.
+   */
   public Node right() {
     return right;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Operation) {
-      Operation other = (Operation)obj;
-      return operator == other.operator
-          && safeEquals(left, other.left)
-          && safeEquals(right, other.right);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.OPERATION;
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return true;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     Node op0 = left.needsEval() ? left.eval(env) : left;
@@ -111,6 +117,9 @@ public class Operation extends BaseNode {
     return op0.operate(env, operator, op1);
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append('(');
@@ -120,6 +129,9 @@ public class Operation extends BaseNode {
     buf.append(')');
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -133,6 +145,9 @@ public class Operation extends BaseNode {
     buf.decrIndent();
   }
 
+  /**
+   * Casts the node to a more specific type.
+   */
   private Node cast(Node node) {
     if (node instanceof Keyword) {
       Keyword kwd = (Keyword)node;
@@ -140,6 +155,22 @@ public class Operation extends BaseNode {
       return color == null ? kwd : color;
     }
     return node;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Operation) {
+      Operation other = (Operation)obj;
+      return operator == other.operator
+          && safeEquals(left, other.left)
+          && safeEquals(right, other.right);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

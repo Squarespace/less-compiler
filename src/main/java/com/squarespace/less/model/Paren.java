@@ -23,43 +23,57 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Wraps another node in parenthesis.
+ */
 public class Paren extends BaseNode {
 
+  /**
+   * Value to be wrapped.
+   */
   protected final Node value;
 
+  /**
+   * Wraps the given value in parenthesis.
+   */
   public Paren(Node value) {
     this.value = value;
   }
 
+  /**
+   * Returns the wrapped value.
+   */
   public Node value() {
     return value;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return (obj instanceof Paren) ? safeEquals(value, ((Paren)obj).value) : false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.PAREN;
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return value.needsEval();
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     return value.needsEval() ? new Paren(value.eval(env)) : this;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append('(');
@@ -67,6 +81,9 @@ public class Paren extends BaseNode {
     buf.append(')');
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -78,6 +95,16 @@ public class Paren extends BaseNode {
       value.modelRepr(buf);
       buf.decrIndent();
     }
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof Paren) ? safeEquals(value, ((Paren)obj).value) : false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

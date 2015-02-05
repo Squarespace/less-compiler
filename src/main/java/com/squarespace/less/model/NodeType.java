@@ -18,8 +18,7 @@ package com.squarespace.less.model;
 
 
 /**
- * A NodeType can refer to a specific type (COLOR) or an abstract type (ENTITY).
- * It is used for fast identification of nodes, registration of node parsers, etc.
+ * Identifies the type of each node in the system.
  */
 public enum NodeType {
 

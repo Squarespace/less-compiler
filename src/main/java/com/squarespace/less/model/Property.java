@@ -21,16 +21,54 @@ import static com.squarespace.less.core.LessUtils.safeEquals;
 import com.squarespace.less.core.Buffer;
 
 
+/**
+ * The property name for a {@link Rule}
+ */
 public class Property extends BaseNode {
 
+  /**
+   * Name of the property.
+   */
   protected final String name;
 
+  /**
+   * Constructs a property with the given name,
+   */
   public Property(String name) {
     this.name = name;
   }
 
+  /**
+   * Returns the property's name.
+   */
   public String name() {
     return name;
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return NodeType.PROPERTY;
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    buf.append(name);
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append(' ').append(name);
   }
 
   @Override
@@ -41,23 +79,6 @@ public class Property extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return NodeType.PROPERTY;
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    buf.append(name);
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append(' ').append(name);
   }
 
 }

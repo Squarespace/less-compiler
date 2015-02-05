@@ -28,26 +28,57 @@ import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * A quoted string which may contain embedded variables.
+ */
 public class Quoted extends BaseNode {
 
+  /**
+   * Default capacity for the components in the string.
+   */
   private static final int DEFAULT_CAPACITY = 3;
 
+  /**
+   * Delimiter for the quoted string, either \' or \"
+   */
   protected final char delim;
 
+  /**
+   * Components that make up the string. Some of these may be variable
+   * references.
+   */
   protected List<Node> parts;
 
+  /**
+   * Indicates whether the string is escaped. If true, it will be emitted
+   * without the start/end delimiters.
+   */
   protected boolean escaped;
 
+  /**
+   * Indicates whether any of the parts require evaluation.
+   */
   protected boolean evaluate;
 
+  /**
+   * Constructs an empty string with the given delimiter character.
+   */
   public Quoted(char delim) {
     this(delim, false);
   }
 
+  /**
+   * Constructs an empty string with the given delimiter character, and setting
+   * the value for the escape flag.
+   */
   public Quoted(char delim, boolean escape) {
     this(delim, escape, null);
   }
 
+  /**
+   * Constructs an empty string with the given delimiter character, setting
+   * the value for the escape flag, and setting the initial parts.
+   */
   public Quoted(char delim, boolean escape, List<Node> parts) {
     this.delim = delim;
     this.escaped = escape;
@@ -59,34 +90,116 @@ public class Quoted extends BaseNode {
     }
   }
 
+  /**
+   * Returns the delimiter character.
+   */
   public char delimiter() {
     return delim;
   }
 
+  /**
+   * Indicates whether the string is escaped. See {@link #escaped}.
+   */
   public boolean escaped() {
     return escaped;
   }
 
+  /**
+   * Returns the list of component parts for the string.
+   */
   public List<Node> parts() {
     return parts;
   }
 
+  /**
+   * Sets the escape flag.
+   */
   public void setEscape(boolean flag) {
     this.escaped = flag;
   }
 
+  /**
+   * Appends a part to the string.
+   */
   public void append(Node node) {
     this.parts = LessUtils.initList(parts, DEFAULT_CAPACITY);
     this.parts.add(node);
     this.evaluate |= node.needsEval();
   }
 
+  /**
+   * Copies the string.
+   */
   public Quoted copy() {
     Quoted res = new Quoted(delim);
     for (Node part : parts) {
       res.append(part);
     }
     return res;
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return QUOTED;
+  }
+
+  /**
+   * See {@link Node#needsEval()}
+   */
+  @Override
+  public boolean needsEval() {
+    return evaluate;
+  }
+
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
+  @Override
+  public Node eval(ExecEnv env) throws LessException {
+    if (!evaluate) {
+      return this;
+    }
+    int size = parts.size();
+    List<Node> result = new ArrayList<>(size);
+    for (int i = 0; i < size; i++) {
+      result.add(parts.get(i).eval(env));
+    }
+    return new Quoted(delim, escaped, result);
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    if (escaped) {
+      buf.append('~');
+    }
+    buf.append(delim);
+    int size = parts.size();
+    for (int i = 0; i < size; i++) {
+      parts.get(i).repr(buf);
+    }
+    buf.append(delim);
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append(" delim=").append(delim);
+    if (escaped) {
+      buf.append(" [escaped]");
+    }
+    buf.append('\n').incrIndent();
+    ReprUtils.modelRepr(buf, "\n", true, parts);
+    buf.decrIndent();
   }
 
   @Override
@@ -102,55 +215,5 @@ public class Quoted extends BaseNode {
   public int hashCode() {
     return super.hashCode();
   }
-
-  @Override
-  public NodeType type() {
-    return QUOTED;
-  }
-
-  @Override
-  public boolean needsEval() {
-    return evaluate;
-  }
-
-  @Override
-  public Node eval(ExecEnv env) throws LessException {
-    if (!evaluate) {
-      return this;
-    }
-    int size = parts.size();
-    List<Node> result = new ArrayList<>(size);
-    for (int i = 0; i < size; i++) {
-      result.add(parts.get(i).eval(env));
-    }
-    return new Quoted(delim, escaped, result);
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    if (escaped) {
-      buf.append('~');
-    }
-    buf.append(delim);
-    int size = parts.size();
-    for (int i = 0; i < size; i++) {
-      parts.get(i).repr(buf);
-    }
-    buf.append(delim);
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append(" delim=").append(delim);
-    if (escaped) {
-      buf.append(" [escaped]");
-    }
-    buf.append('\n').incrIndent();
-    ReprUtils.modelRepr(buf, "\n", true, parts);
-    buf.decrIndent();
-  }
-
 
 }

@@ -24,19 +24,33 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.FlexList;
 
 
+/**
+ * Representation utility methods.
+ */
 public class ReprUtils {
 
   private ReprUtils() {
   }
 
+  /**
+   * Emits the {@link Node#modelRepr(Buffer)} for all nodes in the list.
+   */
   public static void modelRepr(Buffer buf, Collection<? extends Node> nodes) {
     modelRepr(buf, null, false, nodes);
   }
 
+  /**
+   * Emits the {@link Node#modelRepr(Buffer)} for all nodes in the list, separated
+   * by the delimiter character.
+   */
   public static void modelRepr(Buffer buf, String delim, List<? extends Node> nodes) {
     modelRepr(buf, delim, false, nodes);
   }
 
+  /**
+   * Emits the {@link Node#modelRepr(Buffer)} for all nodes in the list, separated
+   * by the delimiter character.
+   */
   public static void modelRepr(Buffer buf, String delim, boolean indent, Collection<? extends Node> nodes) {
     if (nodes != null) {
       Iterator<? extends Node> iter = nodes.iterator();
@@ -55,6 +69,10 @@ public class ReprUtils {
     }
   }
 
+  /**
+   * Emits the {@link Node#modelRepr(Buffer)} for all rules in the {@link FlexList}, separated
+   * by the delimiter character.
+   */
   public static void modelRepr(Buffer buf, String delim, boolean indent, FlexList<? extends Node> rules) {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
