@@ -23,34 +23,60 @@ import com.squarespace.less.exec.ExecEnv;
 
 
 /**
+ * <p>
  * A Mixin is a macro that has a few function-like properties.  When a mixin
- * is called, the mixin is "unrolled" into the calling scope, similar
- * to the way a macro would be expanded.
+ * is called, the mixin is expanded into the calling scope.
+ *</p>
  *
+ *<p>
  * A mixin is not a proper function, as the mixin body's local scope is
- * intermingled with the caller's.  It can see variables in the caller's scope.
+ * intermingled with the caller's, so it can see variables in the caller's scope.
+ * </p>
+ *
+ * <p>
  * The values of local variables depend heavily on the order of evaluation
  * inside the mixin body and can lead to confusing outcomes.
- *
- * A spec is being written which will contain illustrations of how mixin
- * evaluation works in less.js 1.3.3 - phensley.
+ * </p>
  */
 public class Mixin extends BlockNode {
 
+  /**
+   * Name of the mixin.
+   */
   protected final String name;
 
+  /**
+   * Mixin's parameters.
+   */
   protected final MixinParams params;
 
+  /**
+   * Mixin's optional guard expression.
+   */
   protected final Guard guard;
 
+  /**
+   * Closure attached to this mixin definition.
+   */
   protected ExecEnv closure;
 
+  /**
+   * Number of times this mixin's body has been evaluated. Used to detect
+   * and limit recursion.
+   */
   protected int entryCount;
 
+  /**
+   * Constructs a mixin with the given name, parameters and guard expression.
+   */
   public Mixin(String name, MixinParams params, Guard guard) {
     this(name, params, guard, new Block());
   }
 
+  /**
+   * Constructs a mixin with the given name, parameters and guard expression,
+   * with the given block.
+   */
   public Mixin(String name, MixinParams params, Guard guard, Block block) {
     super(block);
     this.name = name;
@@ -58,8 +84,12 @@ public class Mixin extends BlockNode {
     this.guard = guard;
   }
 
+  /**
+   * Creates a copy of this mixin.
+   */
   public Mixin copy() {
     Mixin result = new Mixin(name, params, guard, block.copy());
+    result.copyBase(this);
     result.closure = closure;
     if (originalBlockNode != null) {
       result.originalBlockNode = originalBlockNode;
@@ -67,59 +97,73 @@ public class Mixin extends BlockNode {
     return result;
   }
 
+  /**
+   * Returns the mixin's name.
+   */
   public String name() {
     return name;
   }
 
+  /**
+   * Returns the mixin's parameters.
+   */
   public MixinParams params() {
     return params;
   }
 
+  /**
+   * Returns the mixin's guard expression.
+   */
   public Guard guard() {
     return guard;
   }
 
+  /**
+   * Returns the number of times this mixin's body has been evaluated.
+   */
   public int entryCount() {
     return entryCount;
   }
 
+  /**
+   * Begins evaluating the mixin's body.
+   */
   public void enter() {
     entryCount++;
   }
 
+  /**
+   * Ends evaluating the mixin's body.
+   */
   public void exit() {
     entryCount--;
   }
 
+  /**
+   * Returns the closure environment attached to the mixin's definition.
+   */
   public ExecEnv closure() {
     return closure;
   }
 
+  /**
+   * Sets the closure on this mixin definition.
+   */
   public void closure(ExecEnv env) {
     this.closure = env.copy();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Mixin) {
-      Mixin other = (Mixin)obj;
-      return safeEquals(name, other.name)
-          && safeEquals(params, other.params)
-          && safeEquals(guard, other.guard);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.MIXIN;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append(name).append('(');
@@ -146,6 +190,9 @@ public class Mixin extends BlockNode {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -168,6 +215,22 @@ public class Mixin extends BlockNode {
     buf.indent();
     super.modelRepr(buf);
     buf.decrIndent().append('\n');
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Mixin) {
+      Mixin other = (Mixin)obj;
+      return safeEquals(name, other.name)
+          && safeEquals(params, other.params)
+          && safeEquals(guard, other.guard);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

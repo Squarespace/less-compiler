@@ -27,26 +27,50 @@ import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Arguments to a mixin call.
+ */
 public class MixinCallArgs extends BaseNode {
 
+  /**
+   * The argument delimiter.
+   */
   protected final char delimiter;
 
+  /**
+   * List of arguments.
+   */
   protected List<Argument> args;
 
+  /**
+   * Indicates whether any of the arguments require evaluation.
+   */
   protected boolean evaluate;
 
+  /**
+   * Constructs mixin call arguments with the given delimiter.
+   */
   public MixinCallArgs(char delimiter) {
     this.delimiter = delimiter;
   }
 
+  /**
+   * Returns the argument delimiter character.
+   */
   public char delim() {
     return delimiter;
   }
 
+  /**
+   * Returns the arguments.
+   */
   public List<Argument> args() {
     return LessUtils.safeList(args);
   }
 
+  /**
+   * Adds an argument.
+   */
   public void add(Argument arg) {
     if (arg == null) {
       throw new LessInternalException("Serious error: arg cannot be null.");
@@ -56,34 +80,32 @@ public class MixinCallArgs extends BaseNode {
     evaluate |= arg.needsEval();
   }
 
+  /**
+   * Indicates whether there are any arguments.
+   */
   public boolean isEmpty() {
     return args().isEmpty();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof MixinCallArgs) {
-      MixinCallArgs other = (MixinCallArgs)obj;
-      return delimiter == other.delimiter && safeEquals(args, other.args);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.MIXIN_ARGS;
   }
 
+  /**
+   * See {@link Node#needsEval()}
+   */
   @Override
   public boolean needsEval() {
     return evaluate;
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (!evaluate) {
@@ -96,6 +118,9 @@ public class MixinCallArgs extends BaseNode {
     return res;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append('(');
@@ -114,12 +139,29 @@ public class MixinCallArgs extends BaseNode {
     buf.append(')');
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     buf.append(type().toString()).append(" delim=").append(delimiter).append('\n');
     buf.incrIndent();
     ReprUtils.modelRepr(buf, "\n", true, args);
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof MixinCallArgs) {
+      MixinCallArgs other = (MixinCallArgs)obj;
+      return delimiter == other.delimiter && safeEquals(args, other.args);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

@@ -20,45 +20,79 @@ import java.nio.file.Path;
 
 
 /**
- * A dummy node which is placed into a block to indicate where a MIXIN
- * call's generated nodes begin and end.
+ * A dummy node which is placed into a block to indicate where a {@link MixinCall}
+ * generated nodes begin and end.
  */
 public class MixinMarker extends BaseNode {
 
+  /**
+   * Mixin call whose beginning and end are being marked.
+   */
   protected final MixinCall call;
 
+  /**
+   * The mixin definition being called.
+   */
   protected final BlockNode definition;
 
+  /**
+   * Indicates whether this marker is the beginning or end.
+   */
   protected final boolean beginning;
 
+  /**
+   * Path to the file in which the mixin call is defined.
+   */
   protected Path fileName;
 
+  /**
+   * Constructs a mixin marker with the given call, definition, and beginning/end
+   * indicator.
+   */
   public MixinMarker(MixinCall call, BlockNode definition, boolean begin) {
     this.call = call;
     this.definition = definition;
     this.beginning = begin;
   }
 
+  /**
+   * Returns the mixin call associated with this marker.
+   */
   public MixinCall mixinCall() {
     return call;
   }
 
+  /**
+   * Returns the mixin definition associated with this marker.
+   */
   public BlockNode mixinDefinition() {
     return definition;
   }
 
+  /**
+   * Returns the path to the file in which this mixin call was defined.
+   */
   public Path fileName() {
     return fileName;
   }
 
-  public boolean beginning() {
-    return beginning;
-  }
-
+  /**
+   * Sets the path to the filename in which this mixin call was defined.
+   */
   public void fileName(Path path) {
     this.fileName = path;
   }
 
+  /**
+   * Indicates if this marker is for the beginning or end of the call.
+   */
+  public boolean beginning() {
+    return beginning;
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.MIXIN_MARKER;

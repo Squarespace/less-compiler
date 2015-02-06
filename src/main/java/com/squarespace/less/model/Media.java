@@ -22,53 +22,76 @@ import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * <p>
+ * A CSS media block.
+ * </p>
+ *
+ * Example:
+ * <pre>
+ *     {@literal @}media print {
+ *        ...
+ *     }
+ * </pre>
+ */
 public class Media extends BlockNode {
 
+  /**
+   * {@link Features} attached to the media block.
+   */
   protected final Features features;
 
+  /**
+   * Constructs an empty media block with empty features.
+   */
   public Media() {
     features = new Features();
   }
 
+  /**
+   * Constructs an empty media block with the given features.
+   */
   public Media(Features features) {
     this.features = features;
   }
 
+  /**
+   * Constructs a media node with the given block and features.
+   */
   public Media(Features features, Block block) {
     super(block);
     this.features = features;
   }
 
+  /**
+   * Creates a copy of this media node's features and block.
+   */
   public Media copy(ExecEnv env) throws LessException {
     Features temp = features == null ? null : (Features) features.eval(env);
     Media result = new Media(temp, block.copy());
+    result.copyBase(this);
     result.fileName = fileName;
     return result;
   }
 
+  /**
+   * Returns the features attached to this media node.
+   */
   public Features features() {
     return features;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Media) {
-      Media other = (Media)obj;
-      return LessUtils.safeEquals(features, other.features) && LessUtils.safeEquals(block, other.block);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.MEDIA;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append("@media ");
@@ -91,6 +114,9 @@ public class Media extends BlockNode {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -105,6 +131,20 @@ public class Media extends BlockNode {
     buf.indent();
     super.modelRepr(buf);
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Media) {
+      Media other = (Media)obj;
+      return LessUtils.safeEquals(features, other.features) && LessUtils.safeEquals(block, other.block);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }
