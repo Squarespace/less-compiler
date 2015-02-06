@@ -23,59 +23,120 @@ import java.nio.file.Path;
 import com.squarespace.less.core.Buffer;
 
 
+/**
+ * Base class for all nodes that have nested blocks.
+ */
 public abstract class BlockNode extends BaseNode {
 
+  /**
+   * Nested block associated with this node.
+   */
   protected Block block;
 
+  /**
+   * Original instance that was parsed from the document. We hold a reference
+   * to it for evaluation purposes.
+   */
   protected BlockNode originalBlockNode;
 
+  /**
+   * Indicates whether this block was marked important.
+   */
   protected boolean important;
 
+  /**
+   * Path to the file in which this node was defined.
+   */
   protected Path fileName;
 
+  /**
+   * Constructs a block node with an empty block.
+   */
   public BlockNode() {
     this(new Block());
   }
 
+  /**
+   * Constructs a block node with the associated block.
+   */
   public BlockNode(Block block) {
     this.block = block;
     this.originalBlockNode = this;
   }
 
+  /**
+   * Returns the block.
+   */
   public Block block() {
     return block;
   }
 
+  /**
+   * Returns the original (parsed) instance of this block node. Nodes can be copied
+   * during evaluation, so this provides a reference to the original instance from
+   * which the current instance was derived.
+   */
   public BlockNode original() {
     return originalBlockNode;
   }
 
+  /**
+   * Marks this as the original (parsed) instance.
+   */
   public void markOriginal() {
     originalBlockNode = this;
   }
 
+  /**
+   * Indicates whether this node is marked important.
+   */
   public boolean important() {
     return important;
   }
 
+  /**
+   * Marks this node as important.
+   */
   public void markImportant() {
     important = true;
   }
 
+  /**
+   * Adds a node to the block.
+   */
   public void add(Node node) {
     block.appendNode(node);
   }
 
+  /**
+   * Sets the nested block.
+   */
   public void setBlock(Block block) {
     this.block = block;
   }
 
+  /**
+   * Returns the path to the file in which this node was defined.
+   */
   public Path fileName() {
     return fileName;
   }
 
+  /**
+   * Sets the path to the file in which this node was defined.
+   */
   public void fileName(Path fileName) {
     this.fileName = fileName;
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    if (block != null) {
+      block.modelRepr(buf);
+    }
   }
 
   @Override
@@ -91,13 +152,6 @@ public abstract class BlockNode extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    if (block != null) {
-      block.modelRepr(buf);
-    }
   }
 
 }

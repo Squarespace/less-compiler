@@ -22,14 +22,30 @@ import java.util.Map;
 import com.squarespace.less.core.Chars;
 
 
+/**
+ * Holds the mappings for all named CSS colors, and static instances of
+ * frequently-used colors BLACK and WHITE.
+ */
 public class Colors {
 
+  /**
+   * CSS color black.
+   */
   public static final RGBColor BLACK = new RGBColor(0, 0, 0);
 
+  /**
+   * CSS color white.
+   */
   public static final RGBColor WHITE = new RGBColor(0xff, 0xff, 0xff);
 
+  /**
+   * Mapping from CSS color names to the RGB values.
+   */
   private static final Map<String, int[]> NAME_TO_RGB = new HashMap<>();
 
+  /**
+   * Mapping from RGB values to the CSS color names.
+   */
   private static final Map<Integer, String> RGB_TO_NAME = new HashMap<>();
 
   static {
@@ -183,23 +199,41 @@ public class Colors {
     add(0x9a, 0xcd, 0x32, "yellowgreen");
   }
 
+  /**
+   * Populate the bi-directional mapping of names and RGB color values.
+   */
   private static void add(int r, int g, int b, String name) {
     NAME_TO_RGB.put(name, new int[] { r, g, b });
     RGB_TO_NAME.put(rgbToInt(r, g, b), name);
   }
 
+  /**
+   * Populate the bi-directional mapping of names and greyscale color values.
+   */
   private static void add(int c, String name) {
     add(c, c, c, name);
   }
 
+  /**
+   * Returns the RGB color channels for the given name, or {@code null} if
+   * no color is found.
+   */
   public static int[] nameToRGB(String name) {
     return NAME_TO_RGB.get(name);
   }
 
+  /**
+   * Returns the CSS color name for the given RGB color, or {@code null} if
+   * no name is found
+   */
   public static String colorToName(RGBColor color) {
     return rgbToName(color.red(), color.green(), color.blue());
   }
 
+  /**
+   * Parses a hexadecimal color string into the corresponding RGB color value.
+   * Throws an exception if the string is invalid.
+   */
   public static int[] hexToRGB(String raw) {
     int start = 0;
     int len = raw.length();
@@ -227,18 +261,33 @@ public class Colors {
     return new int[] { c0, c1, c2 };
   }
 
+  /**
+   * Adds the 3 color channels together to produce the integer representation.
+   */
   private static int rgbToInt(int r, int g, int b) {
     return (r << 16) + (g << 8) + b;
   }
 
+  /**
+   * Returns the CSS color name for the given RGB channel values, or {@code null}
+   * if no name is found.
+   */
   private static String rgbToName(int r, int g, int b) {
     return RGB_TO_NAME.get(rgbToInt(r, g, b));
   }
 
+  /**
+   * Returns the integer value for the given doubled hexadecimal character.
+   * Calling {@code component('A')} will return 0xAA.
+   */
   private static int component(char ch) {
     return component(ch, ch);
   }
 
+  /**
+   * Returns the integer value for the given hexadecimal character.
+   * Calling {@code component('8', 'A')} will return 0x8A.
+   */
   private static int component(char ch0, char ch1) {
     return (Chars.hexvalue(ch0) << 4) + Chars.hexvalue(ch1);
   }

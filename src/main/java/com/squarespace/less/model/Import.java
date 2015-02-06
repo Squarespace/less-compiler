@@ -26,72 +26,119 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Imports an external stylesheet.
+ */
 public class Import extends BaseNode {
 
+  /**
+   * Path of the stylesheet to import.
+   */
   protected final Node path;
 
+  /**
+   * Media features associated with this import.
+   */
   protected final Features features;
 
+  /**
+   * Indicates whether this stylesheet must only be imported once.
+   */
   protected final boolean once;
 
-  protected Block block;
-
+  /**
+   * Indicates whether this import statement should be evaluated.
+   */
   protected boolean suppress;
 
+  /**
+   * Path to the directory for the file.
+   */
   protected Path rootPath;
 
+  /**
+   * Name of the file to import.
+   */
   protected Path fileName;
 
+  /**
+   * Constructs an import node with the given path, features and "import once" flag.
+   */
   public Import(Node path, Features features, boolean once) {
     this.path = path;
     this.features = features;
     this.once = once;
   }
 
+  /**
+   * Returns the path value.
+   */
   public Node path() {
     return path;
   }
 
+  /**
+   * Returns the media features or {@code null}.
+   */
   public Features features() {
     return features;
   }
 
+  /**
+   * Indicates whether this stylesheet must only be imported once.
+   */
   public boolean once() {
     return once;
   }
 
-  public Block block() {
-    return block;
-  }
-
-  public void block(Block block) {
-    this.block = block;
-  }
-
+  /**
+   * Indicates whether this import must be suppressed, because the same
+   * stylesheet was imported from another place that was marked "only once".
+   */
   public boolean suppress() {
     return suppress;
   }
 
+  /**
+   * Sets the value of the suppress flag, indicating whether this node should
+   * be evaluated.
+   */
   public void suppress(boolean flag) {
     suppress = flag;
   }
 
+  /**
+   * Returns the directory for the stylesheet to be imported.
+   */
   public Path rootPath() {
     return rootPath;
   }
 
+  /**
+   * Returns the filename of the stylesheet to be imported.
+   */
   public Path fileName() {
     return fileName;
   }
 
+  /**
+   * Sets the directory for the stylesheet to be imported.
+   */
   public void rootPath(Path rootPath) {
     this.rootPath = rootPath;
   }
 
+  /**
+   * Sets the filename of the stylesheet to be imported.
+   */
   public void fileName(Path fileName) {
     this.fileName = fileName;
   }
 
+  /**
+   * Renders the path {@link Node} to get the filesystem path for the
+   * stylesheet to be imported.
+   */
   public String renderPath(ExecEnv env) throws LessException {
     Node value = path;
     if (value instanceof Url) {
@@ -142,21 +189,17 @@ public class Import extends BaseNode {
     return result;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return (obj instanceof Import) ? safeEquals(path, ((Import)obj).path) : false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.IMPORT;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append("@import");
@@ -172,6 +215,9 @@ public class Import extends BaseNode {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -187,6 +233,16 @@ public class Import extends BaseNode {
       ReprUtils.modelRepr(buf, "\n", true, features.features());
     }
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof Import) ? safeEquals(path, ((Import)obj).path) : false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

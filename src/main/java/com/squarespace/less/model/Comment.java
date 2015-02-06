@@ -26,18 +26,37 @@ import com.squarespace.less.core.Chars;
 import com.squarespace.less.core.LessInternalException;
 
 
+/**
+ * Single-line and block CSS comments.
+ */
 public class Comment extends BaseNode {
 
+  /**
+   * Body of the comment.
+   */
   protected final String body;
 
+  /**
+   * Indicates if this is a block (multi-line) comment.
+   */
   protected final boolean block;
 
+  /**
+   * Indicates if a newline should be appended when the comment is emitted.
+   */
   protected final boolean newline;
 
+  /**
+   * Constructs a comment with the given body, indicating if it is a block-style comment.
+   */
   public Comment(String body, boolean block) {
     this(body, block, false);
   }
 
+  /**
+   * Constructs a comment with the given body, indicating if it is a block-style comment,
+   * and if a newline should be added.
+   */
   public Comment(String body, boolean block, boolean newline) {
     if (body == null) {
       throw new LessInternalException("Serious error: body cannot be null.");
@@ -47,41 +66,47 @@ public class Comment extends BaseNode {
     this.newline = newline;
   }
 
+  /**
+   * Returns the body of the comment.
+   */
   public String body() {
     return body;
   }
 
+  /**
+   * Indicates whether this is a block-style comment.
+   */
   public boolean block() {
     return block;
   }
 
+  /**
+   * Indicates whether a newline should be emitted after the comment.
+   */
   public boolean newline() {
     return newline;
   }
 
+  /**
+   * Indicates if this comment body starts with an exclamation character.
+   * When the final output is "minified", comments are removed. If a comment
+   * starts with a '!' it will be retained.
+   */
   public boolean hasBang() {
     return !body.isEmpty() && body.charAt(0) == Chars.EXCLAMATION_MARK;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Comment) {
-      Comment other = (Comment)obj;
-      return block == other.block && safeEquals(body, other.body);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return COMMENT;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     // Emit comments if we're not compressing the output, or if this is a block comment
@@ -98,6 +123,9 @@ public class Comment extends BaseNode {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -108,6 +136,20 @@ public class Comment extends BaseNode {
     buf.indent();
     buf.append(StringEscapeUtils.escapeJava(body));
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Comment) {
+      Comment other = (Comment)obj;
+      return block == other.block && safeEquals(body, other.body);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

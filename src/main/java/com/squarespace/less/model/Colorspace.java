@@ -17,6 +17,9 @@
 package com.squarespace.less.model;
 
 
+/**
+ * Colorspaces RGB or HSL.
+ */
 public enum Colorspace {
 
   RGB,

@@ -23,23 +23,42 @@ package com.squarespace.less.model;
  */
 public class ImportMarker extends BaseNode {
 
+  /**
+   * Import statement we're marking.
+   */
   protected final Import importStatement;
 
+  /**
+   * Whether this marks the beginning or end.
+   */
   protected final boolean beginning;
 
+  /**
+   * Constructs a marker for the given import statement, setting the
+   * begin/end flag.
+   */
   public ImportMarker(Import imp, boolean begin) {
     this.importStatement = imp;
     this.beginning = begin;
   }
 
+  /**
+   * Returns the import statement being marked.
+   */
   public Import importStatement() {
     return importStatement;
   }
 
+  /**
+   * Indicates whether this marks the beginning or end.
+   */
   public boolean beginning() {
     return beginning;
   }
 
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.IMPORT_MARKER;

@@ -21,44 +21,59 @@ import static com.squarespace.less.core.LessUtils.safeEquals;
 import com.squarespace.less.core.Buffer;
 
 
+/**
+ * A CSS directive that has an associated block.
+ *
+ * Example:
+ * <pre>
+ *     {@literal @}-webkit-keyframes frames {
+ *         ...
+ *     }
+ * </pre>
+ */
 public class BlockDirective extends BlockNode {
 
+  /**
+   * Name of the block directive.
+   */
   protected final String name;
 
+  /**
+   * Constructs a block directive with the given name and block.
+   */
   public BlockDirective(String name, Block block) {
     this.name = name;
     setBlock(block);
   }
 
+  /**
+   * Returns the name of the block directive.
+   */
   public String name() {
     return name;
   }
 
+  /**
+   * Copies the block directive.
+   */
   public BlockDirective copy() {
     BlockDirective result = new BlockDirective(name, block.copy());
+    result.copyBase(this);
     result.fileName = fileName;
     return result;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof BlockDirective) {
-      BlockDirective other = (BlockDirective)obj;
-      return safeEquals(name, other.name) && super.equals(obj);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.BLOCK_DIRECTIVE;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     buf.append(name);
@@ -77,6 +92,9 @@ public class BlockDirective extends BlockNode {
     }
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -85,6 +103,20 @@ public class BlockDirective extends BlockNode {
     buf.incrIndent().indent();
     super.modelRepr(buf);
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof BlockDirective) {
+      BlockDirective other = (BlockDirective)obj;
+      return safeEquals(name, other.name) && super.equals(obj);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

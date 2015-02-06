@@ -22,16 +22,58 @@ import static com.squarespace.less.model.NodeType.KEYWORD;
 import com.squarespace.less.core.Buffer;
 
 
+/**
+ * <p>
+ * A LESS / CSS keyword string.
+ * </p>
+ *
+ * Example: {@code border: 1px solid red} both solid and red are keywords.
+ */
 public class Keyword extends BaseNode {
 
+  /**
+   * Keyword string value.
+   */
   protected final String value;
 
+  /**
+   * Constructs a keyword with the given string value.
+   */
   public Keyword(String value) {
     this.value = value;
   }
 
+  /**
+   * Returns the keyword string value.
+   */
   public String value() {
     return value;
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return KEYWORD;
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    buf.append(value);
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append(' ').append(value);
   }
 
   @Override
@@ -42,23 +84,6 @@ public class Keyword extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return KEYWORD;
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    buf.append(value);
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append(' ').append(value);
   }
 
 }
