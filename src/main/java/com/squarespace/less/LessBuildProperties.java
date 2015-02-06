@@ -33,24 +33,34 @@ public class LessBuildProperties {
   private static final Properties properties = load();
 
   public static String version() {
-    return properties.getProperty("build.version", UNDEFINED);
+    return get("build.version");
   }
 
   public static String date() {
-    return properties.getProperty("build.date", UNDEFINED);
+    return get("build.date");
   }
 
   public static String commit() {
-    return properties.getProperty("build.commit", UNDEFINED);
+    return get("build.commit");
+  }
+
+  private static String get(String name) {
+    String value = properties.getProperty(name, UNDEFINED);
+    return (value.startsWith("@")) ? UNDEFINED : value;
   }
 
   private static Properties load() {
     Properties properties = new Properties();
     try (InputStream in = LessBuildProperties.class.getResourceAsStream(BUILD_PROPERTIES)) {
-      properties.load(in);
+      if (in == null) {
+        System.err.println("WARNING: build.properties could not be located");
+      } else {
+        properties.load(in);
+      }
     } catch (IOException e) {
-      System.err.println("Warning: build.properties failed to load: " + e.getMessage());
+      System.err.println("WARNING: build.properties failed to load: " + e.getMessage());
     }
     return properties;
   }
+
 }

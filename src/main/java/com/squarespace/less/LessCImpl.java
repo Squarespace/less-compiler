@@ -134,7 +134,7 @@ public class LessCImpl extends LessBaseCommand {
        .append(IMPLNAME);
     if (verbose) {
       buf.append("\n  version: ").append(LessBuildProperties.version())
-         .append("\n      date: ").append(LessBuildProperties.date())
+         .append("\n     date: ").append(LessBuildProperties.date())
          .append("\n   commit: ").append(LessBuildProperties.commit());
     }
     return buf.toString();
