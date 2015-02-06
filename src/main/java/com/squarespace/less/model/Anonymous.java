@@ -24,16 +24,31 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
 
 
+/**
+ * Anonymous nodes are used any time an opaque string.
+ */
 public class Anonymous extends BaseNode {
 
+  /**
+   * Default value for anonymous nodes are the empty string.
+   */
   private static final String EMPTY = "";
 
+  /**
+   * String value to be emitted.
+   */
   protected final String value;
 
+  /**
+   * Constructs an anonymous string with an empty string.
+   */
   public Anonymous() {
     this.value = EMPTY;
   }
 
+  /**
+   * Constructs an anonymous string with the given {@code value}.
+   */
   public Anonymous(String value) {
     if (value == null) {
       throw new LessInternalException("Serious error: value cannot be null.");
@@ -41,8 +56,41 @@ public class Anonymous extends BaseNode {
     this.value = value;
   }
 
+  /**
+   * Returns the string value.
+   */
   public String value() {
     return value;
+  }
+
+  /**
+   * See {@link Node#type()}
+   */
+  @Override
+  public NodeType type() {
+    return NodeType.ANONYMOUS;
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    buf.append(value);
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append(" \"");
+    if (value != null) {
+      buf.append(StringEscapeUtils.escapeJava(value));
+    }
+    buf.append('"');
   }
 
   @Override
@@ -53,27 +101,6 @@ public class Anonymous extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public NodeType type() {
-    return NodeType.ANONYMOUS;
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    buf.append(value);
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append(" \"");
-    if (value != null) {
-      buf.append(StringEscapeUtils.escapeJava(value));
-    }
-    buf.append('"');
   }
 
 }

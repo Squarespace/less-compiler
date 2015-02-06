@@ -31,22 +31,41 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public abstract class BaseColor extends BaseNode {
 
+  /**
+   * Returns the colorspace for the node.
+   */
   public abstract Colorspace getColorspace();
 
+  /**
+   * Converts this color to an {@link RGBColor}
+   */
   public abstract RGBColor toRGB();
 
+  /**
+   * Converts this color to an {@link HSLColor}
+   */
   public abstract HSLColor toHSL();
 
+  /**
+   * Parse a hexadecimal color representation into an {@link RGBColor}.
+   */
   public static RGBColor fromHex(String raw) {
     int[] c = Colors.hexToRGB(raw);
     return new RGBColor(c[0], c[1], c[2]);
   }
 
+  /**
+   * Convert a dimension's value into an {@link RGBColor}.  The value will
+   * be used for all 3 color channels.
+   */
   public static RGBColor fromDimension(Dimension dim) {
     int val = (int)dim.value();
     return new RGBColor(val, val, val);
   }
 
+  /**
+   * Convert a color name to its {@link RGBColor} instance.
+   */
   public static RGBColor fromName(String name) {
     int[] c = Colors.nameToRGB(name);
     if (c != null) {
@@ -55,15 +74,24 @@ public abstract class BaseColor extends BaseNode {
     return null;
   }
 
+  /**
+   * Clamp the color channel's value into the specified range.
+   */
   public static double clamp(double val, double min, double max) {
     return Math.min(Math.max(val, min), max);
   }
 
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return COLOR;
   }
 
+  /**
+   * See {@link Node#operate(ExecEnv, Operator, Node)}
+   */
   @Override
   public Node operate(ExecEnv env, Operator op, Node arg) throws LessException {
     LessOptions opts = env.context().options();
@@ -97,6 +125,9 @@ public abstract class BaseColor extends BaseNode {
     }
   }
 
+  /**
+   * Implements mathematical operations for colors.
+   */
   private BaseColor operate(Operator op, BaseColor arg0, BaseColor arg1) throws LessException {
     RGBColor c0 = arg0.toRGB();
     RGBColor c1 = arg1.toRGB();

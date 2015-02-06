@@ -27,25 +27,72 @@ import com.squarespace.less.core.LessUtils;
 
 /**
  * Represents an attribute pattern match element.
+ *
+ * Example: {@code .a[href~='squarespace'] }
  */
 public class AttributeElement extends Element {
 
+  /**
+   * Parts of the attribute element.
+   */
   protected List<Node> parts;
 
+  /**
+   * Constructs an attribute element with the given combinator.
+   */
   public AttributeElement(Combinator comb) {
     super(comb);
   }
 
+  /**
+   * Returns the parts of the attribute element.
+   */
   public List<Node> parts() {
     return LessUtils.safeList(parts);
   }
 
+  /**
+   * Adds a part to the attribute element.
+   */
   public void add(Node part) {
     if (part == null) {
       throw new LessInternalException("Serious error: part cannot be null.");
     }
     parts = LessUtils.initList(parts, 2);
     parts.add(part);
+  }
+
+  /**
+   * See {@link Element#isWildcard()}
+   */
+  @Override
+  public boolean isWildcard() {
+    return false;
+  }
+
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
+  @Override
+  public void repr(Buffer buf) {
+    buf.append('[');
+    for (Node part : parts) {
+      part.repr(buf);
+    }
+    buf.append(']');
+  }
+
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append('\n');
+    buf.incrIndent();
+    ReprUtils.modelRepr(buf, "\n", true, parts);
+    buf.decrIndent();
   }
 
   @Override
@@ -60,30 +107,6 @@ public class AttributeElement extends Element {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  @Override
-  public boolean isWildcard() {
-    return false;
-  }
-
-  @Override
-  public void repr(Buffer buf) {
-    buf.append('[');
-    for (Node part : parts) {
-      part.repr(buf);
-    }
-    buf.append(']');
-  }
-
-  @Override
-  public void modelRepr(Buffer buf) {
-    typeRepr(buf);
-    posRepr(buf);
-    buf.append('\n');
-    buf.incrIndent();
-    ReprUtils.modelRepr(buf, "\n", true, parts);
-    buf.decrIndent();
   }
 
 }

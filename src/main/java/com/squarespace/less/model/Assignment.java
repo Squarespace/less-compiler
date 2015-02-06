@@ -24,12 +24,27 @@ import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.exec.ExecEnv;
 
 
+/**
+ * Used to represent a "name = value" part of a function call.  An example of
+ * this is the IE filter properties:
+ *
+ *   filter: progid:DXImageTransform.Microsoft.Alpha( opacity=50 )
+ */
 public class Assignment extends BaseNode {
 
+  /**
+   * Assignment's name part.
+   */
   protected final String name;
 
+  /**
+   * Assignment's value part.
+   */
   protected final Node value;
 
+  /**
+   * Constructs an assignment with the given name and value.
+   */
   public Assignment(String name, Node value) {
     if (name == null || value == null) {
       throw new LessInternalException("Serious error: name/value cannot be null.");
@@ -38,14 +53,23 @@ public class Assignment extends BaseNode {
     this.value = value;
   }
 
+  /**
+   * Returns the assignment's name.
+   */
   public String name() {
     return name;
   }
 
+  /**
+   * Returns the assignment's value.
+   */
   public Node value() {
     return value;
   }
 
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.ASSIGNMENT;
@@ -59,6 +83,9 @@ public class Assignment extends BaseNode {
     return value.needsEval();
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     return value.needsEval() ? new Assignment(name, value.eval(env)) : this;
@@ -73,6 +100,9 @@ public class Assignment extends BaseNode {
     value.repr(buf);
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
@@ -95,9 +125,6 @@ public class Assignment extends BaseNode {
     return false;
   }
 
-  /**
-   * See {@link BaseNode#hashCode()}
-   */
   @Override
   public int hashCode() {
     return super.hashCode();

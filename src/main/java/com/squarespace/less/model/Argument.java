@@ -25,18 +25,30 @@ import com.squarespace.less.exec.ExecEnv;
 
 
 /**
- * Represents an argument to a {@link MixinCall}
+ * Represents an argument to a {@link MixinCall}. The argument may have an optional name.
  */
 public class Argument extends BaseNode {
 
+  /**
+   * Argument's name.
+   */
   protected final String name;
 
+  /**
+   * Argument's value.
+   */
   protected final Node value;
 
+  /**
+   * Constructs an argument with the given {@code value}.
+   */
   public Argument(Node value) {
     this(null, value);
   }
 
+  /**
+   * Constructs a named argument with the given {@code value}.
+   */
   public Argument(String name, Node value) {
     if (value == null) {
       throw new LessInternalException("Serious error: value cannot be null");
@@ -45,31 +57,26 @@ public class Argument extends BaseNode {
     this.value = value;
   }
 
+  /**
+   * Returns the argument's name, which may be null.
+   */
   public String name() {
     return name;
   }
 
+  /**
+   * Returns the argument's value.
+   */
   public Node value() {
     return value;
   }
 
+  /**
+   * See {@link Node#type()}
+   */
   @Override
   public NodeType type() {
     return NodeType.ARGUMENT;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Argument) {
-      Argument other = (Argument)obj;
-      return safeEquals(name, other.name) && safeEquals(value, other.value);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
   }
 
   /**
@@ -80,11 +87,17 @@ public class Argument extends BaseNode {
     return value.needsEval();
   }
 
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
   @Override
   public Node eval(ExecEnv env) throws LessException {
     return value.needsEval() ? new Argument(name, value.eval(env)) : this;
   }
 
+  /**
+   * See {@link Node#repr(Buffer)}
+   */
   @Override
   public void repr(Buffer buf) {
     if (name != null) {
@@ -94,6 +107,9 @@ public class Argument extends BaseNode {
     value.repr(buf);
   }
 
+  /**
+   * See {@link Node#modelRepr(Buffer)}
+   */
   @Override
   public void modelRepr(Buffer buf) {
     buf.append(type().toString()).append("\n");
@@ -111,6 +127,20 @@ public class Argument extends BaseNode {
       buf.append("<null>");
     }
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Argument) {
+      Argument other = (Argument)obj;
+      return safeEquals(name, other.name) && safeEquals(value, other.value);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }
