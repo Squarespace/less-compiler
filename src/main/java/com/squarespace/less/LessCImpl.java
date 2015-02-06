@@ -125,8 +125,19 @@ public class LessCImpl extends LessBaseCommand {
     }
   }
 
-  public static String version() {
-    return PROGRAM_NAME + " compatibility=" + LESSJS_VERSION + "  " + IMPLNAME;
+  public String version() {
+    StringBuilder buf = new StringBuilder();
+    buf.append(PROGRAM_NAME)
+       .append(" compat level ")
+       .append(LESSJS_VERSION)
+       .append("  ")
+       .append(IMPLNAME);
+    if (verbose) {
+      buf.append("\n  version: ").append(LessBuildProperties.version())
+         .append("\n      date: ").append(LessBuildProperties.date())
+         .append("\n   commit: ").append(LessBuildProperties.commit());
+    }
+    return buf.toString();
   }
 
   @Override

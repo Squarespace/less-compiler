@@ -1,4 +1,5 @@
 
+import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.signing.Sign
 
 buildscript {
@@ -78,6 +79,11 @@ allprojects {
   sourceCompatibility = 1.7
   targetCompatibility = 1.7
 
+  project.ext {
+    BUILD_DATE = new java.util.Date()
+    BUILD_COMMIT = ('git rev-parse HEAD').execute().text.trim()
+  }
+
   license {
     header rootProject.file('conf/apache-2.0-header.txt')
     ext.year = Calendar.getInstance().get(Calendar.YEAR)
@@ -143,6 +149,21 @@ allprojects {
   task javadocJar(type: Jar, dependsOn:javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
+  }
+
+  processResources {
+    from (sourceSets.main.resources.srcDirs) {
+      include '**/build.properties'
+      filter(ReplaceTokens, tokens: [
+        'build.version': project.version,
+        'build.date': BUILD_DATE.toString(),
+        'build.commit': BUILD_COMMIT
+      ])
+    }
+
+    from (sourceSets.main.resources.srcDirs) {
+      exclude '**/build.properties'
+    }
   }
 
   artifacts {
