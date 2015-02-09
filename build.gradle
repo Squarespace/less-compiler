@@ -167,22 +167,8 @@ allprojects {
     }
   }
 
-  artifacts {
-    archives sourcesJar
-    archives testJar
-    archives javadocJar
-  }
-
-  jar {
-    manifest {
-      attributes 'Main-Class': 'com.squarespace.less.cli.LessC'
-    }
-
-  }
-
   task execJar(type: Jar, dependsOn: classes) {
-    baseName = project.name + '-exec'
-    archiveName = 'lessc.jar'
+    classifier = 'exec'
     manifest {
       attributes 'Main-Class': 'com.squarespace.less.cli.LessC'
     }
@@ -195,10 +181,26 @@ allprojects {
     }
   }
 
+  artifacts {
+    archives sourcesJar
+    archives testJar
+    archives javadocJar
+    archives execJar
+  }
+
+  jar {
+    manifest {
+      attributes 'Main-Class': 'com.squarespace.less.cli.LessC'
+    }
+
+  }
+
   task makeCli(type: Exec, dependsOn: execJar) {
+    def inputScript = "src/main/resources/scripts/lessc.in"
+    def inputArchive = execJar.archivePath
     workingDir '.'
     executable 'bash'
-    args '-c', 'cat src/main/resources/scripts/lessc.in build/libs/lessc.jar >lessc; chmod ug+x lessc'
+    args '-c', "cat ${inputScript} ${inputArchive} >lessc; chmod ug+x lessc"
   }
 
   uploadArchives {
