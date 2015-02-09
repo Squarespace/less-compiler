@@ -1,0 +1,2 @@
+exec java -jar "$0" "$@"
+

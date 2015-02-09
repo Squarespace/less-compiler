@@ -39,6 +39,13 @@ conversion of LESS to CSS.
  * Color keywords can participate in math operations.
  * See more complete [list of differences](DIFFERENCES.md)
 
+## Usage
+
+    git clone git@github.com:Squarespace/squarespace-less.git
+    cd squarespace-less
+    gradle makeCli
+    ./lessc -h
+
 [lessjs]: http://lesscss.org/  "Less.js"
 [nodejs]: http://nodejs.org/ "Node.js"
 [license-tldr]: https://tldrlegal.com/license/apache-license-2.0-(apache-2.0) "Apache 2.0 tl;dr"

@@ -124,8 +124,10 @@ public class LessOptions {
   }
 
   public void importPaths(List<String> paths) {
-    for (String path : paths) {
-      this.importPaths.add(Paths.get(path));
+    if (paths != null) {
+      for (String path : paths) {
+        this.importPaths.add(Paths.get(path));
+      }
     }
   }
 

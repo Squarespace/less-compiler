@@ -67,6 +67,7 @@ def configurePom(def pom) {
 allprojects {
   apply plugin: 'java'
   apply plugin: 'eclipse'
+  apply plugin: 'application'
   apply plugin: 'license'
   apply plugin: 'checkstyle'
   apply plugin: 'jacoco'
@@ -97,7 +98,7 @@ allprojects {
 
   dependencies {
     compile 'org.apache.commons:commons-lang3:3.1'
-    compile 'com.beust:jcommander:1.30'
+    compile 'net.sourceforge.argparse4j:argparse4j:0.4.4'
 
     testCompile 'org.testng:testng:6.8.7'
     testCompile 'com.googlecode.java-diff-utils:diffutils:1.3.0'
@@ -172,6 +173,33 @@ allprojects {
     archives javadocJar
   }
 
+  jar {
+    manifest {
+      attributes 'Main-Class': 'com.squarespace.less.cli.LessC'
+    }
+
+  }
+
+  task execJar(type: Jar, dependsOn: classes) {
+    baseName = project.name + '-exec'
+    archiveName = 'lessc.jar'
+    manifest {
+      attributes 'Main-Class': 'com.squarespace.less.cli.LessC'
+    }
+    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+    from {
+      configurations.runtime.collect {
+        it.isDirectory() ? it : zipTree(it)
+      }
+    }
+  }
+
+  task makeCli(type: Exec, dependsOn: execJar) {
+    workingDir '.'
+    executable 'bash'
+    args '-c', 'cat src/main/resources/scripts/lessc.in build/libs/lessc.jar >lessc; chmod ug+x lessc'
+  }
 
   uploadArchives {
     repositories.mavenDeployer {

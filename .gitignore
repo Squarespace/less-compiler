@@ -6,8 +6,10 @@
 /.settings
 /.gradle
 
+/lessc
+
 /build
 /target
 /test-output
-
 /bin/
+
