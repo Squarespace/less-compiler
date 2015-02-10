@@ -27,8 +27,8 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.squarespace.less.LessException;
@@ -50,7 +50,7 @@ public class LessCTest {
 
   private SecurityManager savedSecurityManager;
 
-  @BeforeTest
+  @BeforeMethod
   private void setUp() {
     // Trap output for the duration of a single test.
     out = new ByteArrayOutputStream();
@@ -66,7 +66,7 @@ public class LessCTest {
     System.setSecurityManager(new NoExitSecurityManager());
   }
 
-  @AfterTest
+  @AfterMethod
   private void tearDown() {
     // Revert stream / exit intercepts.
     System.setSecurityManager(savedSecurityManager);
