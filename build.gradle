@@ -191,14 +191,18 @@ allprojects {
     archives execJar
   }
 
+  mainClassName = 'com.squarespace.less.cli.LessC'
+
   jar {
     manifest {
-      attributes 'Main-Class': 'com.squarespace.less.cli.LessC'
+      attributes 'Main-Class': "${mainClassName}"
     }
 
   }
 
-  task makeCli(type: Exec, dependsOn: execJar) {
+  task makeCli(type: Exec, dependsOn: execJar,
+    description: 'Create executable "lessc" command') {
+
     def inputScript = "src/main/resources/scripts/lessc.in"
     def inputArchive = execJar.archivePath
     workingDir '.'
