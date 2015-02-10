@@ -44,7 +44,6 @@ abstract class BaseCompile {
 
   protected final PrintStream err;
 
-
   public BaseCompile(Args args, PrintStream out, PrintStream err) {
     this.args = args;
     this.out = out;

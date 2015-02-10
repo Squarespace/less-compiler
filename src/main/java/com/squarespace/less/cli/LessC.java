@@ -51,22 +51,43 @@ public class LessC {
 
   private final PrintStream err;
 
+  /**
+   * Main entry point for the command-line compiler.
+   */
   public static void main(String[] rawArgs) {
-    LessC cmd = new LessC(System.err);
-    Args args = cmd.parseArguments(rawArgs);
-    if (args != null) {
-      BaseCompile impl = null;
-      if (args.batchMode()) {
-        impl = new CompileBatch(args, System.out, System.err);
-      } else {
-        impl = new CompileSingle(args, System.out, System.err);
-      }
-      System.exit(impl.process());
-    }
+    System.exit(process(rawArgs, System.out, System.err));
   }
 
+  /**
+   * Constructs a command-line compiler which writes output to the
+   * given out and err streams.
+   */
   public LessC(PrintStream err) {
     this.err = err;
+  }
+
+  /**
+   * Effectively this is the main() method, but separated so it can be
+   * unit tested and all output captured.
+   */
+  public static int process(String[] rawArgs, PrintStream out, PrintStream err) {
+    LessC cmd = new LessC(err);
+
+    // Bit of a catch-22 here at the moment, since we need to parse the arguments
+    // and report errors before knowing which implementation to invoke.
+    Args args = cmd.parseArguments(rawArgs);
+    if (args == null) {
+      System.exit(BaseCompile.ERR);
+    }
+
+    // Select the implementation based on the parsed arguments.
+    BaseCompile impl = null;
+    if (args.batchMode()) {
+      impl = new CompileBatch(args, out, err);
+    } else {
+      impl = new CompileSingle(args, out, err);
+    }
+    return impl.process();
   }
 
   /**
