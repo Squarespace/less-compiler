@@ -38,6 +38,8 @@ import com.squarespace.less.exec.LessSuiteBase;
 
 public class LessCTest {
 
+  private static final Path suiteRootDir = LessSuiteBase.testSuiteRoot();
+
   private File tempFile;
 
   private ByteArrayOutputStream out;
@@ -82,30 +84,48 @@ public class LessCTest {
 
   @Test
   public void testCompileToStdout() throws LessException, IOException {
-    Path root = LessSuiteBase.testSuiteRoot();
-    String lessPath = root.resolve("less/directive.less").toString();
-    Path cssPath = root.resolve("css/directive.css");
+    String lessPath = suiteRootDir.resolve("less/directive.less").toString();
+    Path cssPath = suiteRootDir.resolve("css/directive.css");
     String expected = LessUtils.readFile(cssPath);
     compile(lessPath);
     assertEquals(out.toString(), expected);
   }
 
   @Test
+  public void testCompileToFile() throws LessException, IOException {
+    Path lessPath = suiteRootDir.resolve("less/directive.less");
+    Path expectedPath = suiteRootDir.resolve("css/directive.css");
+    tempFile = Files.createTempFile("lessc-unit-test", ".css").toFile();
+    compile(lessPath.toString(), tempFile.toString());
+    assertFilesEqual(expectedPath, tempFile.toPath());
+  }
+
+  @Test
+  public void testDebugParse() throws LessException, IOException {
+    Path lessPath = suiteRootDir.resolve("less/directive.less");
+    compile("--debug", "PARSE", lessPath.toString());
+    assertTrue(out.toString().contains("BLOCK_DIRECTIVE"));
+  }
+
+  @Test
+  public void testDebugCanonical() throws LessException, IOException {
+    Path lessPath = suiteRootDir.resolve("less/directive.less");
+    compile("--debug", "CANONICAL", lessPath.toString());
+    assertTrue(out.toString().contains(".ruleset-font-face {"));
+  }
+
+  @Test
   public void testBatchCompile() throws LessException, IOException {
-    Path root = LessSuiteBase.testSuiteRoot();
-    Path lessPath = root.resolve("less");
+    Path lessPath = suiteRootDir.resolve("less");
     tempFile = Files.createTempDirectory("lessc-unit-test").toFile();
     compile("--batch", lessPath.toString(), tempFile.toString());
 
-    // Compare contents of expected and actual directories.
-    Path cssPath = root.resolve("css");
+    // Compare contents of all files in expected and actual directories.
+    Path cssPath = suiteRootDir.resolve("css");
     String pattern = "glob:*.css";
-    for (Path srcPath : LessUtils.getMatchingFiles(cssPath, pattern)) {
-      Path fileName = srcPath.getFileName();
-      Path dstPath = tempFile.toPath().resolve(fileName);
-      String srcData = LessUtils.readFile(srcPath);
-      String dstData = LessUtils.readFile(dstPath);
-      assertEquals(srcData, dstData, "Comparison for file " + fileName + " failed.");
+    for (Path expectedPath : LessUtils.getMatchingFiles(cssPath, pattern)) {
+      Path actualPath = tempFile.toPath().resolve(expectedPath.getFileName());
+      assertFilesEqual(expectedPath, actualPath);
     }
   }
 
@@ -128,6 +148,12 @@ public class LessCTest {
       assertEquals(e.status, 1);
       assertTrue(out.toString().contains("usage: lessc"));
     }
+  }
+
+  private void assertFilesEqual(Path expectedPath, Path actualPath) throws IOException {
+    String srcData = LessUtils.readFile(expectedPath);
+    String dstData = LessUtils.readFile(actualPath);
+    assertEquals(srcData, dstData, "Comparison for file " + expectedPath.getFileName() + " failed.");
   }
 
   private int compile(String ... args) {
