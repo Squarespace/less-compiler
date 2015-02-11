@@ -36,17 +36,32 @@ public class ErrorUtils {
   }
 
   /**
-   * Formats an error message including a full stack trace.
+   * Formats an error message including a full stack trace, in a reusable buffer.
    */
   public static String formatError(LessContext ctx, Path mainPath, LessException exc, int indent) {
     Buffer buf = ctx.acquireBuffer();
+    String error = formatError(buf, mainPath.toString(), exc, indent);
+    ctx.returnBuffer();
+    return error;
+  }
+
+  /**
+   * Formats an error message including a full stack trace, in a newly-allocated buffer.
+   */
+  public static String formatError(Path mainPath, LessException exc, int indent) {
+    Buffer buf = new Buffer(indent);
+    return formatError(buf, mainPath.toString(), exc, indent);
+  }
+
+  /**
+   * Formats an error message including a full stack trace.
+   */
+  public static String formatError(Buffer buf, String mainPath, LessException exc, int indent) {
     buf.append("An error occurred in '" + mainPath + "':\n\n");
     StackFormatter fmt = new StackFormatter(exc.errorContext(), 4, STACK_FRAME_WINDOW);
     buf.append(fmt.format()).append('\n');
     buf.append(exc.primaryError().getMessage());
-    String result = buf.toString();
-    ctx.returnBuffer();
-    return result;
+    return buf.toString();
   }
 
 }

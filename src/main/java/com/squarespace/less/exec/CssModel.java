@@ -291,6 +291,9 @@ public class CssModel {
       }
       if (!headers.isEmpty()) {
         buf.blockClose();
+        if (!buf.compress()) {
+          buf.append('\n');
+        }
       }
     }
   }

@@ -229,13 +229,11 @@ public class Buffer {
    * Closes a nested block (right curly bracket) with optional whitespace suppression.
    */
   public void blockClose() {
-    if (compress) {
-      append('}');
-    } else {
+    if (!compress) {
       decrIndent();
       indent();
-      append("}\n");
     }
+    append('}');
   }
 
   /**
