@@ -16,6 +16,8 @@
 
 package com.squarespace.less.cli;
 
+import static com.squarespace.less.LessCompiler.LESSJS_VERSION;
+
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
@@ -43,8 +45,6 @@ public class LessC {
   private static final String LESS_REPOSITORY = "http://github.com/squarespace/squarespace-less";
 
   private static final String IMPLEMENTATION = "[Java, Squarespace]";
-
-  private static final String LESSJS_VERSION = "1.3.3";
 
   private static final String PROGRAM_NAME = "lessc";
 
@@ -125,7 +125,9 @@ public class LessC {
       .type(String.class)
       .help("Set include paths. Separated by ':'. Use ';' on Windows");
 
-    // TODO: add -l --lint syntax check
+    parser.addArgument("--lint", "-l")
+      .action(Arguments.storeTrue())
+      .help("Syntax check only (lint).");
 
     parser.addArgument("--recursion-limit", "-r")
       .metavar("LIMIT")
@@ -188,9 +190,10 @@ public class LessC {
       cmdArgs.programName = PROGRAM_NAME;
       cmdArgs.input = res.getString("input");
       cmdArgs.output = res.getString("output");
-      cmdArgs.compilerOptions = opts;
       cmdArgs.batchMode = res.getBoolean("batch");
+      cmdArgs.compilerOptions = opts;
       cmdArgs.debugMode = res.<LessDebugMode>get("debug");
+      cmdArgs.lintOnly = res.getBoolean("lint");
       cmdArgs.statistics = res.getBoolean("statistics");
       cmdArgs.verbose = res.getBoolean("verbose");
       cmdArgs.waitForUser = res.getBoolean("wait");
@@ -253,17 +256,20 @@ public class LessC {
 
     private String output;
 
-    private LessOptions compilerOptions;
-
     private boolean batchMode;
 
+    private LessOptions compilerOptions;
+
     private LessDebugMode debugMode;
+
+    private boolean lintOnly;
 
     private boolean statistics;
 
     private boolean verbose;
 
     private boolean waitForUser;
+
 
     private Args() {
     }
@@ -280,16 +286,20 @@ public class LessC {
       return output;
     }
 
-    public LessOptions compilerOptions() {
-      return compilerOptions;
-    }
-
     public boolean batchMode() {
       return batchMode;
     }
 
+    public LessOptions compilerOptions() {
+      return compilerOptions;
+    }
+
     public LessDebugMode debugMode() {
       return debugMode;
+    }
+
+    public boolean lintOnly() {
+      return lintOnly;
     }
 
     public boolean statsEnabled() {

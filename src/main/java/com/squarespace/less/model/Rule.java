@@ -162,7 +162,7 @@ public class Rule extends BaseNode {
    */
   @Override
   public boolean needsEval() {
-    return value.needsEval();
+    return property.needsEval() || value.needsEval();
   }
 
   /**

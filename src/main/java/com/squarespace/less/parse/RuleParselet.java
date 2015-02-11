@@ -47,12 +47,6 @@ public class RuleParselet implements Parselet {
       return null;
     }
 
-    String name = null;
-    if (key instanceof Property) {
-      name = ((Property)key).name();
-    } else {
-      name = ((Variable)key).name();
-    }
     Node value = null;
     stm.skipWs();
 
@@ -61,12 +55,18 @@ public class RuleParselet implements Parselet {
     // The 'font' rule has a special shorthand syntax which resembles
     // dimension division, but must be left unevaluated. We switch into
     // strict math mode for the entire rule.
-    if (name.equals("font")) {
+    if (key instanceof Property && ((Property)key).name().equals("font")) {
       stm.setRequireStrictMath(true);
     }
 
-    // Try to parse a detached ruleset.
-    value = stm.parse(BLOCK);
+    // If we're creating a variable definition, try
+    // to parse a detached ruleset.
+    if (key instanceof Variable) {
+      Variable var = (Variable)key;
+      if (!var.curly()) {
+        value = stm.parse(BLOCK);
+      }
+    }
 
     // Fall back to parsing a normal expression list.
     if (value == null) {
@@ -89,30 +89,32 @@ public class RuleParselet implements Parselet {
     if (!endPeek(stm)) {
       important = false;
       stm.restore(valueMark);
-      if (name.charAt(0) != Chars.AT_SIGN && stm.matchAnonRuleValue()) {
+      if (stm.matchAnonRuleValue()) {
         value = new Anonymous(stm.token().trim());
       }
     } else if (value == null) {
       value = new Anonymous();
     }
 
-    // Only emit a rule if we've parsed a value and found the rule ending.
-    if (value != null && end(stm)) {
-      if (key instanceof Variable) {
+    if (value == null || !end(stm)) {
+      stm.restore(ruleMark);
+      return null;
+    }
+
+    if (key instanceof Variable) {
+      Variable var = (Variable)key;
+      if (!var.curly()) {
         // Note that !important is ingored for definitions.
-        Definition def = stm.context().nodeBuilder().buildDefinition(name, value);
+        Definition def = stm.context().nodeBuilder().buildDefinition((Variable)key, value);
         def.fileName(stm.fileName());
         return def;
-
-      } else {
-        Rule rule = stm.context().nodeBuilder().buildRule((Property)key, value, important);
-        rule.fileName(stm.fileName());
-        return rule;
       }
     }
 
-    stm.restore(ruleMark);
-    return null;
+    // Rule whose property is either a Property or curly Variable.
+    Rule rule = stm.context().nodeBuilder().buildRule(key, value, important);
+    rule.fileName(stm.fileName());
+    return rule;
   }
 
   private Node parseKey(LessStream stm) throws LessException {

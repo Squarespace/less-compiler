@@ -1,0 +1,17 @@
+
+@name: color;
+
+@meta-name: name;
+
+.normal {
+    color: red;
+}
+
+.direct-ref {
+    @{name}: red;
+}
+
+.indirect-ref {
+    @@{meta-name}: red;
+}
+

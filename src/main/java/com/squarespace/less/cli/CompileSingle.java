@@ -60,6 +60,9 @@ class CompileSingle extends BaseCompile {
       if (args.debugMode() == null) {
         // Normal compile
         String result = compiler.compile(source, ctx, input.getParent(), input.getFileName());
+        if (args.lintOnly()) {
+          return OK;
+        }
         String output = args.output();
         if (output != null) {
           try {

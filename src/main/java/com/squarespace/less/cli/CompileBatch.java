@@ -45,6 +45,11 @@ class CompileBatch extends BaseCompile {
 
   @Override
   public int process() {
+    if (args.lintOnly()) {
+      log("ERROR: batch mode does not yet support lint-only mode.\n");
+      return ERR;
+    }
+
     long start = System.nanoTime();
 
     Path input = Paths.get(args.input());
