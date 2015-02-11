@@ -34,6 +34,10 @@ public class SyntaxErrorMaker {
     return error(SyntaxErrorType.ALPHA_UNITS_INVALID).arg0(arg);
   }
 
+  public static LessErrorInfo bareVariable(Object name) {
+    return error(SyntaxErrorType.BARE_VARIABLE).arg0(name);
+  }
+
   public static LessErrorInfo expected(Object thing) {
     return error(SyntaxErrorType.EXPECTED).arg0(thing);
   }

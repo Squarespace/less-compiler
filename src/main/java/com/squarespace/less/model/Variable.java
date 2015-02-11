@@ -16,6 +16,7 @@
 
 package com.squarespace.less.model;
 
+import static com.squarespace.less.core.ExecuteErrorMaker.invalidRulesetReference;
 import static com.squarespace.less.core.ExecuteErrorMaker.varUndefined;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 import static com.squarespace.less.model.NodeType.VARIABLE;
@@ -32,44 +33,45 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Variable extends BaseNode {
 
+  private static final int INDIRECT = 0x01;
+
+  private static final int CURLY = 0x02;
+
+  private static final int RULESET = 0x04;
+
   /**
    * Name of the variable.
    */
   protected final String name;
 
   /**
-   * Indicates whether the variable is an indirect reference.
+   * Flags set on this variable reference.
    */
-  protected final boolean indirect;
-
-  /**
-   * Indicates whether this variable reference is inside a {@link Quoted}.
-   */
-  protected final boolean curly;
+  protected final int flags;
 
   /**
    * Construct a variable reference with the given name.
    */
   public Variable(String name) {
-    this(name, false);
+    this(name, false, false);
   }
 
   /**
    * Construct a variable reference with the given name, and indicate whether
-   * it is inside a {@link Quoted} string.
+   * it is inside a {@link Quoted} string, and whether this variable
+   * references a detached {@link Ruleset}.
    */
-  public Variable(String name, boolean curly) {
+  public Variable(String name, boolean curly, boolean ruleset) {
+    int flags = (curly ? CURLY : 0) | (ruleset ? RULESET : 0);
     if (name == null) {
       throw new LessInternalException("Serious error: name cannot be null");
     }
     if (name.startsWith("@@")) {
       name = name.substring(1);
-      indirect = true;
-    } else {
-      indirect = false;
+      flags |= INDIRECT;
     }
     this.name = name;
-    this.curly = curly;
+    this.flags = flags;
   }
 
   /**
@@ -83,14 +85,22 @@ public class Variable extends BaseNode {
    * Indicates whether this is an indirect reference.
    */
   public boolean indirect() {
-    return indirect;
+    return (flags & INDIRECT) != 0;
   }
 
   /**
    * Indicates whether this variable reference is inside a {@link Quoted} string.
    */
   public boolean curly() {
-    return curly;
+    return (flags & CURLY) != 0;
+  }
+
+  /**
+   * Indicates whether this variable references a detached {@link Ruleset}.
+   * @return
+   */
+  public boolean ruleset() {
+    return (flags & RULESET) != 0;
   }
 
   /**
@@ -98,7 +108,16 @@ public class Variable extends BaseNode {
    */
   protected Node dereference(Definition def, ExecEnv env) throws LessException {
     Node result = def.dereference(env);
-    if (!indirect) {
+
+    // Check if this variable is a detached ruleset reference.
+    if (ruleset()) {
+      if (result instanceof Block) {
+        return result;
+      }
+      throw new LessException(invalidRulesetReference(name, result.type()));
+    }
+
+    if (!indirect()) {
       return result;
     }
 
@@ -144,16 +163,19 @@ public class Variable extends BaseNode {
    */
   @Override
   public void repr(Buffer buf) {
-    if (indirect) {
+    if (indirect()) {
       buf.append('@');
     }
     buf.append('@');
-    if (curly) {
+    if (curly()) {
       buf.append('{');
     }
     buf.append(name.substring(1));
-    if (curly) {
+    if (curly()) {
       buf.append('}');
+    }
+    if (ruleset()) {
+      buf.append("()");
     }
   }
 
@@ -164,9 +186,12 @@ public class Variable extends BaseNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
-    buf.append(' ').append(indirect ? "@" + name : name);
-    if (curly) {
+    buf.append(' ').append(indirect() ? "@" + name : name);
+    if (curly()) {
       buf.append(" (curly)");
+    }
+    if (ruleset()) {
+      buf.append(" (detached ruleset)");
     }
   }
 
@@ -174,9 +199,7 @@ public class Variable extends BaseNode {
   public boolean equals(Object obj) {
     if (obj instanceof Variable) {
       Variable other = (Variable)obj;
-      return indirect == other.indirect
-          && curly == other.curly
-          && safeEquals(name, other.name);
+      return flags == other.flags && safeEquals(name, other.name);
     }
     return false;
   }

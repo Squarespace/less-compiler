@@ -64,11 +64,11 @@ public enum ExecuteErrorType implements LessErrorType {
   INVALID_ARG
   ("Argument %(arg0)s must be %(arg1)s. Found %(arg2)s"),
 
-  INVALID_OPERATION1
-  ("Operation %(arg0)s cannot be applied to %(arg1)s"),
-
-  INVALID_OPERATION2
+  INVALID_OPERATION
   ("Operation %(type)s cannot be applied to %(arg0)s and %(arg1)s"),
+
+  INVALID_RULESET_REF
+  ("Detached ruleset reference %(arg0)s resolves to a non-ruleset definition with value of type %(arg1)s"),
 
   MIXIN_RECURSE
   ("Mixin call %(name)s exceeded the recursion limit of %(arg0)s"),
@@ -81,6 +81,9 @@ public enum ExecuteErrorType implements LessErrorType {
 
   PERCENT_MATH_ORDER
   ("The value %(arg0)s cannot be added to or subtracted from a percentage."),
+
+  RULESET_EXPRESSION
+  ("Detached ruleset references cannot be used in expressions"),
 
   RULESET_RECURSE
   ("The ruleset %(name)s cannot call itself recursively."),

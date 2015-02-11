@@ -92,4 +92,6 @@ public interface NodeBuilder {
 
   Variable buildVariable(String name, boolean curly);
 
+  Variable buildVariable(String name, boolean curly, boolean ruleset);
+
 }

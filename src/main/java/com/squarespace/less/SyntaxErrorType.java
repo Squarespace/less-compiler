@@ -31,6 +31,9 @@ public enum SyntaxErrorType implements LessErrorType {
   ALPHA_UNITS_INVALID
   ("Numeric values for alpha cannot have units. Found %(arg0)s"),
 
+  BARE_VARIABLE
+  ("Found bare variable %(arg0)s at block scope. Expected a detached ruleset reference, e.g. %(arg0)s()"),
+
   EXPECTED
   ("Expected %(arg0)s"),
 

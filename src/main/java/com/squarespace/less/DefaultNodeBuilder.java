@@ -147,7 +147,12 @@ public class DefaultNodeBuilder implements NodeBuilder {
 
   @Override
   public Variable buildVariable(String name, boolean curly) {
-    return new Variable(name, curly);
+    return new Variable(name, curly, false);
+  }
+
+  @Override
+  public Variable buildVariable(String name, boolean curly, boolean ruleset) {
+    return new Variable(name, curly, ruleset);
   }
 
 }

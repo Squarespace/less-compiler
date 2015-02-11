@@ -73,12 +73,12 @@ public class ExecuteErrorMaker {
     return error(ExecuteErrorType.INVALID_ARG).arg0(index).arg1(type1).arg2(type2);
   }
 
-  public static LessErrorInfo invalidOperation(Object op, Object type) {
-    return error(ExecuteErrorType.INVALID_OPERATION1).arg0(op).arg1(type);
+  public static LessErrorInfo invalidRulesetReference(Object name, Object type) {
+    return error(ExecuteErrorType.INVALID_RULESET_REF).arg0(name).arg1(type);
   }
 
   public static LessErrorInfo invalidOperation(Object op, Object type0, Object type1) {
-    return error(ExecuteErrorType.INVALID_OPERATION2).type(op).arg0(type0).arg1(type1);
+    return error(ExecuteErrorType.INVALID_OPERATION).type(op).arg0(type0).arg1(type1);
   }
 
   public static LessErrorInfo mixinRecurse(Object path, int limit) {
@@ -94,6 +94,10 @@ public class ExecuteErrorMaker {
   }
   public static LessErrorInfo percentMathOrder(Object dim) {
     return error(ExecuteErrorType.PERCENT_MATH_ORDER).arg0(dim);
+  }
+
+  public static LessErrorInfo rulesetExpression() {
+    return error(ExecuteErrorType.RULESET_EXPRESSION);
   }
 
   public static LessErrorInfo uncomparableType(Object type) {
