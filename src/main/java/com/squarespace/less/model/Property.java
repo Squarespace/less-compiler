@@ -32,10 +32,16 @@ public class Property extends BaseNode {
   protected final String name;
 
   /**
+   * Quick flag to detect special "font" property.
+   */
+  protected final boolean isFont;
+
+  /**
    * Constructs a property with the given name,
    */
   public Property(String name) {
     this.name = name;
+    this.isFont = name.equals("font");
   }
 
   /**
@@ -43,6 +49,14 @@ public class Property extends BaseNode {
    */
   public String name() {
     return name;
+  }
+
+  /**
+   * Indicates whether this property is named "font". Special math mode
+   * is enabled for font rules.
+   */
+  public boolean isFont() {
+    return isFont;
   }
 
   /**

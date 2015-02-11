@@ -46,12 +46,38 @@ public class Operation extends BaseNode {
   protected final Node right;
 
   /**
+   * Indicates operation is a sub-expression wrapped in parenthesis.
+   */
+  protected boolean isSubExpression;
+
+  /**
+   * Indicates this operation is inside an expression that requires
+   * strict math mode to evaluate.
+   */
+  protected boolean requireStrictMath;
+
+  /**
    * Constructs an operation for the given operator and operands.
    */
   public Operation(Operator operator, Node left, Node right) {
+    this(operator, left, right, false);
+  }
+
+  /**
+   * Constructs an operation for the given operator, operands and sub-expression flag.
+   */
+  public Operation(Operator operator, Node left, Node right, boolean isSubExpression) {
     this.operator = operator;
     this.left = left;
     this.right = right;
+    this.isSubExpression = isSubExpression;
+  }
+
+  /**
+   * Returns the operator.
+   */
+  public Operator operator() {
+    return operator;
   }
 
   /**
@@ -66,6 +92,28 @@ public class Operation extends BaseNode {
    */
   public Node right() {
     return right;
+  }
+
+  /**
+   * Indicates whether this operation requires strict math mode to evaluate.
+   */
+  public boolean requiresStrictMath() {
+    return requireStrictMath;
+  }
+
+  /**
+   * Mark this operation as being inside a sub-expression.
+   */
+  public void setSubExpression(boolean flag) {
+    this.isSubExpression = flag;
+  }
+
+  /**
+   * Mark this operation as being inside an expression which requires
+   * strict math to evaluate.
+   */
+  public void setRequireStrictMath(boolean flag) {
+    this.requireStrictMath = flag;
   }
 
   /**
@@ -91,6 +139,10 @@ public class Operation extends BaseNode {
   public Node eval(ExecEnv env) throws LessException {
     Node op0 = left.needsEval() ? left.eval(env) : left;
     Node op1 = right.needsEval() ? right.eval(env) : right;
+
+    if (requireStrictMath && env.isStrictMath() && !isSubExpression) {
+      return new Operation(operator, op0, op1);
+    }
 
     // Check if we can cast the node to a friendlier type.
     op0 = cast(op0);
@@ -122,11 +174,22 @@ public class Operation extends BaseNode {
    */
   @Override
   public void repr(Buffer buf) {
-    buf.append('(');
+    boolean parens = !requireStrictMath && isSubExpression;
+    if (parens) {
+      buf.append('(');
+    }
     left.repr(buf);
-    buf.append(' ').append(operator.toString()).append(' ');
+    if (parens) {
+      buf.append(' ');
+    }
+    buf.append(operator.toString());
+    if (parens) {
+      buf.append(' ');
+    }
     right.repr(buf);
-    buf.append(')');
+    if (parens) {
+      buf.append(')');
+    }
   }
 
   /**

@@ -173,9 +173,17 @@ public class Rule extends BaseNode {
     if (!needsEval()) {
       return this;
     }
-    Rule result = new Rule(property, blockExpressionCheck(value.eval(env)), important);
+
+    // Enable strict math mode for 'font' properties, since the font shorthand
+    // would otherwise be interpreted as a division operation.
+    boolean strictMath = env.isStrictMath();
+    if (isFontProperty()) {
+      env.setStrictMath(true);
+    }
+    Rule result = new Rule(property.eval(env), blockExpressionCheck(value.eval(env)), important);
     result.fileName(fileName);
     result.copyBase(this);
+    env.setStrictMath(strictMath);
     return result;
   }
 
@@ -189,7 +197,9 @@ public class Rule extends BaseNode {
     if (!buf.compress()) {
       buf.append(' ');
     }
+
     value.repr(buf);
+
     if (important) {
       buf.append(" !important");
     }
@@ -229,6 +239,15 @@ public class Rule extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
+  }
+
+  private boolean isFontProperty() {
+    if (property instanceof Property) {
+      if (((Property)property).isFont()) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

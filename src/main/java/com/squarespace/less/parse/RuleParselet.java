@@ -18,7 +18,6 @@ package com.squarespace.less.parse;
 
 import static com.squarespace.less.parse.Parselets.BLOCK;
 import static com.squarespace.less.parse.Parselets.EXPRESSION_LIST;
-import static com.squarespace.less.parse.Parselets.FONT;
 import static com.squarespace.less.parse.Parselets.RULE_KEY;
 
 import com.squarespace.less.LessException;
@@ -58,25 +57,30 @@ public class RuleParselet implements Parselet {
     stm.skipWs();
 
     Mark valueMark = stm.mark();
+
+    // The 'font' rule has a special shorthand syntax which resembles
+    // dimension division, but must be left unevaluated. We switch into
+    // strict math mode for the entire rule.
     if (name.equals("font")) {
-      value = stm.parse(FONT);
+      stm.setRequireStrictMath(true);
+    }
 
-    } else {
-      // Try to parse a detached ruleset.
-      value = stm.parse(BLOCK);
+    // Try to parse a detached ruleset.
+    value = stm.parse(BLOCK);
 
-      // Fall back to parsing a normal expression list.
-      if (value == null) {
-        value = stm.parse(EXPRESSION_LIST);
-        if (value != null) {
-          // Flatten lists of length 1, simplifying the tree.
-          ExpressionList expn = (ExpressionList)value;
-          if (expn.size() == 1) {
-            value = expn.expressions().get(0);
-          }
+    // Fall back to parsing a normal expression list.
+    if (value == null) {
+      value = stm.parse(EXPRESSION_LIST);
+      if (value != null) {
+        // Flatten lists of length 1, simplifying the tree.
+        ExpressionList expn = (ExpressionList)value;
+        if (expn.size() == 1) {
+          value = expn.expressions().get(0);
         }
       }
     }
+
+    stm.setRequireStrictMath(false);
 
     stm.skipWs();
     boolean important = important(stm);

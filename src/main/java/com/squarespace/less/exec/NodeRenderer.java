@@ -37,6 +37,7 @@ import com.squarespace.less.model.Feature;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Node;
+import com.squarespace.less.model.Operation;
 import com.squarespace.less.model.Paren;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Rule;
@@ -120,6 +121,10 @@ public class NodeRenderer {
 
       case FUNCTION_CALL:
         renderImpl(buf, (FunctionCall)node);
+        break;
+
+      case OPERATION:
+        renderImpl(buf, (Operation)node);
         break;
 
       case PAREN:
@@ -237,6 +242,12 @@ public class NodeRenderer {
       render(buf, args.get(i));
     }
     buf.append(')');
+  }
+
+  private static void renderImpl(Buffer buf, Operation operation) throws LessException {
+    render(buf, operation.left());
+    buf.append(operation.operator().toString());
+    render(buf, operation.right());
   }
 
   /** Render a PAREN node. */

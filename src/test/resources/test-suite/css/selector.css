@@ -7,3 +7,6 @@
 > * + .parent > .parent foo {
   font-size: 1px;
 }
+.foo-bar {
+  color: green;
+}

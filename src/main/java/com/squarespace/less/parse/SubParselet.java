@@ -32,7 +32,10 @@ public class SubParselet implements Parselet {
       return null;
     }
 
+    // Communicate with nested expressions that they're inside parens.
+    stm.setInParens(true);
     Node node = stm.parse(EXPRESSION);
+    stm.setInParens(false);
 
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
       stm.restore(mark);

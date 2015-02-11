@@ -16,6 +16,7 @@
 
 package com.squarespace.less;
 
+import static com.squarespace.less.model.Operator.DIVIDE;
 import static com.squarespace.less.model.Unit.PX;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -25,6 +26,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
+import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Unit;
@@ -64,7 +66,7 @@ public class RuleTest extends LessTestBase {
     h.parseEquals("foo: foo: foo: 123   ;", rule(prop("foo"), anon("foo: foo: 123")));
 
     h.parseEquals("font:italic bold 12px/30px Georgia, serif", rule(prop("font"), expnlist(
-        expn(kwd("italic"), kwd("bold"), shorthand(dim(12, PX), dim(30, PX)), kwd("Georgia")), kwd("serif"))));
+        expn(kwd("italic"), kwd("bold"), oper(DIVIDE, dim(12, PX), dim(30, PX)), kwd("Georgia")), kwd("serif"))));
 
     h = new LessHarness(Parselets.STYLESHEET);
 
@@ -72,6 +74,17 @@ public class RuleTest extends LessTestBase {
     exp.add(rule(prop("foo"), anon()));
     exp.add(rule(prop("bar"), color("#123")));
     h.parseEquals("foo: ;\nbar: #123;", exp);
+  }
+
+  @Test
+  public void testFontRule() throws LessException {
+    LessHarness h = new LessHarness(Parselets.RULE);
+
+    Node expected = rule(prop("font"),
+        expn(oper(DIVIDE, dim(12, PX), dim(6, PX)),
+             kwd("foo"),
+             dim(3, PX)));
+    h.evalEquals("font: 12px/6px foo (1px+2px)", expected);
   }
 
   @Test

@@ -51,6 +51,11 @@ public class ExecEnv {
   private LessException error;
 
   /**
+   * Indicates whether strict math mode is currently enabled.
+   */
+  private boolean strictMath;
+
+  /**
    * Constructs an instance associated with the given compile context.
    */
   public ExecEnv(LessContext ctx) {
@@ -101,6 +106,20 @@ public class ExecEnv {
    */
   public boolean hasError() {
     return error != null;
+  }
+
+  /**
+   * Indicates whether strict math mode is currently enabled.
+   */
+  public boolean isStrictMath() {
+    return strictMath;
+  }
+
+  /**
+   * Enables / disables strict math mode.
+   */
+  public void setStrictMath(boolean flag) {
+    this.strictMath = flag;
   }
 
   /**

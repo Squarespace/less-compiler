@@ -100,6 +100,11 @@ public class LessStream extends Stream {
 
   private String token;
 
+  private boolean inParens;
+
+  // Special mode for 'font' rules.
+  private boolean requireStrictMath;
+
   private Mark position = new Mark();
 
   public LessStream(LessContext ctx, String raw) {
@@ -155,6 +160,22 @@ public class LessStream extends Stream {
 
   public Path fileName() {
     return fileName;
+  }
+
+  public boolean inParens() {
+    return inParens;
+  }
+
+  public void setInParens(boolean flag) {
+    this.inParens = flag;
+  }
+
+  public boolean requireStrictMath() {
+    return requireStrictMath;
+  }
+
+  public void setRequireStrictMath(boolean flag) {
+    this.requireStrictMath = flag;
   }
 
   /**
