@@ -169,6 +169,7 @@ public class Parselets {
     new RulesetParselet(),
     new CommentRuleParselet(),
     new MixinCallParselet(),
+    new RulesetCallParselet(),
     new DirectiveParselet()
   };
 

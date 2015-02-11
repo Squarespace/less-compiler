@@ -16,6 +16,7 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.parse.Parselets.BLOCK;
 import static com.squarespace.less.parse.Parselets.EXPRESSION_LIST;
 import static com.squarespace.less.parse.Parselets.FONT;
 import static com.squarespace.less.parse.Parselets.RULE_KEY;
@@ -61,12 +62,18 @@ public class RuleParselet implements Parselet {
       value = stm.parse(FONT);
 
     } else {
-      value = stm.parse(EXPRESSION_LIST);
-      if (value != null) {
-        // Flatten lists of length 1, simplifying the tree.
-        ExpressionList expn = (ExpressionList)value;
-        if (expn.size() == 1) {
-          value = expn.expressions().get(0);
+      // Try to parse a detached ruleset.
+      value = stm.parse(BLOCK);
+
+      // Fall back to parsing a normal expression list.
+      if (value == null) {
+        value = stm.parse(EXPRESSION_LIST);
+        if (value != null) {
+          // Flatten lists of length 1, simplifying the tree.
+          ExpressionList expn = (ExpressionList)value;
+          if (expn.size() == 1) {
+            value = expn.expressions().get(0);
+          }
         }
       }
     }
@@ -117,13 +124,13 @@ public class RuleParselet implements Parselet {
     return (stm.peek() == Chars.EXCLAMATION_MARK && stm.matchImportant());
   }
 
-  private boolean endPeek(LessStream stm) {
+  static boolean endPeek(LessStream stm) {
     stm.skipWs();
     char ch = stm.peek();
     return ch == Chars.SEMICOLON || ch == Chars.RIGHT_CURLY_BRACKET || ch == Chars.EOF;
   }
 
-  private boolean end(LessStream stm) {
+  static boolean end(LessStream stm) {
     stm.skipWs();
     switch (stm.peek()) {
 

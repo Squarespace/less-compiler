@@ -16,6 +16,7 @@
 
 package com.squarespace.less.model;
 
+import static com.squarespace.less.core.ExecuteErrorMaker.rulesetExpression;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 import static com.squarespace.less.model.NodeType.EXPRESSION;
 
@@ -109,14 +110,22 @@ public class Expression extends BaseNode {
     }
     int size = values.size();
     if (size == 1) {
-      return values.get(0).eval(env);
+      return checkResult(values.get(0).eval(env));
     }
 
     List<Node> result = new ArrayList<>(size);
     for (int i = 0; i < size; i++) {
-      result.add(values.get(i).eval(env));
+      Node value = values.get(i).eval(env);
+      result.add(checkResult(value));
     }
     return new Expression(result);
+  }
+
+  private Node checkResult(Node node) throws LessException {
+    if (node instanceof Block) {
+      throw new LessException(rulesetExpression());
+    }
+    return node;
   }
 
   /**

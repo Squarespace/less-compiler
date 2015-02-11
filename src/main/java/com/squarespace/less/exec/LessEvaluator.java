@@ -166,6 +166,12 @@ public class LessEvaluator {
             Definition def = (Definition)node;
             Definition newDef = def.copy(def.dereference(env));
             newDef.warnings(env.warnings());
+            // Special handling for detached ruleset definitions
+            Node defValue = newDef.value();
+            if (defValue instanceof Block) {
+              expandMixins(env, (Block)defValue);
+              evaluateRules(env, (Block)defValue, false);
+            }
             node = newDef;
             break;
 

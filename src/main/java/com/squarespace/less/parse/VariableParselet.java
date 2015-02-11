@@ -16,17 +16,18 @@
 
 package com.squarespace.less.parse;
 
+import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Node;
 
 
 /**
- * Parses direct and indirect variable references.
+ * Parses variable names.
  */
 public class VariableParselet implements Parselet {
 
   @Override
-  public Node parse(LessStream stm) {
+  public Node parse(LessStream stm) throws LessException {
     Mark mark = stm.mark();
     boolean indirect = false;
     int pos = 0;
@@ -45,6 +46,7 @@ public class VariableParselet implements Parselet {
       stm.restore(mark);
       return null;
     }
+
     String name = '@' + stm.token();
     return stm.context().nodeBuilder().buildVariable(indirect ? '@' + name : name, false);
   }
