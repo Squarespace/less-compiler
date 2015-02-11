@@ -27,7 +27,7 @@ Extend pseudo-class:
       color: red;
     }
 
-Detached rulesets.
+Detached rulesets.  (initial version implemented)
 
     // declare detached ruleset
     @detached-ruleset: { background: red; };
