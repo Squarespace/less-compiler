@@ -143,18 +143,11 @@ public class Ruleset extends BlockNode {
   @Override
   public void repr(Buffer buf) {
     selectors.repr(buf);
-    if (buf.compress()) {
-      buf.append('{');
-    } else {
-      buf.append(" {\n");
-    }
-    buf.incrIndent();
+    buf.blockOpen();
     block.repr(buf);
-    buf.decrIndent();
-    if (buf.compress()) {
-      buf.append('}');
-    } else {
-      buf.indent().append("}\n");
+    buf.blockClose();
+    if (!buf.compress()) {
+      buf.append('\n');
     }
   }
 
@@ -169,6 +162,7 @@ public class Ruleset extends BlockNode {
     buf.incrIndent().indent();
     selectors.modelRepr(buf);
     buf.append('\n');
+    buf.indent();
     super.modelRepr(buf);
     buf.decrIndent().append('\n');
   }

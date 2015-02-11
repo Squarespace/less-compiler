@@ -77,18 +77,11 @@ public class BlockDirective extends BlockNode {
   @Override
   public void repr(Buffer buf) {
     buf.append(name);
-    if (buf.compress()) {
-      buf.append('{');
-    } else {
-      buf.append(" {\n");
-    }
-    buf.incrIndent();
+    buf.blockOpen();
     block.repr(buf);
-    buf.decrIndent();
-    if (buf.compress()) {
-      buf.append('}');
-    } else {
-      buf.indent().append("}\n");
+    buf.blockClose();
+    if (!buf.compress()) {
+      buf.append('\n');
     }
   }
 

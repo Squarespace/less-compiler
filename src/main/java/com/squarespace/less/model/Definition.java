@@ -169,8 +169,17 @@ public class Definition extends BaseNode {
    */
   @Override
   public void repr(Buffer buf) {
-    buf.append(name).append(": ");
+    boolean isBlock = value instanceof Block;
+    buf.append(name).append(':');
+    if (isBlock) {
+      buf.blockOpen();
+    } else {
+      buf.append(' ');
+    }
     value.repr(buf);
+    if (isBlock) {
+      buf.blockClose();
+    }
   }
 
   /**

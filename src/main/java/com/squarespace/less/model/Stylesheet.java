@@ -73,7 +73,7 @@ public class Stylesheet extends BlockNode {
     typeRepr(buf);
     posRepr(buf);
     buf.append('\n');
-    buf.incrIndent();
+    buf.incrIndent().indent();
     super.modelRepr(buf);
     buf.decrIndent();
   }

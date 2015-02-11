@@ -175,18 +175,11 @@ public class Mixin extends BlockNode {
       buf.append(" when ");
       guard.repr(buf);
     }
-    if (buf.compress()) {
-      buf.append('{');
-    } else {
-      buf.append(" {\n");
-    }
-    buf.incrIndent();
+    buf.blockOpen();
     block.repr(buf);
-    buf.decrIndent();
-    if (buf.compress()) {
-      buf.append('}');
-    } else {
-      buf.indent().append("}\n");
+    buf.blockClose();
+    if (!buf.compress()) {
+      buf.append('\n');
     }
   }
 
