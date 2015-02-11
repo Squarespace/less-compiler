@@ -98,12 +98,11 @@ public class LessSuiteTest extends LessSuiteBase {
         } catch (LessException e) {
           // Force generation of the error message, to cover that code
           String msg = ErrorUtils.formatError(ctx, lessPath, e, 4);
-          if (VERBOSE) {
-            System.err.println(msg);
-          }
           if (!errorCase.errorType.equals(e.primaryError().type())) {
             logFailure("Error Suite", ++failures, "Expected ", errorCase.errorType, " found ", e.primaryError().type(),
-                " processing error test case '" + errorCase.failMessage + "'");
+                " processing error test case '" + errorCase.failMessage + "'\n" + msg);
+          } else if (VERBOSE) {
+            System.err.println(msg);
           }
         } catch (RuntimeException e) {
           logFailure("Error Suite", ++failures, "Unexpected runtime exception thrown processing error test case '"

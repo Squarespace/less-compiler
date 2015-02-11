@@ -1,0 +1,29 @@
+
+//:ExecuteErrorType.INVALID_RULESET_REF   invalid ruleset ref
+
+@color: red;
+.parent {
+    @color();
+}
+
+
+//:ExecuteErrorType.RULESET_EXPRESSION   rulesets can't be in expressions
+
+@rs: {
+    color: red;
+};
+
+.parent {
+    rule: @rs;
+}
+
+//:ExecuteErrorType.INVALID_OPERATION    operations on rulesets are invalid
+
+@rs: {
+    color: red;
+};
+
+.parent {
+    rule: @rs + 1;
+}
+

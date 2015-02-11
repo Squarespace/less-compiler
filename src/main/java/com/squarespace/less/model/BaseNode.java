@@ -16,6 +16,8 @@
 
 package com.squarespace.less.model;
 
+import static com.squarespace.less.core.ExecuteErrorMaker.rulesetExpression;
+
 import java.math.BigDecimal;
 
 import com.squarespace.less.LessException;
@@ -200,6 +202,16 @@ public abstract class BaseNode implements Node {
     Buffer buf = new Buffer(4);
     modelRepr(buf);
     return buf.toString();
+  }
+
+  /**
+   * Check if the node is a {@link Block} and is participating in an expression.
+   */
+  protected Node blockExpressionCheck(Node node) throws LessException {
+    if (node instanceof Block) {
+      throw new LessException(rulesetExpression());
+    }
+    return node;
   }
 
 }
