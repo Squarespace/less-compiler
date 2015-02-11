@@ -1,0 +1,24 @@
+
+@color: red;
+
+@one: {
+    color: @color;
+};
+
+.parent-1 {
+    @one: {
+        font-size: 1px;
+    };
+    @other: @one;
+    .parent-2 {
+        @other();
+    }
+}
+
+.parent-3 {
+    @other: @one;
+    .parent-4 {
+        @other();
+    }
+}
+
