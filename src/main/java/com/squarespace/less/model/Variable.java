@@ -97,7 +97,6 @@ public class Variable extends BaseNode {
 
   /**
    * Indicates whether this variable references a detached {@link Ruleset}.
-   * @return
    */
   public boolean ruleset() {
     return (flags & RULESET) != 0;

@@ -16,12 +16,14 @@
 
 package com.squarespace.less;
 
+import static com.squarespace.less.model.Operator.DIVIDE;
 import static com.squarespace.less.model.Unit.PX;
 
 import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
+import com.squarespace.less.model.Node;
 import com.squarespace.less.parse.Parselets;
 
 
@@ -29,13 +31,21 @@ public class FontTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FONT);
-    h.parseEquals("0/0 a", expnlist(expn(ratio("0/0"), kwd("a"))));
-    h.parseEquals("small/0 a", expnlist(expn(shorthand(kwd("small"), dim(0)), kwd("a"))));
+    LessHarness h = new LessHarness(Parselets.RULE);
+    Node expected = rule(prop("font"), expn(oper(DIVIDE, dim(0), dim(0)), kwd("a")));
+    h.parseEquals("font: 0/0 a", expected);
 
-    h.parseEquals("12px/14px", expnlist(expn(shorthand(dim(12, PX), dim(14, PX)))));
-    h.parseEquals("12px / 14px", expnlist(expn(dim(12, PX), anon("/"), dim(14, PX))));
-    h.parseEquals("400 12px / 14px", expnlist(expn(dim(400), dim(12, PX), anon("/"), dim(14, PX))));
+    expected = rule(prop("font"), expn(shorthand(kwd("small"), dim(0)), kwd("a")));
+    h.parseEquals("font: small/0 a", expected);
+
+    expected = rule(prop("font"), oper(DIVIDE, dim(12, PX), dim(14, PX)));
+    h.parseEquals("font: 12px/14px", expected);
+
+    expected = rule(prop("font"), oper(DIVIDE, dim(12, PX), dim(14, PX)));
+    h.parseEquals("font: 12px / 14px", expected);
+
+    expected = rule(prop("font"), expn(dim(400), oper(DIVIDE, dim(12, PX), dim(14, PX))));
+    h.parseEquals("font: 400 12px / 14px", expected);
   }
 
 }

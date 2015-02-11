@@ -109,10 +109,6 @@ public class Parselets {
     new FeaturesParselet()
   };
 
-  public static final Parselet[] FONT = new Parselet[] {
-    new FontParselet()
-  };
-
   public static final Parselet[] FUNCTION_CALL = new Parselet[] {
     new FunctionCallParselet()
   };
@@ -243,7 +239,8 @@ public class Parselets {
   public static final Parselet[] EXPRESSION_SUB = new ParseletBuilder()
     .add(
       new CommentParselet(),
-      new AdditionParselet())
+      new AdditionParselet(),
+      new ShorthandParselet())
     .add(ENTITY)
     .build();
 
