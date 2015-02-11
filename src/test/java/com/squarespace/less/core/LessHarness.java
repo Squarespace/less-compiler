@@ -19,6 +19,7 @@ package com.squarespace.less.core;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,12 +91,17 @@ public class LessHarness {
   }
 
   public String execute(String raw, LessOptions opts) throws LessException {
-    return compiler.compile(raw, context(opts));
+    try {
+      return compiler.compile(raw, context(opts));
+    } catch (LessException e) {
+      fail(ErrorUtils.formatError(Paths.get("<source>"), e, 4));
+      return null;
+    }
   }
 
   public void executeFails(String raw, LessErrorType expected) {
     try {
-      execute(raw);
+      compiler.compile(raw, context(new LessOptions()));
       fail("Expected LessException of type " + expected);
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), expected);
@@ -107,8 +113,12 @@ public class LessHarness {
   }
 
   public void parseEquals(String raw, Node expected) throws LessException {
-    Node res = parse(raw, parselet);
-    assertEquals(res, expected, raw);
+    try {
+      Node res = parse(raw, parselet);
+      assertEquals(res, expected, raw);
+    } catch (LessException e) {
+      fail(ErrorUtils.formatError(Paths.get("<source>"), e, 4));
+    }
   }
 
   public void parseFails(String raw, LessErrorType expected) {

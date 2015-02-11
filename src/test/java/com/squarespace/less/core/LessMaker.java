@@ -418,7 +418,11 @@ public class LessMaker {
   }
 
   public Variable var(String name, boolean curly) {
-    return new Variable(name, curly);
+    return new Variable(name, curly, false);
+  }
+
+  public Variable var(String name, boolean curly, boolean ruleset) {
+    return new Variable(name, curly, ruleset);
   }
 
   public ValueElement varelem(Combinator combinator, Variable var) {
