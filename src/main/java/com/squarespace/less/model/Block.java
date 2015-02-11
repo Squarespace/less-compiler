@@ -283,7 +283,11 @@ public class Block extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     if (rules != null) {
+      typeRepr(buf);
+      buf.append('\n');
+      buf.incrIndent();
       ReprUtils.modelRepr(buf, "\n", true, rules);
+      buf.decrIndent();
     }
   }
 
