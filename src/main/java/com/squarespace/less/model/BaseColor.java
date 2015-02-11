@@ -114,7 +114,7 @@ public abstract class BaseColor extends BaseNode {
       return operate(op, this, fromDimension((Dimension)arg));
 
     } else {
-      LessErrorInfo info = invalidOperation(op, type());
+      LessErrorInfo info = invalidOperation(op, type(), argType);
       if (opts.strict()) {
         throw new LessException(info);
       }
@@ -149,7 +149,7 @@ public abstract class BaseColor extends BaseNode {
         return new RGBColor(r - c1.red(), g - c1.green(), b - c1.blue(), a);
 
       default:
-        throw new LessException(invalidOperation(op, NodeType.COLOR));
+        throw new LessException(invalidOperation(op, arg0.type(), arg1.type()));
     }
   }
 

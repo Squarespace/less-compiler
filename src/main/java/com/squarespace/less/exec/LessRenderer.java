@@ -203,6 +203,10 @@ public class LessRenderer {
       Node node = rules.get(i);
       switch (node.type()) {
 
+        case BLOCK:
+          renderBlock((Block)node, includeImports);
+          break;
+
         case BLOCK_DIRECTIVE:
           renderBlockDirective((BlockDirective)node);
           break;

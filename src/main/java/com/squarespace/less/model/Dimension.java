@@ -134,7 +134,7 @@ public class Dimension extends BaseNode {
   @Override
   public Node operate(ExecEnv env, Operator op, Node node) throws LessException {
     if (!(node instanceof Dimension)) {
-      throw new LessException(invalidOperation(op, type()));
+      throw new LessException(invalidOperation(op, type(), node.type()));
     }
 
     LessOptions opts = env.context().options();
