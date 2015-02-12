@@ -205,10 +205,10 @@ public abstract class BaseNode implements Node {
   }
 
   /**
-   * Check if the node is a {@link Block} and is participating in an expression.
+   * Check if the node is a {@link BlockNode} and is participating in an expression.
    */
   protected Node blockExpressionCheck(Node node) throws LessException {
-    if (node instanceof Block) {
+    if (node instanceof BlockNode) {
       throw new LessException(rulesetExpression());
     }
     return node;

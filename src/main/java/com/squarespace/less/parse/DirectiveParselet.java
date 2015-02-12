@@ -62,14 +62,22 @@ public class DirectiveParselet implements Parselet {
 
       case "@import":
       case "@import-once":
+      {
         Node result = parseImport(stm, nvName);
         if (result == null) {
           stm.restore(mark);
         }
         return result;
+      }
 
       case "@media":
-        return parseMedia(stm);
+      {
+        Node result = parseMedia(stm);
+        if (result == null) {
+          stm.restore(mark);
+        }
+        return result;
+      }
 
       case "@font-face":
       case "@viewport":

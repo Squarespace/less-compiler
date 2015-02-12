@@ -21,6 +21,7 @@ import static com.squarespace.less.core.LessUtils.safeEquals;
 import java.nio.file.Path;
 
 import com.squarespace.less.core.Buffer;
+import com.squarespace.less.exec.ExecEnv;
 
 
 /**
@@ -38,6 +39,11 @@ public abstract class BlockNode extends BaseNode {
    * to it for evaluation purposes.
    */
   protected BlockNode originalBlockNode;
+
+  /**
+   * Closure attached to this block node.
+   */
+  protected ExecEnv closure;
 
   /**
    * Indicates whether this block was marked important.
@@ -85,6 +91,20 @@ public abstract class BlockNode extends BaseNode {
    */
   public void markOriginal() {
     originalBlockNode = this;
+  }
+
+  /**
+   * Returns the closure environment attached to the block node's definition.
+   */
+  public ExecEnv closure() {
+    return closure;
+  }
+
+  /**
+   * Sets the closure on this block node definition.
+   */
+  public void closure(ExecEnv env) {
+    this.closure = env.copy();
   }
 
   /**

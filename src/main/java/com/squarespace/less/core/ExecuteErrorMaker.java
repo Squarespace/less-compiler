@@ -116,6 +116,10 @@ public class ExecuteErrorMaker {
     return error(ExecuteErrorType.VAR_UNDEFINED).name(name);
   }
 
+  public static LessErrorInfo varBlockLevel(Object name) {
+    return error(ExecuteErrorType.VAR_BLOCK_LEVEL).name(name);
+  }
+
   private static LessErrorInfo error(LessErrorType type) {
     LessErrorInfo info = new LessErrorInfo(type);
     info.code(type);

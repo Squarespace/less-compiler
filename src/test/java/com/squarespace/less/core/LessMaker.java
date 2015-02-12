@@ -35,6 +35,7 @@ import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.CompositeProperty;
 import com.squarespace.less.model.Condition;
 import com.squarespace.less.model.Definition;
+import com.squarespace.less.model.DetachedRuleset;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.Element;
@@ -401,6 +402,10 @@ public class LessMaker {
       res.add(selector);
     }
     return res;
+  }
+
+  public DetachedRuleset ruleset(Node ... nodes) {
+    return new DetachedRuleset(block(nodes));
   }
 
   public Selector selector(Element ... elements) {

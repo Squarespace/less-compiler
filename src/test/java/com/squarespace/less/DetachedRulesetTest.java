@@ -33,7 +33,7 @@ public class DetachedRulesetTest extends LessTestBase {
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(Parselets.RULE);
 
-    Node expected = def("@foo", block(
+    Node expected = def("@foo", ruleset(
       rule(prop("color"), color("red")),
       rule(prop("font-size"), dim(12, Unit.PX))
     ));

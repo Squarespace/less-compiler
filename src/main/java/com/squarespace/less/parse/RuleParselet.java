@@ -24,7 +24,9 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Anonymous;
+import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Definition;
+import com.squarespace.less.model.DetachedRuleset;
 import com.squarespace.less.model.ExpressionList;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Property;
@@ -65,6 +67,9 @@ public class RuleParselet implements Parselet {
       Variable var = (Variable)key;
       if (!var.curly()) {
         value = stm.parse(BLOCK);
+        if (value != null) {
+          value = new DetachedRuleset((Block)value);
+        }
       }
     }
 

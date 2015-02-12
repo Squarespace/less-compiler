@@ -94,6 +94,9 @@ public enum ExecuteErrorType implements LessErrorType {
   UNKNOWN_UNIT
   ("Unknown unit %(arg0)s"),
 
+  VAR_BLOCK_LEVEL
+  ("Found a variable '%(arg0)s' at block scope that is not a detached ruleset reference."),
+
   VAR_UNDEFINED
   ("Failed to locate a definition for the variable %(name)s in current scope"),
 

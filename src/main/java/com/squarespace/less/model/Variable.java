@@ -110,7 +110,7 @@ public class Variable extends BaseNode {
 
     // Check if this variable is a detached ruleset reference.
     if (ruleset()) {
-      if (result instanceof Block) {
+      if (result instanceof DetachedRuleset) {
         return result;
       }
       throw new LessException(invalidRulesetReference(name, result.type()));

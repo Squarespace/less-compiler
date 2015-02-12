@@ -28,6 +28,7 @@ import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Definition;
+import com.squarespace.less.model.DetachedRuleset;
 import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Import;
@@ -183,14 +184,8 @@ public class LessRenderer {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node node = rules.get(i);
-      switch (node.type()) {
-
-        case IMPORT:
-          renderImport((Import)node);
-          break;
-
-        default:
-          break;
+      if (node instanceof Import) {
+        renderImport((Import)node);
       }
     }
   }
@@ -227,12 +222,21 @@ public class LessRenderer {
           renderDefinition((Definition)node);
           break;
 
+        case DETACHED_RULESET:
+        {
+          DetachedRuleset ruleset = (DetachedRuleset)node;
+          renderBlock(ruleset.block(), includeImports);
+          break;
+        }
+
         case DIRECTIVE:
+        {
           Directive directive = (Directive)node;
           if (!directive.name().equals("@charset")) {
             model.value(ctx.render(directive));
           }
           break;
+        }
 
         case IMPORT:
           if (includeImports) {

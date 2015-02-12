@@ -19,7 +19,6 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.exec.ExecEnv;
 
 
 /**
@@ -54,11 +53,6 @@ public class Mixin extends BlockNode {
    * Mixin's optional guard expression.
    */
   protected final Guard guard;
-
-  /**
-   * Closure attached to this mixin definition.
-   */
-  protected ExecEnv closure;
 
   /**
    * Number of times this mixin's body has been evaluated. Used to detect
@@ -137,20 +131,6 @@ public class Mixin extends BlockNode {
    */
   public void exit() {
     entryCount--;
-  }
-
-  /**
-   * Returns the closure environment attached to the mixin's definition.
-   */
-  public ExecEnv closure() {
-    return closure;
-  }
-
-  /**
-   * Sets the closure on this mixin definition.
-   */
-  public void closure(ExecEnv env) {
-    this.closure = env.copy();
   }
 
   /**

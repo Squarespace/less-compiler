@@ -19,6 +19,7 @@ package com.squarespace.less.exec;
 import static com.squarespace.less.core.Constants.FALSE;
 import static com.squarespace.less.core.ExecuteErrorMaker.mixinRecurse;
 import static com.squarespace.less.core.ExecuteErrorMaker.mixinUndefined;
+import static com.squarespace.less.core.ExecuteErrorMaker.varBlockLevel;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.Definition;
+import com.squarespace.less.model.DetachedRuleset;
 import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Guard;
@@ -44,6 +46,7 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Stylesheet;
+import com.squarespace.less.model.Variable;
 
 
 /**
@@ -129,6 +132,28 @@ public class LessEvaluator {
     return ruleset;
   }
 
+  public DetachedRuleset evaluateDetachedRuleset(ExecEnv env, DetachedRuleset input, boolean forceImportant)
+      throws LessException {
+
+    ExecEnv closure = input.closure();
+    if (closure != null) {
+      env = env.copy();
+      env.append(closure.frames());
+    }
+
+    DetachedRuleset ruleset = input.copy(env);
+
+    env.push(ruleset);
+    Block block = ruleset.block();
+    expandMixins(env, block);
+    evaluateRules(env, block, forceImportant);
+
+    if (closure == null) {
+      env.pop();
+    }
+    return ruleset;
+  }
+
   /**
    * Evaluate a STYLESHEET node.
    */
@@ -163,19 +188,28 @@ public class LessEvaluator {
             break;
 
           case DEFINITION:
-            Definition def = (Definition)node;
-            Definition newDef = def.copy(def.dereference(env));
-            newDef.warnings(env.warnings());
-            // Special handling for detached ruleset definitions
-            Node defValue = newDef.value();
-            if (defValue instanceof Block) {
-              expandMixins(env, (Block)defValue);
-              evaluateRules(env, (Block)defValue, false);
+          {
+            Definition definition = (Definition)node;
+            Node value = definition.value();
+
+            // Defer evaluation of detached rulesets. They will be evaluated
+            // when they are referenced.  Set the closure for the environment
+            // in which the detached ruleset is defined.
+            if (value instanceof DetachedRuleset) {
+              DetachedRuleset ruleset = (DetachedRuleset)value;
+              ruleset.closure(env);
+
+            } else {
+              // Definitions has a non-BlockNode value.
+              Definition newDef = definition.copy(definition.dereference(env));
+              newDef.warnings(env.warnings());
+              node = newDef;
             }
-            node = newDef;
             break;
+          }
 
           case DIRECTIVE:
+          {
             Directive directive = (Directive)(node.eval(env));
             if (directive.name().equals("@charset")) {
               if (block.charset() == null) {
@@ -184,23 +218,28 @@ public class LessEvaluator {
             }
             node = directive;
             break;
+          }
 
           case IMPORT_MARKER:
+          {
             ImportMarker marker = (ImportMarker) node;
             currentImport = marker.beginning() ? marker.importStatement() : null;
             break;
+          }
 
           case MEDIA:
             node = evaluateMedia(env, (Media)node);
             break;
 
           case MIXIN:
+          {
             // Register the closure on the original MIXIN.
             Mixin mixin = (Mixin) ((Mixin)node).original();
             if (mixin.closure() == null) {
               mixin.closure(env);
             }
             break;
+          }
 
           case MIXIN_CALL:
             throw new LessInternalException("Serious error: all mixin calls should already have been evaluated.");
@@ -210,6 +249,7 @@ public class LessEvaluator {
             break;
 
           case RULE:
+          {
             Rule rule = (Rule) node;
             Rule newRule = null;
             if (forceImportant && !rule.important()) {
@@ -220,6 +260,17 @@ public class LessEvaluator {
             newRule.warnings(env.warnings());
             node = newRule;
             break;
+          }
+
+          case VARIABLE:
+          {
+            Variable var = (Variable)node;
+            if (!var.ruleset()) {
+              throw new LessException(varBlockLevel(var.name()));
+            }
+            node = evaluateDetachedRuleset(env, (DetachedRuleset)node.eval(env), forceImportant);
+            break;
+          }
 
           default:
             node = node.eval(env);
