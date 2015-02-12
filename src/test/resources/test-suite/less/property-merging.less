@@ -33,4 +33,28 @@
     b-@{name}-prop+: 4px !important;
 }
 
+.mixed-merge-modes {
+    a-prop+: 1px;
+    a-prop+_: 2px;
+
+    b-prop+_: 3px;
+    b-prop+: 4px;
+}
+
+.mixin() {
+    a-prop+_: red;
+    b-prop+: blue;
+}
+
+.target-1 {
+    a-prop+_: 1px;
+    b-prop+_: 3px;
+    .mixin();
+}
+
+.target-2 {
+    .mixin();
+    a-prop+_: 1px;
+    b-prop+_: 3px;
+}
 

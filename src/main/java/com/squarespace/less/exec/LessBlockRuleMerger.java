@@ -94,9 +94,8 @@ public class LessBlockRuleMerger {
     boolean important = mapped.important() || rule.important();
     mapped.markImportant(important);
 
-    // Merge the source value to the destination using the destination's
+    // Merge the source value to the destination using the source's
     // merge mode.
-    mergeable = (PropertyMergeable)mapped.property();
     Node dst = mapped.value();
     Node src = rule.value();
     if (mergeable.mergeMode() == PropertyMergeMode.COMMA) {
