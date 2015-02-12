@@ -19,9 +19,12 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 import static com.squarespace.less.model.NodeType.RULE_PROPERTY;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
+import com.squarespace.less.exec.ExecEnv;
 
 
 /**
@@ -76,6 +79,24 @@ public class RuleProperty extends BaseNode {
   @Override
   public NodeType type() {
     return RULE_PROPERTY;
+  }
+
+  /**
+   * See {@link Node#eval(ExecEnv)}
+   */
+  @Override
+  public Node eval(ExecEnv env) throws LessException {
+    List<Node> values = new ArrayList<>(segments.size());
+    for (Node segment : segments) {
+      Node value = segment.needsEval() ? segment.eval(env) : segment;
+      values.add(value);
+    }
+    return new RuleProperty(values, mergeMode);
+  }
+
+  @Override
+  public boolean needsEval() {
+    return true;
   }
 
   /**

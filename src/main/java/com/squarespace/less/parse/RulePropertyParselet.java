@@ -54,30 +54,20 @@ public class RulePropertyParselet implements Parselet {
     // The vast majority of rules will have a static property, so try to
     // parse a single segment first.
     Node first = stm.parse(Parselets.PROPERTY);
-    if (first == null) {
-      stm.restore(mark);
-      return null;
-    }
-
-    // Check if this is the only property segment.
-    merge = end(stm);
-    if (merge != null) {
-      Property prop = (Property) first;
-      prop.mergeMode(merge);
-      return prop;
-    }
-
-    // We failed to find the end, so try to parse one or more Property and curly Variable nodes.
-    Node second = stm.parse(Parselets.RULE_KEY);
-    if (second == null) {
-      stm.restore(mark);
-      return null;
+    if (first != null) {
+      merge = end(stm);
+      if (merge != null) {
+        Property prop = (Property) first;
+        prop.mergeMode(merge);
+        return prop;
+      }
     }
 
     // Okay, we have 2 segments so keep parsing.
     List<Node> segments = new ArrayList<>();
-    segments.add(first);
-    segments.add(second);
+    if (first != null) {
+      segments.add(first);
+    }
     while ((node = stm.parse(Parselets.RULE_KEY)) != null) {
       segments.add(node);
     }

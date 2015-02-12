@@ -17,6 +17,7 @@
 package com.squarespace.less;
 
 import static com.squarespace.less.model.Operator.DIVIDE;
+import static com.squarespace.less.model.PropertyMergeMode.SPACE;
 import static com.squarespace.less.model.Unit.PX;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -100,7 +101,9 @@ public class RuleTest extends LessTestBase {
     GenericBlock defs = defs(def("@name", kwd("color")));
     LessHarness h = new LessHarness(Parselets.RULE, defs);
 
-    h.evalEquals("@{name}: red", rule(kwd("color"), color("red")));
+    h.evalEquals("@{name}: red", rule(prop(proplist(kwd("color"))), color("red")));
+    h.evalEquals("foo-@{name}: red", rule(prop(proplist(prop("foo-"), kwd("color"))), color("red")));
+    h.evalEquals("@{name}+_: red", rule(prop(proplist(kwd("color")), SPACE), color("red")));
   }
 
   @Test
