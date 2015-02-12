@@ -7,3 +7,11 @@
 .indirect-ref {
   color: red;
 }
+.composite-1 {
+  foo-header-bar-body-baz: 1px;
+  header-bar-body-baz: 2px;
+  *-bar-body-baz: 3px;
+  -bar-body-baz: 4px;
+  *-body-baz: 5px;
+  -body-baz: 6px;
+}

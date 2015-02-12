@@ -15,3 +15,15 @@
     @@{meta-name}: red;
 }
 
+@part1: header;
+@part2: body;
+
+.composite-1 {
+    foo-@{part1}-bar-@{part2}-baz: 1px;
+    @{part1}-bar-@{part2}-baz: 2px;
+    *-bar-@{part2}-baz: 3px;
+    -bar-@{part2}-baz: 4px;
+    *-@{part2}-baz: 5px;
+    -@{part2}-baz: 6px;
+}
+

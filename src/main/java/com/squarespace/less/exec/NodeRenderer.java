@@ -77,6 +77,7 @@ public class NodeRenderer {
         break;
 
       case ANONYMOUS:
+      case COMPOSITE_PROPERTY:
       case DIMENSION:
       case FALSE:
       case KEYWORD:
