@@ -17,60 +17,43 @@
 package com.squarespace.less.model;
 
 import static com.squarespace.less.core.LessUtils.safeEquals;
+import static com.squarespace.less.model.NodeType.RULE_PROPERTY;
+
+import java.util.List;
 
 import com.squarespace.less.core.Buffer;
 
 
 /**
- * The property name for a {@link Rule} or {@link Feature}.
+ * A rule property that consists of 2 or more segments, where each
+ * segment is of type {@link Property} or curly {@link Variable}.
  */
-public class Property extends BaseNode {
+public class RuleProperty extends BaseNode {
 
   /**
-   * Name of the property.
+   * List of segments of the rule property, alternately {@link Property}
+   * and curl {@link Variable} nodes.
    */
-  protected final String name;
-
-  /**
-   * Quick flag to detect special "font" property.
-   */
-  protected final boolean isFont;
+  private final List<Node> segments;
 
   /**
    * Mode for merging properties having the same name.
    */
-  protected PropertyMergeMode mergeMode;
-
+  private PropertyMergeMode mergeMode;
 
   /**
-   * Constructs a property with the given name, without a merge mode.
+   * Constructs a rule property with the given segments.
    */
-  public Property(String name) {
-    this(name, PropertyMergeMode.NONE);
+  public RuleProperty(List<Node> segments) {
+    this(segments, PropertyMergeMode.NONE);
   }
 
   /**
-   * Constructs a property with the given name and merge mode.
+   * Construct a rule property with the given segments and merge mode.
    */
-  public Property(String name, PropertyMergeMode mergeMode) {
-    this.name = name;
+  public RuleProperty(List<Node> segments, PropertyMergeMode mergeMode) {
+    this.segments = segments;
     this.mergeMode = mergeMode;
-    this.isFont = name.equals("font");
-  }
-
-  /**
-   * Returns the property's name.
-   */
-  public String name() {
-    return name;
-  }
-
-  /**
-   * Indicates whether this property is named "font". Special math mode
-   * is enabled for font rules.
-   */
-  public boolean isFont() {
-    return isFont;
   }
 
   /**
@@ -81,10 +64,10 @@ public class Property extends BaseNode {
   }
 
   /**
-   * Sets the merge mode for this property.
+   * Sets the merge mode for the property.
    */
-  public void mergeMode(PropertyMergeMode merge) {
-    this.mergeMode = merge;
+  public void mergeMode(PropertyMergeMode mergeMode) {
+    this.mergeMode = mergeMode;
   }
 
   /**
@@ -92,7 +75,7 @@ public class Property extends BaseNode {
    */
   @Override
   public NodeType type() {
-    return NodeType.PROPERTY;
+    return RULE_PROPERTY;
   }
 
   /**
@@ -100,7 +83,9 @@ public class Property extends BaseNode {
    */
   @Override
   public void repr(Buffer buf) {
-    buf.append(name);
+    for (Node segment : segments) {
+      segment.repr(buf);
+    }
     if (mergeMode == PropertyMergeMode.COMMA) {
       buf.append('+');
     } else if (mergeMode == PropertyMergeMode.SPACE) {
@@ -115,17 +100,24 @@ public class Property extends BaseNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
-    buf.append(' ').append(name);
     if (mergeMode != PropertyMergeMode.NONE) {
-      buf.append(" merge=").append(mergeMode.name());
+      buf.append(" merge=" + mergeMode);
     }
+    buf.append('\n');
+    buf.incrIndent();
+    for (Node segment : segments) {
+      buf.indent();
+      segment.modelRepr(buf);
+      buf.append('\n');
+    }
+    buf.decrIndent();
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof Property) {
-      Property other = (Property)obj;
-      return mergeMode == other.mergeMode && safeEquals(name, other.name);
+    if (obj instanceof RuleProperty) {
+      RuleProperty other = (RuleProperty)obj;
+      return mergeMode == other.mergeMode && safeEquals(segments, other.segments);
     }
     return false;
   }

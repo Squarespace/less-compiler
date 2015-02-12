@@ -19,6 +19,7 @@ package com.squarespace.less.core;
 import static com.squarespace.less.model.Combinator.DESC;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.squarespace.less.exec.ArgSpec;
 import com.squarespace.less.model.Alpha;
@@ -57,10 +58,12 @@ import com.squarespace.less.model.Operator;
 import com.squarespace.less.model.Parameter;
 import com.squarespace.less.model.Paren;
 import com.squarespace.less.model.Property;
+import com.squarespace.less.model.PropertyMergeMode;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.RGBColor;
 import com.squarespace.less.model.Ratio;
 import com.squarespace.less.model.Rule;
+import com.squarespace.less.model.RuleProperty;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
@@ -327,6 +330,22 @@ public class LessMaker {
 
   public Property prop(String name) {
     return new Property(name);
+  }
+
+  public Property prop(String name, PropertyMergeMode merge) {
+    return new Property(name, merge);
+  }
+
+  public RuleProperty prop(List<Node> segments) {
+    return new RuleProperty(segments);
+  }
+
+  public RuleProperty prop(List<Node> segments, PropertyMergeMode merge) {
+    return new RuleProperty(segments, merge);
+  }
+
+  public List<Node> proplist(Node ... segments) {
+    return Arrays.asList(segments);
   }
 
   public Quoted quoted(char delim, boolean escape, Object ... elems) {

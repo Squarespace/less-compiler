@@ -18,7 +18,7 @@ package com.squarespace.less.parse;
 
 import static com.squarespace.less.parse.Parselets.BLOCK;
 import static com.squarespace.less.parse.Parselets.EXPRESSION_LIST;
-import static com.squarespace.less.parse.Parselets.RULE_KEY;
+import static com.squarespace.less.parse.Parselets.RULE_PROPERTY;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.CharClass;
@@ -41,7 +41,7 @@ public class RuleParselet implements Parselet {
     }
 
     Mark ruleMark = stm.mark();
-    Node key = parseKey(stm);
+    Node key = stm.parse(RULE_PROPERTY);
     if (key == null) {
       stm.restore(ruleMark);
       return null;
@@ -115,15 +115,6 @@ public class RuleParselet implements Parselet {
     Rule rule = stm.context().nodeBuilder().buildRule(key, value, important);
     rule.fileName(stm.fileName());
     return rule;
-  }
-
-  private Node parseKey(LessStream stm) throws LessException {
-    Node key = stm.parse(RULE_KEY);
-    stm.skipWs();
-    if (stm.seekIf(Chars.COLON)) {
-      return key;
-    }
-    return null;
   }
 
   private boolean important(LessStream stm) {

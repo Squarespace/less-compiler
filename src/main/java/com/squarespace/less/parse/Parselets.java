@@ -187,8 +187,11 @@ public class Parselets {
 
   public static final Parselet[] RULE_KEY = new Parselet[] {
     new PropertyParselet(),
-    new VariableParselet(),
     new VariableCurlyParselet()
+  };
+
+  public static final Parselet[] RULE_PROPERTY = new Parselet[] {
+    new RulePropertyParselet()
   };
 
   public static final Parselet[] RULESET = new Parselet[] {

@@ -61,6 +61,7 @@ public enum NodeType {
   RATIO,
   RULE,
   RULESET,
+  RULE_PROPERTY,
   SELECTOR,
   SELECTORS,
   SHORTHAND,

@@ -252,6 +252,7 @@ public class LessRenderer {
           break;
 
         case RULE:
+          // TODO: index all rendered properties for rules which have a merge mode set.
           renderRule((Rule)node);
           break;
 

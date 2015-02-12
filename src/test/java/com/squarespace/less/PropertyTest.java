@@ -17,6 +17,9 @@
 package com.squarespace.less;
 
 import static com.squarespace.less.SyntaxErrorType.INCOMPLETE_PARSE;
+import static com.squarespace.less.model.PropertyMergeMode.COMMA;
+import static com.squarespace.less.model.PropertyMergeMode.NONE;
+import static com.squarespace.less.model.PropertyMergeMode.SPACE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -36,11 +39,23 @@ public class PropertyTest extends LessTestBase {
     assertNotEquals(prop("x"), null);
     assertNotEquals(prop("x"), anon("x"));
     assertNotEquals(prop("x"), prop("y"));
+
+    assertEquals(prop("x", COMMA), prop("x", COMMA));
+    assertNotEquals(prop("x", COMMA), prop("x", NONE));
+    assertNotEquals(prop("x", COMMA), prop("x", SPACE));
   }
 
   @Test
   public void testModelReprSafety() {
     prop("x").toString();
+  }
+
+  @Test
+  public void testRepr() {
+    assertEquals(prop("x").repr(), "x");
+    assertEquals(prop("x", NONE).repr(), "x");
+    assertEquals(prop("x", COMMA).repr(), "x+");
+    assertEquals(prop("x", SPACE).repr(), "x+_");
   }
 
   @Test
