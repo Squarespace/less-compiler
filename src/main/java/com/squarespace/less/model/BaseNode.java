@@ -108,7 +108,7 @@ public abstract class BaseNode implements Node {
    * Constructs the position representation for this node.
    */
   public void posRepr(Buffer buf) {
-    buf.append(" [").append(lineOffset).append(',').append(charOffset).append("]");
+    buf.append(" [").append(lineOffset + 1).append(',').append(charOffset + 1).append("]");
   }
 
   /**

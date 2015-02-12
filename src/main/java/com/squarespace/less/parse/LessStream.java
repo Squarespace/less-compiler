@@ -105,8 +105,6 @@ public class LessStream extends Stream {
   // Special mode for 'font' rules.
   private boolean requireStrictMath;
 
-  private Mark position = new Mark();
-
   public LessStream(LessContext ctx, String raw) {
     this(ctx, raw, null, null);
   }
@@ -200,7 +198,6 @@ public class LessStream extends Stream {
       if (result != null) {
         result.setLineOffset(pos.lineOffset);
         result.setCharOffset(pos.charOffset);
-        mark(position);
         break;
       }
     }
