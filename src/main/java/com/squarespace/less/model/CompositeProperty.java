@@ -31,7 +31,7 @@ import com.squarespace.less.exec.ExecEnv;
  * A property that consists of 2 or more segments, where each
  * segment is of type {@link Property} or curly {@link Variable}.
  */
-public class CompositeProperty extends BaseNode {
+public class CompositeProperty extends BaseNode implements PropertyMergeable {
 
   /**
    * List of segments of the composite property, alternately {@link Property}

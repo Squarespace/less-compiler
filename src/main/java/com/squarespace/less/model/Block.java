@@ -333,14 +333,10 @@ public class Block extends BaseNode {
       flags |= FLAG_HAS_IMPORTS;
     } else if (node instanceof MixinCall) {
       flags |= FLAG_HAS_MIXIN_CALLS;
-    } else if (node instanceof Property) {
-      Property property = (Property)node;
-      if (property.mergeMode() != PropertyMergeMode.NONE) {
-        flags |= FLAG_HAS_MERGE_MODES;
-      }
-    } else if (node instanceof CompositeProperty) {
-      CompositeProperty property = (CompositeProperty)node;
-      if (property.mergeMode() != PropertyMergeMode.NONE) {
+    } else if (node instanceof Rule) {
+      Rule rule = (Rule) node;
+      PropertyMergeMode mode = ((PropertyMergeable)rule.property()).mergeMode();
+      if (mode != PropertyMergeMode.NONE) {
         flags |= FLAG_HAS_MERGE_MODES;
       }
     }

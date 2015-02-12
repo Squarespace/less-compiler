@@ -39,7 +39,7 @@ public class Rule extends BaseNode {
   /**
    * Value for this rule.
    */
-  protected final Node value;
+  protected Node value;
 
   /**
    * Marks the rule as !important.
@@ -96,6 +96,13 @@ public class Rule extends BaseNode {
    */
   public Node value() {
     return value;
+  }
+
+  /**
+   * Set the rule's value.
+   */
+  public void value(Node node) {
+    this.value = node;
   }
 
   /**

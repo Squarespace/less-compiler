@@ -92,6 +92,9 @@ public class LessRenderer {
     this.model = new CssModel(context);
   }
 
+  /**
+   * Shortcut to render a stylesheet against the given context.
+   */
   public static String render(LessContext context, Stylesheet sheet) throws LessException {
     return new LessRenderer(context, sheet).render();
   }
@@ -197,7 +200,9 @@ public class LessRenderer {
    * imports.
    */
   private void renderBlock(Block block, boolean includeImports) throws LessException {
+    LessBlockRuleMerger ruleMerger = block.hasPropertyMergeModes() ? new LessBlockRuleMerger(ctx) : null;
     FlexList<Node> rules = block.rules();
+
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node node = rules.get(i);
@@ -252,8 +257,11 @@ public class LessRenderer {
           break;
 
         case RULE:
-          // TODO: index all rendered properties for rules which have a merge mode set.
-          renderRule((Rule)node);
+          if (ruleMerger == null) {
+            renderRule((Rule)node);
+          } else {
+            ruleMerger.add((Rule)node);
+          }
           break;
 
         case RULESET:
@@ -262,6 +270,13 @@ public class LessRenderer {
 
         default:
           throw new LessInternalException("Unhandled node: " + node.type());
+      }
+    }
+
+    // If rule merging was in effect, we need to render all rules here.
+    if (ruleMerger != null) {
+      for (Rule rule : ruleMerger.rules()) {
+        renderRule(rule);
       }
     }
   }

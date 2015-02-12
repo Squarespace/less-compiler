@@ -24,7 +24,7 @@ import com.squarespace.less.core.Buffer;
 /**
  * The property name for a {@link Rule} or {@link Feature}.
  */
-public class Property extends BaseNode {
+public class Property extends BaseNode implements PropertyMergeable {
 
   /**
    * Name of the property.
@@ -40,7 +40,6 @@ public class Property extends BaseNode {
    * Mode for merging properties having the same name.
    */
   protected PropertyMergeMode mergeMode;
-
 
   /**
    * Constructs a property with the given name, without a merge mode.
