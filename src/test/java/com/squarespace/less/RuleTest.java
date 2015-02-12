@@ -101,9 +101,9 @@ public class RuleTest extends LessTestBase {
     GenericBlock defs = defs(def("@name", kwd("color")));
     LessHarness h = new LessHarness(Parselets.RULE, defs);
 
-    h.evalEquals("@{name}: red", rule(prop(proplist(kwd("color"))), color("red")));
-    h.evalEquals("foo-@{name}: red", rule(prop(proplist(prop("foo-"), kwd("color"))), color("red")));
-    h.evalEquals("@{name}+_: red", rule(prop(proplist(kwd("color")), SPACE), color("red")));
+    h.evalEquals("@{name}: red", rule(prop(list(kwd("color"))), color("red")));
+    h.evalEquals("foo-@{name}: red", rule(prop(list(prop("foo-"), kwd("color"))), color("red")));
+    h.evalEquals("@{name}+_: red", rule(prop(list(kwd("color")), SPACE), color("red")));
   }
 
   @Test

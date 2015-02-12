@@ -26,7 +26,7 @@ import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Property;
 import com.squarespace.less.model.PropertyMergeMode;
-import com.squarespace.less.model.RuleProperty;
+import com.squarespace.less.model.CompositeProperty;
 import com.squarespace.less.model.Variable;
 
 
@@ -75,7 +75,7 @@ public class RulePropertyParselet implements Parselet {
     // We found N segments, so look for the end or bail out.
     merge = end(stm);
     if (merge != null) {
-      return new RuleProperty(segments, merge);
+      return new CompositeProperty(segments, merge);
     }
     stm.restore(mark);
     return null;

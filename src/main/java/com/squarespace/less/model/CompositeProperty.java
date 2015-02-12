@@ -17,7 +17,7 @@
 package com.squarespace.less.model;
 
 import static com.squarespace.less.core.LessUtils.safeEquals;
-import static com.squarespace.less.model.NodeType.RULE_PROPERTY;
+import static com.squarespace.less.model.NodeType.COMPOSITE_PROPERTY;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +28,13 @@ import com.squarespace.less.exec.ExecEnv;
 
 
 /**
- * A rule property that consists of 2 or more segments, where each
+ * A property that consists of 2 or more segments, where each
  * segment is of type {@link Property} or curly {@link Variable}.
  */
-public class RuleProperty extends BaseNode {
+public class CompositeProperty extends BaseNode {
 
   /**
-   * List of segments of the rule property, alternately {@link Property}
+   * List of segments of the composite property, alternately {@link Property}
    * and curl {@link Variable} nodes.
    */
   private final List<Node> segments;
@@ -45,16 +45,16 @@ public class RuleProperty extends BaseNode {
   private PropertyMergeMode mergeMode;
 
   /**
-   * Constructs a rule property with the given segments.
+   * Constructs a composite property with the given segments.
    */
-  public RuleProperty(List<Node> segments) {
+  public CompositeProperty(List<Node> segments) {
     this(segments, PropertyMergeMode.NONE);
   }
 
   /**
-   * Construct a rule property with the given segments and merge mode.
+   * Construct a composite property with the given segments and merge mode.
    */
-  public RuleProperty(List<Node> segments, PropertyMergeMode mergeMode) {
+  public CompositeProperty(List<Node> segments, PropertyMergeMode mergeMode) {
     this.segments = segments;
     this.mergeMode = mergeMode;
   }
@@ -78,7 +78,7 @@ public class RuleProperty extends BaseNode {
    */
   @Override
   public NodeType type() {
-    return RULE_PROPERTY;
+    return COMPOSITE_PROPERTY;
   }
 
   /**
@@ -91,7 +91,7 @@ public class RuleProperty extends BaseNode {
       Node value = segment.needsEval() ? segment.eval(env) : segment;
       values.add(value);
     }
-    return new RuleProperty(values, mergeMode);
+    return new CompositeProperty(values, mergeMode);
   }
 
   @Override
@@ -136,8 +136,8 @@ public class RuleProperty extends BaseNode {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof RuleProperty) {
-      RuleProperty other = (RuleProperty)obj;
+    if (obj instanceof CompositeProperty) {
+      CompositeProperty other = (CompositeProperty)obj;
       return mergeMode == other.mergeMode && safeEquals(segments, other.segments);
     }
     return false;

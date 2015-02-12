@@ -32,6 +32,7 @@ import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.Colors;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Comment;
+import com.squarespace.less.model.CompositeProperty;
 import com.squarespace.less.model.Condition;
 import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.Dimension;
@@ -63,7 +64,6 @@ import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.RGBColor;
 import com.squarespace.less.model.Ratio;
 import com.squarespace.less.model.Rule;
-import com.squarespace.less.model.RuleProperty;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
@@ -225,19 +225,11 @@ public class LessMaker {
   }
 
   public Expression expn(Node ... nodes) {
-    Expression res = new Expression();
-    for (Node node : nodes) {
-      res.add(node);
-    }
-    return res;
+    return new Expression(Arrays.asList(nodes));
   }
 
   public ExpressionList expnlist(Node ... elems) {
-    ExpressionList res = new ExpressionList();
-    for (Node elem : elems) {
-      res.add(elem);
-    }
-    return res;
+    return new ExpressionList(Arrays.asList(elems));
   }
 
   public Feature feature(Node property, Node value) {
@@ -270,6 +262,10 @@ public class LessMaker {
 
   public Keyword kwd(String value) {
     return new Keyword(value);
+  }
+
+  public List<Node> list(Node ... nodes) {
+    return Arrays.asList(nodes);
   }
 
   public Media media() {
@@ -336,16 +332,12 @@ public class LessMaker {
     return new Property(name, merge);
   }
 
-  public RuleProperty prop(List<Node> segments) {
-    return new RuleProperty(segments);
+  public CompositeProperty prop(List<Node> segments) {
+    return new CompositeProperty(segments);
   }
 
-  public RuleProperty prop(List<Node> segments, PropertyMergeMode merge) {
-    return new RuleProperty(segments, merge);
-  }
-
-  public List<Node> proplist(Node ... segments) {
-    return Arrays.asList(segments);
+  public CompositeProperty prop(List<Node> segments, PropertyMergeMode merge) {
+    return new CompositeProperty(segments, merge);
   }
 
   public Quoted quoted(char delim, boolean escape, Object ... elems) {
@@ -428,9 +420,9 @@ public class LessMaker {
     return new Url(node);
   }
 
-  public ExpressionList value(Node ... nodes) {
-    return new ExpressionList(Arrays.asList(nodes));
-  }
+//  public ExpressionList value(Node ... nodes) {
+//    return new ExpressionList(Arrays.asList(nodes));
+//  }
 
   public Variable var(String name) {
     return var(name, false);

@@ -26,27 +26,27 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.RuleProperty;
+import com.squarespace.less.model.CompositeProperty;
 
 
-public class RulePropertyTest extends LessTestBase {
+public class CompositePropertyTest extends LessTestBase {
 
   @Test
   public void testEquals() throws LessException {
-    assertEquals(prop(proplist(prop("x"), var("@y"))), prop(proplist(prop("x"), var("@y"))));
+    assertEquals(prop(list(prop("x"), var("@y"))), prop(list(prop("x"), var("@y"))));
   }
 
   @Test
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(RULE_PROPERTY);
 
-    Node expected = prop(proplist(prop("foo-"), var("@var1", true), prop("-bar-"), var("@var2", true)));
+    Node expected = prop(list(prop("foo-"), var("@var1", true), prop("-bar-"), var("@var2", true)));
     h.parseEquals("foo-@{var1}-bar-@{var2}  :", expected);
   }
 
   @Test
   public void testRepr() throws LessException {
-    RuleProperty actual = prop(proplist(prop("x-"), var("@y", true)), SPACE);
+    CompositeProperty actual = prop(list(prop("x-"), var("@y", true)), SPACE);
     assertEquals(actual.repr(), "x-@{y}+_");
 
     actual.mergeMode(COMMA);
