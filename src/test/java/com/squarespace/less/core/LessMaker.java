@@ -77,6 +77,21 @@ import com.squarespace.less.model.ValueElement;
 import com.squarespace.less.model.Variable;
 
 
+/**
+ * Shorthand methods for constructing LESS node instances, for more
+ * compact test cases.
+ *
+ * NOTE: It is currently possible to manually build invalid trees
+ * using this class.  An invalid tree is one which it is impossible
+ * to produce through the parser.
+ *
+ * Eventually a validating node builder should be written to allow for
+ * manual construction of valid trees via the API.  This validation
+ * should not be merged into the models themselves, to avoid the
+ * the overhead of extra type checking.  The parser should produce
+ * a syntactically-valid tree, and other errors are caught and raised
+ * at evaluation time.
+ */
 public class LessMaker {
 
   public Alpha alpha(Node node) {
@@ -419,10 +434,6 @@ public class LessMaker {
   public Url url(Node node) {
     return new Url(node);
   }
-
-//  public ExpressionList value(Node ... nodes) {
-//    return new ExpressionList(Arrays.asList(nodes));
-//  }
 
   public Variable var(String name) {
     return var(name, false);
