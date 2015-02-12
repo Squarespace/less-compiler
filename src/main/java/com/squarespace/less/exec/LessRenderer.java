@@ -45,7 +45,7 @@ import com.squarespace.less.model.Stylesheet;
 
 
 /**
- * Given an executed tree, renders the final output.
+ * Given an executed tree, renders the final CSS output.
  */
 public class LessRenderer {
 

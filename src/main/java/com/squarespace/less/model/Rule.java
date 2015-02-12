@@ -212,11 +212,11 @@ public class Rule extends BaseNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
+    if (important) {
+      buf.append(" IMPORTANT");
+    }
     buf.append('\n').incrIndent().indent();
     property.modelRepr(buf);
-    if (important) {
-      buf.append("!important");
-    }
     buf.append('\n');
     if (value != null) {
       buf.indent();

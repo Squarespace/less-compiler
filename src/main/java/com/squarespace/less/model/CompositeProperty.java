@@ -60,6 +60,13 @@ public class CompositeProperty extends BaseNode {
   }
 
   /**
+   * Returns the segments that make up this composite property.
+   */
+  public List<Node> segments() {
+    return segments;
+  }
+
+  /**
    * Mode for merging properties having the same name.
    */
   public PropertyMergeMode mergeMode() {
@@ -122,14 +129,12 @@ public class CompositeProperty extends BaseNode {
     typeRepr(buf);
     posRepr(buf);
     if (mergeMode != PropertyMergeMode.NONE) {
-      buf.append(" merge=" + mergeMode);
+      buf.append(" MERGE_" + mergeMode);
     }
-    buf.append('\n');
     buf.incrIndent();
     for (Node segment : segments) {
-      buf.indent();
+      buf.append('\n').indent();
       segment.modelRepr(buf);
-      buf.append('\n');
     }
     buf.decrIndent();
   }

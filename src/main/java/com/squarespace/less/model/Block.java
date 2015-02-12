@@ -54,6 +54,11 @@ public class Block extends BaseNode {
   private static final byte FLAG_HAS_MIXIN_CALLS = 0x04;
 
   /**
+   * Block contains one or more properties with merge modes.
+   */
+  private static final byte FLAG_HAS_MERGE_MODES = 0x08;
+
+  /**
    * Initial capacity of the blocks array.
    */
   private static final int INITIAL_CAPACITY = 8;
@@ -161,6 +166,17 @@ public class Block extends BaseNode {
    */
   public boolean hasMixinCalls() {
     return (flags & FLAG_HAS_MIXIN_CALLS) != 0;
+  }
+
+  /**
+   * Indicate whether this block contains at least one rule whose
+   * property has a merge mode set.
+   *
+   * This indicates the block must defer output during rendering, to
+   * combine the values of rules whose properties have the same name.
+   */
+  public boolean hasPropertyMergeModes() {
+    return (flags & FLAG_HAS_MERGE_MODES) != 0;
   }
 
   /**
@@ -317,6 +333,16 @@ public class Block extends BaseNode {
       flags |= FLAG_HAS_IMPORTS;
     } else if (node instanceof MixinCall) {
       flags |= FLAG_HAS_MIXIN_CALLS;
+    } else if (node instanceof Property) {
+      Property property = (Property)node;
+      if (property.mergeMode() != PropertyMergeMode.NONE) {
+        flags |= FLAG_HAS_MERGE_MODES;
+      }
+    } else if (node instanceof CompositeProperty) {
+      CompositeProperty property = (CompositeProperty)node;
+      if (property.mergeMode() != PropertyMergeMode.NONE) {
+        flags |= FLAG_HAS_MERGE_MODES;
+      }
     }
   }
 

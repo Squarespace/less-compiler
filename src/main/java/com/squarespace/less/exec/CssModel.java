@@ -35,14 +35,18 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.BlockDirective;
+import com.squarespace.less.model.Media;
 import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Ruleset;
+import com.squarespace.less.model.Stylesheet;
 
 /**
- * Extremely simplistic model for CSS structure. Allows the LESS renderer
- * to defer final output in order to suppress empty blocks, and eliminate
- * duplicate rules.  It also ensures that each nested block is emitted
- * in the output model at the correct scope.
+ * Simple model for producing the final CSS output.
+ *
+ * Allows the LESS renderer to defer final output in order to
+ * suppress empty blocks, and eliminate duplicate rules.  It also
+ * ensures that each nested block is emitted in the output model
+ * at the correct scope.
  */
 public class CssModel {
 

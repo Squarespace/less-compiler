@@ -117,7 +117,7 @@ public class Property extends BaseNode {
     posRepr(buf);
     buf.append(' ').append(name);
     if (mergeMode != PropertyMergeMode.NONE) {
-      buf.append(" merge=").append(mergeMode.name());
+      buf.append(" MERGE_").append(mergeMode.name());
     }
   }
 

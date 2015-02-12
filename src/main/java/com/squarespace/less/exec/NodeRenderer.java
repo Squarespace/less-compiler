@@ -29,6 +29,7 @@ import com.squarespace.less.model.AttributeElement;
 import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Comment;
+import com.squarespace.less.model.CompositeProperty;
 import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.Element;
 import com.squarespace.less.model.Expression;
@@ -39,6 +40,7 @@ import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Operation;
 import com.squarespace.less.model.Paren;
+import com.squarespace.less.model.Property;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Selector;
@@ -77,11 +79,9 @@ public class NodeRenderer {
         break;
 
       case ANONYMOUS:
-      case COMPOSITE_PROPERTY:
       case DIMENSION:
       case FALSE:
       case KEYWORD:
-      case PROPERTY:
       case RATIO:
       case TRUE:
       case UNICODE_RANGE:
@@ -98,6 +98,10 @@ public class NodeRenderer {
 
       case COMMENT:
         renderImpl(buf, (Comment)node);
+        break;
+
+      case COMPOSITE_PROPERTY:
+        renderImpl(buf, (CompositeProperty)node);
         break;
 
       case DIRECTIVE:
@@ -130,6 +134,10 @@ public class NodeRenderer {
 
       case PAREN:
         renderImpl(buf, (Paren)node);
+        break;
+
+      case PROPERTY:
+        renderImpl(buf, (Property)node);
         break;
 
       case QUOTED:
@@ -186,7 +194,13 @@ public class NodeRenderer {
     }
   }
 
-  private static void renderImpl(Buffer buf, Directive directive) {
+  private static void renderImpl(Buffer buf, CompositeProperty property) throws LessException {
+    for (Node node : property.segments()) {
+      buf.append(node.repr());
+    }
+  }
+
+  private static void renderImpl(Buffer buf, Directive directive) throws LessException {
     buf.append(directive.name());
     Node value = directive.value();
     if (value != null) {
@@ -256,6 +270,10 @@ public class NodeRenderer {
     buf.append('(');
     render(buf, paren.value());
     buf.append(')');
+  }
+
+  private static void renderImpl(Buffer buf, Property property) throws LessException {
+    buf.append(property.name());
   }
 
   /**

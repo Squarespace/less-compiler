@@ -38,8 +38,14 @@ public class Stream {
 
   protected int furthest;
 
+  /**
+   * Offset of the current line. NOTE: zero-based.
+   */
   protected int lineOffset;
 
+  /**
+   * Offset of the character position of the current line. NOTE: zero-based.
+   */
   protected int charOffset;
 
   public Stream(String raw) {
