@@ -19,16 +19,6 @@ Extend pseudo-class:
       color: red;
     }
 
-Detached rulesets.  (initial version implemented)
-
-    // declare detached ruleset
-    @detached-ruleset: { background: red; };
-
-    // use detached ruleset
-    .top {
-        @detached-ruleset(); 
-    }
-
 Default mixins (see default() in functions)
 
     .mixin(blue) {
@@ -37,6 +27,8 @@ Default mixins (see default() in functions)
     .mixin(red) when (default()) {
         ..
     }
+
+Add all relevant less 2.x test cases to the test suite.
 
 
 Completed
@@ -67,6 +59,17 @@ Merging property values by comma or space:
     .myclass {
       .mixin();
       box-shadow+: 0 0 20px black;
+    }
+
+
+Detached rulesets.
+
+    // declare detached ruleset
+    @detached-ruleset: { background: red; };
+
+    // use detached ruleset
+    .top {
+        @detached-ruleset(); 
     }
 
 
