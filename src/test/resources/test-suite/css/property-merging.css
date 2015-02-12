@@ -1,0 +1,16 @@
+.spaces {
+  a-prop: 1px 2px !important;
+  b-prop: 3px 4px !important;
+}
+.spaces-and-vars {
+  a-header-prop: 1px 2px !important;
+  b-header-prop: 3px 4px !important;
+}
+.commas {
+  a-prop: 1px, 2px !important;
+  b-prop: 3px, 4px !important;
+}
+.commas-and-vars {
+  a-header-prop: 1px, 2px !important;
+  b-header-prop: 3px, 4px !important;
+}

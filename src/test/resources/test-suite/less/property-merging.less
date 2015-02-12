@@ -1,0 +1,36 @@
+
+@name: header;
+
+.spaces {
+    a-prop+_: 1px !important;
+    a-prop+_: 2px;
+
+    b-prop+_: 3px;
+    b-prop+_: 4px !important;
+}
+
+.spaces-and-vars {
+    a-@{name}-prop+_: 1px !important;
+    a-@{name}-prop+_: 2px;
+
+    b-@{name}-prop+_: 3px;
+    b-@{name}-prop+_: 4px !important;
+}
+
+.commas {
+    a-prop+: 1px !important;
+    a-prop+: 2px;
+
+    b-prop+: 3px;
+    b-prop+: 4px !important;
+}
+
+.commas-and-vars {
+    a-@{name}-prop+: 1px !important;
+    a-@{name}-prop+: 2px;
+
+    b-@{name}-prop+: 3px;
+    b-@{name}-prop+: 4px !important;
+}
+
+
