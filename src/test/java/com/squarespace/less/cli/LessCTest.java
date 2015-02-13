@@ -103,14 +103,14 @@ public class LessCTest {
   @Test
   public void testDebugParse() throws LessException, IOException {
     Path lessPath = suiteRootDir.resolve("less/directive.less");
-    compile("--debug", "PARSE", lessPath.toString());
+    compile("--debug", "PARSETREE", lessPath.toString());
     assertTrue(out.toString().contains("BLOCK_DIRECTIVE"));
   }
 
   @Test
   public void testDebugCanonical() throws LessException, IOException {
     Path lessPath = suiteRootDir.resolve("less/directive.less");
-    compile("--debug", "CANONICAL", lessPath.toString());
+    compile("--debug", "CANONICALIZE", lessPath.toString());
     assertTrue(out.toString().contains(".ruleset-font-face {"));
   }
 

@@ -148,7 +148,8 @@ public class SelectorUtils {
         result.add(((TextElement)elem).name());
 
       } else if (elem instanceof ValueElement) {
-        result.add(context.render(elem));
+        String text = context.render(((ValueElement)elem).value());
+        result.add(text);
       }
 
     }
