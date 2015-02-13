@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.squarespace.less;
+package com.squarespace.less.cli;
 
 import com.squarespace.less.core.LessUtils;
 
@@ -24,15 +24,18 @@ import com.squarespace.less.core.LessUtils;
  */
 public enum LessDebugMode {
 
-  CANONICAL
-  ("Parses and emits the canonical representation of the parsed template"),
+  CANONICALIZE
+  ("Parses and emits the canonical representation of the parsed template."),
 
-  EXPAND
+  EVAL
   ("Expands all IMPORT and MIXIN_CALL statements, and resolves all variable references, and emits "
-      + "the canonical form of the expanded template"),
+      + "the canonicalized form of the expanded template"),
 
-  PARSE
-  ("Parses the file and displays the internal parse tree (potentially extremely verbose)");
+  EVALTREE
+  ("Performs an EVAL and emits the pre-render syntax tree."),
+
+  PARSETREE
+  ("Parses the file and displays the internal syntax tree (potentially extremely verbose)");
 
   private String description;
 

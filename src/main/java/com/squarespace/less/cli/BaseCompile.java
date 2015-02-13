@@ -58,7 +58,7 @@ abstract class BaseCompile {
     return buf.toString();
   }
 
-  protected String parseTree(Stylesheet stylesheet) {
+  protected String syntaxTree(Stylesheet stylesheet) {
     Buffer buf = new Buffer(args.compilerOptions().indent());
     stylesheet.modelRepr(buf);
     return buf.toString();

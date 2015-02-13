@@ -76,17 +76,22 @@ class CompileSingle extends BaseCompile {
         Stylesheet stylesheet = compiler.parse(source, ctx, input.getParent(), input.getFileName());
         switch (args.debugMode()) {
 
-          case CANONICAL:
+          case CANONICALIZE:
             out.println(canonicalize(stylesheet));
             break;
 
-          case PARSE:
-            out.println(parseTree(stylesheet));
-            break;
-
-          case EXPAND:
+          case EVAL:
             stylesheet = compiler.expand(stylesheet, ctx);
             out.println(canonicalize(stylesheet));
+            break;
+
+          case EVALTREE:
+            stylesheet = compiler.expand(stylesheet, ctx);
+            out.println(syntaxTree(stylesheet));
+            break;
+
+          case PARSETREE:
+            out.println(syntaxTree(stylesheet));
             break;
 
           default:

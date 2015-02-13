@@ -30,7 +30,6 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.lang3.StringUtils;
 
 import com.squarespace.less.LessBuildProperties;
-import com.squarespace.less.LessDebugMode;
 import com.squarespace.less.LessOptions;
 
 
