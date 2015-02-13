@@ -194,13 +194,13 @@ public class NodeRenderer {
     }
   }
 
-  private static void renderImpl(Buffer buf, CompositeProperty property) throws LessException {
+  private static void renderImpl(Buffer buf, CompositeProperty property) {
     for (Node node : property.segments()) {
       buf.append(node.repr());
     }
   }
 
-  private static void renderImpl(Buffer buf, Directive directive) throws LessException {
+  private static void renderImpl(Buffer buf, Directive directive) {
     buf.append(directive.name());
     Node value = directive.value();
     if (value != null) {
@@ -259,7 +259,7 @@ public class NodeRenderer {
     buf.append(')');
   }
 
-  private static void renderImpl(Buffer buf, Operation operation) throws LessException {
+  private static void renderImpl(Buffer buf, Operation operation) {
     render(buf, operation.left());
     buf.append(operation.operator().toString());
     render(buf, operation.right());
@@ -272,7 +272,7 @@ public class NodeRenderer {
     buf.append(')');
   }
 
-  private static void renderImpl(Buffer buf, Property property) throws LessException {
+  private static void renderImpl(Buffer buf, Property property) {
     buf.append(property.name());
   }
 
