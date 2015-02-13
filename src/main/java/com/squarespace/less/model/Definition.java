@@ -22,7 +22,6 @@ import java.nio.file.Path;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.core.ExecuteErrorMaker;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.exec.ExecEnv;
 
@@ -99,6 +98,14 @@ public class Definition extends BaseNode {
     return value;
   }
 
+  /**
+   * Indicates whether this definition is currently being evaluated. Helps
+   * detect and skip over circular references.
+   */
+  public boolean evaluating() {
+    return evaluating;
+  }
+
   public Path fileName() {
     return fileName;
   }
@@ -119,9 +126,7 @@ public class Definition extends BaseNode {
    * Resolve the value for this definition.
    */
   public Node dereference(ExecEnv env) throws LessException {
-    if (evaluating) {
-      throw new LessException(ExecuteErrorMaker.varCircularRef(env));
-    }
+    // Mark as 'evaluating' so that we can detect and skip circular references.
     evaluating = true;
     Node result = value.eval(env);
     evaluating = false;

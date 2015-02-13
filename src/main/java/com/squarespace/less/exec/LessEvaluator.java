@@ -256,9 +256,15 @@ public class LessEvaluator {
       Node node = rules.get(i);
       if (node instanceof MixinCall) {
         Block mixinResult = executeMixinCall(env, (MixinCall)node);
+
+        // Splice the rules produced by the mixin call into the current block,
+        // replacing the mixin call.
         FlexList<Node> other = mixinResult.rules();
         rules.splice(i, 1, other);
         i += other.size() - 1;
+
+        // Indicate the block has changed, new variable definitions may have
+        // been added.
         block.resetVariableCache();
         block.orFlags(mixinResult);
       }

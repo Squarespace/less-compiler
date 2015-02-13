@@ -22,6 +22,7 @@ import java.util.List;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.FlexList;
 import com.squarespace.less.model.Block;
+import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.MixinParams;
@@ -146,12 +147,22 @@ public class MixinResolver {
       return match(index + 1, mixin.block());
     }
 
+    // Evaluate the mixin's params in order to perform pattern-matching.
     MixinParams params = mixin.params();
     ExecEnv env = matcher.callEnv().copy();
+
+    // Append the mixin definitions closure frames, if any.
     ExecEnv defEnv = mixin.closure();
     if (defEnv != null) {
       env.append(defEnv.frames().copy());
     }
+
+    // Make sure we can resolve params against other params.
+    GenericBlock block = params.toBlock(env);
+    if (block != null) {
+      env.push(block);
+    }
+
     params = (MixinParams) params.eval(env);
     boolean matches = matcher.patternMatch(params);
 

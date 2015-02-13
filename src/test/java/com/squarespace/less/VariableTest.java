@@ -16,7 +16,6 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.ExecuteErrorType.VAR_CIRCULAR_REFERENCE;
 import static com.squarespace.less.ExecuteErrorType.VAR_UNDEFINED;
 import static com.squarespace.less.SyntaxErrorType.INCOMPLETE_PARSE;
 import static com.squarespace.less.parse.Parselets.QUOTED;
@@ -79,9 +78,21 @@ public class VariableTest extends LessTestBase {
         def("@link2", var("@value"))
         );
     LessHarness h = new LessHarness(VARIABLE, defs);
-    h.evalFails("@value", VAR_CIRCULAR_REFERENCE);
-    h.evalFails("@link1", VAR_CIRCULAR_REFERENCE);
-    h.evalFails("@link2", VAR_CIRCULAR_REFERENCE);
+    h.evalFails("@value", VAR_UNDEFINED);
+    h.evalFails("@link1", VAR_UNDEFINED);
+    h.evalFails("@link2", VAR_UNDEFINED);
+  }
+
+  @Test
+  public void testSkipCircular() throws LessException {
+    GenericBlock frameOne = defs(
+        def("@color", color("red"))
+        );
+    GenericBlock frameTwo = defs(
+        def("@color", var("@color"))
+        );
+    LessHarness h = new LessHarness(VARIABLE, frameOne, frameTwo);
+    h.renderEquals("@color", "red");
   }
 
   @Test

@@ -18,6 +18,7 @@ package com.squarespace.less.exec;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
+import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.FlexList;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockNode;
@@ -166,7 +167,9 @@ public class ExecEnv {
     int size = frames.size();
     for (int i = size - 1; i >= 0; i--) {
       Definition def = frames.get(i).resolveDefinition(name);
-      if (def != null) {
+      // If definition exists and is not currently being evaluated, return it.
+      // This skips over circular references, looking in a higher stack frame.
+      if (def != null && !def.evaluating()) {
         return def;
       }
     }
@@ -200,4 +203,17 @@ public class ExecEnv {
     frames.pop();
   }
 
+  /**
+   * Dump all variable definitions in each block of the stack. Used for
+   * debugging in a pinch.
+   */
+  public String dumpDefinitions() {
+    Buffer buf = new Buffer(4);
+    int size = frames.size();
+    for (int i = size - 1; i >= 0; i--) {
+      frames.get(i).dumpDefs(buf);
+      buf.incrIndent();
+    }
+    return buf.toString();
+  }
 }

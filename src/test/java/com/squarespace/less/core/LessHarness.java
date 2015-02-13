@@ -19,6 +19,9 @@ package com.squarespace.less.core;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessErrorType;
@@ -49,12 +52,12 @@ public class LessHarness {
 
   private final LessCompiler compiler = new LessCompiler(FUNCTIONS);
 
-  private final GenericBlock defs;
+  private final List<GenericBlock> definitions = new ArrayList<>();
 
   private final Parselet[] parselet;
 
   public LessHarness() {
-    this(Parselets.STYLESHEET, null);
+    this.parselet = Parselets.STYLESHEET;
   }
 
   public LessHarness(GenericBlock defs) {
@@ -62,12 +65,14 @@ public class LessHarness {
   }
 
   public LessHarness(Parselet[] parselet) {
-    this(parselet, null);
+    this.parselet = parselet;
   }
 
-  public LessHarness(Parselet[] parselet, GenericBlock defs) {
+  public LessHarness(Parselet[] parselet, GenericBlock ... defs) {
     this.parselet = parselet;
-    this.defs = defs;
+    for (GenericBlock def : defs) {
+      this.definitions.add(def);
+    }
   }
 
   public LessContext context() {
@@ -116,24 +121,24 @@ public class LessHarness {
   }
 
   public void renderEquals(String raw, String expected) throws LessException {
-    ExecEnv env = define(defs);
+    ExecEnv env = define(definitions);
     Node res = evaluate(raw, parselet, env);
     assertEquals(env.context().render(res), expected, raw);
   }
 
   public void evalEquals(String raw, Node expected) throws LessException {
-    Node res = evaluate(raw, parselet, define(defs));
+    Node res = evaluate(raw, parselet, define(definitions));
     assertEquals(res, expected, raw);
   }
 
   public void evalEquals(Node input, Node expected) throws LessException {
-    Node result = evaluate(input, define(defs));
+    Node result = evaluate(input, define(definitions));
     assertEquals(result, expected, input.repr());
   }
 
   public void evalFails(String raw, LessErrorType expected) throws LessException {
     try {
-      evaluate(raw, parselet, define(defs));
+      evaluate(raw, parselet, define(definitions));
       fail("Expected LessException of type " + expected);
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), expected);
@@ -142,7 +147,7 @@ public class LessHarness {
 
   public void evalFails(Node node, LessErrorType expected) throws LessException {
     try {
-      evaluate(node, define(defs));
+      evaluate(node, define(definitions));
       fail("Expected LessException of type " + expected);
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), expected);
@@ -150,11 +155,11 @@ public class LessHarness {
   }
 
   public Node evaluate(String raw) throws LessException {
-    return evaluate(parse(raw, parselet), define(defs));
+    return evaluate(parse(raw, parselet), define(definitions));
   }
 
   public Node evaluate(Node node) throws LessException {
-    return node.eval(define(defs));
+    return node.eval(define(definitions));
   }
 
   public Node evaluate(Node node, ExecEnv env) throws LessException {
@@ -162,7 +167,7 @@ public class LessHarness {
   }
 
   public Node evaluate(String raw, Parselet[] parselet) throws LessException {
-    return evaluate(parse(raw, parselet), define(defs));
+    return evaluate(parse(raw, parselet), define(definitions));
   }
 
   public Node evaluate(String raw, Parselet[] parselet, ExecEnv env) throws LessException {
@@ -176,11 +181,12 @@ public class LessHarness {
     return res;
   }
 
-  private ExecEnv define(GenericBlock defs) throws LessException {
+  private ExecEnv define(List<GenericBlock> blocks) throws LessException {
     LessContext ctx = context();
     ExecEnv env = ctx.newEnv();
-    if (defs != null) {
-      env.push(defs);
+    // The first block pushed will be the top-most stack frame.
+    for (GenericBlock block : blocks) {
+      env.push(block);
     }
     return env;
   }
