@@ -41,6 +41,18 @@ Variable references in selectors.
     }
 
 
+Mixin calls to interpolated selectors.
+
+    @name: bar;
+
+    .@{name} {
+        color: red;
+    }
+
+    .ruleset {
+        .bar;
+    }
+
 Variables in property names:
 
     @foo: 'font-size';
