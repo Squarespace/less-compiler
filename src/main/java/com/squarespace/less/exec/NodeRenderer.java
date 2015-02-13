@@ -201,9 +201,9 @@ public class NodeRenderer {
     int size = nodes.size();
     for (int i = 0; i < size; i++) {
       if (i > 0) {
-        buf.listSep();
+        buf.append(sep);
       }
-      render(buf, expns.get(i));
+      render(buf, nodes.get(i));
     }
   }
 
