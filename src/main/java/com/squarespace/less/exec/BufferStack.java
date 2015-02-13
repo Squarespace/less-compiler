@@ -60,9 +60,9 @@ public class BufferStack {
    * Acquire a reusable buffer to render nodes.
    */
   public Buffer acquireBuffer() {
-    // Need to grow the list.
     Buffer buf = null;
     if (index == bufferList.size()) {
+      // Need to grow the list.
       buf = ctx.newBuffer();
       bufferList.add(buf);
 

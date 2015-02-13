@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.squarespace.less.LessContext;
 import com.squarespace.less.core.CartesianProduct;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Element;
@@ -27,6 +28,7 @@ import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
 import com.squarespace.less.model.TextElement;
+import com.squarespace.less.model.ValueElement;
 
 
 /**
@@ -101,12 +103,20 @@ public class SelectorUtils {
   /**
    * Constructs a list of strings from a selector, to enable simpler {@link Mixin} matching.
    */
-  public static List<String> renderMixinSelector(Selector selector) {
+  public static List<String> renderSelector(Selector selector) {
+    return renderSelector(selector, null);
+  }
+
+  /**
+   * Constructs a list of strings from a selector, to enable simpler {@link Mixin} matching.
+   */
+  public static List<String> renderSelector(Selector selector, LessContext context) {
     List<Element> elements = selector.elements();
     if (elements.isEmpty()) {
       return null;
     }
 
+    // Scan the selector's elements to produce a mixin-friendly path.
     List<String> result = null;
     int size = elements.size();
     for (int i = 0; i < size; i++) {
@@ -117,14 +127,30 @@ public class SelectorUtils {
         }
         return null;
       }
-      if (!(elem instanceof TextElement)) {
+
+      // If the context is null we can't render any nodes, so we can only
+      // build paths for text elements.
+      if (context == null && !(elem instanceof TextElement)) {
         return null;
       }
-      TextElement text = (TextElement)elem;
+
+      // We can render either of these elements
+      boolean valid = (elem instanceof TextElement) || (elem instanceof ValueElement);
+      if (!valid) {
+        return null;
+      }
+
+      // Defer allocation as long as possible
       if (result == null) {
         result = LessUtils.initList(result, size);
       }
-      result.add(text.name());
+      if (elem instanceof TextElement) {
+        result.add(((TextElement)elem).name());
+
+      } else if (elem instanceof ValueElement) {
+        result.add(context.render(elem));
+      }
+
     }
     return result;
   }

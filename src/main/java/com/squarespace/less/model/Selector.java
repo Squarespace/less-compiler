@@ -24,12 +24,19 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
+import com.squarespace.less.exec.SelectorUtils;
 
 
 /**
  * Represents one selector in a selector set.
  */
 public class Selector extends BaseNode {
+
+  private static final byte FLAG_EVALUATE = 0x01;
+
+  private static final byte FLAG_HAS_WILDCARD = 0x02;
+
+  private static final byte FLAG_MIXIN_PATH_BUILT = 0x04;
 
   /**
    * Default capacity for the selector's element list.
@@ -47,20 +54,15 @@ public class Selector extends BaseNode {
   protected List<String> mixinPath;
 
   /**
-   * Indicates whether this selector list contains a wildcard element.
+   * Flags set on this selector.
    */
-  protected boolean hasWildcard;
-
-  /**
-   * Indicates whether one of the elements in the list requires evaluation.
-   */
-  protected boolean evaluate;
+  protected byte flags;
 
   /**
    * Indicates whether the selector list contains a wildcard element.
    */
   public boolean hasWildcard() {
-    return hasWildcard;
+    return (flags & FLAG_HAS_WILDCARD) != 0;
   }
 
   /**
@@ -69,9 +71,11 @@ public class Selector extends BaseNode {
   public void add(Element element) {
     elements = LessUtils.initList(elements, DEFAULT_CAPACITY);
     elements.add(element);
-    evaluate |= element.needsEval();
+    if (element.needsEval()) {
+      flags |= FLAG_EVALUATE;
+    }
     if (element.isWildcard()) {
-      hasWildcard = true;
+      flags |= FLAG_HAS_WILDCARD;
     }
   }
 
@@ -83,17 +87,19 @@ public class Selector extends BaseNode {
   }
 
   /**
-   * Returns the segmented {@link Mixin} path corresponding to this selector.
+   * Indicates this selector has a "mixin-friendly" path.
    */
-  public List<String> mixinPath() {
-    return mixinPath;
+  public boolean hasMixinPath() {
+    buildMixinPath();
+    return mixinPath != null;
   }
 
   /**
-   * Sets the segmented {@link Mixin} path corresponding to this selector.
+   * Returns the segmented {@link Mixin} path corresponding to this selector.
    */
-  public void mixinPath(List<String> mixinPath) {
-    this.mixinPath = mixinPath;
+  public List<String> mixinPath() {
+    buildMixinPath();
+    return mixinPath;
   }
 
   /**
@@ -115,7 +121,7 @@ public class Selector extends BaseNode {
    */
   @Override
   public boolean needsEval() {
-    return evaluate;
+    return (flags & FLAG_EVALUATE) != 0;
   }
 
   /**
@@ -123,13 +129,16 @@ public class Selector extends BaseNode {
    */
   @Override
   public Node eval(ExecEnv env) throws LessException {
-    if (!evaluate) {
+    if (!needsEval()) {
       return this;
     }
     Selector result = new Selector();
     for (Element elem : elements) {
       result.add((Element)elem.eval(env));
     }
+
+    result.mixinPath = SelectorUtils.renderSelector(result, env.context());
+    result.flags |= FLAG_MIXIN_PATH_BUILT;
     return result;
   }
 
@@ -170,6 +179,16 @@ public class Selector extends BaseNode {
   @Override
   public int hashCode() {
     return super.hashCode();
+  }
+
+  /**
+   * Builds the mixin path on demand.
+   */
+  private void buildMixinPath() {
+    if ((flags & FLAG_MIXIN_PATH_BUILT) == 0) {
+      this.mixinPath = SelectorUtils.renderSelector(this);
+      flags |= FLAG_MIXIN_PATH_BUILT;
+    }
   }
 
 }

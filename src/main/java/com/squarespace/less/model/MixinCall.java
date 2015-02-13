@@ -63,7 +63,7 @@ public class MixinCall extends BaseNode {
     this.selector = selector;
     this.args = args;
     this.important = important;
-    this.selectorPath = SelectorUtils.renderMixinSelector(selector);
+    this.selectorPath = SelectorUtils.renderSelector(selector);
   }
 
   /**
@@ -108,6 +108,9 @@ public class MixinCall extends BaseNode {
    * Returns the segmented selector path used to locate the mixin definition.
    */
   public List<String> path() {
+    if (selectorPath == null) {
+
+    }
     return this.selectorPath;
   }
 

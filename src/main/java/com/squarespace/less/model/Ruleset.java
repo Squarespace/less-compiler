@@ -18,12 +18,9 @@ package com.squarespace.less.model;
 
 import static com.squarespace.less.core.LessUtils.safeEquals;
 
-import java.util.List;
-
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.ExecEnv;
-import com.squarespace.less.exec.SelectorUtils;
 
 
 /**
@@ -67,14 +64,14 @@ public class Ruleset extends BlockNode {
   public Ruleset(Selectors selectors, Block block) {
     super(block);
     this.selectors = selectors;
-    addMixinPaths(selectors);
+    this.hasMixinPath = selectors.hasMixinPath();
   }
 
   /**
    * Evaluates the ruleset's selectors and returns a copy.
    */
   public Ruleset copy(ExecEnv env) throws LessException {
-    Ruleset result = new Ruleset((Selectors) selectors.eval(env), block.copy());
+    Ruleset result = new Ruleset((Selectors)selectors.eval(env), block.copy());
     result.fileName = fileName;
     if (originalBlockNode != null) {
       result.originalBlockNode = originalBlockNode;
@@ -125,7 +122,7 @@ public class Ruleset extends BlockNode {
     if (node instanceof Selector) {
       Selector selector = (Selector)node;
       selectors.add(selector);
-      addMixinPaths(selector);
+      hasMixinPath |= selectors.hasMixinPath();
 
     } else {
       super.add(node);
@@ -188,26 +185,6 @@ public class Ruleset extends BlockNode {
   @Override
   public int hashCode() {
     return super.hashCode();
-  }
-
-  /**
-   * Attach the mixin paths to the corresponding selectors.
-   */
-  private void addMixinPaths(Selectors selectors) {
-    for (Selector selector : selectors.selectors()) {
-      addMixinPaths(selector);
-    }
-  }
-
-  /**
-   * Render the mixin selector path and attach it to the corresponding selector.
-   */
-  private void addMixinPaths(Selector selector) {
-    List<String> path = SelectorUtils.renderMixinSelector(selector);
-    if (path != null) {
-      selector.mixinPath(path);
-      hasMixinPath = true;
-    }
   }
 
 }

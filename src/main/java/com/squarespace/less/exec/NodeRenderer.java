@@ -19,7 +19,6 @@ package com.squarespace.less.exec;
 import java.util.List;
 
 import com.squarespace.less.LessContext;
-import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
@@ -57,14 +56,14 @@ public class NodeRenderer {
   private NodeRenderer() {
   }
 
-  public static String render(LessContext ctx, Node node) throws LessException {
+  public static String render(LessContext ctx, Node node) {
     Buffer buf = ctx.acquireBuffer();
     render(buf, node);
     ctx.returnBuffer();
     return buf.toString();
   }
 
-  public static void render(Buffer buf, Node node) throws LessException {
+  public static void render(Buffer buf, Node node) {
     if (node == null) {
       return;
     }
@@ -158,18 +157,18 @@ public class NodeRenderer {
     }
   }
 
-  private static void renderImpl(Buffer buf, Alpha alpha) throws LessException {
+  private static void renderImpl(Buffer buf, Alpha alpha) {
     buf.append("alpha(opacity=");
     render(buf, alpha.value());
     buf.append(')');
   }
 
-  private static void renderImpl(Buffer buf, Assignment assign) throws LessException {
+  private static void renderImpl(Buffer buf, Assignment assign) {
     buf.append(assign.name()).append('=');
     render(buf, assign.value());
   }
 
-  private static void renderImpl(Buffer buf, Comment comment) throws LessException {
+  private static void renderImpl(Buffer buf, Comment comment) {
     String body = comment.body();
     if (comment.block()) {
       buf.append("/*").append(body).append("*/");
@@ -181,7 +180,7 @@ public class NodeRenderer {
     }
   }
 
-  private static void renderImpl(Buffer buf, Directive directive) throws LessException {
+  private static void renderImpl(Buffer buf, Directive directive) {
     buf.append(directive.name());
     Node value = directive.value();
     if (value != null) {
@@ -190,20 +189,16 @@ public class NodeRenderer {
     }
   }
 
-  private static void renderImpl(Buffer buf, Expression expn) throws LessException {
-    List<Node> values = expn.values();
-    int size = values.size();
-    for (int i = 0; i < size; i++) {
-      if (i > 0) {
-        buf.append(' ');
-      }
-      render(buf, values.get(i));
-    }
+  private static void renderImpl(Buffer buf, Expression expn) {
+    renderList(buf, expn.values(), " ");
   }
 
-  private static void renderImpl(Buffer buf, ExpressionList list) throws LessException {
-    List<Node> expns = list.expressions();
-    int size = expns.size();
+  private static void renderImpl(Buffer buf, ExpressionList list) {
+    renderList(buf, list.expressions(), buf.compress() ? "," : ", ");
+  }
+
+  private static void renderList(Buffer buf, List<Node> nodes, String sep) {
+    int size = nodes.size();
     for (int i = 0; i < size; i++) {
       if (i > 0) {
         buf.listSep();
@@ -212,13 +207,13 @@ public class NodeRenderer {
     }
   }
 
-  public static void renderImpl(Buffer buf, Feature feature) throws LessException {
+  public static void renderImpl(Buffer buf, Feature feature) {
     render(buf, feature.property());
     buf.ruleSep();
     render(buf, feature.value());
   }
 
-  private static void renderImpl(Buffer buf, Features features) throws LessException {
+  private static void renderImpl(Buffer buf, Features features) {
     List<Node> nodes = features.features();
     int size = nodes.size();
     for (int i = 0; i < size; i++) {
@@ -229,7 +224,7 @@ public class NodeRenderer {
     }
   }
 
-  private static void renderImpl(Buffer buf, FunctionCall call) throws LessException {
+  private static void renderImpl(Buffer buf, FunctionCall call) {
     String name = call.name();
     buf.append(name).append('(');
 
@@ -245,7 +240,7 @@ public class NodeRenderer {
   }
 
   /** Render a PAREN node. */
-  private static void renderImpl(Buffer buf, Paren paren) throws LessException {
+  private static void renderImpl(Buffer buf, Paren paren) {
     buf.append('(');
     render(buf, paren.value());
     buf.append(')');
@@ -254,7 +249,7 @@ public class NodeRenderer {
   /**
    * Render a QUOTED node.
    */
-  private static void renderImpl(Buffer buf, Quoted quoted) throws LessException {
+  private static void renderImpl(Buffer buf, Quoted quoted) {
     List<Node> parts = quoted.parts();
     boolean escaped = quoted.escaped();
     char delim = escaped ? Chars.NULL : quoted.delimiter();
@@ -280,7 +275,7 @@ public class NodeRenderer {
   }
 
   /** Render a RULE node. */
-  public static void renderImpl(Buffer buf, Rule rule) throws LessException {
+  public static void renderImpl(Buffer buf, Rule rule) {
     render(buf, rule.property());
     buf.ruleSep();
     render(buf, rule.value());
@@ -290,14 +285,14 @@ public class NodeRenderer {
   }
 
   /** Render a SHORTHAND node. */
-  public static void renderImpl(Buffer buf, Shorthand shorthand) throws LessException {
+  public static void renderImpl(Buffer buf, Shorthand shorthand) {
     render(buf, shorthand.left());
     buf.append('/');
     render(buf, shorthand.right());
   }
 
   /** Render a SELECTOR node. */
-  private static void renderImpl(Buffer buf, Selector selector) throws LessException {
+  private static void renderImpl(Buffer buf, Selector selector) {
     List<Element> elements = selector.elements();
     int size = elements.size();
     for (int i = 0; i < size; i++) {
@@ -310,7 +305,7 @@ public class NodeRenderer {
    * of this method is required to properly emit whitespace before and after combinators, depending
    * on if we're in compress mode or not.
    */
-  private static void renderImpl(Buffer buf, Element element, boolean isFirst) throws LessException {
+  private static void renderImpl(Buffer buf, Element element, boolean isFirst) {
     Combinator combinator = element.combinator();
     if (combinator != null) {
       boolean isDescendant = combinator == Combinator.DESC;
@@ -366,7 +361,7 @@ public class NodeRenderer {
   }
 
   /** Render a URL node. */
-  private static void renderImpl(Buffer buf, Url url) throws LessException {
+  private static void renderImpl(Buffer buf, Url url) {
     buf.append("url(");
     render(buf, url.value());
     buf.append(Chars.RIGHT_PARENTHESIS);

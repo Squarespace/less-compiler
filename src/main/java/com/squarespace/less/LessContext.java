@@ -147,7 +147,7 @@ public class LessContext {
     return new LessErrorInfo(type);
   }
 
-  public String render(Node node) throws LessException {
+  public String render(Node node) {
     return NodeRenderer.render(this, node);
   }
 

@@ -81,6 +81,11 @@ public class MixinResolver {
       return false;
     }
 
+    // TODO: future mixin resolution optimization to cache ruleset/mixins in
+    // a separate field on the block to reduce size of these inner loops.
+    // this should improve execution times for large stylesheets with many
+    // imports.
+
     boolean matched = false;
     int size = rules.size();
     for (int i = 0; i < size; i++) {

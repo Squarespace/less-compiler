@@ -42,6 +42,11 @@ public class Selectors extends BaseNode {
   protected boolean evaluate;
 
   /**
+   * Indicates that at least one of the child selectors is "mixin-friendly".
+   */
+  protected boolean hasMixinPath;
+
+  /**
    * Constructs an empty selector set.
    */
   public Selectors() {
@@ -68,6 +73,7 @@ public class Selectors extends BaseNode {
     selectors = LessUtils.initList(selectors, 2);
     selectors.add(selector);
     evaluate |= selector.needsEval();
+    hasMixinPath |= selector.hasMixinPath();
   }
 
   /**
@@ -75,6 +81,13 @@ public class Selectors extends BaseNode {
    */
   public List<Selector> selectors() {
     return LessUtils.safeList(selectors);
+  }
+
+  /**
+   * Indicates that at least one of the child selectors is "mixin-friendly".
+   */
+  public boolean hasMixinPath() {
+    return hasMixinPath;
   }
 
   /**
