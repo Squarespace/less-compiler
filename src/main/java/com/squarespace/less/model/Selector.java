@@ -137,7 +137,10 @@ public class Selector extends BaseNode {
       result.add((Element)elem.eval(env));
     }
 
-    result.mixinPath = SelectorUtils.renderSelector(result, env.context());
+    List<String> path = env.context().renderMixinPath(result);
+    if (path != null) {
+      result.mixinPath = path;
+    }
     result.flags |= FLAG_MIXIN_PATH_BUILT;
     return result;
   }

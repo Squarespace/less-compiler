@@ -20,9 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.squarespace.less.LessContext;
+import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.CartesianProduct;
-import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Element;
 import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.Selector;
@@ -101,22 +100,19 @@ public class SelectorUtils {
   }
 
   /**
-   * Constructs a list of strings from a selector, to enable simpler {@link Mixin} matching.
+   * Constructs a list of strings from a selector, to enable faster {@link Mixin} matching.
+   * This only renders selectors which require no evaluation.
    */
   public static List<String> renderSelector(Selector selector) {
-    return renderSelector(selector, null);
-  }
+    if (selector.needsEval()) {
+      return null;
+    }
 
-  /**
-   * Constructs a list of strings from a selector, to enable simpler {@link Mixin} matching.
-   */
-  public static List<String> renderSelector(Selector selector, LessContext context) {
     List<Element> elements = selector.elements();
     if (elements.isEmpty()) {
       return null;
     }
 
-    // Scan the selector's elements to produce a mixin-friendly path.
     List<String> result = null;
     int size = elements.size();
     for (int i = 0; i < size; i++) {
@@ -128,10 +124,37 @@ public class SelectorUtils {
         return null;
       }
 
-      // If the context is null we can't render any nodes, so we can only
-      // build paths for text elements.
-      if (context == null && !(elem instanceof TextElement)) {
+      if (!(elem instanceof TextElement)) {
         return null;
+      }
+
+      if (result == null) {
+        result = new ArrayList<>(size);
+      }
+      result.add(((TextElement)elem).name());
+    }
+    return result;
+  }
+
+  /**
+   * Constructs a list of strings from a selector, to enable faster {@link Mixin} matching.
+   * Is able to render non-text elements.
+   */
+  public static List<String> renderCompositeSelector(Selector selector, Buffer buffer) {
+    List<Element> elements = selector.elements();
+    if (elements.isEmpty()) {
+      return selector.mixinPath();
+    }
+
+    List<String> result = null;
+    int size = elements.size();
+    for (int i = 0; i < size; i++) {
+      Element elem = elements.get(i);
+      if (elem.isWildcard()) {
+        if (i == 0) {
+          continue;
+        }
+        return selector.mixinPath();
       }
 
       // We can render either of these elements
@@ -140,18 +163,28 @@ public class SelectorUtils {
         return null;
       }
 
-      // Defer allocation as long as possible
-      if (result == null) {
-        result = LessUtils.initList(result, size);
+      if (i > 0 && elem.combinator() != null && buffer.length() > 0) {
+        if (result == null) {
+          result = new ArrayList<>(size);
+        }
+        result.add(buffer.toString());
+        buffer.reset();
       }
+
       if (elem instanceof TextElement) {
-        result.add(((TextElement)elem).name());
+        buffer.append(((TextElement)elem).name());
 
       } else if (elem instanceof ValueElement) {
-        String text = context.render(((ValueElement)elem).value());
-        result.add(text);
+        NodeRenderer.render(buffer, ((ValueElement)elem).value());
       }
 
+    }
+
+    if (buffer.length() > 0) {
+      if (result == null) {
+        result = new ArrayList<>(size);
+      }
+      result.add(buffer.toString());
     }
     return result;
   }

@@ -17,6 +17,7 @@
 package com.squarespace.less;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 import com.squarespace.less.core.Buffer;
@@ -27,7 +28,9 @@ import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.exec.MixinResolver;
 import com.squarespace.less.exec.NodeRenderer;
 import com.squarespace.less.exec.RenderEnv;
+import com.squarespace.less.exec.SelectorUtils;
 import com.squarespace.less.model.Node;
+import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.parse.LessImporter;
 
@@ -153,6 +156,13 @@ public class LessContext {
 
   public void render(Buffer buf, Node node) throws LessException {
     NodeRenderer.render(buf, node);
+  }
+
+  public List<String> renderMixinPath(Selector selector) throws LessException {
+    Buffer buf = acquireBuffer();
+    List<String> result = SelectorUtils.renderCompositeSelector(selector, buf);
+    returnBuffer();
+    return result;
   }
 
   public void enterMixin() {
