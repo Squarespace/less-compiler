@@ -17,7 +17,6 @@
 package com.squarespace.less;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 
 import com.squarespace.less.core.Buffer;
@@ -158,9 +157,9 @@ public class LessContext {
     NodeRenderer.render(buf, node);
   }
 
-  public List<String> renderMixinPath(Selector selector) throws LessException {
+  public String renderMixinPath(Selector selector) throws LessException {
     Buffer buf = acquireBuffer();
-    List<String> result = SelectorUtils.renderCompositeSelector(selector, buf);
+    String result = SelectorUtils.renderCompositeSelector(selector, buf);
     returnBuffer();
     return result;
   }

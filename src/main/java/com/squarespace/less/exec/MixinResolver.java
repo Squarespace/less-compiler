@@ -24,6 +24,7 @@ import com.squarespace.less.core.FlexList;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Mixin;
+import com.squarespace.less.model.MixinCall;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
@@ -44,13 +45,13 @@ public class MixinResolver {
 
   protected MixinCallArgs args;
 
-  protected List<String> callPath;
+  protected String callPath;
 
-  protected int callPathSize;
+  protected int callPathLength;
 
   protected int maxIndex;
 
-  // TODO: change how this is used, so we can avoid the default constructor / reset method. - phensley
+  // TODO: change how this is used, so we can avoid the default constructor / reset method.
 
   public MixinResolver() {
   }
@@ -59,8 +60,8 @@ public class MixinResolver {
     this.matcher = matcher;
     this.args = matcher.mixinArgs();
     this.callPath = matcher.mixinCall().path();
-    this.callPathSize = callPath.size();
-    this.maxIndex = callPath.size() - 1;
+    this.callPathLength = callPath.length();
+    this.maxIndex = callPathLength - 1;
     this.results = new ArrayList<>(3);
   }
 
@@ -68,12 +69,19 @@ public class MixinResolver {
     return results;
   }
 
+  /**
+   * Starts the matching process at the beginning of the {@link MixinCall}'s path.
+   */
   public boolean match(Block block) throws LessException {
     return match(0, block);
   }
 
+  /**
+   * Scan the block and match each found {@link Mixin} or {@link Ruleset}'s path
+   * against this {@link MixinCall}'s path starting at position {@code index}.
+   */
   protected boolean match(int index, Block block) throws LessException {
-    if (index >= callPathSize) {
+    if (index >= callPathLength) {
       return false;
     }
 
@@ -102,6 +110,9 @@ public class MixinResolver {
     return matched;
   }
 
+  /**
+   * Attempt to match the mixin call's path against a {@link Ruleset}
+   */
   protected boolean matchRuleset(int index, Ruleset ruleset) throws LessException {
     if (!ruleset.hasMixinPath()) {
       return false;
@@ -113,7 +124,7 @@ public class MixinResolver {
 
     Selectors selectors = ruleset.selectors();
     for (Selector selector : selectors.selectors()) {
-      List<String> path = selector.mixinPath();
+      String path = selector.mixinPath();
       int remaining = matchPath(index, path);
       if (remaining < 0) {
         continue;
@@ -128,7 +139,7 @@ public class MixinResolver {
 
       } else {
         // Partial match.. continue matching the children of this ruleset.
-        if (match(index + path.size(), ruleset.block())) {
+        if (match(index + path.length(), ruleset.block())) {
           return true;
         }
       }
@@ -137,17 +148,23 @@ public class MixinResolver {
     return false;
   }
 
+  /**
+   * Attempt to match the mixin call's path against a {@link Mixin}.
+   */
   private boolean matchMixin(int index, Mixin mixin) throws LessException {
-    boolean matched = callPath.get(index).equals(mixin.name());
-    if (!matched) {
+    int remaining = matchPath(index, mixin.name());
+
+    // No match, bail out
+    if (remaining < 0) {
       return false;
     }
-    if (matched && index < maxIndex) {
+
+    if (remaining > 0) {
       // We haven't matched entire path, so drill deeper.
-      return match(index + 1, mixin.block());
+      return match(index + mixin.name().length(), mixin.block());
     }
 
-    // Evaluate the mixin's params in order to perform pattern-matching.
+    // Full match, check if the arguments pattern match the parameters.
     MixinParams params = mixin.params();
     ExecEnv env = matcher.callEnv().copy();
 
@@ -172,25 +189,29 @@ public class MixinResolver {
     return matches;
   }
 
-  protected int matchPath(int index, List<String> other) {
+  /**
+   * Partially match the call path against the given string.
+   */
+  protected int matchPath(int index, String other) {
     if (other == null) {
       return -1;
     }
-    int otherSize = other.size();
-    int currSize = callPathSize - index;
-    if (otherSize == 0 || currSize < otherSize) {
+
+    int otherLength = other.length();
+    int currSize = callPathLength - index;
+    if (otherLength == 0 || currSize < otherLength) {
       return -1;
     }
 
     int j = 0;
-    while (j < otherSize) {
-      if (!callPath.get(index).equals(other.get(j))) {
+    while (j < otherLength) {
+      if (callPath.charAt(index) != other.charAt(j)) {
         return -1;
       }
       index++;
       j++;
     }
-    return callPathSize - index;
+    return callPathLength - index;
   }
 
 }

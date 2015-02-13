@@ -19,7 +19,6 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import java.nio.file.Path;
-import java.util.List;
 
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.SelectorUtils;
@@ -38,7 +37,7 @@ public class MixinCall extends BaseNode {
   /**
    * Segmented selector path used to locate the mixin definition.
    */
-  protected final List<String> selectorPath;
+  protected final String selectorPath;
 
   /**
    * Arguments to the mixin call.
@@ -107,10 +106,7 @@ public class MixinCall extends BaseNode {
   /**
    * Returns the segmented selector path used to locate the mixin definition.
    */
-  public List<String> path() {
-    if (selectorPath == null) {
-
-    }
+  public String path() {
     return this.selectorPath;
   }
 

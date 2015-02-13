@@ -103,7 +103,7 @@ public class SelectorUtils {
    * Constructs a list of strings from a selector, to enable faster {@link Mixin} matching.
    * This only renders selectors which require no evaluation.
    */
-  public static List<String> renderSelector(Selector selector) {
+  public static String renderSelector(Selector selector) {
     if (selector.needsEval()) {
       return null;
     }
@@ -113,7 +113,7 @@ public class SelectorUtils {
       return null;
     }
 
-    List<String> result = null;
+    Buffer buf = new Buffer(0);
     int size = elements.size();
     for (int i = 0; i < size; i++) {
       Element elem = elements.get(i);
@@ -128,25 +128,21 @@ public class SelectorUtils {
         return null;
       }
 
-      if (result == null) {
-        result = new ArrayList<>(size);
-      }
-      result.add(((TextElement)elem).name());
+      buf.append(((TextElement)elem).name());
     }
-    return result;
+    return buf.toString();
   }
 
   /**
    * Constructs a list of strings from a selector, to enable faster {@link Mixin} matching.
    * Is able to render non-text elements.
    */
-  public static List<String> renderCompositeSelector(Selector selector, Buffer buffer) {
+  public static String renderCompositeSelector(Selector selector, Buffer buffer) {
     List<Element> elements = selector.elements();
     if (elements.isEmpty()) {
-      return selector.mixinPath();
+      return null;
     }
 
-    List<String> result = null;
     int size = elements.size();
     for (int i = 0; i < size; i++) {
       Element elem = elements.get(i);
@@ -154,21 +150,13 @@ public class SelectorUtils {
         if (i == 0) {
           continue;
         }
-        return selector.mixinPath();
+        return null;
       }
 
       // We can render either of these elements
       boolean valid = (elem instanceof TextElement) || (elem instanceof ValueElement);
       if (!valid) {
         return null;
-      }
-
-      if (i > 0 && elem.combinator() != null && buffer.length() > 0) {
-        if (result == null) {
-          result = new ArrayList<>(size);
-        }
-        result.add(buffer.toString());
-        buffer.reset();
       }
 
       if (elem instanceof TextElement) {
@@ -180,13 +168,7 @@ public class SelectorUtils {
 
     }
 
-    if (buffer.length() > 0) {
-      if (result == null) {
-        result = new ArrayList<>(size);
-      }
-      result.add(buffer.toString());
-    }
-    return result;
+    return buffer.toString();
   }
 
 }

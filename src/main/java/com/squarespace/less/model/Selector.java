@@ -51,7 +51,7 @@ public class Selector extends BaseNode {
   /**
    * {@link Mixin} path this selector maps to.
    */
-  protected List<String> mixinPath;
+  protected String mixinPath;
 
   /**
    * Flags set on this selector.
@@ -97,7 +97,7 @@ public class Selector extends BaseNode {
   /**
    * Returns the segmented {@link Mixin} path corresponding to this selector.
    */
-  public List<String> mixinPath() {
+  public String mixinPath() {
     buildMixinPath();
     return mixinPath;
   }
@@ -137,7 +137,7 @@ public class Selector extends BaseNode {
       result.add((Element)elem.eval(env));
     }
 
-    List<String> path = env.context().renderMixinPath(result);
+    String path = env.context().renderMixinPath(result);
     if (path != null) {
       result.mixinPath = path;
     }
