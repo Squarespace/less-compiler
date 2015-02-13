@@ -2,6 +2,37 @@
 2.x Core Checklist
 ---------
 
+Detached rulesets as mixin arguments:
+
+    .mixin({
+        color: blue
+    });
+
+Functions in guard conditions:
+
+Guards on Rulesets:
+
+    @var: true;
+    #foo when ( @var ) {
+        ...
+    }
+
+Custom units.
+ * Requires reworking the enum units into classes.
+
+When Javascript support is disabled, parse the values as opaque strings
+and emit a warning. Filter them from the output.
+
+Adding !important to definitions, merging accurately in rule:
+
+    @size: 1px !important;
+    @color: black !important;
+    color: solid @size @color !important
+
+    color: solid 1px black !important;
+
+Strict math mode, default this in 2.x mode.
+
 Ensure all @import keywords work (inline, once, etc)
 
 Variable references in import paths:
