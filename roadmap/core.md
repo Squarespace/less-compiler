@@ -2,6 +2,8 @@
 2.x Core Checklist
 ---------
 
+Rework pairwise type comparison functions.
+
 Detached rulesets as mixin arguments:
 
     .mixin({
