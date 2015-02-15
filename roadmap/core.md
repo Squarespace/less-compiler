@@ -19,9 +19,6 @@ Guards on Rulesets:
         ...
     }
 
-Custom units.
- * Requires reworking the enum units into classes.
-
 When Javascript support is disabled, parse the values as opaque strings
 and emit a warning. Filter them from the output.
 
@@ -116,5 +113,9 @@ Detached rulesets.
     .top {
         @detached-ruleset(); 
     }
+
+
+Custom units.
+ * Requires reworking the enum units into classes.
 
 
