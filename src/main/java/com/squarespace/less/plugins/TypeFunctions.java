@@ -111,7 +111,7 @@ public class TypeFunctions implements Registry<Function> {
       } else {
         return FALSE;
       }
-      return (unit == dim.unit()) ? TRUE : FALSE;
+      return (unit.equals(dim.unit())) ? TRUE : FALSE;
     }
   };
 

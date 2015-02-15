@@ -34,6 +34,8 @@ import static com.squarespace.less.model.Unit.RAD;
 import static com.squarespace.less.model.Unit.S;
 import static com.squarespace.less.model.Unit.TURN;
 
+import java.util.Collection;
+
 
 
 /**
@@ -51,8 +53,8 @@ public class UnitConversions {
    * with the given factor.
    */
   private static void create(Unit from, Unit to, double factor) {
-    int i0 = from.ordinal();
-    int i1 = to.ordinal();
+    int i0 = from.id();
+    int i1 = to.id();
     CONVERSIONS[i0][i1] = factor;
     CONVERSIONS[i1][i0] = 1.0 / factor;
   }
@@ -61,9 +63,9 @@ public class UnitConversions {
    * Builds the conversion table.
    */
   static {
-    Unit[] values = Unit.values();
-    int sz = values.length;
-    CONVERSIONS = new double[sz][sz];
+    Collection<Unit> values = Unit.values();
+    int size = values.size();
+    CONVERSIONS = new double[size][size];
     for (Unit unit : values) {
       create(unit, unit, 1.0);
     }
@@ -132,7 +134,12 @@ public class UnitConversions {
     if (from == null || to == null) {
       return 1.0;
     }
-    return CONVERSIONS[from.ordinal()][to.ordinal()];
+    int fromId = from.id();
+    int toId = to.id();
+    if (fromId == 0 || toId == 0) {
+      return 1.0;
+    }
+    return CONVERSIONS[fromId][toId];
   }
 
 }

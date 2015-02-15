@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 
 import com.squarespace.less.core.CharPattern;
 import com.squarespace.less.core.Chars;
-import com.squarespace.less.model.Unit;
 
 
 public class Patterns {
@@ -58,7 +57,7 @@ public class Patterns {
 
   public static final Pattern DIGITS = pattern("\\d+");
 
-  public static final Pattern DIMENSION_UNIT = pattern(Unit.REGEX, true);
+  public static final Pattern DIMENSION_UNIT = pattern("%|[a-z]+", true);
 
   public static final Pattern DIMENSION_VALUE = pattern("[+-]?\\d*\\.?\\d+");
 

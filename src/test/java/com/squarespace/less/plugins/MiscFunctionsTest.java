@@ -82,10 +82,10 @@ public class MiscFunctionsTest extends LessTestBase {
     h.evalEquals("unit(1, 'px')", dim(1, Unit.PX));
     h.evalEquals("unit(3em, pt)", dim(3, Unit.PT));
     h.evalEquals("unit(3em)", dim(3));
+    h.evalEquals("unit(3em, quark)", dim(3, Unit.get("quark")));
 
     h.evalFails("unit('foo', px)", INVALID_ARG);
     h.evalFails("unit(1px, #f00)", UNKNOWN_UNIT);
-    h.evalFails("unit(3em, quark)", UNKNOWN_UNIT);
   }
 
   private LessHarness harness() {

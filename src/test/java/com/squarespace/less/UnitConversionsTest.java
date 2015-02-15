@@ -34,6 +34,8 @@ public class UnitConversionsTest {
     assertEquals(factor(Unit.PX, Unit.IN), 1.0 / 96.0);
     assertEquals(factor(Unit.KHZ, Unit.HZ), 1000.0);
     assertEquals(factor(Unit.HZ, Unit.KHZ), 1 / 1000.0);
+
+    assertEquals(factor(Unit.IN, new Unit("quark")), 1.0);
   }
 
 }

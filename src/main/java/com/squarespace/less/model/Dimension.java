@@ -25,6 +25,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.ExecuteErrorMaker;
+import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
 
 
@@ -79,7 +80,7 @@ public class Dimension extends BaseNode {
   public boolean equals(Object obj) {
     if (obj instanceof Dimension) {
       Dimension other = (Dimension)obj;
-      boolean unitEqual = unit == other.unit;
+      boolean unitEqual = LessUtils.safeEquals(unit, other.unit);
       if (Double.isNaN(value) && Double.isNaN(other.value)) {
         return unitEqual;
       } else if (Double.isInfinite(value) && Double.isInfinite(other.value)) {

@@ -281,7 +281,7 @@ public class ArgSpec {
         throw new LessException(invalidArg(index + 1, DIMENSION, arg.type()));
       }
       Dimension dim = (Dimension)arg;
-      if (dim.unit() == null || dim.unit() == Unit.PERCENTAGE) {
+      if (dim.unit() == null || dim.unit().equals(Unit.PERCENTAGE)) {
         return;
       }
       throw new LessException(invalidArg(index + 1, "a unit-less number or a percentage", arg.type()));
