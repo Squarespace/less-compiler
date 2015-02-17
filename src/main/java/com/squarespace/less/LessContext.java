@@ -153,10 +153,6 @@ public class LessContext {
     return NodeRenderer.render(this, node);
   }
 
-  public void render(Buffer buf, Node node) throws LessException {
-    NodeRenderer.render(buf, node);
-  }
-
   public String renderMixinPath(Selector selector) throws LessException {
     Buffer buf = acquireBuffer();
     String result = SelectorUtils.renderCompositeSelector(selector, buf);

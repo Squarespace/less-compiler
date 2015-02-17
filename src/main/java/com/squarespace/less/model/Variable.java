@@ -26,6 +26,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.exec.ExecEnv;
+import com.squarespace.less.exec.NodeRenderer;
 
 
 /**
@@ -125,7 +126,7 @@ public class Variable extends BaseNode {
     LessContext ctx = env.context();
     Buffer buf = ctx.newBuffer();
     buf.startDelim('"');
-    ctx.render(buf, result);
+    NodeRenderer.render(buf, result);
     return env.context().nodeBuilder().buildVariable("@" + buf.toString()).eval(env);
   }
 

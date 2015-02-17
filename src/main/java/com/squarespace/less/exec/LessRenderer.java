@@ -130,7 +130,7 @@ public class LessRenderer {
       // Selectors are indented and delimited by the model.
       Buffer buf = ctx.acquireBuffer();
       for (Selector selector : selectors.selectors()) {
-        ctx.render(buf, selector);
+        NodeRenderer.render(buf, selector);
         model.header(buf.toString());
         buf.reset();
       }
@@ -315,11 +315,11 @@ public class LessRenderer {
   private void renderImport(Import imp) throws LessException {
     Buffer buf = new Buffer(0);
     buf.append("@import ");
-    ctx.render(buf, imp.path());
+    NodeRenderer.render(buf, imp.path());
     Features features = imp.features();
     if (features != null && !features.isEmpty()) {
       buf.append(' ');
-      ctx.render(buf, features);
+      NodeRenderer.render(buf, features);
     }
     model.value(buf.toString());
   }
@@ -365,9 +365,9 @@ public class LessRenderer {
       emitTrace("next rule defined at '" + line + "'");
     }
     Buffer buf = ctx.acquireBuffer();
-    ctx.render(buf, rule.property());
+    NodeRenderer.render(buf, rule.property());
     buf.ruleSep();
-    ctx.render(buf, rule.value());
+    NodeRenderer.render(buf, rule.value());
     if (rule.important()) {
       buf.append(" !important");
     }
