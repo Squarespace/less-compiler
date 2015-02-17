@@ -100,8 +100,13 @@ public class SelectorUtils {
   }
 
   /**
-   * Constructs a list of strings from a selector, to enable faster {@link Mixin} matching.
-   * This only renders selectors which require no evaluation.
+   * Constructs string representation of a selector, to enable faster {@link Mixin} matching.
+   * This only renders selectors which require no evaluation, since no context / shared
+   * buffer exists at the point the selector is being rendered.
+   *
+   * Note: this is a rendering method but exists here, since it renders intermediate
+   * representation of the selector for mixin matching purposes, and may in fact render
+   * nothing if the selector is incompatible with mixin matching.
    */
   public static String renderSelector(Selector selector) {
     if (selector.needsEval()) {
@@ -124,6 +129,8 @@ public class SelectorUtils {
         return null;
       }
 
+      // Ignore all non-text elements, since at the time this selector is being
+      // expanded, only text elements can be used for mixin matching.
       if (!(elem instanceof TextElement)) {
         return null;
       }
@@ -134,13 +141,17 @@ public class SelectorUtils {
   }
 
   /**
-   * Constructs a list of strings from a selector, to enable faster {@link Mixin} matching.
-   * Is able to render non-text elements.
+   * Constructs string representation from a selector, to enable faster {@link Mixin} matching.
+   * This version able to render non-text elements.
+   *
+   * Note: this is a rendering method but exists here, since it renders intermediate
+   * representation of the selector for mixin matching purposes, and may in fact render
+   * nothing if the selector is incompatible with mixin matching.
    */
-  public static String renderCompositeSelector(Selector selector, Buffer buffer) {
+  public static boolean renderCompositeSelector(Selector selector, Buffer buffer) {
     List<Element> elements = selector.elements();
     if (elements.isEmpty()) {
-      return null;
+      return false;
     }
 
     int size = elements.size();
@@ -150,13 +161,15 @@ public class SelectorUtils {
         if (i == 0) {
           continue;
         }
-        return null;
+        return false;
       }
 
-      // We can render either of these elements
+      // Value elements have been evaluated so now these composite nodes can be rendered.
+      // For example, a selector with a variable reference, like ".@{foo}" may have
+      // been evaluated into ".123" or [TEXT, DIMENSION(123)].
       boolean valid = (elem instanceof TextElement) || (elem instanceof ValueElement);
       if (!valid) {
-        return null;
+        return false;
       }
 
       if (elem instanceof TextElement) {
@@ -167,8 +180,7 @@ public class SelectorUtils {
       }
 
     }
-
-    return buffer.toString();
+    return true;
   }
 
 }

@@ -150,12 +150,17 @@ public class LessContext {
   }
 
   public String render(Node node) {
-    return NodeRenderer.render(this, node);
+    Buffer buf = acquireBuffer();
+    NodeRenderer.render(buf, node);
+    String result = buf.toString();
+    returnBuffer();
+    return result;
   }
 
   public String renderMixinPath(Selector selector) throws LessException {
     Buffer buf = acquireBuffer();
-    String result = SelectorUtils.renderCompositeSelector(selector, buf);
+    boolean rendered = SelectorUtils.renderCompositeSelector(selector, buf);
+    String result = rendered ? buf.toString() : null;
     returnBuffer();
     return result;
   }
