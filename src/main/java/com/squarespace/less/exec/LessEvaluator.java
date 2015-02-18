@@ -312,7 +312,14 @@ public class LessEvaluator {
     for (int i = 0; i < rules.size(); i++) {
       Node node = rules.get(i);
       if (node instanceof MixinCall) {
-        Block mixinResult = executeMixinCall(env, (MixinCall)node);
+        Block mixinResult = null;
+        try {
+          mixinResult = executeMixinCall(env, (MixinCall)node);
+
+        } catch (LessException e) {
+          e.push(node);
+          throw e;
+        }
 
         // Splice the rules produced by the mixin call into the current block,
         // replacing the mixin call.
