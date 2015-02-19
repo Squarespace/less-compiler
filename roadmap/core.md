@@ -2,16 +2,6 @@
 2.x Core Checklist
 ---------
 
-Guards on Rulesets:
-
-    @var: true;
-    #foo when ( @var ) {
-        ...
-    }
-
-When Javascript support is disabled, parse the values as opaque strings
-and emit a warning. Filter them from the output.
-
 Adding !important to definitions, merging accurately in rule:
 
     @size: 1px !important;
@@ -50,9 +40,21 @@ Default mixins (see default() in functions)
 
 Add all relevant less 2.x test cases to the test suite.
 
+When Javascript support is disabled, parse the values as opaque strings
+and emit a warning. Filter them from the output.
+
 
 Completed
 -----
+
+
+Guards on Rulesets:
+
+    @var: true;
+    #foo when ( @var ) {
+        ...
+    }
+
 
 Detached rulesets as mixin call arguments:
 
