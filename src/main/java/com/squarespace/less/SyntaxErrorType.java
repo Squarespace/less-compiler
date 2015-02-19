@@ -53,7 +53,13 @@ public enum SyntaxErrorType implements LessErrorType {
   ("Cannot mix semicolon and comma as delimiters"),
 
   QUOTED_BARE_LF
-  ("Quoted string contains a bare line feed");
+  ("Quoted string contains a bare line feed"),
+
+  SELECTOR_ONE_GUARD
+  ("Guards are only currently allowed on a single selector."),
+
+  SELECTOR_END_GUARD
+  ("A guard can only be used at the end of selector");
 
   private static final String PREFIX = "SyntaxError %(code)s ";
 

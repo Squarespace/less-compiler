@@ -16,49 +16,31 @@
 
 package com.squarespace.less.parse;
 
-import static com.squarespace.less.core.SyntaxErrorMaker.selectorOneGuard;
-import static com.squarespace.less.parse.Parselets.COMMENT;
-import static com.squarespace.less.parse.Parselets.SELECTOR;
-
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
+import com.squarespace.less.model.Condition;
+import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.Selector;
-import com.squarespace.less.model.Selectors;
 
 
-public class SelectorsParselet implements Parselet {
+public class MixinGuardParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Node node = stm.parse(SELECTOR);
-    if (node == null) {
+    stm.skipWs();
+    if (!stm.matchWhen()) {
       return null;
     }
-
-    Selector selector;
-    boolean hasGuard = false;
-    Selectors group = new Selectors();
-    while (node != null) {
-      selector = (Selector)node;
-      if (hasGuard && !group.isEmpty()) {
-        throw stm.parseError(new LessException(selectorOneGuard()));
-      }
-
-      hasGuard = selector.hasGuard();
-      group.add(selector);
-
-      stm.parse(COMMENT);
+    Guard guard = new Guard();
+    Node cond = null;
+    while ((cond = stm.parse(Parselets.MIXIN_GUARD_CONDITION)) != null) {
+      guard.add((Condition)cond);
       stm.skipWs();
       if (!stm.seekIf(Chars.COMMA)) {
         break;
       }
-      stm.parse(COMMENT);
-      stm.skipWs();
-      node = stm.parse(SELECTOR);
     }
-
-    return group;
+    return guard;
   }
 
 }

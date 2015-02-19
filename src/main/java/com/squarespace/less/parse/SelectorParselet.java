@@ -16,6 +16,7 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.SyntaxErrorMaker.selectorEndGuard;
 import static com.squarespace.less.parse.Parselets.COMMENT;
 import static com.squarespace.less.parse.Parselets.ELEMENT;
 import static com.squarespace.less.parse.Parselets.ENTITY;
@@ -25,6 +26,7 @@ import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Element;
+import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.ValueElement;
@@ -58,8 +60,19 @@ public class SelectorParselet implements Parselet {
       }
       selector.add((Element)elem);
       stm.parse(COMMENT);
+      stm.skipWs();
+
+      Guard guard = (Guard)stm.parse(Parselets.RULESET_GUARD);
+      if (guard != null) {
+        selector.guard(guard);
+      }
+
       if (CharClass.selectorEnd(stm.peek())) {
         break;
+      }
+
+      if (guard != null) {
+        throw stm.parseError(new LessException(selectorEndGuard()));
       }
     }
     return selector;

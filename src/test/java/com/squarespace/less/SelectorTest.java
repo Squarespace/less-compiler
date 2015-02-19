@@ -16,6 +16,8 @@
 
 package com.squarespace.less;
 
+import static com.squarespace.less.SyntaxErrorType.SELECTOR_END_GUARD;
+import static com.squarespace.less.SyntaxErrorType.SELECTOR_ONE_GUARD;
 import static com.squarespace.less.model.Combinator.CHILD;
 import static com.squarespace.less.model.Combinator.DESC;
 import static com.squarespace.less.model.Combinator.SIB_ADJ;
@@ -76,6 +78,14 @@ public class SelectorTest extends LessTestBase {
 
     Selector exp = selector(element("p"), attr(null, "class", "~=", quoted('"', false, "a")));
     h.parseEquals("p[class~=\"a\"]", exp);
+  }
+
+  @Test
+  public void testParseGuard() throws LessException {
+    LessHarness h = new LessHarness(Parselets.SELECTORS);
+
+    h.parseFails(".parent when not (@a = 1) foo bar ", SELECTOR_END_GUARD);
+    h.parseFails(".parent when not (@a = 1), .child ", SELECTOR_ONE_GUARD);
   }
 
   private String render(boolean compress, Selector selector) throws LessException {

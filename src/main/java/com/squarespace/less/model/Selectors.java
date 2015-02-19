@@ -47,6 +47,11 @@ public class Selectors extends BaseNode {
   protected boolean hasMixinPath;
 
   /**
+   * Guard expression attached to the child selector.
+   */
+  protected Guard guard;
+
+  /**
    * Constructs an empty selector set.
    */
   public Selectors() {
@@ -72,6 +77,9 @@ public class Selectors extends BaseNode {
   public void add(Selector selector) {
     selectors = LessUtils.initList(selectors, 2);
     selectors.add(selector);
+    if (guard == null) {
+      this.guard = selector.guard();
+    }
     evaluate |= selector.needsEval();
     hasMixinPath |= selector.hasMixinPath();
   }
@@ -81,6 +89,14 @@ public class Selectors extends BaseNode {
    */
   public List<Selector> selectors() {
     return LessUtils.safeList(selectors);
+  }
+
+  /**
+   * Returns the guard expression for this selector set.
+   * @return
+   */
+  public Guard guard() {
+    return guard;
   }
 
   /**

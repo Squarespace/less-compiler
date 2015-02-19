@@ -34,12 +34,25 @@ import com.squarespace.less.model.Operator;
  */
 public class ConditionParselet implements Parselet {
 
+  private final boolean mixinGuard;
+
+  public ConditionParselet(boolean mixinGuard) {
+    this.mixinGuard = mixinGuard;
+  }
+
   @Override
   public Node parse(LessStream stm) throws LessException {
     Condition cond = parseCondition(stm);
+    if (cond == null) {
+      return null;
+    }
+
     stm.skipWs();
     while (stm.matchAnd()) {
       Condition sub = parseCondition(stm);
+      if (sub == null) {
+        return cond;
+      }
       cond = new Condition(AND, cond, sub, false);
       stm.skipWs();
     }
@@ -53,7 +66,10 @@ public class ConditionParselet implements Parselet {
     Condition res = null;
     stm.skipWs();
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
-      throw stm.parseError(new LessException(expected("left parenthesis '(' to start guard condition")));
+      if (mixinGuard) {
+        throw stm.parseError(new LessException(expected("left parenthesis '(' to start guard condition")));
+      }
+      return null;
     }
 
     Node left = parseValue(stm);

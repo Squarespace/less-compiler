@@ -18,7 +18,7 @@ package com.squarespace.less.parse;
 
 import static com.squarespace.less.parse.Parselets.BLOCK;
 import static com.squarespace.less.parse.Parselets.COMMENT;
-import static com.squarespace.less.parse.Parselets.GUARD;
+import static com.squarespace.less.parse.Parselets.MIXIN_GUARD;
 import static com.squarespace.less.parse.Parselets.MIXIN_PARAMS;
 
 import com.squarespace.less.LessException;
@@ -51,7 +51,7 @@ public class MixinParselet implements Parselet {
     }
     stm.parse(COMMENT);
 
-    Guard guard = (Guard)stm.parse(GUARD);
+    Guard guard = (Guard)stm.parse(MIXIN_GUARD);
     stm.parse(COMMENT);
 
     Node block = stm.parse(BLOCK);

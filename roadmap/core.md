@@ -2,8 +2,6 @@
 2.x Core Checklist
 ---------
 
-Functions in guard conditions
-
 Guards on Rulesets:
 
     @var: true;

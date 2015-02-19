@@ -166,7 +166,7 @@ public class ConditionTest extends LessTestBase {
 
   @Test
   public void testCondition() throws LessException {
-    LessHarness h = new LessHarness(Parselets.CONDITION);
+    LessHarness h = new LessHarness(Parselets.MIXIN_GUARD_CONDITION);
 
     // NOTE: the "=<" and "<>", "!=" tests below are disabled until this
     // can be added upstream to less.js, or enabled as an extension.

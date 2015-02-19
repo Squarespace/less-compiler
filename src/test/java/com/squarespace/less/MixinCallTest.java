@@ -84,4 +84,14 @@ public class MixinCallTest extends LessTestBase {
     h.parseEquals(".mixin(1, {color: red}, {font-size: 1px})", exp);
   }
 
+  @Test
+  public void testUnevaluatedRuleset() throws LessException {
+    LessHarness h = new LessHarness(Parselets.STYLESHEET);
+    LessOptions opts = new LessOptions(true);
+
+    String source = "@a: 1; .parent; .parent when (@a = 1) { .foo { color: red; }} .parent;";
+    String expected = ".parent .foo{color:red}";
+    assertEquals(h.execute(source, opts), expected);
+  }
+
 }

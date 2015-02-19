@@ -33,6 +33,7 @@ import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.DetachedRuleset;
 import com.squarespace.less.model.Directive;
+import com.squarespace.less.model.Dummy;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.Import;
@@ -46,6 +47,7 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Stylesheet;
+import com.squarespace.less.model.True;
 import com.squarespace.less.model.Variable;
 
 
@@ -129,6 +131,7 @@ public class LessEvaluator {
 
     original.exit();
     env.pop();
+    ruleset.evaluated(true);
     return ruleset;
   }
 
@@ -245,8 +248,16 @@ public class LessEvaluator {
             throw new LessInternalException("Serious error: all mixin calls should already have been evaluated.");
 
           case RULESET:
-            node = evaluateRuleset(env, (Ruleset)node, forceImportant);
+          {
+            Ruleset ruleset = (Ruleset)node;
+            Guard guard = ruleset.selectors().guard();
+            if (evaluateGuard(env, guard)) {
+              node = evaluateRuleset(env, ruleset, forceImportant);
+            } else {
+              node = Dummy.fromNode(ruleset);
+            }
             break;
+          }
 
           case RULE:
           {
@@ -472,6 +483,12 @@ public class LessEvaluator {
     MixinCall call = matcher.mixinCall();
     Ruleset ruleset = (Ruleset)match.mixin();
 
+    // Ignore rulesets with guards that have not been evaluated.
+    Ruleset original = (Ruleset)ruleset.original();
+    if (original.selectors().guard() != null && !ruleset.evaluated()) {
+      return true;
+    }
+
     // Limits the overall depth if the mixin call stack.
     LessContext ctx = env.context();
     if (ctx.mixinDepth() >= opts.recursionLimit()) {
@@ -488,6 +505,19 @@ public class LessEvaluator {
       block.appendNode(new MixinMarker(call, ruleset, false));
     }
     collector.appendBlock(block);
+    return true;
+  }
+
+  /**
+   * Evaluates a guard expression and returns true if the guard is null or evaluates to {@link True}.
+   */
+  private boolean evaluateGuard(ExecEnv env, Guard guard) throws LessException {
+    if (guard != null) {
+      Node result = guard.eval(env);
+      if (!(result instanceof True)) {
+        return false;
+      }
+    }
     return true;
   }
 

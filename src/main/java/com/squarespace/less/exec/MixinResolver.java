@@ -117,7 +117,10 @@ public class MixinResolver {
     if (!ruleset.hasMixinPath()) {
       return false;
     }
+
     Ruleset original = (Ruleset)ruleset.original();
+
+    /// Ignore recursive entries into ruleset mixins.
     if (original.evaluating()) {
       return false;
     }

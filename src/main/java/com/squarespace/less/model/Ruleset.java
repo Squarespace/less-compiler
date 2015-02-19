@@ -39,6 +39,11 @@ public class Ruleset extends BlockNode {
   protected boolean evaluating;
 
   /**
+   * Mark this ruleset as having been evaluated.
+   */
+  protected boolean evaluated;
+
+  /**
    * Indicates whether this ruleset has at least one mixin path.
    */
   protected boolean hasMixinPath;
@@ -112,6 +117,21 @@ public class Ruleset extends BlockNode {
    */
   public boolean evaluating() {
     return evaluating;
+  }
+
+  /**
+   * Indicates the ruleset has been evaluated;
+   */
+  public boolean evaluated() {
+    return evaluated;
+  }
+
+  /**
+   * Set the flag indicating the ruleset has been evaluated. This is used
+   * to skip unevaluated rulesets during mixin resolution.
+   */
+  public void evaluated(boolean flag) {
+    this.evaluated = flag;
   }
 
   /**

@@ -54,6 +54,11 @@ public class Selector extends BaseNode {
   protected String mixinPath;
 
   /**
+   * {@link Guard} condition protecting this selector.
+   */
+  protected Guard guard;
+
+  /**
    * Flags set on this selector.
    */
   protected byte flags;
@@ -84,6 +89,28 @@ public class Selector extends BaseNode {
    */
   public List<Element> elements() {
     return LessUtils.safeList(elements);
+  }
+
+  /**
+   * Returns the guard expression for this selector.
+   */
+  public Guard guard() {
+    return guard;
+  }
+
+  /**
+   * Set the guard expression for this selector.
+   */
+  public void guard(Guard guard) {
+    this.guard = guard;
+  }
+
+  /**
+   * Indicates whether this selector has a guard expression.
+   * @return
+   */
+  public boolean hasGuard() {
+    return guard != null;
   }
 
   /**

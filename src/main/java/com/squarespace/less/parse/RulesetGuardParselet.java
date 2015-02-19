@@ -16,7 +16,7 @@
 
 package com.squarespace.less.parse;
 
-import static com.squarespace.less.parse.Parselets.CONDITION;
+import static com.squarespace.less.parse.Parselets.RULESET_GUARD_CONDITION;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
@@ -25,7 +25,7 @@ import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.Node;
 
 
-public class GuardParselet implements Parselet {
+public class RulesetGuardParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
@@ -33,16 +33,32 @@ public class GuardParselet implements Parselet {
     if (!stm.matchWhen()) {
       return null;
     }
+    Node cond = stm.parse(RULESET_GUARD_CONDITION);
+    if (cond == null) {
+      return null;
+    }
+
+    Mark mark = stm.mark();
     Guard guard = new Guard();
-    Node cond = null;
-    while ((cond = stm.parse(CONDITION)) != null) {
+    boolean comma = false;
+    do {
       guard.add((Condition)cond);
       stm.skipWs();
-      if (!stm.seekIf(Chars.COMMA)) {
+      stm.mark(mark);
+
+      comma = stm.seekIf(Chars.COMMA);
+      if (!comma) {
         break;
       }
+
+      cond = stm.parse(RULESET_GUARD_CONDITION);
+    } while (cond != null);
+
+    if (comma) {
+      stm.restore(mark);
     }
     return guard;
   }
+
 
 }

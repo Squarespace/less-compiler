@@ -16,6 +16,7 @@
 
 package com.squarespace.less.core;
 
+import com.squarespace.less.model.Dummy;
 import com.squarespace.less.model.False;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Selectors;
@@ -33,6 +34,8 @@ public class Constants {
   public static final Features EMPTY_FEATURES = new Features();
 
   public static final Selectors EMPTY_SELECTORS = new Selectors();
+
+  public static final Dummy DUMMY = new Dummy();
 
   public static final String UTF8 = "UTF-8";
 

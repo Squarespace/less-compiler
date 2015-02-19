@@ -52,10 +52,6 @@ public class Parselets {
     new CommentParselet()
   };
 
-  public static final Parselet[] CONDITION = new Parselet[] {
-    new ConditionParselet()
-  };
-
   public static final Parselet[] CONDITION_SUB = new Parselet[] {
     new AdditionParselet(),
     new KeywordParselet(),
@@ -122,10 +118,6 @@ public class Parselets {
     new VariableParselet()
   };
 
-  public static final Parselet[] GUARD = new Parselet[] {
-    new GuardParselet()
-  };
-
   public static final Parselet[] KEYWORD = new Parselet[] {
     new KeywordParselet()
   };
@@ -142,6 +134,14 @@ public class Parselets {
     new ExpressionParselet(),
     new DetachedRulesetParselet()
 
+  };
+
+  public static final Parselet[] MIXIN_GUARD = new Parselet[] {
+    new MixinGuardParselet()
+  };
+
+  public static final Parselet[] MIXIN_GUARD_CONDITION = new Parselet[] {
+    new ConditionParselet(true)
   };
 
   public static final Parselet[] MIXIN_PARAMS = new Parselet[] {
@@ -206,6 +206,14 @@ public class Parselets {
 
   public static final Parselet[] RULESET = new Parselet[] {
     new RulesetParselet()
+  };
+
+  public static final Parselet[] RULESET_GUARD = new Parselet[] {
+    new RulesetGuardParselet()
+  };
+
+  public static final Parselet[] RULESET_GUARD_CONDITION = new Parselet[] {
+    new ConditionParselet(false)
   };
 
   public static final Parselet[] SELECTOR = new Parselet[] {

@@ -66,6 +66,14 @@ public class SyntaxErrorMaker {
     return error(SyntaxErrorType.QUOTED_BARE_LF);
   }
 
+  public static LessErrorInfo selectorOneGuard() {
+    return error(SyntaxErrorType.SELECTOR_ONE_GUARD);
+  }
+
+  public static LessErrorInfo selectorEndGuard() {
+    return error(SyntaxErrorType.SELECTOR_END_GUARD);
+  }
+
   private static LessErrorInfo error(LessErrorType type) {
     LessErrorInfo info = new LessErrorInfo(type);
     info.code(type);

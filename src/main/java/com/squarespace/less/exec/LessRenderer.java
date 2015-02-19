@@ -238,6 +238,10 @@ public class LessRenderer {
           break;
         }
 
+        case DUMMY:
+          // No visible representation. Ignore.
+          break;
+
         case IMPORT:
           if (includeImports) {
             renderImport((Import)node);
