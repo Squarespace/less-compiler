@@ -2,15 +2,7 @@
 2.x Core Checklist
 ---------
 
-Rebuild condition comparator logic, revise tests accordingly.
-
-Detached rulesets as mixin arguments:
-
-    .mixin({
-        color: blue
-    });
-
-Functions in guard conditions:
+Functions in guard conditions
 
 Guards on Rulesets:
 
@@ -63,6 +55,14 @@ Add all relevant less 2.x test cases to the test suite.
 
 Completed
 -----
+
+Detached rulesets as mixin call arguments:
+
+    .mixin({
+        color: blue
+    });
+
+Rebuild condition comparator logic, revise tests accordingly.
 
 Variable references in selectors.
 
