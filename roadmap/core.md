@@ -2,7 +2,7 @@
 2.x Core Checklist
 ---------
 
-Rework pairwise type comparison functions.
+Rebuild condition comparator logic, revise tests accordingly.
 
 Detached rulesets as mixin arguments:
 
