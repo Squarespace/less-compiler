@@ -74,7 +74,7 @@ public class MiscFunctions implements Registry<Function> {
       Unit unit = dim.unit();
       if (unit == null) {
         return new Anonymous();
-      } else if (unit == Unit.PERCENTAGE) {
+      } else if (Unit.PERCENTAGE.equals(unit)) {
         return new Quoted('"', false, Arrays.<Node>asList(new Anonymous("%")));
       }
       return new Keyword(unit.repr());

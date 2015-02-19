@@ -18,6 +18,7 @@ package com.squarespace.less.plugins;
 
 import static com.squarespace.less.core.Constants.FALSE;
 import static com.squarespace.less.core.Constants.TRUE;
+import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import java.util.List;
 
@@ -136,7 +137,7 @@ public class TypeFunctions implements Registry<Function> {
       Node arg = args.get(0);
       if (arg instanceof Dimension) {
         Dimension dim = (Dimension)arg;
-        return dim.unit() == unit ? TRUE : FALSE;
+        return safeEquals(dim.unit(), unit) ? TRUE : FALSE;
       }
       return FALSE;
     }

@@ -160,7 +160,7 @@ public class ColorOperationsFunctions implements Registry<Function> {
       HSLColor hsl = hsl(args.get(0));
       Dimension amount = (Dimension)args.get(1);
       double value = amount.value();
-      if (amount.unit() == Unit.PERCENTAGE) {
+      if (Unit.PERCENTAGE.equals(amount.unit())) {
         value = (value / 100.0) * 360;
       }
       double hue = (hsl.hue() + value) % 360;

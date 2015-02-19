@@ -84,7 +84,7 @@ public abstract class Function {
    */
   public static double percent(Node node) throws LessException {
     Dimension dim = (Dimension)node;
-    return (dim.unit() == Unit.PERCENTAGE) ? dim.value() * 0.01 : dim.value();
+    return Unit.PERCENTAGE.equals(dim.unit()) ? dim.value() * 0.01 : dim.value();
   }
 
   /**
@@ -100,7 +100,7 @@ public abstract class Function {
   public static double scaled(Node node, double scale) throws LessException {
     Dimension dim = (Dimension)node;
     double value = number(node);
-    return dim.unit() == Unit.PERCENTAGE ? (value * .01) * scale : value;
+    return Unit.PERCENTAGE.equals(dim.unit()) ? (value * .01) * scale : value;
   }
 
   /**
