@@ -33,17 +33,25 @@ public class ExpressionParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Node node = stm.parse(EXPRESSION_SUB);
-    if (node == null) {
+    Node first = stm.parse(EXPRESSION_SUB);
+    if (first == null) {
       return null;
     }
 
-    List<Node> entities = new ArrayList<>();
+    // Check if a 2nd entity exists. If not, just return the first.
+    Node next = stm.parse(EXPRESSION_SUB);
+    if (next == null) {
+      return first;
+    }
+
+    // Two or more exist, create a wrapper.
+    List<Node> entities = new ArrayList<>(4);
+    entities.add(first);
     do {
-      entities.add(node);
-      node = stm.parse(EXPRESSION_SUB);
-    } while (node != null);
-    return entities.size() == 1 ? entities.get(0) : new Expression(entities);
+      entities.add(next);
+      next = stm.parse(EXPRESSION_SUB);
+    } while (next != null);
+    return new Expression(entities);
   }
 
 }

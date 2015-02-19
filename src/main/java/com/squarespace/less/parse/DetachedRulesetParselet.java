@@ -16,44 +16,21 @@
 
 package com.squarespace.less.parse;
 
-import static com.squarespace.less.parse.Parselets.EXPRESSION;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.Chars;
-import com.squarespace.less.model.ExpressionList;
+import com.squarespace.less.model.Block;
+import com.squarespace.less.model.DetachedRuleset;
 import com.squarespace.less.model.Node;
 
 
 /**
- * Parse a comma-delimited list of expressions.
+ * Parses a bare ruleset.
  */
-public class ExpressionListParselet implements Parselet {
+public class DetachedRulesetParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Node node = stm.parse(EXPRESSION);
-    if (node == null) {
-      return null;
-    }
-
-    stm.skipWs();
-    if (stm.peek() != Chars.COMMA) {
-      return node;
-    }
-
-    List<Node> expressions = new ArrayList<>(4);
-    do {
-      expressions.add(node);
-      stm.skipWs();
-      if (!stm.seekIf(Chars.COMMA)) {
-        break;
-      }
-      node = stm.parse(EXPRESSION);
-    } while (node != null);
-    return new ExpressionList(expressions);
+    Node node = stm.parse(Parselets.BLOCK);
+    return node == null ? null : new DetachedRuleset((Block)node);
   }
 
 }

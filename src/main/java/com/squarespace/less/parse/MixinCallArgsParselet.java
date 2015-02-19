@@ -18,7 +18,7 @@ package com.squarespace.less.parse;
 
 import static com.squarespace.less.core.SyntaxErrorMaker.expected;
 import static com.squarespace.less.core.SyntaxErrorMaker.mixedDelimiters;
-import static com.squarespace.less.parse.Parselets.EXPRESSION;
+import static com.squarespace.less.parse.Parselets.MIXIN_CALL_ARG;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
@@ -46,7 +46,7 @@ public class MixinCallArgsParselet implements Parselet {
     String name = null;
     Node node = null;
 
-    while ((node = stm.parse(EXPRESSION)) != null) {
+    while ((node = stm.parse(MIXIN_CALL_ARG)) != null) {
       String nameLoop = null;
       Node value = node;
 
@@ -113,7 +113,7 @@ public class MixinCallArgsParselet implements Parselet {
     if (!stm.seekIf(Chars.COLON)) {
       return null;
     }
-    Node value = stm.parse(EXPRESSION);
+    Node value = stm.parse(MIXIN_CALL_ARG);
     if (value == null) {
       throw stm.parseError(new LessException(expected("expression for named argument")));
     }

@@ -62,6 +62,10 @@ public class Parselets {
     new QuotedParselet()
   };
 
+  public static final Parselet[] DETACHED_RULESET = new Parselet[] {
+    new DetachedRulesetParselet()
+  };
+
   public static final Parselet[] DIMENSION = new Parselet[] {
     new DimensionParselet()
   };
@@ -132,6 +136,12 @@ public class Parselets {
 
   public static final Parselet[] MIXIN_CALL_ARGS = new Parselet[] {
     new MixinCallArgsParselet()
+  };
+
+  public static final Parselet[] MIXIN_CALL_ARG = new Parselet[] {
+    new ExpressionParselet(),
+    new DetachedRulesetParselet()
+
   };
 
   public static final Parselet[] MIXIN_PARAMS = new Parselet[] {

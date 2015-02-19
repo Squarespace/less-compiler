@@ -16,7 +16,7 @@
 
 package com.squarespace.less.parse;
 
-import static com.squarespace.less.parse.Parselets.BLOCK;
+import static com.squarespace.less.parse.Parselets.DETACHED_RULESET;
 import static com.squarespace.less.parse.Parselets.EXPRESSION_LIST;
 import static com.squarespace.less.parse.Parselets.RULE_PROPERTY;
 
@@ -24,10 +24,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Anonymous;
-import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Definition;
-import com.squarespace.less.model.DetachedRuleset;
-import com.squarespace.less.model.ExpressionList;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Property;
 import com.squarespace.less.model.Rule;
@@ -66,23 +63,13 @@ public class RuleParselet implements Parselet {
     if (key instanceof Variable) {
       Variable var = (Variable)key;
       if (!var.curly()) {
-        value = stm.parse(BLOCK);
-        if (value != null) {
-          value = new DetachedRuleset((Block)value);
-        }
+        value = stm.parse(DETACHED_RULESET);
       }
     }
 
     // Fall back to parsing a normal expression list.
     if (value == null) {
       value = stm.parse(EXPRESSION_LIST);
-      if (value != null) {
-        // Flatten lists of length 1, simplifying the tree.
-        ExpressionList expn = (ExpressionList)value;
-        if (expn.size() == 1) {
-          value = expn.expressions().get(0);
-        }
-      }
     }
 
     stm.setRequireStrictMath(false);

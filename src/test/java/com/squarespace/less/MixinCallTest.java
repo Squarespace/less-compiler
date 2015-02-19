@@ -27,6 +27,7 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
+import com.squarespace.less.model.Unit;
 import com.squarespace.less.parse.Parselets;
 
 
@@ -71,6 +72,16 @@ public class MixinCallTest extends LessTestBase {
 
     exp = mixincall(selector(element(null, "#ns"), element(CHILD, ".mixin")));
     h.parseEquals("#ns > .mixin", exp);
+  }
+
+  @Test
+  public void testParseBlockArgs() throws LessException {
+    LessHarness h = new LessHarness(Parselets.MIXIN_CALL);
+
+    Node rs1 = ruleset(rule(prop("color"), color("red")));
+    Node rs2 = ruleset(rule(prop("font-size"), dim(1, Unit.PX)));
+    Node exp = mixincall(selector(element(null, ".mixin")), args(',', arg(dim(1)), arg(rs1), arg(rs2)));
+    h.parseEquals(".mixin(1, {color: red}, {font-size: 1px})", exp);
   }
 
 }
