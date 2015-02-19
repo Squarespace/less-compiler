@@ -41,16 +41,10 @@
     -8: @a;
 }
 
-.m (@a) when (@a =< 10px), (@a => 20px) {
-    /* (@a =< 10px), (@a => 20px) */
+.m (@a) when not (@a = 20px) and not (@a = 5px) {
+    /* not (@a = 20px) and not (@a = 5px) */
     -9: @a;
 }
-
-.m (@a) when (@a != 20px) and (@a != 5px) {
-    /* (@a != 20px) and (@a != 5px) */
-    -10: @a;
-}
-
 
 // calls
 

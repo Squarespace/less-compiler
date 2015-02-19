@@ -21,10 +21,12 @@ import java.util.Map;
 
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.BufferStack;
+import com.squarespace.less.exec.Comparison;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.exec.MixinResolver;
+import com.squarespace.less.exec.NodeComparator;
 import com.squarespace.less.exec.NodeRenderer;
 import com.squarespace.less.exec.RenderEnv;
 import com.squarespace.less.exec.SelectorUtils;
@@ -52,6 +54,8 @@ public class LessContext {
   private final BufferStack bufferStack = new BufferStack(this);
 
   private final MixinResolver mixinResolver = new MixinResolver();
+
+  private final NodeComparator comparator;
 
   private final LessStats stats = new LessStats();
 
@@ -82,6 +86,7 @@ public class LessContext {
   public LessContext(LessOptions opts, LessLoader loader, Map<Path, Stylesheet> preCache) {
     this.opts = opts;
     this.importer = new LessImporter(this, loader, preCache);
+    this.comparator = new NodeComparator(this);
   }
 
   public LessOptions options() {
@@ -157,7 +162,7 @@ public class LessContext {
     return result;
   }
 
-  public String renderMixinPath(Selector selector) throws LessException {
+  public String renderMixinPath(Selector selector) {
     Buffer buf = acquireBuffer();
     boolean rendered = SelectorUtils.renderCompositeSelector(selector, buf);
     String result = rendered ? buf.toString() : null;
@@ -175,6 +180,10 @@ public class LessContext {
 
   public int mixinDepth() {
     return this.mixinDepth;
+  }
+
+  public Comparison compare(Node left, Node right) throws LessException {
+    return this.comparator.compare(left, right);
   }
 
 }

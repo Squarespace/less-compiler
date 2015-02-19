@@ -29,6 +29,7 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.core.ExecuteErrorMaker;
 import com.squarespace.less.core.LessInternalException;
+import com.squarespace.less.exec.Comparison;
 import com.squarespace.less.exec.ExecEnv;
 
 
@@ -190,45 +191,27 @@ public class Condition extends BaseNode {
         break;
     }
 
-    NodeType type = op0.type();
-    int result = -1;
-    switch (type) {
-      case ANONYMOUS:
-        result = compare(env, (Anonymous)op0, op1);
+    Comparison comparison = env.context().compare(op0, op1);
+    boolean result = false;
+    switch (comparison) {
+      case LESS_THAN:
+        result = operator == LESS_THAN || operator == LESS_THAN_OR_EQUAL || operator == NOT_EQUAL;
         break;
 
-      case COLOR:
-        result = compare((BaseColor)op0, op1);
+      case EQUAL_TO:
+        result = operator == EQUAL || operator == LESS_THAN_OR_EQUAL || operator == GREATER_THAN_OR_EQUAL;
         break;
 
-      case DIMENSION:
-        result = compare((Dimension)op0, op1);
+      case GREATER_THAN:
+        result = operator == GREATER_THAN || operator == GREATER_THAN_OR_EQUAL || operator == NOT_EQUAL;
         break;
 
-      case KEYWORD:
-      case TRUE:
-      case FALSE:
-        result = compare((Keyword)op0, op1);
-        break;
-
-      case QUOTED:
-        result = compare(env, (Quoted)op0, op1);
-        break;
-
+      case NOT_COMPARABLE:
       default:
-        throw new LessException(ExecuteErrorMaker.uncomparableType(type));
+        result = operator == NOT_EQUAL;
+        break;
     }
-
-    switch (result) {
-      case -1:
-        return operator == LESS_THAN || operator == LESS_THAN_OR_EQUAL || operator == NOT_EQUAL;
-      case 0:
-        return operator == EQUAL || operator == LESS_THAN_OR_EQUAL || operator == GREATER_THAN_OR_EQUAL;
-      case 1:
-        return operator == GREATER_THAN || operator == GREATER_THAN_OR_EQUAL || operator == NOT_EQUAL;
-      default:
-        throw new LessInternalException("Serious error: comparison functions must return -1, 0, or 1. Got " + result);
-    }
+    return result;
   }
 
   /**
@@ -243,14 +226,6 @@ public class Condition extends BaseNode {
    */
   private boolean disjunction(ExecEnv env, Node left, Node right) throws LessException {
     return truthValue(env, left) || truthValue(env, right);
-  }
-
-  /**
-   * Compares an {@link Anonymous} node to another node.
-   */
-  private int compare(ExecEnv env, Anonymous anon, Node arg) throws LessException {
-    String value = env.context().render(arg);
-    return anon.value().compareTo(value);
   }
 
   /**
@@ -273,71 +248,6 @@ public class Condition extends BaseNode {
   }
 
   /**
-   * Compares a {@link BaseColor} to another node.
-   */
-  private int compare(BaseColor color, Node arg) throws LessException {
-    if (arg instanceof Keyword) {
-      Keyword kwd = (Keyword)arg;
-      RGBColor tmp = RGBColor.fromName(kwd.value());
-      if (tmp != null) {
-        arg = tmp;
-      }
-    }
-    if (!(arg instanceof BaseColor)) {
-      return -1;
-    }
-    RGBColor color0 = color.toRGB();
-    RGBColor color1 = ((BaseColor)arg).toRGB();
-    return color0.red() == color1.red()
-        && color0.green() == color1.green()
-        && color0.blue() == color1.blue()
-        && color0.alpha() == color1.alpha() ? 0 : -1;
-  }
-
-  /**
-   * Compares a {@link Dimension} to another node.
-   */
-  private int compare(Dimension dim0, Node arg) throws LessException {
-    if (arg instanceof Dimension) {
-      Dimension dim1 = (Dimension)arg;
-      double value0 = dim0.value();
-      Unit unit0 = dim0.unit();
-      Unit unit1 = dim1.unit();
-      unit0 = (unit0 == Unit.PERCENTAGE ? null : unit0);
-      unit1 = (unit1 == Unit.PERCENTAGE ? null : unit1);
-
-      double factor = 1.0;
-      double scaled = dim1.value();
-      if (dim0.unit() != dim1.unit()) {
-        factor = UnitConversions.factor(unit1, unit0);
-        if (factor == 0.0) {
-          return -1;
-        }
-        scaled *= factor;
-      }
-      return value0 < scaled ? -1 : (value0 > scaled ? 1 : 0);
-    }
-    return -1;
-  }
-
-  /**
-   * Compares a {@link Keyword} to another node.
-   */
-  private int compare(Keyword keyword, Node arg) throws LessException {
-    if (arg instanceof Keyword) {
-      return compareTo(keyword.value(), ((Keyword)arg).value());
-    }
-    return -1;
-  }
-
-  /**
-   * Compares a {@link Quoted} to another node.
-  */
-  private int compare(ExecEnv env, Quoted quoted, Node arg) throws LessException {
-    return compareTo(render(env, quoted), render(env, arg));
-  }
-
-  /**
    * Renders a node to get its string representation, for comparison purposes.
    */
   private String render(ExecEnv env, Node arg) throws LessException {
@@ -347,14 +257,6 @@ public class Condition extends BaseNode {
       return ((Keyword)arg).value();
     }
     return env.context().render(arg);
-  }
-
-  /**
-   * Compares two strings.
-   */
-  private int compareTo(String left, String right) {
-    int res = left.compareTo(right);
-    return res < 0 ? -1 : (res > 0) ? 1 : 0;
   }
 
 }

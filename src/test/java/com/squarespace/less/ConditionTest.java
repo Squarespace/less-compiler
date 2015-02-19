@@ -147,6 +147,14 @@ public class ConditionTest extends LessTestBase {
   }
 
   @Test
+  public void testFoo() throws LessException {
+//    Dimension twoS = dim(2, Unit.S);
+//    Dimension twoPX = dim(2, Unit.PX);
+//    compare(true, cond(NOT_EQUAL, twoS, twoPX));
+    compare(true, cond(EQUAL, kwd("true"), TRUE));
+  }
+
+  @Test
   public void testGuard() throws LessException {
     Condition eq = cond(EQUAL, dim(2), dim(2));
     Condition ne = cond(EQUAL, dim(2), dim(4));
@@ -160,21 +168,24 @@ public class ConditionTest extends LessTestBase {
   public void testCondition() throws LessException {
     LessHarness h = new LessHarness(Parselets.CONDITION);
 
+    // NOTE: the "=<" and "<>", "!=" tests below are disabled until this
+    // can be added upstream to less.js, or enabled as an extension.
+
     h.parseEquals("(1=1)", cond(EQUAL, dim(1), dim(1)));
     h.parseEquals("(1<2)", cond(LESS_THAN, dim(1), dim(2)));
     h.parseEquals("(1>2)", cond(GREATER_THAN, dim(1), dim(2)));
     h.parseEquals("(1>=2)", cond(GREATER_THAN_OR_EQUAL, dim(1), dim(2)));
-    h.parseEquals("(1=>2)", cond(GREATER_THAN_OR_EQUAL, dim(1), dim(2)));
+//    h.parseEquals("(1=>2)", cond(GREATER_THAN_OR_EQUAL, dim(1), dim(2)));
     h.parseEquals("(1<=2)", cond(LESS_THAN_OR_EQUAL, dim(1), dim(2)));
     h.parseEquals("(1=<2)", cond(LESS_THAN_OR_EQUAL, dim(1), dim(2)));
-    h.parseEquals("(1!=2)", cond(NOT_EQUAL, dim(1), dim(2)));
-    h.parseEquals("(1<>2)", cond(NOT_EQUAL, dim(1), dim(2)));
+//    h.parseEquals("(1!=2)", cond(NOT_EQUAL, dim(1), dim(2)));
+//    h.parseEquals("(1<>2)", cond(NOT_EQUAL, dim(1), dim(2)));
 
     h.parseEquals("(@b=1px)", cond(EQUAL, var("@b"), dim(1, Unit.PX)));
     h.parseEquals("(@a=true)", cond(EQUAL, var("@a"), new True()));
-    h.parseEquals("(1px!=2px)", cond(NOT_EQUAL, dim(1, Unit.PX), dim(2, Unit.PX)));
+//    h.parseEquals("(1px!=2px)", cond(NOT_EQUAL, dim(1, Unit.PX), dim(2, Unit.PX)));
     h.parseEquals("('foo'<='bar')", cond(LESS_THAN_OR_EQUAL, quoted('\'', false, "foo"), quoted('\'', false, "bar")));
-    h.parseEquals("(xyz<>abc)", cond(NOT_EQUAL, kwd("xyz"), kwd("abc")));
+//    h.parseEquals("(xyz<>abc)", cond(NOT_EQUAL, kwd("xyz"), kwd("abc")));
 
     h.evalFails(cond(ADD, dim(1), dim(2)), EXPECTED_BOOLOP);
   }

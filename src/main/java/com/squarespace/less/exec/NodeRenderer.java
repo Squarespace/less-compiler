@@ -280,9 +280,17 @@ public class NodeRenderer {
    * Render a QUOTED node.
    */
   private static void renderImpl(Buffer buf, Quoted quoted) {
-    List<Node> parts = quoted.parts();
+    renderQuoted(buf, quoted, quoted.delimiter());
+  }
+
+  /**
+   * Render a QUOTED node, forcing the given delimiter to be used.
+   * This is useful when comparing the contents of 2 strings, ignoring
+   * their delimiters.
+   */
+  public static void renderQuoted(Buffer buf, Quoted quoted, char delim) {
     boolean escaped = quoted.escaped();
-    char delim = escaped ? Chars.NULL : quoted.delimiter();
+    delim = escaped ? Chars.NULL : delim;
     boolean emitDelim = !buf.inEscape();
     if (emitDelim) {
       if (!escaped) {
@@ -291,6 +299,7 @@ public class NodeRenderer {
       buf.startDelim(delim);
     }
 
+    List<Node> parts = quoted.parts();
     int size = (parts == null) ? 0 : parts.size();
     for (int i = 0; i < size; i++) {
       render(buf, parts.get(i));
@@ -305,7 +314,7 @@ public class NodeRenderer {
   }
 
   /** Render a RULE node. */
-  public static void renderImpl(Buffer buf, Rule rule) {
+  private static void renderImpl(Buffer buf, Rule rule) {
     render(buf, rule.property());
     buf.ruleSep();
     render(buf, rule.value());
@@ -315,7 +324,7 @@ public class NodeRenderer {
   }
 
   /** Render a SHORTHAND node. */
-  public static void renderImpl(Buffer buf, Shorthand shorthand) {
+  private static void renderImpl(Buffer buf, Shorthand shorthand) {
     render(buf, shorthand.left());
     buf.append('/');
     render(buf, shorthand.right());

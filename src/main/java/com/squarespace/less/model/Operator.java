@@ -31,7 +31,7 @@ public enum Operator {
   LESS_THAN ("<", "less than"),
   LESS_THAN_OR_EQUAL ("<=", "less than or equal to"),
   MULTIPLY ("*", "multiply"),
-  NOT_EQUAL ("<>", "not equal to"),
+  NOT_EQUAL ("<>", "not equal to"), // Extension, not present in less.js 2.4
   OR ("or", "or"),
   SUBTRACT ("-", "subtract");
 
@@ -92,16 +92,17 @@ public enum Operator {
         return EQUAL;
 
       case ">=":
-      case "=>":
+//      case "=>": // this form not present in less.js 2.4. maybe artifact of ruby days?
         return GREATER_THAN_OR_EQUAL;
 
       case "<=":
       case "=<":
         return LESS_THAN_OR_EQUAL;
 
-      case "!=":
-      case "<>":
-        return NOT_EQUAL;
+      // Extension: these forms not in less.js 2.4 but some users may prefer them to "not (a = b)".
+//      case "!=":
+//      case "<>":
+//        return NOT_EQUAL;
 
       default:
         break;

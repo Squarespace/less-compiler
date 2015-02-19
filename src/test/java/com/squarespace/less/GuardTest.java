@@ -20,7 +20,6 @@ import static com.squarespace.less.core.Constants.FALSE;
 import static com.squarespace.less.core.Constants.TRUE;
 import static com.squarespace.less.model.Operator.AND;
 import static com.squarespace.less.model.Operator.EQUAL;
-import static com.squarespace.less.model.Operator.NOT_EQUAL;
 
 import org.testng.annotations.Test;
 
@@ -39,16 +38,20 @@ public class GuardTest extends LessTestBase {
     Dimension one = dim(1);
     Dimension two = dim(2);
     Condition oneEq1 = cond(EQUAL, one, one);
-    Condition twoEq2 = cond(EQUAL, two, two);
-    Condition oneNe2 = cond(NOT_EQUAL, one, two);
+
+    // NOTE: the NOT_EQUAL operator is disabled until it can be added
+    // upstream to less.js or enabled as an extension.
+
+//    Condition twoEq2 = cond(EQUAL, two, two);
+//    Condition oneNe2 = cond(NOT_EQUAL, one, two);
 
     LessHarness h = new LessHarness(Parselets.GUARD);
 
     h.parseEquals("when (1)",
         guard(cond(EQUAL, one, Constants.TRUE)));
 
-    h.parseEquals("when (1=1), (2=2) and (1!=2)",
-        guard(oneEq1, cond(AND, twoEq2, oneNe2)));
+//    h.parseEquals("when (1=1), (2=2) and (1!=2)",
+//        guard(oneEq1, cond(AND, twoEq2, oneNe2)));
 
     h.parseEquals("when not (1=1)",
         guard(cond(EQUAL, one, one, true)));
