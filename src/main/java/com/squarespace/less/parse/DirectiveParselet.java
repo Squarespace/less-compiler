@@ -43,6 +43,7 @@ public class DirectiveParselet implements Parselet {
   public Node parse(LessStream stm) throws LessException {
     Mark mark = stm.mark();
     stm.skipWs();
+    int position = stm.position();
     if (stm.peek() != Chars.AT_SIGN || !stm.matchDirective()) {
       return null;
     }
@@ -63,7 +64,7 @@ public class DirectiveParselet implements Parselet {
       case "@import":
       case "@import-once":
       {
-        Node result = parseImport(stm, nvName);
+        Node result = parseImport(stm, nvName, position);
         if (result == null) {
           stm.restore(mark);
         }
@@ -150,7 +151,7 @@ public class DirectiveParselet implements Parselet {
     return media;
   }
 
-  private Node parseImport(LessStream stm, String name) throws LessException {
+  private Node parseImport(LessStream stm, String name, int position) throws LessException {
     boolean once = false;
     if (name.endsWith("-once")) {
       once = true;
@@ -165,9 +166,17 @@ public class DirectiveParselet implements Parselet {
     stm.skipWs();
     if (stm.seekIf(Chars.SEMICOLON)) {
       Import importNode = new Import(path, features, once);
+      importNode.parseOffset(position);
       importNode.rootPath(stm.rootPath());
       importNode.fileName(stm.fileName());
-      return stm.context().importer().importStylesheet(importNode);
+      if (path.needsEval()) {
+        // Defer evaluation of this block / import node.
+        stm.defer();
+        return importNode;
+
+      } else {
+        return stm.context().importer().importStylesheet(stm, importNode);
+      }
     }
     return null;
   }

@@ -19,11 +19,16 @@ package com.squarespace.less.parse;
 import static com.squarespace.less.core.SyntaxErrorMaker.incompleteParse;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
+import com.squarespace.less.core.FlexList;
+import com.squarespace.less.exec.ExecEnv;
+import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Node;
 
 
@@ -94,6 +99,16 @@ public class LessStream extends Stream {
 
   private final Path fileName;
 
+  private final List<ExecEnv> deferEvaluation = new ArrayList<>();
+
+  /**
+   * Holds a stack of parse frames, which represent the nested blocks entered
+   * during the parse.  This allows us to capture a closure for each import
+   * statement encountered that requires interpolation.  We evaluate the
+   * import path against that closure immediately after the parse completes.
+   */
+  private ParseEnv execEnv;
+
   private int matchEnd = -1;
 
   private Mark tokenPosition = new Mark();
@@ -114,6 +129,7 @@ public class LessStream extends Stream {
     this.context = ctx;
     this.rootPath = rootPath;
     this.fileName = fileName;
+    this.execEnv = new ParseEnv(ctx);
     this.matcherAnd = Patterns.AND.matcher(raw);
     this.matcherAnonRuleValue = Patterns.ANON_RULE_VALUE.matcher(raw);
     this.matcherAttributeKey = Patterns.ATTRIBUTE_KEY.matcher(raw);
@@ -184,6 +200,7 @@ public class LessStream extends Stream {
     if (peek() != Chars.EOF) {
       throw parseError(new LessException(incompleteParse()));
     }
+    context.importer().evaluateInterpolated(this, deferEvaluation);
   }
 
   /**
@@ -332,6 +349,17 @@ public class LessStream extends Stream {
     return peek(matcherShorthand);
   }
 
+  public ExecEnv execEnv() {
+    return execEnv;
+  }
+
+  public void defer() {
+    if (execEnv != null && !execEnv.deferred) {
+      execEnv.markDeferred();
+      deferEvaluation.add(execEnv.copy());
+    }
+  }
+
   private boolean peek(Matcher matcher) {
     matcher.region(index, length);
     return matcher.lookingAt();
@@ -365,4 +393,24 @@ public class LessStream extends Stream {
     token = raw.substring(start, end);
   }
 
+  private static class ParseEnv extends ExecEnv {
+
+    private boolean deferred;
+
+    public ParseEnv(LessContext context) {
+      super(context);
+    }
+
+    public ParseEnv(LessContext context, FlexList<Block> frames, FlexList<String> warnings) {
+      super(context, frames, warnings);
+    }
+
+    public ParseEnv copy() {
+      return new ParseEnv(ctx, frames.copy(), warnings);
+    }
+
+    public void markDeferred() {
+      deferred = true;
+    }
+  }
 }

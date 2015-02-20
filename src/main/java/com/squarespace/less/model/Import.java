@@ -62,6 +62,12 @@ public class Import extends BaseNode {
   protected Path fileName;
 
   /**
+   * Start of the import statement definition in the parse stream. We use
+   * this to handle execution errors
+   */
+  protected int parseOffset;
+
+  /**
    * Constructs an import node with the given path, features and "import once" flag.
    */
   public Import(Node path, Features features, boolean once) {
@@ -133,6 +139,20 @@ public class Import extends BaseNode {
    */
   public void fileName(Path fileName) {
     this.fileName = fileName;
+  }
+
+  /**
+   * Returns the offset of the import definition in the stream.
+   */
+  public int parseOffset() {
+    return parseOffset;
+  }
+
+  /**
+   * Sets the offset of the import definition in the stream.
+   */
+  public void parseOffset(int offset) {
+    this.parseOffset = offset;
   }
 
   /**

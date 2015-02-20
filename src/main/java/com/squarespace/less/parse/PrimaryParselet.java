@@ -28,6 +28,8 @@ public class PrimaryParselet implements Parselet {
   @Override
   public Node parse(LessStream stm) throws LessException {
     Block block = new Block();
+    stm.execEnv().push(block);
+
     Node node = null;
     stm.skipEmpty();
 
@@ -47,6 +49,8 @@ public class PrimaryParselet implements Parselet {
       stm.skipEmpty();
       stm.mark(position);
     }
+
+    stm.execEnv().pop();
     stm.skipEmpty();
     return block;
   }

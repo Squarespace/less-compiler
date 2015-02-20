@@ -36,13 +36,13 @@ public class RulesetParselet implements Parselet {
       return null;
     }
 
-    Node block = stm.parse(BLOCK);
-    if (block == null) {
+    Node node = stm.parse(BLOCK);
+    if (node == null) {
       stm.restore(mark);
       return null;
     }
 
-    Ruleset ruleset = stm.context().nodeBuilder().buildRuleset(group, (Block)block);
+    Ruleset ruleset = stm.context().nodeBuilder().buildRuleset(group, (Block)node);
     ruleset.fileName(stm.fileName());
     return ruleset;
   }

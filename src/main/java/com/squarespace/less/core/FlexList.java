@@ -98,6 +98,14 @@ public class FlexList<E> {
   }
 
   /**
+   * Return the last element.
+   */
+  @SuppressWarnings("unchecked")
+  public E last() {
+    return (E)elems[size - 1];
+  }
+
+  /**
    * If the list is empty.
    */
   public boolean isEmpty() {

@@ -33,17 +33,17 @@ public class ExecEnv {
   /**
    * Context for the current compile.
    */
-  private final LessContext ctx;
+  protected final LessContext ctx;
 
   /**
    * Stack frames for execution.
    */
-  private final FlexList<Block> frames;
+  protected final FlexList<Block> frames;
 
   /**
    * List of warnings emitted during execution.
    */
-  private FlexList<String> warnings;
+  protected FlexList<String> warnings;
 
   /**
    * Exception that terminated execution, if any.
@@ -209,10 +209,17 @@ public class ExecEnv {
   }
 
   /**
-   * Push a block onto the stack.
+   * Push a block node onto the stack.
    */
   public void push(BlockNode blockNode) throws LessException {
     frames.push(blockNode.block());
+  }
+
+  /**
+   * Push a block onto the stack.
+   */
+  public void push(Block block) throws LessException {
+    frames.push(block);
   }
 
   /**

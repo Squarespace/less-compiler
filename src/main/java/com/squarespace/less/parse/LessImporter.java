@@ -29,6 +29,8 @@ import com.squarespace.less.FilesystemLessLoader;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessLoader;
+import com.squarespace.less.core.FlexList;
+import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.ImportRecord;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Features;
@@ -36,6 +38,7 @@ import com.squarespace.less.model.Import;
 import com.squarespace.less.model.ImportMarker;
 import com.squarespace.less.model.Media;
 import com.squarespace.less.model.Node;
+import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Url;
@@ -68,16 +71,18 @@ public class LessImporter {
    * Retrieves an external stylesheet and initializes the import node's block.
    * If not already cached, parse it and cache it.
    */
-  public Node importStylesheet(Import importNode) throws LessException {
+  public Node importStylesheet(LessStream stm, Import importNode) throws LessException {
     String rawPath = renderImportPath(importNode);
     if (rawPath == null) {
       return importNode;
     }
-    Stylesheet sheet = importStylesheet(rawPath, importNode);
+
+    Stylesheet sheet = importStylesheet(stm, rawPath, importNode);
     if (sheet == null) {
       // When import-once is used, we disappear the import node.
       return new Block(0);
     }
+
     Block block = sheet.block();
     Features features = importNode.features();
     if (features != null && !features.isEmpty()) {
@@ -85,6 +90,7 @@ public class LessImporter {
       block = new Block();
       block.appendNode(media);
     }
+
     if (context.options().tracing()) {
       block.prependNode(new ImportMarker(importNode, true));
       block.appendNode(new ImportMarker(importNode, false));
@@ -93,9 +99,37 @@ public class LessImporter {
   }
 
   /**
+   * Scan each block for imports and evaluate those with interpolated paths.
+   */
+  public void evaluateInterpolated(LessStream stm, List<ExecEnv> deferred) throws LessException {
+    for (ExecEnv env : deferred) {
+      Block block = env.frames().last();
+      FlexList<Node> rules = block.rules();
+      int size = rules.size();
+      for (int i = 0; i < size; i++) {
+        Node node = rules.get(i);
+        if (node.type() == NodeType.IMPORT) {
+          Import imp = (Import)node;
+          Node path = imp.path();
+          if (path.needsEval()) {
+            Import newImport = new Import(path.eval(env), imp.features(), imp.once());
+            newImport.rootPath(imp.rootPath());
+            newImport.fileName(imp.fileName());
+            try {
+              rules.set(i, importStylesheet(stm, newImport));
+            } catch (LessException e) {
+              throw ParseUtils.parseError(e, stm.fileName(), stm.raw(), imp.parseOffset());
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
    * Retrieves an external stylesheet.
    */
-  public Stylesheet importStylesheet(String rawPath, Import importNode) throws LessException {
+  private Stylesheet importStylesheet(LessStream stm, String rawPath, Import importNode) throws LessException {
     Path rootPath = importNode.rootPath();
     boolean once = importNode.once();
     List<Path> importPaths = context.options().importPaths();
