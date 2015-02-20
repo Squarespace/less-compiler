@@ -14,11 +14,6 @@ Strict math mode, default this in 2.x mode.
 
 Ensure all @import keywords work (inline, once, etc)
 
-Variable references in import paths:
-
-    @import "@{var}/foo.less";
-
-
 Extend pseudo-class:
 
     nav ul {
@@ -46,6 +41,10 @@ and emit a warning. Filter them from the output.
 
 Completed
 -----
+
+Variable references in import paths:
+
+    @import "@{var}/foo.less";
 
 
 Guards on Rulesets:
