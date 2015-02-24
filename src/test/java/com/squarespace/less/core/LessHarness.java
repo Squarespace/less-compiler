@@ -32,6 +32,7 @@ import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Node;
+import com.squarespace.less.parse.LessParser;
 import com.squarespace.less.parse.LessStream;
 import com.squarespace.less.parse.Parselet;
 import com.squarespace.less.parse.Parselets;
@@ -80,9 +81,17 @@ public class LessHarness {
     return context(null);
   }
 
+  public LessParser parser() {
+    return new LessParser(context());
+  }
+
+  public LessCompiler compiler() {
+    return compiler;
+  }
+
   public LessContext context(LessOptions opts) {
     LessContext ctx = (opts == null) ? new LessContext() : new LessContext(opts);
-    ctx.setCompiler(compiler);
+    ctx.setFunctionTable(FUNCTIONS);
     return ctx;
   }
 
@@ -185,7 +194,7 @@ public class LessHarness {
   }
 
   private Node parse(String raw, Parselet[] parselet) throws LessException {
-    LessStream stm = new LessStream(context(), raw);
+    LessStream stm = new LessStream(parser(), raw);
     Node res = stm.parse(parselet);
     stm.checkComplete();
     return res;

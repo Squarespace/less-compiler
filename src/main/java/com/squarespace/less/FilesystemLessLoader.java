@@ -45,6 +45,11 @@ public class FilesystemLessLoader implements LessLoader {
     return readFile(path);
   }
 
+  @Override
+  public Path normalize(Path path) {
+    return (path == null) ? null : path.toAbsolutePath();
+  }
+
   private String readFile(Path path) throws LessException {
     try (InputStream input = Files.newInputStream(path)) {
       try (Reader reader = new InputStreamReader(input, Constants.UTF8)) {

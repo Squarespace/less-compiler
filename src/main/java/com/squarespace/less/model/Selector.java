@@ -107,7 +107,6 @@ public class Selector extends BaseNode {
 
   /**
    * Indicates whether this selector has a guard expression.
-   * @return
    */
   public boolean hasGuard() {
     return guard != null;

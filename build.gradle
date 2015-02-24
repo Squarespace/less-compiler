@@ -197,7 +197,6 @@ allprojects {
     manifest {
       attributes 'Main-Class': "${mainClassName}"
     }
-
   }
 
   task makeCli(type: Exec, dependsOn: execJar,

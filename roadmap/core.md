@@ -2,12 +2,6 @@
 2.x Core Checklist
 ---------
 
-Reorganize the stream to be hierarchical.  Parsing continues until an import
-statement is encountered. If it has a non-interpolated path, push the current
-stream / filename onto the stack and start parsing the import.  Once we hit
-EOF, pop the stream stack and continue parsing.  Need to reconcile this with
-import caching / reuse.
-
 Adding !important to definitions, merging accurately in rule:
 
     @size: 1px !important;
@@ -47,6 +41,14 @@ and emit a warning. Filter them from the output.
 
 Completed
 -----
+
+Reorganize the stream to be hierarchical.  Parsing continues until an import
+statement is encountered. If it has a non-interpolated path, push the current
+stream / filename onto the stack and start parsing the import.  Once we hit
+EOF, pop the stream stack and continue parsing.  Need to reconcile this with
+import caching / reuse.
+
+Deferred evaluation for imports with interpolated paths.
 
 Variable references in import paths:
 

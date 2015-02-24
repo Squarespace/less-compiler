@@ -44,4 +44,9 @@ public class HashMapLessLoader implements LessLoader {
     return result;
   }
 
+  @Override
+  public Path normalize(Path path) {
+    return path;
+  }
+
 }

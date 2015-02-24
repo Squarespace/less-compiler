@@ -16,15 +16,13 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.parse.Parselets.STYLESHEET;
-
 import java.nio.file.Path;
 
 import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.exec.LessEvaluator;
 import com.squarespace.less.exec.LessRenderer;
 import com.squarespace.less.model.Stylesheet;
-import com.squarespace.less.parse.LessStream;
+import com.squarespace.less.parse.LessParser;
 import com.squarespace.less.plugins.ColorBlendingFunctions;
 import com.squarespace.less.plugins.ColorChannelFunctions;
 import com.squarespace.less.plugins.ColorDefinitionFunctions;
@@ -46,13 +44,15 @@ public class LessCompiler {
    */
   public static final String LESSJS_VERSION = "1.3.3";
 
+  private static final FunctionTable DEFAULT_FUNCTION_TABLE = defaultFunctionTable();
+
   /**
    * Table of function implementations that will be used by the compiler.
    */
   private final FunctionTable functionTable;
 
   public LessCompiler() {
-    this(defaultFunctionTable());
+    this(DEFAULT_FUNCTION_TABLE);
   }
 
   public LessCompiler(FunctionTable functionTable) {
@@ -60,25 +60,20 @@ public class LessCompiler {
     this.functionTable.setInUse();
   }
 
-  public LessContext context(LessOptions opts) {
-    LessContext ctx = new LessContext(opts);
-    ctx.setCompiler(this);
-    return ctx;
-  }
-
   public FunctionTable functionTable() {
     return functionTable;
   }
 
   public Stylesheet parse(String raw, LessContext ctx) throws LessException {
-    return parse(raw, ctx, null, null);
+    return parse(raw, ctx, null);
   }
 
-  public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
+  public Stylesheet parse(String raw, LessContext ctx, Path filePath) throws LessException {
     LessStats stats = ctx.stats();
     long started = stats.now();
-    LessStream stm = new LessStream(ctx, raw, rootPath, fileName);
-    Stylesheet sheet = (Stylesheet) stm.parse(STYLESHEET);
+    LessParser parser = new LessParser(ctx);
+    parser.parse(raw, filePath);
+    Stylesheet sheet = parser.stylesheet();
     stats.parseDone(raw.length(), started);
     return sheet;
   }
@@ -95,11 +90,11 @@ public class LessCompiler {
   }
 
   public String compile(String raw, LessContext ctx) throws LessException {
-    return compile(raw, ctx, null, null);
+    return compile(raw, ctx, null);
   }
 
-  public String compile(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
-    Stylesheet sheet = parse(raw, ctx, rootPath, fileName);
+  public String compile(String raw, LessContext ctx, Path filePath) throws LessException {
+    Stylesheet sheet = parse(raw, ctx, filePath);
     LessStats stats = ctx.stats();
     long started = stats.now();
     String result = render(sheet, ctx);

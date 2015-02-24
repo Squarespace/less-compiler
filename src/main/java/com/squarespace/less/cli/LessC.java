@@ -37,6 +37,8 @@ import com.squarespace.less.LessOptions;
 
 /**
  * Main command line interface for the compiler.
+ *
+ * TODO: move to separate gradle subproject
  */
 public class LessC {
 

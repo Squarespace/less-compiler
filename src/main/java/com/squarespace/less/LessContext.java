@@ -16,9 +16,6 @@
 
 package com.squarespace.less;
 
-import java.nio.file.Path;
-import java.util.Map;
-
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.BufferStack;
 import com.squarespace.less.exec.Comparison;
@@ -32,8 +29,7 @@ import com.squarespace.less.exec.RenderEnv;
 import com.squarespace.less.exec.SelectorUtils;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
-import com.squarespace.less.model.Stylesheet;
-import com.squarespace.less.parse.LessImporter;
+import com.squarespace.less.parse.Importer;
 
 
 /**
@@ -61,9 +57,10 @@ public class LessContext {
 
   private final LessOptions opts;
 
-  private LessCompiler compiler;
-
-  private LessImporter importer;
+  /**
+   * Controls the importing of external stylesheets.
+   */
+  private final Importer importer;
 
   private FunctionTable functionTable;
 
@@ -72,7 +69,7 @@ public class LessContext {
   private int mixinDepth;
 
   public LessContext() {
-    this(DEFAULT_OPTS);
+    this(DEFAULT_OPTS, null);
   }
 
   public LessContext(LessOptions opts) {
@@ -80,17 +77,17 @@ public class LessContext {
   }
 
   public LessContext(LessOptions opts, LessLoader loader) {
-    this(opts, loader, null);
-  }
-
-  public LessContext(LessOptions opts, LessLoader loader, Map<Path, Stylesheet> preCache) {
     this.opts = opts;
-    this.importer = new LessImporter(this, loader, preCache);
+    this.importer = new Importer(this, loader);
     this.comparator = new NodeComparator(this);
   }
 
   public LessOptions options() {
     return opts;
+  }
+
+  public Importer importer() {
+    return importer;
   }
 
   public NodeBuilder nodeBuilder() {
@@ -101,25 +98,16 @@ public class LessContext {
     this.nodeBuilder = builder;
   }
 
+  public void setFunctionTable(FunctionTable table) {
+    this.functionTable = table;
+  }
+
   public MixinResolver mixinResolver() {
     return mixinResolver;
   }
 
   public void sanityCheck() {
     bufferStack.sanityCheck();
-  }
-
-  public LessCompiler compiler() {
-    return compiler;
-  }
-
-  public void setCompiler(LessCompiler compiler) {
-    this.compiler = compiler;
-    this.functionTable = compiler.functionTable();
-  }
-
-  public LessImporter importer() {
-    return importer;
   }
 
   public Function findFunction(String symbol) {

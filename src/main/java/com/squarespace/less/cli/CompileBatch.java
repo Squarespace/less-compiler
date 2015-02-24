@@ -104,11 +104,11 @@ class CompileBatch extends BaseCompile {
         Path cssPath = output.resolve(fileParts[0] + ".css").normalize();
 
         log("compiling " + fileName + " to " + cssPath);
-        LessContext ctx = new LessContext(args.compilerOptions(), null, cache);
+        LessContext ctx = new LessContext(args.compilerOptions());
+        ctx.setFunctionTable(compiler.functionTable());
         try {
 
           long compileStart = System.nanoTime();
-          ctx.setCompiler(compiler);
           String css = compiler.render(stylesheet.copy(), ctx);
           LessUtils.writeFile(cssPath, css);
           logElapsed(" ", compileStart, System.nanoTime());
@@ -145,13 +145,13 @@ class CompileBatch extends BaseCompile {
    */
   private Stylesheet parse(Path path) throws LessException, IOException {
     LessContext ctx = new LessContext(args.compilerOptions());
+    ctx.setFunctionTable(compiler.functionTable());
     try {
       String data = LessUtils.readFile(path);
       Stylesheet result = null;
-      ctx.setCompiler(compiler);
       log("parsing " + path + " ");
       long start = System.nanoTime();
-      result = compiler.parse(data, ctx, path.getParent(), path.getFileName());
+      result = compiler.parse(data, ctx, path);
       double elapsed = (System.nanoTime() - start) / 1000000.0;
       err.printf(" %.3fms\n", elapsed);
       return result;

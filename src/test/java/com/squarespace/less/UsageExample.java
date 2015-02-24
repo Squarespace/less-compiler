@@ -52,9 +52,9 @@ public class UsageExample {
     LessLoader loader = new HashMapLessLoader(buildMap());
     LessOptions opts = buildOptions(path);
     LessContext ctx = new LessContext(opts, loader);
-    ctx.setCompiler(COMPILER);
+    ctx.setFunctionTable(COMPILER.functionTable());
     try {
-      String result = COMPILER.compile(source, ctx, path.getParent(), path);
+      String result = COMPILER.compile(source, ctx, path);
       System.out.println(result);
 
     } catch (LessException exc) {

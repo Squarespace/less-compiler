@@ -34,4 +34,9 @@ public interface LessLoader {
    */
   String load(Path path) throws LessException;
 
+  /**
+   * Ensure the path is normalized for comparisons.
+   */
+  Path normalize(Path path);
+
 }

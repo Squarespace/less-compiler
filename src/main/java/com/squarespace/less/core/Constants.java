@@ -16,6 +16,9 @@
 
 package com.squarespace.less.core;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.squarespace.less.model.Dummy;
 import com.squarespace.less.model.False;
 import com.squarespace.less.model.Features;
@@ -38,5 +41,7 @@ public class Constants {
   public static final Dummy DUMMY = new Dummy();
 
   public static final String UTF8 = "UTF-8";
+
+  public static final Path DEFAULT_PATH = Paths.get("[source]");
 
 }

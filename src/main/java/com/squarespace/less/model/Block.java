@@ -59,6 +59,11 @@ public class Block extends BaseNode {
   private static final byte FLAG_HAS_MERGE_MODES = 0x08;
 
   /**
+   * Block has been marked for deferred evaluation.
+   */
+  private static final byte FLAG_DEFERRED_EVALUATION = 0x10;
+
+  /**
    * Initial capacity of the blocks array.
    */
   private static final int INITIAL_CAPACITY = 8;
@@ -152,6 +157,27 @@ public class Block extends BaseNode {
    */
   public FlexList<Node> rules() {
     return rules;
+  }
+
+  /**
+   * Indicates whether block is marked for deferred evaluation.
+   */
+  public boolean deferred() {
+    return (flags & FLAG_DEFERRED_EVALUATION) != 0;
+  }
+
+  /**
+   * Mark the block for deferred evaluation.
+   */
+  public void markDeferred() {
+    flags |= FLAG_DEFERRED_EVALUATION;
+  }
+
+  /**
+   * Clear the deferred evaluation flag.
+   */
+  public void clearDeferred() {
+    flags &= ~FLAG_DEFERRED_EVALUATION;
   }
 
   /**

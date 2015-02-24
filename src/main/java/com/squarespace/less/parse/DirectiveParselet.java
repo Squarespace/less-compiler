@@ -157,6 +157,8 @@ public class DirectiveParselet implements Parselet {
       once = true;
     }
 
+    // TODO: import keywords
+
     Node path = stm.parse(DIRECTIVE_IMPORT);
     if (path == null) {
       return null;
@@ -169,14 +171,7 @@ public class DirectiveParselet implements Parselet {
       importNode.parseOffset(position);
       importNode.rootPath(stm.rootPath());
       importNode.fileName(stm.fileName());
-      if (path.needsEval()) {
-        // Defer evaluation of this block / import node.
-        stm.defer();
-        return importNode;
-
-      } else {
-        return stm.context().importer().importStylesheet(stm, importNode);
-      }
+      return importNode;
     }
     return null;
   }

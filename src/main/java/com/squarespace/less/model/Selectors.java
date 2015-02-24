@@ -93,7 +93,6 @@ public class Selectors extends BaseNode {
 
   /**
    * Returns the guard expression for this selector set.
-   * @return
    */
   public Guard guard() {
     return guard;

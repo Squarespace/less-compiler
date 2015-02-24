@@ -19,6 +19,7 @@ package com.squarespace.less.parse;
 import static com.squarespace.less.core.SyntaxErrorMaker.incompleteParse;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -26,7 +27,7 @@ import java.util.regex.Matcher;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
-import com.squarespace.less.core.FlexList;
+import com.squarespace.less.core.Constants;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Node;
@@ -93,13 +94,18 @@ public class LessStream extends Stream {
 
   private final Matcher matcherWord;
 
-  private final LessContext context;
+  private final LessParser parser;
+
+  private final Path path;
 
   private final Path rootPath;
 
   private final Path fileName;
 
-  private final List<ExecEnv> deferEvaluation = new ArrayList<>();
+  /**
+   * Maintains a list of deferred evaluations during parse.
+   */
+  private final List<ExecEnv> deferred = new ArrayList<>();
 
   /**
    * Holds a stack of parse frames, which represent the nested blocks entered
@@ -107,7 +113,7 @@ public class LessStream extends Stream {
    * statement encountered that requires interpolation.  We evaluate the
    * import path against that closure immediately after the parse completes.
    */
-  private ParseEnv execEnv;
+  private final ExecEnv parseEnv;
 
   private int matchEnd = -1;
 
@@ -120,16 +126,24 @@ public class LessStream extends Stream {
   // Special mode for 'font' rules.
   private boolean requireStrictMath;
 
-  public LessStream(LessContext ctx, String raw) {
-    this(ctx, raw, null, null);
+  public LessStream(LessParser parser, String raw) {
+    this(parser, raw, null);
   }
 
-  public LessStream(LessContext ctx, String raw, Path rootPath, Path fileName) {
+  public LessStream(LessParser parser, String raw, Path path) {
+    this(parser, raw, null, null);
+  }
+
+  public LessStream(LessParser parser, String raw, Path path, ExecEnv env) {
     super(raw);
-    this.context = ctx;
-    this.rootPath = rootPath;
-    this.fileName = fileName;
-    this.execEnv = new ParseEnv(ctx);
+    this.parser = parser;
+    this.path = (path == null) ? Constants.DEFAULT_PATH : path;
+
+    Path parent = this.path.getParent();
+    this.rootPath = (parent == null) ? Paths.get(".") : parent;
+    this.fileName = this.path.getFileName();
+    this.parseEnv = (env == null) ? new ExecEnv(parser.context()) : env;
+
     this.matcherAnd = Patterns.AND.matcher(raw);
     this.matcherAnonRuleValue = Patterns.ANON_RULE_VALUE.matcher(raw);
     this.matcherAttributeKey = Patterns.ATTRIBUTE_KEY.matcher(raw);
@@ -164,8 +178,24 @@ public class LessStream extends Stream {
     return ParseUtils.parseError(exc, fileName, raw, furthest);
   }
 
+  public LessParser parser() {
+    return parser;
+  }
+
   public LessContext context() {
-    return context;
+    return parser.context();
+  }
+
+  public List<ExecEnv> deferreds() {
+    return deferred;
+  }
+
+  public ExecEnv execEnv() {
+    return parseEnv;
+  }
+
+  public Path path() {
+    return path;
   }
 
   public Path rootPath() {
@@ -200,7 +230,6 @@ public class LessStream extends Stream {
     if (peek() != Chars.EOF) {
       throw parseError(new LessException(incompleteParse()));
     }
-    context.importer().evaluateInterpolated(this, deferEvaluation);
   }
 
   /**
@@ -223,6 +252,20 @@ public class LessStream extends Stream {
 
   public String token() {
     return token;
+  }
+
+  /**
+   * Defer the current block for evaluation after the parse completes.
+   * To do this we capture the current stack as a closure.
+   */
+  public void defer() {
+    if (parseEnv != null) {
+      Block block = parseEnv.frames().last();
+      if (!block.deferred()) {
+        block.markDeferred();
+        deferred.add(parseEnv.copy());
+      }
+    }
   }
 
   public boolean matchAnd() {
@@ -349,17 +392,6 @@ public class LessStream extends Stream {
     return peek(matcherShorthand);
   }
 
-  public ExecEnv execEnv() {
-    return execEnv;
-  }
-
-  public void defer() {
-    if (execEnv != null && !execEnv.deferred) {
-      execEnv.markDeferred();
-      deferEvaluation.add(execEnv.copy());
-    }
-  }
-
   private boolean peek(Matcher matcher) {
     matcher.region(index, length);
     return matcher.lookingAt();
@@ -393,24 +425,4 @@ public class LessStream extends Stream {
     token = raw.substring(start, end);
   }
 
-  private static class ParseEnv extends ExecEnv {
-
-    private boolean deferred;
-
-    public ParseEnv(LessContext context) {
-      super(context);
-    }
-
-    public ParseEnv(LessContext context, FlexList<Block> frames, FlexList<String> warnings) {
-      super(context, frames, warnings);
-    }
-
-    public ParseEnv copy() {
-      return new ParseEnv(ctx, frames.copy(), warnings);
-    }
-
-    public void markDeferred() {
-      deferred = true;
-    }
-  }
 }

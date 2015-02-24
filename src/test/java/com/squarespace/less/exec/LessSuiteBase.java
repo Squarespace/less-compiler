@@ -62,7 +62,7 @@ public class LessSuiteBase {
     opts.addImportPath(importRoot.toString());
     LessContext ctx = new LessContext(opts);
     LessCompiler compiler = new LessCompiler();
-    ctx.setCompiler(compiler);
+    ctx.setFunctionTable(compiler.functionTable());
     return compiler.parse(source, ctx);
   }
 
@@ -71,9 +71,9 @@ public class LessSuiteBase {
     LessOptions opts = new LessOptions();
     opts.addImportPath(importRoot.toString());
 
-    LessContext ctx = new LessContext(opts);
     LessCompiler compiler = new LessCompiler();
-    ctx.setCompiler(compiler);
+    LessContext ctx = new LessContext(opts);
+    ctx.setFunctionTable(compiler.functionTable());
 
     // First, parse the stylesheet and generate the parse tree and canonical representations,
     // in order to exercise more parts of the code.
@@ -99,7 +99,7 @@ public class LessSuiteBase {
 
     // Finally, compile and execute the stylesheet.
     ctx = new LessContext(opts);
-    ctx.setCompiler(compiler);
+    ctx.setFunctionTable(compiler.functionTable());
     String result = compiler.compile(source, ctx);
     ctx.sanityCheck();
     return result;

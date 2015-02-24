@@ -55,11 +55,11 @@ class CompileSingle extends BaseCompile {
     }
 
     LessContext ctx = new LessContext(args.compilerOptions());
-    ctx.setCompiler(compiler);
+    ctx.setFunctionTable(compiler.functionTable());
     try {
       if (args.debugMode() == null) {
         // Normal compile
-        String result = compiler.compile(source, ctx, input.getParent(), input.getFileName());
+        String result = compiler.compile(source, ctx, input);
         if (args.lintOnly()) {
           return OK;
         }
@@ -76,7 +76,7 @@ class CompileSingle extends BaseCompile {
 
       } else {
         // Execute one of the debug modes
-        Stylesheet stylesheet = compiler.parse(source, ctx, input.getParent(), input.getFileName());
+        Stylesheet stylesheet = compiler.parse(source, ctx, input);
         switch (args.debugMode()) {
 
           case CANONICALIZE:

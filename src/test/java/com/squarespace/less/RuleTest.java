@@ -32,6 +32,7 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.parse.LessParser;
 import com.squarespace.less.parse.LessStream;
 import com.squarespace.less.parse.Parselets;
 
@@ -108,14 +109,15 @@ public class RuleTest extends LessTestBase {
 
   @Test
   public void testAnonRuleValueParse() throws LessException {
-    LessContext ctx = new LessContext();
-    LessStream stm = new LessStream(ctx, "foo bar;");
+    LessParser parser = new LessParser(new LessContext());
+
+    LessStream stm = new LessStream(parser, "foo bar;");
     assertTrue(stm.matchAnonRuleValue());
     assertEquals(stm.token(), "foo bar");
 
-    stm = new LessStream(ctx, "foo: foo: foo: 123 ;");
+    stm = new LessStream(parser, "foo: foo: foo: 123 ;");
     assertTrue(stm.matchAnonRuleValue());
     assertEquals(stm.token(), "foo: foo: foo: 123 "); // token before trimming
-}
+  }
 
 }
