@@ -20,7 +20,6 @@ import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import java.nio.file.Path;
 
-import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.ExecEnv;
@@ -153,37 +152,6 @@ public class Import extends BaseNode {
    */
   public void parseOffset(int offset) {
     this.parseOffset = offset;
-  }
-
-  /**
-   * Renders the path {@link Node} to get the filesystem path for the
-   * stylesheet to be imported.
-   */
-  public String renderPath(ExecEnv env) throws LessException {
-    Node value = path;
-    if (value instanceof Url) {
-      value = ((Url)value).value();
-    }
-
-    LessContext ctx = env.context();
-    Quoted quoted = null;
-    String rendered = null;
-    if (value instanceof Quoted) {
-
-      // Strip quote delimiters and render inner string. This technique allows
-      // for variable substitution inside @import paths, which may or may not
-      // be useful.
-      //
-      // Conversely, Less.js performs all importing during the parse phase, so
-      // it has to assume all paths are bare strings.
-      quoted = ((Quoted)value).copy();
-      quoted.setEscape(true);
-      rendered = ctx.render(quoted);
-
-    } else {
-      rendered = ctx.render(value);
-    }
-    return rendered;
   }
 
   /**

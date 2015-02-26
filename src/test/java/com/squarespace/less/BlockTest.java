@@ -17,12 +17,16 @@
 package com.squarespace.less;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessTestBase;
+import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.Rule;
+import com.squarespace.less.model.Unit;
 
 
 public class BlockTest extends LessTestBase {
@@ -44,4 +48,15 @@ public class BlockTest extends LessTestBase {
     block(rule(prop("x"), anon("y"))).toString();
   }
 
+  @Test
+  public void testDebugDefinitions() throws LessException {
+    Definition defA = def("@a", dim(123, Unit.PX));
+    Definition defB = def("@b", anon("foo"));
+    Rule rule = rule(prop("foo"), dim(321));
+
+    String defs = block(defA, rule, defB).dumpDefs();
+    assertTrue(defs.contains(defA.toString().replaceAll("\\s+", " ")));
+    assertTrue(defs.contains(defB.toString().replaceAll("\\s+", " ")));
+    assertFalse(defs.contains(rule.toString().replaceAll("\\s+", " ")));
+  }
 }

@@ -121,11 +121,7 @@ public class LessParser {
    */
   public LessStream push(String raw, Path filePath, ExecEnv env) {
     LessStream stream = null;
-    if (filePath == null) {
-      stream = new LessStream(this, raw, null, env);
-    } else {
-      stream = new LessStream(this, raw, filePath, env);
-    }
+    stream = new LessStream(this, raw, filePath, env);
     this.streamPaths.add(filePath);
     this.streams.push(stream);
     return stream;
