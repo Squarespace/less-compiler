@@ -66,8 +66,8 @@ public class DefaultNodeBuilder implements NodeBuilder {
   }
 
   @Override
-  public Definition buildDefinition(Variable variable, Node value) {
-    return new Definition(variable, value);
+  public Definition buildDefinition(String name, Node value, boolean important) {
+    return new Definition(name, value, important);
   }
 
   @Override

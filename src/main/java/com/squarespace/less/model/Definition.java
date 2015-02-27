@@ -47,6 +47,11 @@ public class Definition extends BaseNode {
   protected boolean evaluating;
 
   /**
+   * Flag indicating the definition was marked important.
+   */
+  protected boolean important;
+
+  /**
    * Filename in which this variable is defined.
    */
   protected Path fileName;
@@ -57,21 +62,22 @@ public class Definition extends BaseNode {
   protected String warnings;
 
   /**
-   * Constructs a definition with the {@code variable}'s name and the given value.
+   * Constructs a definition with the name and value.
    */
-  public Definition(Variable variable, Node value) {
-    this(variable.name(), value);
+  public Definition(String name, Node value) {
+    this(name, value, false);
   }
 
   /**
-   * Constructs a definition with the given name and value.
+   * Constructs a definition with the name and value, and important flag.
    */
-  public Definition(String name, Node value) {
+  public Definition(String name, Node value, boolean important) {
     if (name == null || value == null) {
       throw new LessInternalException("Serious error: name/value cannot be null.");
     }
     this.name = name;
     this.value = value;
+    this.important = important;
   }
 
   /**
@@ -80,6 +86,7 @@ public class Definition extends BaseNode {
   protected Definition(Definition orig, Node newValue) {
     this(orig.name(), newValue);
     this.fileName = orig.fileName;
+    this.important = orig.important;
     copyBase(orig);
   }
 
@@ -96,6 +103,10 @@ public class Definition extends BaseNode {
 
   public Node value() {
     return value;
+  }
+
+  public boolean important() {
+    return important;
   }
 
   /**
@@ -130,6 +141,9 @@ public class Definition extends BaseNode {
     evaluating = true;
     Node result = value.eval(env);
     evaluating = false;
+    if (important) {
+      env.setImportantFlag(true);
+    }
     return result;
   }
 

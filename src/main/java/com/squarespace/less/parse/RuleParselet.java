@@ -97,7 +97,7 @@ public class RuleParselet implements Parselet {
       Variable var = (Variable)key;
       if (!var.curly()) {
         // Note that !important is ingored for definitions.
-        Definition def = stm.context().nodeBuilder().buildDefinition((Variable)key, value);
+        Definition def = stm.context().nodeBuilder().buildDefinition(var.name(), value, important);
         def.fileName(stm.fileName());
         return def;
       }

@@ -187,7 +187,9 @@ public class Rule extends BaseNode {
     if (isFontProperty()) {
       env.setStrictMath(true);
     }
-    Rule result = new Rule(property.eval(env), blockExpressionCheck(value.eval(env)), important);
+    env.setImportantFlag(false);
+    Node newValue = value.eval(env);
+    Rule result = new Rule(property.eval(env), blockExpressionCheck(newValue), important | env.importantFlagged());
     result.fileName(fileName);
     result.copyBase(this);
     env.setStrictMath(strictMath);

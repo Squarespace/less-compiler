@@ -56,6 +56,13 @@ public class ExecEnv {
   private boolean strictMath;
 
   /**
+   * When evaluating a rule we clear this flag and evaluate the rule's
+   * right-hand side expression. If any definition is encountered which
+   * is marked important, it will set this flag.
+   */
+  private boolean importantFlagged;
+
+  /**
    * Constructs an instance associated with the given compile context.
    */
   public ExecEnv(LessContext ctx) {
@@ -121,6 +128,21 @@ public class ExecEnv {
   public void setStrictMath(boolean flag) {
     this.strictMath = flag;
   }
+
+  /**
+   * Sets the important flag.
+   */
+  public void setImportantFlag(boolean flag) {
+    this.importantFlagged = flag;
+  }
+
+  /**
+   * Indicates whether the important flag was set during evaluation.
+   */
+  public boolean importantFlagged() {
+    return importantFlagged;
+  }
+
 
   /**
    * Returns the execution error, if any.

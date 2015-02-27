@@ -1,0 +1,20 @@
+
+@color: blue;
+@icolor: red !important;
+@math: 3 + 7;
+@imath: 3 + 7 !important;
+
+.combinations {
+    none: @color @math;
+    color: @icolor @math;
+    rcolor: @math @icolor;
+    math: @color @imath;
+    rmath: @imath @color;
+    both: @imath @icolor;
+
+    repeat-1: @imath @imath @imath;
+    repeat-2: @icolor @imath @icolor @imath @color @math;
+}
+
+
+

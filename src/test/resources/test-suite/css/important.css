@@ -1,0 +1,10 @@
+.combinations {
+  none: blue 10;
+  color: red 10 !important;
+  rcolor: 10 red !important;
+  math: blue 10 !important;
+  rmath: 10 blue !important;
+  both: 10 red !important;
+  repeat-1: 10 10 10 !important;
+  repeat-2: red 10 red 10 blue 10 !important;
+}

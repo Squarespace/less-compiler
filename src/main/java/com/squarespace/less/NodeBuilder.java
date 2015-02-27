@@ -56,9 +56,9 @@ public interface NodeBuilder {
 
   Comment buildComment(String body, boolean block, boolean newline);
 
-  Definition buildDefinition(Variable variable, Node value);
-
   Definition buildDefinition(String name, Node value);
+
+  Definition buildDefinition(String name, Node value, boolean important);
 
   Directive buildDirective(String name, Node value);
 

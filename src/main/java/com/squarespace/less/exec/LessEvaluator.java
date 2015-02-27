@@ -264,7 +264,9 @@ public class LessEvaluator {
             Rule rule = (Rule) node;
             Rule newRule = null;
             if (forceImportant && !rule.important()) {
-              newRule = rule.copy(rule.value().eval(env), forceImportant);
+              Node value = rule.value().eval(env);
+              newRule = rule.copy(value, forceImportant);
+
             } else {
               newRule = (Rule)rule.eval(env);
             }
