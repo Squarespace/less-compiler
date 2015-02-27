@@ -19,6 +19,7 @@ package com.squarespace.less.parse;
 import static com.squarespace.less.core.SyntaxErrorMaker.javascriptDisabled;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Node;
 
@@ -30,12 +31,20 @@ public class JavascriptParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
+    LessOptions options = stm.context().options();
     int pos = 0;
     if (stm.peek() == Chars.TILDE) {
       pos++;
     }
     if (stm.peek(pos) == Chars.GRAVE_ACCENT) {
-      throw stm.parseError(new LessException(javascriptDisabled()));
+      if (options.strict()) {
+        throw stm.parseError(new LessException(javascriptDisabled()));
+      }
+      stm.seek(2);
+      stm.seekTo(Chars.GRAVE_ACCENT);
+      if (!options.hideWarnings()) {
+        stm.execEnv().addWarning("javascript expressions are currently unsupported");
+      }
     }
     return null;
   }

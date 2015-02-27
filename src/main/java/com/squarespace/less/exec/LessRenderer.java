@@ -296,7 +296,7 @@ public class LessRenderer {
     String warnings = def.warnings();
     if (warnings != null) {
       String repr = "definition '" + def.name() + "'";
-      emitWarnings(repr, def.warnings());
+      emitWarnings(repr, warnings);
     }
     if (opts.tracing()) {
       Path fileName = def.fileName();
