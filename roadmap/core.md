@@ -2,14 +2,6 @@
 2.x Core Checklist
 ---------
 
-Adding !important to definitions, merging accurately in rule:
-
-    @size: 1px !important;
-    @color: black !important;
-    color: solid @size @color !important
-
-    color: solid 1px black !important;
-
 Strict math mode, default this in 2.x mode.
 
 Ensure all @import keywords work (inline, once, etc)
@@ -41,6 +33,15 @@ and emit a warning. Filter them from the output.
 
 Completed
 -----
+
+Adding !important to definitions, merging accurately in rule:
+
+    @size: 1px !important;
+    @color: black !important;
+    color: solid @size @color !important
+
+    color: solid 1px black !important;
+
 
 Reorganize the stream to be hierarchical.  Parsing continues until an import
 statement is encountered. If it has a non-interpolated path, push the current
