@@ -88,15 +88,16 @@ public class RuleParselet implements Parselet {
       value = new Anonymous();
     }
 
+    // Nothing was parsed or we failed to find the ending sequence.
     if (value == null || !end(stm)) {
       stm.restore(ruleMark);
       return null;
     }
 
+    // If we parsed an AT-prefixed name, it may be a definition.
     if (key instanceof Variable) {
       Variable var = (Variable)key;
       if (!var.curly()) {
-        // Note that !important is ingored for definitions.
         Definition def = stm.context().nodeBuilder().buildDefinition(var.name(), value, important);
         def.fileName(stm.fileName());
         return def;
