@@ -39,6 +39,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.squarespace.less.model.Expression;
+import com.squarespace.less.model.ExpressionList;
+import com.squarespace.less.model.Node;
+
 
 /**
  * Generic utility methods.
@@ -102,6 +106,31 @@ public class LessUtils {
     try (OutputStream output = Files.newOutputStream(outPath, CREATE, TRUNCATE_EXISTING)) {
       output.write(data.getBytes(Constants.UTF8));
     }
+  }
+
+  /**
+   * Flattens the list types {@link Expression} and {@link ExpressionList} of length 1
+   * by returning their first value
+   */
+  public static Node flatten(Node node) {
+    List<Node> values = listValues(node);
+    if (values == null) {
+      return node;
+    }
+    return values.size() == 1 ? values.get(0) : node;
+  }
+
+  /**
+   * If the node is one of the list types, return the values; otherwise return null.
+   */
+  public static List<Node> listValues(Node node) {
+    List<Node> values = null;
+    if (node instanceof Expression) {
+      values = ((Expression)node).values();
+    } else if (node instanceof ExpressionList) {
+      values = ((ExpressionList)node).expressions();
+    }
+    return values;
   }
 
   /**

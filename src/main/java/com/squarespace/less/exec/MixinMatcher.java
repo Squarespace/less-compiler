@@ -28,6 +28,7 @@ import java.util.Queue;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessInternalException;
+import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Argument;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Expression;
@@ -172,20 +173,26 @@ public class MixinMatcher {
     // Build the final bindings block.
     Expression arguments = new Expression();
     Block bindings = new Block(boundValues.size());
+
     for (Map.Entry<String, Node> entry : boundValues.entrySet()) {
       Node value = entry.getValue();
       bindings.appendNode(ctx.nodeBuilder().buildDefinition(entry.getKey(), value));
       arguments.add(value);
     }
+
+    // Add a binding for the named variadic, if any.
     if (variadicName != null) {
-      bindings.appendNode(ctx.nodeBuilder().buildDefinition(variadicName, variadic));
+      bindings.appendNode(ctx.nodeBuilder().buildDefinition(variadicName, LessUtils.flatten(variadic)));
     }
+
+    // If we captured variadic arguments, add them to the special @arguments variable.
     if (variadic != null) {
       for (Node value : variadic.values()) {
         arguments.add(value);
       }
     }
-    bindings.appendNode(ctx.nodeBuilder().buildDefinition("@arguments", arguments));
+
+    bindings.appendNode(ctx.nodeBuilder().buildDefinition("@arguments", LessUtils.flatten(arguments)));
     return new GenericBlock(bindings);
   }
 

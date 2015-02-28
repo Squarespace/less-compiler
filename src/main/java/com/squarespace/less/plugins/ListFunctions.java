@@ -19,11 +19,11 @@ package com.squarespace.less.plugins;
 import java.util.List;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
 import com.squarespace.less.model.Dimension;
-import com.squarespace.less.model.ExpressionList;
 import com.squarespace.less.model.Node;
 
 
@@ -37,42 +37,49 @@ public class ListFunctions implements Registry<Function> {
   public static final Function LENGTH = new Function("length", "*.") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      Node node = args.get(0);
-      int size = 1;
-      if (node instanceof ExpressionList) {
-        ExpressionList list = (ExpressionList) node;
-        size = list.size();
-      }
-      return new Dimension(size);
+      Node arg = args.get(0);
+      List<Node> values = LessUtils.listValues(arg);
+      return (values == null) ? new Dimension(1) : new Dimension(values.size());
     }
   };
 
   /**
-   * Note: I'm not satisfied with the vague behavior exhibited by the upstream
-   * JS compiler. If length() is called with 2 or more arguments of the wrong
-   * type, it tends to output the literal function call as a default,
-   * rather than emitting a warning, or better and error.
+   * NOTE: Functions called with arguments of the wrong type will emit the
+   * literal representation of the function call, rather than emitting
+   * a warning or error.
    *
    * In order to maintain compatibility with upstream I've replicated this
    * behavior.
+   * TODO: revisit this to ensure the behavior is properly documented somewhere.
+   * - phensley
    */
   public static final Function EXTRACT = new Function("extract", "**.") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Node arg1 = args.get(0);
       Node arg2 = args.get(1);
-      if (!(arg1 instanceof ExpressionList) || !(arg2 instanceof Dimension)) {
-        // Bail out and emit literal representation of function call.
+
+      // Indices must be a number.
+      if (!(arg2 instanceof Dimension)) {
         return null;
       }
-      ExpressionList list = (ExpressionList) arg1;
-      int size = list.size();
+
+      // Indices are 1-based integers. Verify integer-ness and subtract 1 to
+      // get true index.
       double index = ((Dimension) arg2).value();
-      if (index != Math.round(index) || index < 0 || index >= size) {
-        // Bail out and emit literal representation of function call.
+      index--;
+      if (index != (int)index || index < 0) {
         return null;
       }
-      return list.expressions().get((int)index);
+
+      // Extract values for list types.
+      List<Node> values = LessUtils.listValues(arg1);
+      if (values == null) {
+        // Treat non-list types as list of size 1.
+        return index == 0 ? arg1 : null;
+      }
+
+      return (index >= values.size()) ? null : values.get((int)index);
     }
   };
 

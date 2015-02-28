@@ -118,19 +118,19 @@ public class ArgumentBinderTest extends LessTestBase {
     assertBinds("(@a: 1)", "(2)", defs(
 
         def("@a", dim(2)),
-        def("@arguments", expn(dim(2)))
+        def("@arguments", dim(2))
         ));
 
     assertBinds("(@a: 'foo')", "(2)", defs(
 
         def("@a", dim(2)),
-        def("@arguments", expn(dim(2)))
+        def("@arguments", dim(2))
         ));
 
     assertBinds("(true, @a: 1)", "(true, 2px)", defs(
 
         def("@a", dim(2, Unit.PX)),
-        def("@arguments", expn(dim(2, Unit.PX)))
+        def("@arguments", dim(2, Unit.PX))
         ));
 
     assertBinds("(...)", "(1, 2, 3)", defs(

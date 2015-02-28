@@ -51,18 +51,18 @@ public class ListFunctionsTest extends LessTestBase {
     h.evalFails("extract()", ARG_COUNT);
     h.evalFails("extract(1)", ARG_COUNT);
 
-    h.evalEquals("extract(@nums3, 0)", dim(1));
-    h.evalEquals("extract(@nums3, 1)", dim(2));
-    h.evalEquals("extract(@nums3, 2)", dim(3));
+    h.evalEquals("extract(@nums3, 1)", dim(1));
+    h.evalEquals("extract(@nums3, 2)", dim(2));
+    h.evalEquals("extract(@nums3, 3)", dim(3));
 
-    h.evalEquals("extract(@fruit, 0)", quoted('"', false, "orange"));
-    h.evalEquals("extract(@fruit, 1)", quoted('"', false, "banana"));
-    h.evalEquals("extract(@fruit, 2)", quoted('"', false, "apple"));
-    h.evalEquals("extract(@fruit, 3)", quoted('"', false, "tomato"));
+    h.evalEquals("extract(@fruit, 1)", quoted('"', false, "orange"));
+    h.evalEquals("extract(@fruit, 2)", quoted('"', false, "banana"));
+    h.evalEquals("extract(@fruit, 3)", quoted('"', false, "apple"));
+    h.evalEquals("extract(@fruit, 4)", quoted('"', false, "tomato"));
 
     // Failures to invoke will emit a literal representation of the call
-    Node expected = call("extract", dim(1), dim(1));
-    h.evalEquals("extract(1, 1)", expected);
+    Node expected = call("extract", dim(1), dim(2));
+    h.evalEquals("extract(1, 2)", expected);
 
     Node nums3 = expnlist(dim(1), dim(2), dim(3));
     h.evalEquals("extract(@nums3, -1)", call("extract", nums3, dim(-1)));
