@@ -42,6 +42,7 @@ Adding !important to definitions, merging accurately in rule:
 
     color: solid 1px black !important;
 
+Detect recursive imports and raise a syntax error.
 
 Reorganize the stream to be hierarchical.  Parsing continues until an import
 statement is encountered. If it has a non-interpolated path, push the current
