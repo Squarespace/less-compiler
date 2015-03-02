@@ -37,6 +37,9 @@ public enum SyntaxErrorType implements LessErrorType {
   EXPECTED
   ("Expected %(arg0)s"),
 
+  EXTEND_MISSING_TARGET
+  ("Missing target selector for :extend()"),
+
   GENERAL
   ("%(arg0)s"),
 
@@ -58,11 +61,14 @@ public enum SyntaxErrorType implements LessErrorType {
   RECURSIVE_IMPORT
   ("Import cycle detected. Import '%(arg0)s' is entered multiple times recursively."),
 
-  SELECTOR_ONE_GUARD
-  ("Guards are only currently allowed on a single selector."),
+  SELECTOR_END_EXTEND
+  ("Extend can only be used at the end of selector."),
 
   SELECTOR_END_GUARD
-  ("A guard can only be used at the end of selector");
+  ("A guard can only be used at the end of selector"),
+
+  SELECTOR_ONE_GUARD
+  ("Guards are only currently allowed on a single selector.");
 
   private static final String PREFIX = "SyntaxError %(code)s ";
 

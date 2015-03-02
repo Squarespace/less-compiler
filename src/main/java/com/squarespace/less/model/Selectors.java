@@ -167,6 +167,10 @@ public class Selectors extends BaseNode {
     for (int i = 0; i < size; i++) {
       reprElement(buf, elements.get(i), i == 0);
     }
+    ExtendList extendList = selector.extendList();
+    if (extendList != null) {
+      extendList.repr(buf);
+    }
   }
 
   /**

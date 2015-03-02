@@ -72,6 +72,10 @@ public class Patterns {
 
   public static final Pattern ELEMENT3 = pattern("[\\.#](?=@)");
 
+  public static final Pattern EXTEND = pattern(":extend\\(");
+
+  public static final Pattern EXTEND_ALL = pattern("all\\s*(\\)|,)");
+
   public static final Pattern HEXCOLOR = pattern("#(" + _HEXCHAR + "{6}|" + _HEXCHAR + "{3})");
 
   // TODO: less allows identifiers starting with a digit, perhaps we should restrict it to [a-zA-Z][\\w-]+

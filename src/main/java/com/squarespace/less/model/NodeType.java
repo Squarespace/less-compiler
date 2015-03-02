@@ -39,6 +39,8 @@ public enum NodeType {
   ELEMENT,
   EXPRESSION,
   EXPRESSION_LIST,
+  EXTEND,
+  EXTEND_LIST,
   FALSE,
   FEATURE,
   FEATURES,

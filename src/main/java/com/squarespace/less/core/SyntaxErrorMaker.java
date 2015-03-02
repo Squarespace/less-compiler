@@ -42,6 +42,10 @@ public class SyntaxErrorMaker {
     return error(SyntaxErrorType.EXPECTED).arg0(thing);
   }
 
+  public static LessErrorInfo extendMissingTarget() {
+    return error(SyntaxErrorType.EXTEND_MISSING_TARGET);
+  }
+
   public static LessErrorInfo general(Object obj) {
     return error(SyntaxErrorType.GENERAL).arg0(obj);
   }
@@ -70,12 +74,16 @@ public class SyntaxErrorMaker {
     return error(SyntaxErrorType.RECURSIVE_IMPORT).arg0(path);
   }
 
+  public static LessErrorInfo selectorEndGuard() {
+    return error(SyntaxErrorType.SELECTOR_END_GUARD);
+  }
+
   public static LessErrorInfo selectorOneGuard() {
     return error(SyntaxErrorType.SELECTOR_ONE_GUARD);
   }
 
-  public static LessErrorInfo selectorEndGuard() {
-    return error(SyntaxErrorType.SELECTOR_END_GUARD);
+  public static LessErrorInfo selectorEndExtend() {
+    return error(SyntaxErrorType.SELECTOR_END_EXTEND);
   }
 
   private static LessErrorInfo error(LessErrorType type) {

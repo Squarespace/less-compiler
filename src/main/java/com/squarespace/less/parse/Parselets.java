@@ -85,6 +85,11 @@ public class Parselets {
     new SelectorParselet()
   };
 
+  public static final Parselet[] ELEMENT_OR_EXTEND = new Parselet[] {
+    new ExtendParselet(false),
+    new ElementParselet()
+  };
+
   public static final Parselet[] LITERAL = new Parselet[] {
     new RatioParselet(),
     new DimensionParselet(),
@@ -170,6 +175,7 @@ public class Parselets {
   };
 
   public static final Parselet[] PRIMARY_SUB = new Parselet[] {
+    new ExtendParselet(true),
     new MixinParselet(),
     new RuleParselet(),
     new RulesetParselet(),

@@ -138,7 +138,7 @@ public class Condition extends BaseNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
-    buf.append(' ').append(operator.toString());
+    buf.append(' ').append(operator.name());
     if (negate) {
       buf.append(" [negate]");
     }

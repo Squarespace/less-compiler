@@ -223,6 +223,13 @@ public class LessEvaluator {
             break;
           }
 
+          case EXTEND:
+          {
+            // TODO: defer extends evaluation.
+
+            break;
+          }
+
           case IMPORT_MARKER:
           {
             ImportMarker marker = (ImportMarker) node;

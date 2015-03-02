@@ -38,6 +38,8 @@ public class Selector extends BaseNode {
 
   private static final byte FLAG_MIXIN_PATH_BUILT = 0x04;
 
+  private static final byte FLAG_HAS_EXTEND = 0x08;
+
   /**
    * Default capacity for the selector's element list.
    */
@@ -47,6 +49,11 @@ public class Selector extends BaseNode {
    * List of elements in this selector.
    */
   protected List<Element> elements;
+
+  /**
+   * {@link ExtendList} attached to this selector.
+   */
+  protected ExtendList extendList;
 
   /**
    * {@link Mixin} path this selector maps to.
@@ -71,6 +78,13 @@ public class Selector extends BaseNode {
   }
 
   /**
+   * Indicates whether this selector has a least one {@link Extend} attached.
+   */
+  public boolean hasExtend() {
+    return (flags & FLAG_HAS_EXTEND) != 0;
+  }
+
+  /**
    * Adds an element to the selector.
    */
   public void add(Element element) {
@@ -84,6 +98,11 @@ public class Selector extends BaseNode {
     }
   }
 
+  public void extendList(ExtendList extendList) {
+    this.extendList = extendList;
+    flags |= FLAG_HAS_EXTEND;
+  }
+
   /**
    * Returns the list of elements in this selector.
    */
@@ -92,7 +111,7 @@ public class Selector extends BaseNode {
   }
 
   /**
-   * Returns the guard expression for this selector.
+   * Returns the guard expression for this selector, if any.
    */
   public Guard guard() {
     return guard;
@@ -103,6 +122,13 @@ public class Selector extends BaseNode {
    */
   public void guard(Guard guard) {
     this.guard = guard;
+  }
+
+  /**
+   * Returns the extend list attached to this selector, if any.
+   */
+  public ExtendList extendList() {
+    return extendList;
   }
 
   /**
@@ -194,9 +220,20 @@ public class Selector extends BaseNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
-    buf.append('\n');
     buf.incrIndent();
-    ReprUtils.modelRepr(buf, "\n", true, elements);
+    if (elements != null && !elements.isEmpty()) {
+      buf.append('\n');
+      ReprUtils.modelRepr(buf, "\n", true, elements);
+    }
+    if (extendList != null) {
+      buf.append('\n');
+      buf.indent();
+      extendList.modelRepr(buf);
+    }
+    if (guard != null) {
+      buf.indent();
+      guard.modelRepr(buf);
+    }
     buf.decrIndent();
   }
 

@@ -64,9 +64,16 @@ public abstract class BaseNode implements Node {
    * Copies the base field values of {@code from} to this node.
    */
   public void copyBase(BaseNode from) {
+    copyPosition(from);
+    userData(from.userData);
+  }
+
+  /**
+   * Copy parse position information from {@code from} to this node.
+   */
+  public void copyPosition(BaseNode from) {
     setLineOffset(from.lineOffset);
     setCharOffset(from.charOffset);
-    userData(from.userData);
   }
 
   /**

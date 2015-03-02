@@ -16,9 +16,10 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.SyntaxErrorMaker.selectorEndExtend;
 import static com.squarespace.less.core.SyntaxErrorMaker.selectorEndGuard;
 import static com.squarespace.less.parse.Parselets.COMMENT;
-import static com.squarespace.less.parse.Parselets.ELEMENT;
+import static com.squarespace.less.parse.Parselets.ELEMENT_OR_EXTEND;
 import static com.squarespace.less.parse.Parselets.ENTITY;
 
 import com.squarespace.less.LessException;
@@ -26,6 +27,7 @@ import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Element;
+import com.squarespace.less.model.ExtendList;
 import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
@@ -54,11 +56,21 @@ public class SelectorParselet implements Parselet {
     }
 
     Node elem = null;
-    while ((elem = stm.parse(ELEMENT)) != null) {
+    boolean extended = false;
+    while ((elem = stm.parse(ELEMENT_OR_EXTEND)) != null) {
       if (selector == null) {
         selector = stm.context().nodeBuilder().buildSelector();
       }
-      selector.add((Element)elem);
+      if (elem instanceof Element) {
+        if (extended) {
+          throw stm.parseError(new LessException(selectorEndExtend()));
+        }
+        selector.add((Element)elem);
+      } else if (elem instanceof ExtendList) {
+        selector.extendList((ExtendList)elem);
+        extended = true;
+      }
+
       stm.parse(COMMENT);
       stm.skipWs();
 

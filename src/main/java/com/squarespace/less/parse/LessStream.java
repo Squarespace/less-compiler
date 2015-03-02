@@ -66,6 +66,10 @@ public class LessStream extends Stream {
 
   private final Matcher matcherElement3;
 
+  private final Matcher matcherExtend;
+
+  private final Matcher matcherExtendAll;
+
   private final Matcher matcherHexColor;
 
   private final Matcher matcherIdentifier;
@@ -158,6 +162,8 @@ public class LessStream extends Stream {
     this.matcherElement1 = Patterns.ELEMENT1.matcher(raw);
     this.matcherElement2 = Patterns.ELEMENT2.matcher(raw);
     this.matcherElement3 = Patterns.ELEMENT3.matcher(raw);
+    this.matcherExtend = Patterns.EXTEND.matcher(raw);
+    this.matcherExtendAll = Patterns.EXTEND_ALL.matcher(raw);
     this.matcherHexColor = Patterns.HEXCOLOR.matcher(raw);
     this.matcherIdentifier = Patterns.IDENTIFIER.matcher(raw);
     this.matcherImportant = Patterns.IMPORTANT.matcher(raw);
@@ -334,6 +340,21 @@ public class LessStream extends Stream {
 
   public boolean matchElement3() {
     return finish(match(matcherElement3));
+  }
+
+  public boolean matchExtend() {
+    return finish(match(matcherExtend));
+  }
+
+  public boolean matchExtendAll() {
+    if (!match(matcherExtendAll)) {
+      return false;
+    }
+    // Back up to before the comma or parenthesis.
+    matchEnd--;
+    set(index, matchEnd);
+    consume();
+    return true;
   }
 
   public boolean matchHexColor() {
