@@ -120,8 +120,7 @@ public class LessParser {
    * Push a stream onto the stack, typically to process an {@link Import} statement.
    */
   public LessStream push(String raw, Path filePath, ExecEnv env) {
-    LessStream stream = null;
-    stream = new LessStream(this, raw, filePath, env);
+    LessStream stream = new LessStream(this, raw, filePath, env);
     this.streamPaths.add(filePath);
     this.streams.push(stream);
     return stream;
