@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,90 +46,111 @@ public class ImporterTest extends LessTestBase {
 
   @Test
   public void testResolver() throws LessException {
-    LessContext context = newContext("foo.less");
+    Path rootPath = Paths.get("/rootpath/foo");
+    LessContext context = newContext(rootPath, "one.less");
 
-    Import imp = newImport(anon("foo.less"));
-    Path path = context.importer().resolvePath(imp);
-    assertEquals(path, Paths.get("foo.less"));
+    Import imp = newImport(anon("one.less"));
+    imp.rootPath(rootPath);
+    Path actual = context.importer().resolvePath(imp);
+    assertEquals(actual, rootPath.resolve("one.less"));
 
-    imp = newImport(anon("bar.less"));
-    path = context.importer().resolvePath(imp);
-    assertEquals(path, null);
+    imp = newImport(anon("two.less"));
+    actual = context.importer().resolvePath(imp);
+    assertEquals(actual, null);
   }
 
   @Test
   public void testImportOnce() throws LessException {
-    LessContext context = newContext("foo.less");
+    Path rootPath = Paths.get("/rootpath/foo");
+    LessContext context = newContext(rootPath, "one.less");
     Importer importer = context.importer();
 
-    Import imp = newImport(anon("foo.less"), null, true);
+    Import imp = newImport(anon("one.less"), null, true);
+    imp.rootPath(rootPath);
 
-    Path path = importer.resolvePath(imp);
-    assertEquals(path, Paths.get("foo.less"));
-    assertFalse(importer.shouldSuppressImport(path));
+    Path actual = importer.resolvePath(imp);
+    assertEquals(actual, rootPath.resolve("one.less"));
+    assertFalse(importer.shouldSuppressImport(actual));
 
-    importer.recordImport(imp, path);
-    assertTrue(importer.shouldSuppressImport(path));
+    importer.recordImport(imp, actual);
+    assertTrue(importer.shouldSuppressImport(actual));
   }
 
   @Test
   public void testGlobalImportOnce() throws LessException {
     LessOptions options = new LessOptions();
     options.importOnce(true);
-    LessContext context = newContext(options, "foo.less");
+    Path rootPath = Paths.get("/rootpath/foo");
+    LessContext context = newContext(options, rootPath, "one.less");
     Importer importer = context.importer();
 
-    Import imp = newImport(anon("foo.less"));
-    Path path = importer.resolvePath(imp);
-    assertEquals(path, Paths.get("foo.less"));
-    assertFalse(importer.shouldSuppressImport(path));
+    Import imp = newImport(anon("one.less"));
+    imp.rootPath(rootPath);
 
-    importer.recordImport(imp, path);
-    assertTrue(importer.shouldSuppressImport(path));
+    Path actual = importer.resolvePath(imp);
+    assertEquals(actual, rootPath.resolve("one.less"));
+    assertFalse(importer.shouldSuppressImport(actual));
+
+    importer.recordImport(imp, actual);
+    assertTrue(importer.shouldSuppressImport(actual));
   }
 
   @Test
   public void testImportRootPath() throws LessException {
-    Path rootPath = Paths.get("bar").toAbsolutePath();
-    LessContext context = newContext(rootPath + "/foo.less", rootPath + "/baz/bar.less");
+    Path rootPath = Paths.get("/rootpath/foo");
+    LessContext context = newContext(rootPath, "one.less", "bar/two.less");
     Importer importer = context.importer();
 
-    Import imp = newImport(anon("foo.less"));
+    Import imp = newImport(anon("one.less"));
     imp.rootPath(rootPath);
-    Path path = importer.resolvePath(imp);
-    assertEquals(path, rootPath.resolve("foo.less"));
 
-    imp = newImport(anon("bar.less"));
+    Path actual = importer.resolvePath(imp);
+    assertEquals(actual, rootPath.resolve("one.less"));
+
+    imp = newImport(anon("two.less"));
     imp.rootPath(rootPath);
-    path = importer.resolvePath(imp);
-    assertEquals(path, null);
+    actual = importer.resolvePath(imp);
+    assertEquals(actual, null);
+
+    imp = newImport(anon("bar/two.less"));
+    imp.rootPath(rootPath);
+    actual = importer.resolvePath(imp);
+    assertEquals(actual, rootPath.resolve("bar/two.less"));
   }
 
   @Test
   public void testGlobalImportPaths() throws LessException {
-    Path rootPath1 = Paths.get("bar").toAbsolutePath();
-    Path rootPath2 = Paths.get("baz").toAbsolutePath();
+    Path rootPath = Paths.get("/rootpath");
+    Path fooPath = rootPath.resolve("foo");
+    Path barPath = rootPath.resolve("bar");
     LessOptions options = new LessOptions();
-    options.importPaths(Arrays.asList(rootPath1.toString(), rootPath2.toString()));
+    options.importPaths(Arrays.asList(fooPath.toString(), barPath.toString()));
 
-    LessContext context = newContext(options,
-        rootPath1 + "/foo.less",
-        rootPath2 + "/bar.less");
+    LessContext context = newContext(options, rootPath, "foo/one.less", "bar/two.less");
     Importer importer = context.importer();
 
-    Import imp = newImport(anon("foo.less"));
+    Import imp = newImport(anon("one.less"));
+    imp.rootPath(rootPath);
     Path path = importer.resolvePath(imp);
-    assertEquals(path, rootPath1.resolve("foo.less"));
+    assertEquals(path, fooPath.resolve("one.less"));
 
-    imp = newImport(anon("bar.less"));
+    imp = newImport(anon("two.less"));
+    imp.rootPath(rootPath);
     path = importer.resolvePath(imp);
-    assertEquals(path, rootPath2.resolve("bar.less"));
+    assertEquals(path, barPath.resolve("two.less"));
 
-    imp = newImport(quoted('"', false, anon("bar.less")));
+    imp = newImport(quoted('"', false, anon("two.less")));
+    imp.rootPath(rootPath);
     path = importer.resolvePath(imp);
-    assertEquals(path, rootPath2.resolve("bar.less"));
+    assertEquals(path, barPath.resolve("two.less"));
+
+    imp = newImport(anon("bar/../foo/one.less"));
+    imp.rootPath(rootPath);
+    path = importer.resolvePath(imp);
+    assertEquals(path, fooPath.resolve("one.less"));
 
     imp = newImport(anon("missing.less"));
+    imp.rootPath(rootPath);
     path = importer.resolvePath(imp);
     assertEquals(path, null);
   }
@@ -142,7 +162,7 @@ public class ImporterTest extends LessTestBase {
     LessContext ctx = new LessContext(opts, loader);
     ctx.setFunctionTable(COMPILER.functionTable());
     String source = "@import 'base.less'; .ruleset { color: @color; font-size: @size; }";
-    String result = COMPILER.compile(source, ctx, Paths.get("./foo.less"));
+    String result = COMPILER.compile(source, ctx, path("foo.less"));
 
     assertEquals(result, ".child{font-size:12px}.ruleset{color:#abc;font-size:12px}");
   }
@@ -169,12 +189,12 @@ public class ImporterTest extends LessTestBase {
     return opts;
   }
 
-  private static LessContext newContext(String ... paths) {
-    return newContext(null, paths);
+  private static LessContext newContext(Path rootPath, String ... paths) {
+    return newContext(null, rootPath, paths);
   }
 
-  private static LessContext newContext(LessOptions options, String ... paths) {
-    LessLoader loader = new TestLoader(Arrays.asList(paths));
+  private static LessContext newContext(LessOptions options, Path rootPath, String ... paths) {
+    LessLoader loader = new TestLoader(rootPath, paths);
     if (options == null) {
       options = new LessOptions();
     }
@@ -185,9 +205,9 @@ public class ImporterTest extends LessTestBase {
 
     private final Set<Path> pathSet = new HashSet<>();
 
-    public TestLoader(List<String> paths) {
+    public TestLoader(Path root, String ... paths) {
       for (String path : paths) {
-        pathSet.add(Paths.get(path));
+        pathSet.add(root.resolve(path).toAbsolutePath().normalize());
       }
     }
 
@@ -203,7 +223,7 @@ public class ImporterTest extends LessTestBase {
 
     @Override
     public Path normalize(Path path) {
-      return (path == null) ? null : path.toAbsolutePath();
+      return (path == null) ? null : path.toAbsolutePath().normalize();
     }
 
   }

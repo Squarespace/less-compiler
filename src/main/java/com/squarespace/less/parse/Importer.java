@@ -113,7 +113,7 @@ public class Importer {
 
     // First, check if the path is a sibling of the current stream's input.
     if (rootPath != null) {
-      path = rootPath.resolve(rawPath).toAbsolutePath().normalize();
+      path = loader.normalize(rootPath.resolve(rawPath));
       if (loader.exists(path)) {
         return path;
       }
@@ -128,7 +128,7 @@ public class Importer {
     // Check if the path exists under one of the global import paths,
     // if any are defined.
     for (Path importPath : importPaths) {
-      path = importPath.resolve(rawPath).toAbsolutePath().normalize();
+      path = loader.normalize(importPath.resolve(rawPath));
       if (loader.exists(path)) {
         return path;
       }
