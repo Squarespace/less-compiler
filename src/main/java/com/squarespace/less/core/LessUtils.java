@@ -124,13 +124,12 @@ public class LessUtils {
    * If the node is one of the list types, return the values; otherwise return null.
    */
   public static List<Node> listValues(Node node) {
-    List<Node> values = null;
     if (node instanceof Expression) {
-      values = ((Expression)node).values();
+      return ((Expression)node).values();
     } else if (node instanceof ExpressionList) {
-      values = ((ExpressionList)node).expressions();
+      return ((ExpressionList)node).expressions();
     }
-    return values;
+    return null;
   }
 
   /**
