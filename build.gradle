@@ -209,6 +209,10 @@ allprojects {
     args '-c', "cat ${inputScript} ${inputArchive} >lessc; chmod ug+x lessc"
   }
 
+  clean {
+    delete 'lessc'
+  }
+
   uploadArchives {
     repositories.mavenDeployer {
       repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
