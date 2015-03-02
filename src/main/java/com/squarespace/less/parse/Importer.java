@@ -109,11 +109,7 @@ public class Importer {
       return null;
     }
 
-    // Check if the path exists in the loader as-is.
     Path path = Paths.get(rawPath);
-    if (loader.exists(path)) {
-      return path;
-    }
 
     // First, check if the path is a sibling of the current stream's input.
     if (rootPath != null) {

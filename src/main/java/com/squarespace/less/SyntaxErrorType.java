@@ -55,6 +55,9 @@ public enum SyntaxErrorType implements LessErrorType {
   QUOTED_BARE_LF
   ("Quoted string contains a bare line feed"),
 
+  RECURSIVE_IMPORT
+  ("Import cycle detected. Import '%(arg0)s' is entered multiple times recursively."),
+
   SELECTOR_ONE_GUARD
   ("Guards are only currently allowed on a single selector."),
 

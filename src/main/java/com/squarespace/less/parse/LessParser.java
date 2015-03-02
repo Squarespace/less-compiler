@@ -16,6 +16,7 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.SyntaxErrorMaker.recursiveImport;
 import static com.squarespace.less.parse.PrimaryParselet.evaluateImport;
 
 import java.nio.file.Path;
@@ -119,10 +120,20 @@ public class LessParser {
   /**
    * Push a stream onto the stack, typically to process an {@link Import} statement.
    */
-  public LessStream push(String raw, Path filePath, ExecEnv env) {
-    LessStream stream = new LessStream(this, raw, filePath, env);
+  public LessStream push(String raw, Path filePath, ExecEnv env) throws LessException {
+    // Make sure we're not recursing through the same import file.
+    if (this.streamPaths.contains(filePath)) {
+      LessStream current = this.streams.last();
+      throw current.parseError(new LessException(recursiveImport(filePath)));
+    }
     this.streamPaths.add(filePath);
+
+    LessStream stream = null;
+    stream = new LessStream(this, raw, filePath, env);
     this.streams.push(stream);
+
+    // TODO: in the future we may want enforce some limit on maximum import depth.
+
     return stream;
   }
 

@@ -66,6 +66,10 @@ public class SyntaxErrorMaker {
     return error(SyntaxErrorType.QUOTED_BARE_LF);
   }
 
+  public static LessErrorInfo recursiveImport(Object path) {
+    return error(SyntaxErrorType.RECURSIVE_IMPORT).arg0(path);
+  }
+
   public static LessErrorInfo selectorOneGuard() {
     return error(SyntaxErrorType.SELECTOR_ONE_GUARD);
   }
