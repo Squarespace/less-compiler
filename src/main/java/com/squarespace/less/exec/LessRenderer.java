@@ -26,10 +26,12 @@ import com.squarespace.less.core.FlexList;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockDirective;
+import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.DetachedRuleset;
 import com.squarespace.less.model.Directive;
+import com.squarespace.less.model.ExtendList;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Import;
 import com.squarespace.less.model.ImportMarker;
@@ -97,14 +99,17 @@ public class LessRenderer {
    * Shortcut to render a stylesheet against the given context.
    */
   public static String render(LessContext context, Stylesheet sheet) throws LessException {
-    return new LessRenderer(context, sheet).render();
+    LessRenderer renderer = new LessRenderer(context, sheet);
+    return renderer.render();
   }
 
   /**
    * Render the {@link Stylesheet} to the {@link CssModel} and return the
    * rendered output.
    */
-  public String render() throws LessException {
+  private String render() throws LessException {
+    indexExtends(stylesheet);
+
     env.push(stylesheet);
     Block block = stylesheet.block();
     Directive charset = block.charset();
@@ -119,6 +124,47 @@ public class LessRenderer {
   }
 
   /**
+   * Scan the stylesheet for extends and index them.
+   */
+  private void indexExtends(BlockNode blockNode) throws LessException {
+    env.push(blockNode);
+
+    // If one of the selectors has an extend list, index it.
+    if (blockNode instanceof Ruleset) {
+      Selectors selectors = env.frame().selectors();
+      if (selectors.hasExtend()) {
+        for (Selector selector : selectors.selectors()) {
+          if (selector.hasExtend()) {
+            env.indexSelector(selector);
+          }
+        }
+      }
+    }
+
+    // Iterate looking for rule-level extends and other block nodes.
+    // We use the flags to try to avoid scanning blocks unnecessarily.
+    Block block = blockNode.block();
+    if (block.hasNestedBlock() || block.hasNestedExtend()) {
+      FlexList<Node> rules = block.rules();
+      int size = rules.size();
+      for (int i = 0; i < size; i++) {
+        Node node = rules.get(i);
+
+        if (node instanceof BlockNode) {
+          // Recurse into the block.
+          indexExtends((BlockNode)node);
+
+        } else if (node instanceof ExtendList) {
+          // Index the rule-level extend.
+          env.indexSelector(env.frame().selectors(), (ExtendList)node);
+        }
+      }
+    }
+
+    env.pop();
+  }
+
+  /**
    * Render a {@link Ruleset}
    */
   private void renderRuleset(Ruleset ruleset) throws LessException {
@@ -127,9 +173,17 @@ public class LessRenderer {
 
     Selectors selectors = env.frame().selectors();
     if (!selectors.isEmpty()) {
+
+      // Try matching each selector against the extend indexes. This
+      // will append any matched selectors. It the selector group was
+      // extended, this will return a copy with the extra selectors
+      // added.  This ensures the extended selectors are not added
+      // to the stack and inherited by nested rulesets.
+      Selectors extended = env.extend(selectors);
+
       // Selectors are indented and delimited by the model.
       Buffer buf = ctx.acquireBuffer();
-      for (Selector selector : selectors.selectors()) {
+      for (Selector selector : extended.selectors()) {
         NodeRenderer.render(buf, selector);
         model.header(buf.toString());
         buf.reset();
@@ -239,8 +293,11 @@ public class LessRenderer {
         }
 
         case DUMMY:
+        case EXTEND_LIST:
+        {
           // No visible representation. Ignore.
           break;
+        }
 
         case IMPORT:
           if (includeImports) {

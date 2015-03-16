@@ -167,7 +167,7 @@ public class Parameter extends BaseNode {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return hashCode == 0 ? buildHashCode(variadic, name, value) : hashCode;
   }
 
 }

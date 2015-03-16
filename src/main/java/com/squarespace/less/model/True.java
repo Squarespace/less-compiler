@@ -42,7 +42,7 @@ public class True extends Keyword {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return hashCode == 0 ? buildHashCode(value) : hashCode;
   }
 
 }

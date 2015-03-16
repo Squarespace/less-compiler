@@ -76,26 +76,6 @@ public class Dimension extends BaseNode {
     return unit;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Dimension) {
-      Dimension other = (Dimension)obj;
-      boolean unitEqual = LessUtils.safeEquals(unit, other.unit);
-      if (Double.isNaN(value) && Double.isNaN(other.value)) {
-        return unitEqual;
-      } else if (Double.isInfinite(value) && Double.isInfinite(other.value)) {
-        return unitEqual;
-      }
-      return unitEqual && value == other.value;
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
   /**
    * See {@link Node#type()}
    */
@@ -189,6 +169,26 @@ public class Dimension extends BaseNode {
     }
 
     return new Dimension(result, newUnit);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Dimension) {
+      Dimension other = (Dimension)obj;
+      boolean unitEqual = LessUtils.safeEquals(unit, other.unit);
+      if (Double.isNaN(value) && Double.isNaN(other.value)) {
+        return unitEqual;
+      } else if (Double.isInfinite(value) && Double.isInfinite(other.value)) {
+        return unitEqual;
+      }
+      return unitEqual && value == other.value;
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return hashCode == 0 ? buildHashCode(value, unit == null ? "" : unit) : hashCode;
   }
 
 }

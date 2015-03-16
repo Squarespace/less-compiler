@@ -83,7 +83,10 @@ public class Keyword extends BaseNode {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    if (hashCode == 0) {
+      return buildHashCode(value);
+    }
+    return hashCode;
   }
 
 }

@@ -123,7 +123,7 @@ public class Shorthand extends BaseNode {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return hashCode == 0 ? buildHashCode(left, right) : hashCode;
   }
 
 }

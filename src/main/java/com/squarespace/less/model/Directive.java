@@ -145,7 +145,7 @@ public class Directive extends BaseNode {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return hashCode == 0 ? buildHashCode(name, value) : hashCode;
   }
 
 }

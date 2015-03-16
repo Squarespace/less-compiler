@@ -41,6 +41,12 @@ public class ElementParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
+
+    // Note: this quietly eats combinator characters not followed by a valid
+    // element. The combinator character will be parsed and when no
+    // element is found, we simply return null. This currently replicates the
+    // behavior of the upstream less.js parser.
+
     Combinator comb = parseCombinator(stm);
     stm.skipWs();
     char ch = stm.peek();
@@ -129,11 +135,12 @@ public class ElementParselet implements Parselet {
     char prev = stm.peek(-1);
     int skipped = stm.skipWs();
     char ch = stm.peek();
+    boolean useDesc = (prev == Chars.EOF || prev == Chars.COMMA || prev == Chars.LEFT_PARENTHESIS);
     if (CharClass.combinator(ch)) {
       stm.seek1();
       return Combinator.fromChar(ch);
 
-    } else if (skipped > 0 || CharClass.whitespace(prev) || prev == Chars.EOF || prev == Chars.COMMA) {
+    } else if (skipped > 0 || CharClass.whitespace(prev) || useDesc) {
       return Combinator.DESC;
     }
     return null;

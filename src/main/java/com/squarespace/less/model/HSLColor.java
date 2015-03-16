@@ -166,7 +166,10 @@ public class HSLColor extends BaseColor {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    if (hashCode == 0) {
+      return buildHashCode(hue, saturation, lightness, alpha);
+    }
+    return hashCode;
   }
 
   private double hue(double p, double q, double h) {

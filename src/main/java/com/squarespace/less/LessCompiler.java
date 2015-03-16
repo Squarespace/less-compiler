@@ -42,7 +42,7 @@ public class LessCompiler {
   /**
    * Current LESS language compatibility level of this compiler.
    */
-  public static final String LESSJS_VERSION = "1.3.3";
+  public static final String LESSJS_VERSION = "2.4.0";
 
   private static final FunctionTable DEFAULT_FUNCTION_TABLE = defaultFunctionTable();
 

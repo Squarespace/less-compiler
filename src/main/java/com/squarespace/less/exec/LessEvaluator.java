@@ -105,6 +105,7 @@ public class LessEvaluator {
    */
   private Media evaluateMedia(ExecEnv env, Media input) throws LessException {
     Media media = input.copy(env);
+    media.extendContext(new ExtendContext());
     env.push(media);
 
     Block block = media.block();
@@ -135,6 +136,9 @@ public class LessEvaluator {
     return ruleset;
   }
 
+  /**
+   * Evaluate a DETACHED_RULESET node.
+   */
   public DetachedRuleset evaluateDetachedRuleset(ExecEnv env, DetachedRuleset input, boolean forceImportant)
       throws LessException {
 
@@ -162,6 +166,7 @@ public class LessEvaluator {
    */
   private Stylesheet evaluateStylesheet(ExecEnv env, Stylesheet original) throws LessException {
     Stylesheet stylesheet = original.copy();
+    stylesheet.extendContext(new ExtendContext());
     env.push(stylesheet);
 
     Block block = stylesheet.block();
@@ -220,13 +225,6 @@ public class LessEvaluator {
               }
             }
             node = directive;
-            break;
-          }
-
-          case EXTEND:
-          {
-            // TODO: defer extends evaluation.
-
             break;
           }
 
@@ -456,6 +454,7 @@ public class LessEvaluator {
 
     env.push(mixin);
 
+    LessException exception = null;
     try {
       Block block = mixin.block();
       expandMixins(env, block);
@@ -469,16 +468,22 @@ public class LessEvaluator {
       }
 
       evaluateRules(env, block, call.important());
+      exception = env.error();
       collector.appendBlock(block);
 
     } catch (LessException e) {
-      // If any errors occur inside a mixin call, we want to show the actual
-      // arguments to the mixin call.
+      exception = e;
+    }
+
+    // If any errors occur inside a mixin call, we want to show the actual
+    // arguments passed to the call.
+    if (exception != null) {
       MixinCall actualCall = call.copy();
       actualCall.args(matcher.mixinArgs());
-      e.push(actualCall);
-      throw e;
+      exception.push(actualCall);
+      throw exception;
     }
+
     ctx.exitMixin();
     original.exit();
     return true;

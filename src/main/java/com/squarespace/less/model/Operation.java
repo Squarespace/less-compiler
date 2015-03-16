@@ -174,20 +174,22 @@ public class Operation extends BaseNode {
    */
   @Override
   public void repr(Buffer buf) {
-    boolean parens = !requireStrictMath && isSubExpression;
-    if (parens) {
+    boolean noStrict = !requireStrictMath;
+    if (noStrict) {
       buf.append('(');
     }
+
     left.repr(buf);
-    if (parens) {
+    if (noStrict) {
       buf.append(' ');
     }
     buf.append(operator.toString());
-    if (parens) {
+    if (noStrict) {
       buf.append(' ');
     }
     right.repr(buf);
-    if (parens) {
+
+    if (noStrict) {
       buf.append(')');
     }
   }
@@ -233,7 +235,7 @@ public class Operation extends BaseNode {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return hashCode == 0 ? buildHashCode(operator, left, right) : hashCode;
   }
 
 }

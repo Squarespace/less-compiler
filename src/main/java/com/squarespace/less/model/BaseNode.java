@@ -19,6 +19,7 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.ExecuteErrorMaker.rulesetExpression;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
@@ -45,6 +46,11 @@ public abstract class BaseNode implements Node {
    * User data attached to this node
    */
   protected Object userData;
+
+  /**
+   * Hash code for hashable types.
+   */
+  protected int hashCode;
 
   /**
    * Returns any user data attached to this node.
@@ -209,6 +215,17 @@ public abstract class BaseNode implements Node {
     Buffer buf = new Buffer(4);
     modelRepr(buf);
     return buf.toString();
+  }
+
+  /**
+   * Builds the object's hashCode from the given objects.
+   */
+  protected int buildHashCode(Object ... objects) {
+    hashCode = Objects.hash(objects);
+    if (hashCode == 0) {
+      hashCode++;
+    }
+    return hashCode;
   }
 
   /**

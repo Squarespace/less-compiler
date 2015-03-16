@@ -1,0 +1,15 @@
+.foo > .bar,
+.replace-1 {
+  content: 1;
+}
+.foo > .bar,
+.replace-1 {
+  content: 2;
+}
+@media (foo: bar) {
+  .x .y,
+  .replace-2 .replace-3 .y,
+  .x .replace-2 .replace-3 {
+    content: 3;
+  }
+}

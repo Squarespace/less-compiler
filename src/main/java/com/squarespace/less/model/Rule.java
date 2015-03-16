@@ -247,7 +247,7 @@ public class Rule extends BaseNode {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return hashCode == 0 ? buildHashCode(important, property, value) : hashCode;
   }
 
   private boolean isFontProperty() {

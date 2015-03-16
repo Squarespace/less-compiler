@@ -33,9 +33,11 @@ public class QuotedTest extends LessTestBase {
     assertEquals(quoted('"', false, "foo", "bar"), quoted('"', false, "foo", "bar"));
     assertEquals(quoted('"', false, var("@foo"), "bar"), quoted('"', false, var("@foo"), "bar"));
 
+    // Delimiters are not compared
+    assertEquals(quoted('"', false, "foo", "bar"), quoted('\'', false, "foo", "bar"));
+
     assertNotEquals(quoted('"', false, "foo", "bar"), null);
     assertNotEquals(quoted('"', false, "foo", "bar"), anon("foobar"));
-    assertNotEquals(quoted('"', false, "foo", "bar"), quoted('\'', false, "foo", "bar"));
     assertNotEquals(quoted('"', false, "foo", "bar"), quoted('"', false, "bar"));
   }
 

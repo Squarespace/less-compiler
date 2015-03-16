@@ -16,6 +16,7 @@
 
 package com.squarespace.less.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.squarespace.less.LessException;
@@ -32,24 +33,34 @@ import com.squarespace.less.exec.ExecEnv;
 public class Selectors extends BaseNode {
 
   /**
+   * Indicates whether one or more of the selectors requires evaluation.
+   */
+  private static final int FLAG_EVALUATE = 0x01;
+
+  /**
+   * Indicates that at least one of the child selectors is "mixin-friendly".
+   */
+  private static final int FLAG_HAS_MIXIN_PATH = 0x02;
+
+  /**
+   * Indicates at least one of the child selectors has an extend list.
+   */
+  private static final int FLAG_HAS_EXTEND = 0x04;
+
+  /**
    * List of {@link Selector} nodes in this set.
    */
   protected List<Selector> selectors;
 
   /**
-   * Indicates whether one or more of the selectors requires evaluation.
-   */
-  protected boolean evaluate;
-
-  /**
-   * Indicates that at least one of the child selectors is "mixin-friendly".
-   */
-  protected boolean hasMixinPath;
-
-  /**
    * Guard expression attached to the child selector.
    */
   protected Guard guard;
+
+  /**
+   * Set of flag bits for this selector group.
+   */
+  protected int flags;
 
   /**
    * Constructs an empty selector set.
@@ -80,8 +91,25 @@ public class Selectors extends BaseNode {
     if (guard == null) {
       this.guard = selector.guard();
     }
-    evaluate |= selector.needsEval();
-    hasMixinPath |= selector.hasMixinPath();
+    if (selector.needsEval()) {
+      flags |= FLAG_EVALUATE;
+    }
+    if (selector.hasMixinPath()) {
+      flags |= FLAG_HAS_MIXIN_PATH;
+    }
+    if (selector.hasExtend()) {
+      flags |= FLAG_HAS_EXTEND;
+    }
+  }
+
+  /**
+   * Copy this selector group, its guard and flags.
+   */
+  public Selectors copy() {
+    Selectors result = new Selectors(new ArrayList<>(selectors));
+    result.guard = guard;
+    result.flags = flags;
+    return result;
   }
 
   /**
@@ -102,7 +130,14 @@ public class Selectors extends BaseNode {
    * Indicates that at least one of the child selectors is "mixin-friendly".
    */
   public boolean hasMixinPath() {
-    return hasMixinPath;
+    return (flags & FLAG_HAS_MIXIN_PATH) != 0;
+  }
+
+  /**
+   * Indicates that at least one of the child selectors has an extend list.
+   */
+  public boolean hasExtend() {
+    return (flags & FLAG_HAS_EXTEND) != 0;
   }
 
   /**
@@ -110,7 +145,7 @@ public class Selectors extends BaseNode {
    */
   @Override
   public boolean needsEval() {
-    return evaluate;
+    return (flags & FLAG_EVALUATE) != 0;
   }
 
   /**
@@ -118,9 +153,10 @@ public class Selectors extends BaseNode {
    */
   @Override
   public Node eval(ExecEnv env) throws LessException {
-    if (!evaluate) {
+    if (!needsEval()) {
       return this;
     }
+
     Selectors result = new Selectors();
     for (Selector selector : selectors) {
       result.add((Selector)selector.eval(env));
@@ -176,7 +212,7 @@ public class Selectors extends BaseNode {
   /**
    * Renders the {@link Element}'s {@link Node#repr()} to the buffer.
    */
-  private static void reprElement(Buffer buf, Element element, boolean isFirst) {
+  public static void reprElement(Buffer buf, Element element, boolean isFirst) {
     Combinator combinator = element.combinator();
     if (combinator != null) {
       boolean isDescendant = combinator == Combinator.DESC;

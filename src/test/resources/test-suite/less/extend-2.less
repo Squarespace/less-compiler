@@ -1,0 +1,30 @@
+
+.replace-1:extend(.a.b.c) {}
+
+.replace-2:extend(.a .b .c) {}
+
+.a .b .c {
+    content: 1;
+}
+
+@media (foo: bar) {
+
+    .a.b.c {
+        content: 2;
+    }
+
+    .replace-3:extend(.a.b.c) {}
+
+    .replace-4:extend(.a .b .c) {}
+}
+
+
+.replace-5:extend( .b all ) {}
+
+.replace-6:extend( .b.c all) {}
+
+.a .b .c .d {
+    content: 3;
+}
+
+

@@ -1,0 +1,49 @@
+
+.replace:extend(.b all) {}
+
+.a.b.c {
+    content: 1;
+}
+
+.b.c {
+    content: 2;
+}
+
+.b {
+    content: 3;
+}
+
+.a {
+    .b {
+        .c {
+            content: 4;
+        }
+    }
+}
+
+.a {
+    &.b {
+        &.c {
+            content: 5;
+        }
+    }
+}
+
+.a.b {
+    .c {
+        content: 6;
+    }
+}
+
+.a > .b > .c {
+    content: 7;
+}
+
+.a.b > .c {
+    content: 8;
+}
+
+.a+.b>.c {
+    content: 9;
+}
+

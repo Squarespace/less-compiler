@@ -62,6 +62,13 @@ public class TextElement extends Element {
   }
 
   /**
+   * @see Element#copy(Combinator)
+   */
+  public Element copy(Combinator replacement) {
+    return new TextElement(replacement, name);
+  }
+
+  /**
    * See {@link Element#isWildcard()}
    */
   @Override
@@ -101,8 +108,17 @@ public class TextElement extends Element {
   }
 
   @Override
+  public boolean equalsIgnoreCombinator(Object obj) {
+    if (obj instanceof TextElement) {
+      return safeEquals(name, ((TextElement)obj).name);
+    }
+    return false;
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    // Hash codes do not include the combinator
+    return hashCode == 0 ? buildHashCode(name) : hashCode;
   }
 
 }

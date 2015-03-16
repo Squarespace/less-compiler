@@ -1,0 +1,33 @@
+
+@name1: .foo;
+@name2: .bar;
+
+.replace-1:extend(@{name1} > @{name2} all) { }
+
+@{name1} > @{name2} {
+    content: 1;
+}
+
+@name3: ~'.foo > .bar';
+
+@{name3} {
+    content: 2;
+}
+
+.replace-2 {
+    .replace-3 {
+        &:extend(@{name4} all, @{name5} all);
+    }
+}
+
+@name4: ~'.x';
+@name5: ~'.y';
+
+@media (foo: bar) {
+    @{name4} {
+        @{name5} {
+            content: 3;
+        }
+    }
+}
+

@@ -231,7 +231,7 @@ public class Unit {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return repr.hashCode();
   }
 
   @Override

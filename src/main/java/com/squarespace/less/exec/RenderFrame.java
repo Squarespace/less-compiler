@@ -25,6 +25,7 @@ import com.squarespace.less.model.Media;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
+import com.squarespace.less.model.Stylesheet;
 
 
 /**
@@ -45,6 +46,8 @@ public class RenderFrame {
 
   private Features features;
 
+  private ExtendContext extendContext;
+
   public RenderFrame() {
     this(null, null, 0);
   }
@@ -53,10 +56,19 @@ public class RenderFrame {
     this.parent = parent;
     this.blockNode = blockNode;
     this.depth = depth;
+    if (blockNode instanceof Stylesheet) {
+      this.extendContext = ((Stylesheet)blockNode).extendContext();
+    } else if (blockNode instanceof Media) {
+      this.extendContext = ((Media)blockNode).extendContext();
+    }
   }
 
   public BlockNode blockNode() {
     return blockNode;
+  }
+
+  public ExtendContext extendContext() {
+    return extendContext;
   }
 
   public RenderFrame parent() {

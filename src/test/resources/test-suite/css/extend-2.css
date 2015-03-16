@@ -1,0 +1,18 @@
+.a .b .c,
+.replace-2,
+.a .replace-5 .c {
+  content: 1;
+}
+@media (foo: bar) {
+  .a.b.c,
+  .replace-3,
+  .replace-1,
+  .a.replace-5.c,
+  .a.replace-6 {
+    content: 2;
+  }
+}
+.a .b .c .d,
+.a .replace-5 .c .d {
+  content: 3;
+}

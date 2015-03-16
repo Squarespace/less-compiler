@@ -44,6 +44,11 @@ public abstract class Element extends BaseNode {
   }
 
   /**
+   * Copy the element, replacing its combinator.
+   */
+  public abstract Element copy(Combinator replacement);
+
+  /**
    * Indicates whether this element is a wildcard.
    */
   public abstract boolean isWildcard();
@@ -60,6 +65,8 @@ public abstract class Element extends BaseNode {
   public boolean equals(Object obj) {
     throw new LessInternalException("Element subclass must implement equals(Object)!");
   }
+
+  public abstract boolean equalsIgnoreCombinator(Object obj);
 
   @Override
   public int hashCode() {

@@ -27,14 +27,13 @@ import com.squarespace.less.core.LessUtils;
 /**
  * Represents an array of rules.
  *
- * During evaluation some instructions such as {@link Import} or {@link MixinCall},
- * when produce one or more new rules.  These rules can be spliced into the
- * block, replacing the node which produced them.
- *
- * For this reason, blocks manage their arrays of objects directly.
+ * During evaluation some instructions {@link MixinCall} produce one or more
+ * new rules.  These rules can be spliced into the block, replacing the node
+ * which produced them.
  *
  * Each block contains a set of flags which are used to avoid unnecessary
- * scans of its rules during evaluation.
+ * scans during evaluation. Due to the way evaluation and rendering are
+ * structured, with a brute force approach we would perform many nested
  */
 public class Block extends BaseNode {
 
@@ -62,6 +61,16 @@ public class Block extends BaseNode {
    * Block has been marked for deferred evaluation.
    */
   private static final byte FLAG_DEFERRED_EVALUATION = 0x10;
+
+  /**
+   * Block has a nested block node (media, ruleset, etc).
+   */
+  private static final byte FLAG_HAS_NESTED_BLOCK = 0x20;
+
+  /**
+   * Block has a nested extend rule.
+   */
+  private static final byte FLAG_HAS_NESTED_EXTEND = 0x40;
 
   /**
    * Initial capacity of the blocks array.
@@ -203,6 +212,27 @@ public class Block extends BaseNode {
    */
   public boolean hasPropertyMergeModes() {
     return (flags & FLAG_HAS_MERGE_MODES) != 0;
+  }
+
+  /**
+   * Indicate whether this block contains a nested block node.
+   */
+  public boolean hasNestedBlock() {
+    return (flags & FLAG_HAS_NESTED_BLOCK) != 0;
+  }
+
+  /**
+   * Indicate whether this block contains a rule-level extend.
+   */
+  public boolean hasNestedExtend() {
+    return (flags & FLAG_HAS_NESTED_EXTEND) != 0;
+  }
+
+  /**
+   * Return the flags set on this block.
+   */
+  public int flags() {
+    return flags;
   }
 
   /**
@@ -355,16 +385,39 @@ public class Block extends BaseNode {
    * Sets this block's flags based on type of this node.
    */
   private void setFlags(Node node) {
-    if (node instanceof Import) {
-      flags |= FLAG_HAS_IMPORTS;
-    } else if (node instanceof MixinCall) {
-      flags |= FLAG_HAS_MIXIN_CALLS;
-    } else if (node instanceof Rule) {
-      Rule rule = (Rule) node;
-      PropertyMergeMode mode = ((PropertyMergeable)rule.property()).mergeMode();
-      if (mode != PropertyMergeMode.NONE) {
-        flags |= FLAG_HAS_MERGE_MODES;
+
+    // Optimization to determine whether we need to scan for nested blocks.
+    if (node instanceof BlockNode) {
+      flags |= FLAG_HAS_NESTED_BLOCK;
+    }
+
+    switch (node.type()) {
+
+      case EXTEND_LIST:
+        flags |= FLAG_HAS_NESTED_EXTEND;
+        break;
+
+      case IMPORT:
+        flags |= FLAG_HAS_IMPORTS;
+        break;
+
+      case MIXIN_CALL:
+        flags |= FLAG_HAS_MIXIN_CALLS;
+        break;
+
+      case RULE:
+      {
+        // This flag is set so we know later to collect all rules accumulated in this
+        // block and merge those rules with duplicate properties.
+        Rule rule = (Rule) node;
+        PropertyMergeMode mode = ((PropertyMergeable)rule.property()).mergeMode();
+        if (mode != PropertyMergeMode.NONE) {
+          flags |= FLAG_HAS_MERGE_MODES;
+        }
       }
+
+      default:
+        break;
     }
   }
 

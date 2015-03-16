@@ -40,6 +40,11 @@ public class ExtendList extends BaseNode {
   private List<Extend> values;
 
   /**
+   * Indicates whether one or more extend elements needs evaluation.
+   */
+  private boolean needsEval;
+
+  /**
    * Constructs an extend list, optionally specifying the extend
    * expression is at rule level.
    */
@@ -55,11 +60,23 @@ public class ExtendList extends BaseNode {
   }
 
   /**
+   * Returns the values inside this extend list.
+   */
+  public List<Extend> values() {
+    return values;
+  }
+
+  /**
    * @see Node#type()
    */
   @Override
   public NodeType type() {
     return NodeType.EXTEND_LIST;
+  }
+
+  @Override
+  public boolean needsEval() {
+    return needsEval;
   }
 
   /**
@@ -68,6 +85,7 @@ public class ExtendList extends BaseNode {
   public void add(Extend extend) {
     this.values = LessUtils.initList(values, 3);
     this.values.add(extend);
+    this.needsEval |= extend.needsEval();
   }
 
   /**
@@ -75,7 +93,14 @@ public class ExtendList extends BaseNode {
    */
   @Override
   public Node eval(ExecEnv env) throws LessException {
-    return super.eval(env);
+    if (needsEval) {
+      ExtendList result = new ExtendList(atRuleLevel);
+      for (Extend node : values) {
+        result.add((Extend)node.eval(env));
+      }
+      return result;
+    }
+    return this;
   }
 
   /**
@@ -114,8 +139,7 @@ public class ExtendList extends BaseNode {
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof ExtendList) {
-      ExtendList other = (ExtendList)obj;
-      return LessUtils.safeEquals(values, other.values);
+      return LessUtils.safeEquals(values, ((ExtendList)obj).values);
     }
     return false;
   }

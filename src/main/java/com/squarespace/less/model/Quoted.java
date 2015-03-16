@@ -61,6 +61,11 @@ public class Quoted extends BaseNode {
   protected boolean evaluate;
 
   /**
+   * Hashcode of the quoted string.
+   */
+  private int hashCode;
+
+  /**
    * Constructs an empty string with the given delimiter character.
    */
   public Quoted(char delim) {
@@ -193,7 +198,7 @@ public class Quoted extends BaseNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
-    buf.append(" delim=").append(delim);
+    buf.append(" delim=").append(delim == '"' ? "DOUBLE" : "SINGLE");
     if (escaped) {
       buf.append(" [escaped]");
     }
@@ -206,14 +211,16 @@ public class Quoted extends BaseNode {
   public boolean equals(Object obj) {
     if (obj instanceof Quoted) {
       Quoted other = (Quoted)obj;
-      return delim == other.delim && escaped == other.escaped && safeEquals(parts, other.parts);
+      // NOTE: delimiter characters are not compared for equals().
+      return escaped == other.escaped && safeEquals(parts, other.parts);
     }
     return false;
   }
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    // NOTE: delimiter character is not part of the hash.
+    return hashCode == 0 ? buildHashCode(escaped, parts) : hashCode;
   }
 
 }

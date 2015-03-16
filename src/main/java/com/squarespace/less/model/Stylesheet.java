@@ -17,12 +17,18 @@
 package com.squarespace.less.model;
 
 import com.squarespace.less.core.Buffer;
+import com.squarespace.less.exec.ExtendContext;
 
 
 /**
  * Represents a LESS stylesheet.
  */
 public class Stylesheet extends BlockNode {
+
+  /**
+   * Tracks the extend lists as the stylesheet is traversed.
+   */
+  protected ExtendContext extendContext;
 
   /**
    * Constructs an empty stylesheet.
@@ -37,6 +43,20 @@ public class Stylesheet extends BlockNode {
    */
   public Stylesheet(Block block) {
     super(block);
+  }
+
+  /**
+   * Returns the extend list context for the stylesheet.
+   */
+  public ExtendContext extendContext() {
+    return extendContext;
+  }
+
+  /**
+   * Sets the extend context for this scope.
+   */
+  public void extendContext(ExtendContext context) {
+    this.extendContext = context;
   }
 
   /**

@@ -50,6 +50,14 @@ public class ValueElement extends Element {
   }
 
   /**
+   * @see Element#copy(Combinator)
+   */
+  @Override
+  public Element copy(Combinator replacement) {
+    return new ValueElement(replacement, value);
+  }
+
+  /**
    * See {@link Node#needsEval()}
    */
   @Override
@@ -114,8 +122,17 @@ public class ValueElement extends Element {
   }
 
   @Override
+  public boolean equalsIgnoreCombinator(Object obj) {
+    if (obj instanceof ValueElement) {
+      return safeEquals(value, ((ValueElement)obj).value);
+    }
+    return false;
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    // Hash codes do not include the combinator
+    return hashCode == 0 ? buildHashCode(value) : hashCode;
   }
 
 }

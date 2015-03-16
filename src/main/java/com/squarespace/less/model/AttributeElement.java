@@ -44,6 +44,11 @@ public class AttributeElement extends Element {
     super(comb);
   }
 
+  private AttributeElement(Combinator comb, List<Node> parts) {
+    super(comb);
+    this.parts = parts;
+  }
+
   /**
    * Returns the parts of the attribute element.
    */
@@ -60,6 +65,14 @@ public class AttributeElement extends Element {
     }
     parts = LessUtils.initList(parts, 2);
     parts.add(part);
+  }
+
+  /**
+   * @see Element#copy(Combinator)
+   */
+  @Override
+  public Element copy(Combinator replacement) {
+    return new AttributeElement(replacement, parts);
   }
 
   /**
@@ -99,14 +112,24 @@ public class AttributeElement extends Element {
   public boolean equals(Object obj) {
     if (obj instanceof AttributeElement) {
       AttributeElement other = (AttributeElement)obj;
-      return combinator == other.combinator && safeEquals(parts, ((AttributeElement)obj).parts);
+      return combinator == other.combinator && safeEquals(parts, other.parts);
+    }
+    return false;
+  }
+
+  @Override
+  public boolean equalsIgnoreCombinator(Object obj) {
+    if (obj instanceof AttributeElement) {
+      AttributeElement other = (AttributeElement)obj;
+      return safeEquals(parts, other.parts);
     }
     return false;
   }
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    // Hash codes do not include the combinator
+    return hashCode == 0 ? buildHashCode(parts) : hashCode;
   }
 
 }

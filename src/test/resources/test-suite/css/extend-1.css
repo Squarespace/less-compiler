@@ -1,0 +1,36 @@
+.a.b.c,
+.a.replace.c {
+  content: 1;
+}
+.b.c,
+.replace.c {
+  content: 2;
+}
+.b,
+.replace {
+  content: 3;
+}
+.a .b .c,
+.a .replace .c {
+  content: 4;
+}
+.a.b.c,
+.a.replace.c {
+  content: 5;
+}
+.a.b .c,
+.a.replace .c {
+  content: 6;
+}
+.a > .b > .c,
+.a > .replace > .c {
+  content: 7;
+}
+.a.b > .c,
+.a.replace > .c {
+  content: 8;
+}
+.a + .b > .c,
+.a + .replace > .c {
+  content: 9;
+}

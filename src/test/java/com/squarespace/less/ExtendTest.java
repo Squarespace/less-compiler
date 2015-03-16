@@ -38,7 +38,6 @@ public class ExtendTest extends LessTestBase {
     // Selector-level extend.
     String source = ".foo:extend(bar all baz all, .foo all, .bar .foo) { color: red; }";
     Node actual = h.parse(source);
-
     Buffer buf = new Buffer(2, true);
     actual.repr(buf);
     assertEquals(".foo:extend(bar all baz all,.foo all,.bar .foo){color:red}", buf.toString());
@@ -46,7 +45,6 @@ public class ExtendTest extends LessTestBase {
     // Rule level extend
     source = ".foo { &:extend(bar baz, baz all bar all); color: red; }";
     actual = h.parse(source);
-
     buf = new Buffer(2, true);
     actual.repr(buf);
     assertEquals(".foo{&:extend(bar baz,baz all bar all);color:red}", buf.toString());
@@ -59,6 +57,14 @@ public class ExtendTest extends LessTestBase {
     h.parseFails(".foo:extend() { }", EXTEND_MISSING_TARGET);
     h.parseFails(".foo:extend(bar) baz { color: red; }", SELECTOR_END_EXTEND);
     h.parseFails(".baz .foo:extend(bar baz all) .bar { }", SELECTOR_END_EXTEND);
+  }
+
+  @Test
+  public void testSelector() throws LessException {
+    LessOptions opts = new LessOptions(true);
+    LessHarness h = new LessHarness(Parselets.STYLESHEET);
+    String result = h.execute("@name: ~'foo'; .@{name} { color: red; }", opts);
+    assertEquals(result, ".foo{color:red}");
   }
 
 }

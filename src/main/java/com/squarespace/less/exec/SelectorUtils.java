@@ -23,6 +23,7 @@ import java.util.List;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.CartesianProduct;
 import com.squarespace.less.model.Element;
+import com.squarespace.less.model.ExtendList;
 import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
@@ -50,13 +51,14 @@ public class SelectorUtils {
   public static Selectors combine(Selectors ancestors, Selectors current) {
     Selectors result = new Selectors();
     for (Selector selector : current.selectors()) {
+      ExtendList extendList = selector.extendList();
 
       // When no wildcard is present, the selector is prepended to the ancestors.
       if (!selector.hasWildcard()) {
         List<List<Selector>> inputs = new ArrayList<>(2);
         inputs.add(ancestors.selectors());
         inputs.add(Arrays.asList(selector));
-        SelectorUtils.flatten(inputs, result);
+        flatten(inputs, result, extendList);
         continue;
       }
 
@@ -77,7 +79,7 @@ public class SelectorUtils {
         inputs.add(Arrays.asList(temp));
       }
 
-      SelectorUtils.flatten(inputs, result);
+      SelectorUtils.flatten(inputs, result, extendList);
     }
     return result;
   }
@@ -86,7 +88,7 @@ public class SelectorUtils {
    * Generates a cartesian product from {@code selectors} and appends the flattened
    * selectors {@code result}.
    */
-  public static void flatten(List<List<Selector>> selectors, Selectors result) {
+  public static void flatten(List<List<Selector>> selectors, Selectors result, ExtendList extendList) {
     CartesianProduct<Selector> product = new CartesianProduct<>(selectors);
     while (product.hasNext()) {
       Selector flat = new Selector();
@@ -94,6 +96,9 @@ public class SelectorUtils {
         for (Element elem : tmp.elements()) {
           flat.add(elem);
         }
+      }
+      if (extendList != null) {
+        flat.extendList(extendList);
       }
       result.add(flat);
     }
@@ -149,6 +154,9 @@ public class SelectorUtils {
    * nothing if the selector is incompatible with mixin matching.
    */
   public static boolean renderCompositeSelector(Selector selector, Buffer buffer) {
+    if (selector == null) {
+      return false;
+    }
     List<Element> elements = selector.elements();
     if (elements.isEmpty()) {
       return false;

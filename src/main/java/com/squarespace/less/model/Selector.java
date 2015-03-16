@@ -20,10 +20,12 @@ import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import java.util.List;
 
+import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
+import com.squarespace.less.exec.NodeRenderer;
 import com.squarespace.less.exec.SelectorUtils;
 
 
@@ -61,7 +63,9 @@ public class Selector extends BaseNode {
   protected String mixinPath;
 
   /**
-   * {@link Guard} condition protecting this selector.
+   * {@link Guard} condition protecting this selector. Note that this
+   * attribute is only used to pass the guard from the parse up to the
+   * parent {@link Selectors} node.
    */
   protected Guard guard;
 
@@ -101,6 +105,9 @@ public class Selector extends BaseNode {
   public void extendList(ExtendList extendList) {
     this.extendList = extendList;
     flags |= FLAG_HAS_EXTEND;
+    if (extendList.needsEval()) {
+      flags |= FLAG_EVALUATE;
+    }
   }
 
   /**
@@ -184,17 +191,47 @@ public class Selector extends BaseNode {
     if (!needsEval()) {
       return this;
     }
-    Selector result = new Selector();
-    for (Element elem : elements) {
-      result.add((Element)elem.eval(env));
+
+    // Selectors requiring evaluation are now rendered and parsed
+    // to produce the canonical form.
+
+    // Render the elements to a temporary buffer.
+    LessContext context = env.context();
+    Buffer buf = context.acquireBuffer();
+    int size = elements.size();
+    for (int i = 0; i < size; i++) {
+      NodeRenderer.renderElement(buf, (Element)elements.get(i).eval(env), i == 0);
     }
 
-    String path = env.context().renderMixinPath(result);
-    if (path != null) {
-      result.mixinPath = path;
+    // Parse the rendered representation to produce the canonical form of the
+    // selector.  This is essential for later comparison.
+    String source = buf.toString();
+    Selector selector = env.context().selectorParser().parse(source);
+    context.returnBuffer();
+
+    if (selector == null) {
+      // Selector failed to parse. Emit a warning and fall back to the evaluated
+      // original.
+      // TODO: perhaps a strict mode should raise an execution error
+      env.addWarning("Failed to parse selector: " + source);
+
+      selector = new Selector();
+      for (Element element : elements) {
+        selector.add((Element)element.eval(env));
+      }
     }
-    result.flags |= FLAG_MIXIN_PATH_BUILT;
-    return result;
+
+    String path = context.renderMixinPath(selector);
+    if (path != null) {
+      selector.mixinPath = path;
+    }
+    selector.flags |= FLAG_MIXIN_PATH_BUILT;
+
+    if (extendList != null) {
+      // Extend list contains selectors which will be canonicalized when evaluated.
+      selector.extendList((ExtendList)extendList.eval(env));
+    }
+    return selector;
   }
 
   /**

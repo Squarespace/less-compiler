@@ -20,6 +20,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
+import com.squarespace.less.exec.ExtendContext;
 
 
 /**
@@ -42,6 +43,11 @@ public class Media extends BlockNode {
   protected final Features features;
 
   /**
+   * Tracks the extend lists as the media block is traversed.
+   */
+  protected ExtendContext extendContext;
+
+  /**
    * Constructs an empty media block with empty features.
    */
   public Media() {
@@ -61,6 +67,20 @@ public class Media extends BlockNode {
   public Media(Features features, Block block) {
     super(block);
     this.features = features;
+  }
+
+  /**
+   * Returns the extend list context for the media block.
+   */
+  public ExtendContext extendContext() {
+    return extendContext;
+  }
+
+  /**
+   * Sets the extend context for this scope.
+   */
+  public void extendContext(ExtendContext context) {
+    this.extendContext = context;
   }
 
   /**
@@ -97,7 +117,6 @@ public class Media extends BlockNode {
     buf.append("@media ");
     if (features != null) {
       features.repr(buf);
-      buf.append(' ');
     }
     buf.blockOpen();
     block.repr(buf);

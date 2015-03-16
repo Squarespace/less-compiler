@@ -67,6 +67,10 @@ public class LessSuiteTest extends LessSuiteBase {
       // Compare with expected CSS result.
       String[] parts = lessPath.getFileName().toString().split("\\.(?=[^\\.]+$)");
       Path cssPath = cssRoot.resolve(parts[0] + ".css").normalize();
+      if (!cssPath.toFile().exists()) {
+        logFailure("Test Suite", ++failures, "Cannot locate ", cssPath, " for comparison");
+        continue;
+      }
       String cssData = LessUtils.readFile(cssPath);
 
       String result = diff(cssData, lessCompiled);

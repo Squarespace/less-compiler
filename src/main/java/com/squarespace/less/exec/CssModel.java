@@ -22,12 +22,10 @@ import static com.squarespace.less.model.NodeType.RULESET;
 import static com.squarespace.less.model.NodeType.STYLESHEET;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.squarespace.less.LessContext;
@@ -181,7 +179,10 @@ public class CssModel {
    */
   static class CssBlock extends CssNode {
 
-    private final List<String> headers = new ArrayList<>();
+    // Adding an element to a LinkedHashSet is about 1/2 as fast as adding it to
+    // an ArrayList, but maintains original insertion order while removing duplicates.
+
+    private final Set<String> headers = new LinkedHashSet<>();
 
     private final Set<CssNode> nodes = new LinkedHashSet<>();
 
@@ -272,13 +273,14 @@ public class CssModel {
       }
 
       if (!headers.isEmpty()) {
-        int size = headers.size();
-        for (int i = 0; i < size; i++) {
-          if (i > 0) {
+        int count = 0;
+        for (String header : headers) {
+          if (count > 0) {
             buf.selectorSep();
           }
           buf.indent();
-          buf.append(headers.get(i));
+          buf.append(header);
+          count++;
         }
         buf.blockOpen();
       }

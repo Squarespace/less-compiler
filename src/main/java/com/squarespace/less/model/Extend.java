@@ -18,6 +18,7 @@ package com.squarespace.less.model;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
+import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.ExecEnv;
 
 
@@ -50,8 +51,13 @@ public class Extend extends BaseNode {
   }
 
   @Override
+  public boolean needsEval() {
+    return selector.needsEval();
+  }
+
+  @Override
   public Node eval(ExecEnv env) throws LessException {
-    return super.eval(env);
+    return selector.needsEval() ? new Extend((Selector)selector.eval(env), matchAll) : this;
   }
 
   /**
@@ -79,6 +85,20 @@ public class Extend extends BaseNode {
     buf.incrIndent().indent();
     selector.modelRepr(buf);
     buf.decrIndent();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Extend) {
+      Extend other = (Extend)obj;
+      return matchAll == other.matchAll && LessUtils.safeEquals(selector, other.selector);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 }

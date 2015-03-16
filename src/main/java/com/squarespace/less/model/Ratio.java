@@ -35,16 +35,6 @@ public class Ratio extends BaseNode {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    return (obj instanceof Ratio) ? safeEquals(value, ((Ratio)obj).value) : false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
-  @Override
   public NodeType type() {
     return RATIO;
   }
@@ -59,6 +49,16 @@ public class Ratio extends BaseNode {
     typeRepr(buf);
     posRepr(buf);
     buf.append(' ').append(value);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof Ratio) ? safeEquals(value, ((Ratio)obj).value) : false;
+  }
+
+  @Override
+  public int hashCode() {
+    return hashCode == 0 ? buildHashCode(value) : hashCode;
   }
 
 }

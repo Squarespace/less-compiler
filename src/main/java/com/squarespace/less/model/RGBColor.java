@@ -347,7 +347,10 @@ public class RGBColor extends BaseColor {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    if (hashCode == 0) {
+      return buildHashCode(red, green, blue, alpha);
+    }
+    return hashCode;
   }
 
 }
