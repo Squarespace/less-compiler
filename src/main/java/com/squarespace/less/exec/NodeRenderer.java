@@ -28,10 +28,10 @@ import com.squarespace.less.model.Assignment;
 import com.squarespace.less.model.AttributeElement;
 import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.Combinator;
+import com.squarespace.less.model.CombinatorType;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.CompositeProperty;
 import com.squarespace.less.model.Directive;
-import com.squarespace.less.model.Element;
 import com.squarespace.less.model.Expression;
 import com.squarespace.less.model.ExpressionList;
 import com.squarespace.less.model.Feature;
@@ -44,11 +44,13 @@ import com.squarespace.less.model.Property;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Selector;
+import com.squarespace.less.model.SelectorPart;
 import com.squarespace.less.model.Selectors;
 import com.squarespace.less.model.Shorthand;
 import com.squarespace.less.model.TextElement;
 import com.squarespace.less.model.Url;
 import com.squarespace.less.model.ValueElement;
+import com.squarespace.less.model.WildcardElement;
 
 
 /**
@@ -332,32 +334,25 @@ public class NodeRenderer {
 
   /** Render a SELECTOR node. */
   private static void renderImpl(Buffer buf, Selector selector) {
-    List<Element> elements = selector.elements();
-    int size = elements.size();
+    List<SelectorPart> parts = selector.parts();
+    int size = parts.size();
+    int last = size - 1;
     for (int i = 0; i < size; i++) {
-      renderElement(buf, elements.get(i), i == 0);
+      SelectorPart part = parts.get(i);
+      renderSelectorPart(buf, part, i == 0, i == last);
     }
   }
 
   /**
-   * Handles rendering all of the ELEMENT nodes for a SELECTOR.  The complexity in the first half
-   * of this method is required to properly emit whitespace before and after combinators, depending
-   * on if we're in compress mode or not.
+   * Renders part of a selector, which may be a combinator or element.
    */
-  public static void renderElement(Buffer buf, Element element, boolean isFirst) {
-    Combinator combinator = element.combinator();
-    if (combinator != null) {
-      boolean isDescendant = combinator == Combinator.DESC;
-      if (isDescendant && element.isWildcard()) {
-        // This combination just emits useless whitespace. Ignore.
-        return;
-      }
-
-      char ch = combinator.getChar();
-
+  public static void renderSelectorPart(Buffer buf, SelectorPart part, boolean isFirst, boolean isLast) {
+    if (part instanceof Combinator) {
+      CombinatorType type = ((Combinator)part).combinatorType();
+      boolean isDescendant = type == CombinatorType.DESC;
       if (isFirst) {
         if (!isDescendant) {
-          buf.append(ch);
+          buf.append(type.repr());
         }
 
       } else {
@@ -365,37 +360,35 @@ public class NodeRenderer {
           buf.append(' ');
         }
         if (!isDescendant || !CharClass.whitespace(buf.prevChar())) {
-          buf.append(ch);
+          buf.append(type.repr());
         }
       }
-
-      if (!buf.compress() && !element.isWildcard() && !CharClass.whitespace(buf.prevChar())) {
+      if (!buf.compress() && !isLast && !CharClass.whitespace(buf.prevChar())) {
         buf.append(' ');
       }
-    }
 
-    renderElement(buf, element);
+    } else {
+      renderElement(buf, part);
+    }
   }
 
   /**
    * Render CSS for an element.
    */
-  public static void renderElement(Buffer buf, Element element) {
-    // Wildcard elements do not produce output
-    if (element.isWildcard()) {
+  public static void renderElement(Buffer buf, SelectorPart current) {
+    if (current instanceof WildcardElement) {
       return;
     }
 
-    if (element instanceof TextElement) {
-      ((TextElement)element).repr(buf);
+    if (current instanceof TextElement) {
+      ((TextElement)current).repr(buf);
 
-    } else if (element instanceof ValueElement) {
-      ValueElement varElem = (ValueElement)element;
-      render(buf, varElem.value());
+    } else if (current instanceof ValueElement) {
+      render(buf, ((ValueElement)current).value());
 
-    } else if (element instanceof AttributeElement) {
+    } else if (current instanceof AttributeElement) {
       buf.append('[');
-      AttributeElement attrElem = (AttributeElement)element;
+      AttributeElement attrElem = (AttributeElement)current;
       List<Node> parts = attrElem.parts();
       int size = parts.size();
       for (int i = 0; i < size; i++) {

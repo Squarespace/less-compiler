@@ -16,10 +16,17 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.Chars.EOF;
+import static com.squarespace.less.core.Chars.GREATER_THAN_SIGN;
+import static com.squarespace.less.core.Chars.NUMBER_SIGN;
+import static com.squarespace.less.core.Chars.PERIOD;
+import static com.squarespace.less.core.Chars.RIGHT_CURLY_BRACKET;
+import static com.squarespace.less.core.Chars.SEMICOLON;
+import static com.squarespace.less.model.CombinatorType.CHILD;
+import static com.squarespace.less.model.CombinatorType.DESC;
 import static com.squarespace.less.parse.Parselets.MIXIN_CALL_ARGS;
 
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.MixinCall;
 import com.squarespace.less.model.MixinCallArgs;
@@ -33,23 +40,25 @@ public class MixinCallParselet implements Parselet {
   @Override
   public Node parse(LessStream stm) throws LessException {
     char ch = stm.peek();
-    if (ch != Chars.PERIOD && ch != Chars.NUMBER_SIGN) {
+    if (ch != PERIOD && ch != NUMBER_SIGN) {
       return null;
     }
     Mark mark = stm.mark();
     Selector selector = new Selector();
-    Combinator comb = null;
+    Combinator combinator = null;
     while (stm.matchMixinName()) {
-      selector.add(new TextElement(comb, stm.token()));
+      if (combinator != null) {
+        selector.add(combinator);
+        combinator = null;
+      }
+      selector.add(new TextElement(stm.token()));
 
       int skipped = stm.skipWs();
-      if (stm.peek() == Chars.GREATER_THAN_SIGN) {
-        comb = Combinator.CHILD;
+      if (stm.peek() == GREATER_THAN_SIGN) {
+        combinator = new Combinator(CHILD);
         stm.seek1();
       } else if (skipped > 0) {
-        comb = Combinator.DESC;
-      } else {
-        comb = null;
+        combinator = new Combinator(DESC);
       }
       stm.skipWs();
     }
@@ -68,11 +77,11 @@ public class MixinCallParselet implements Parselet {
     ch = stm.peek();
 
     MixinCall call = null;
-    if (ch == Chars.SEMICOLON) {
+    if (ch == SEMICOLON) {
       stm.seek1();
       call = stm.context().nodeBuilder().buildMixinCall(selector, args, important);
 
-    } else if (ch == Chars.RIGHT_CURLY_BRACKET || ch == Chars.EOF) {
+    } else if (ch == RIGHT_CURLY_BRACKET || ch == EOF) {
       call = stm.context().nodeBuilder().buildMixinCall(selector, args, important);
     }
     if (call != null) {

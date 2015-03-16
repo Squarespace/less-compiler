@@ -141,6 +141,9 @@ public class MixinCall extends BaseNode {
     if (args != null) {
       args.repr(buf);
     }
+    if (important) {
+      buf.append(" !important");
+    }
   }
 
   /**
@@ -150,7 +153,9 @@ public class MixinCall extends BaseNode {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
-    buf.append(' ').append(selectorPath.toString());
+    if (selectorPath != null) {
+      buf.append(' ').append(selectorPath.toString());
+    }
     buf.append(' ').append(important ? "IMPORTANT" : "").append('\n');
     buf.incrIndent().indent();
     selector.modelRepr(buf);

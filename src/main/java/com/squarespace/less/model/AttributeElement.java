@@ -30,24 +30,12 @@ import com.squarespace.less.core.LessUtils;
  *
  * Example: {@code .a[href~='squarespace'] }
  */
-public class AttributeElement extends Element {
+public class AttributeElement extends SelectorPart {
 
   /**
    * Parts of the attribute element.
    */
   protected List<Node> parts;
-
-  /**
-   * Constructs an attribute element with the given combinator.
-   */
-  public AttributeElement(Combinator comb) {
-    super(comb);
-  }
-
-  private AttributeElement(Combinator comb, List<Node> parts) {
-    super(comb);
-    this.parts = parts;
-  }
 
   /**
    * Returns the parts of the attribute element.
@@ -67,20 +55,9 @@ public class AttributeElement extends Element {
     parts.add(part);
   }
 
-  /**
-   * @see Element#copy(Combinator)
-   */
   @Override
-  public Element copy(Combinator replacement) {
-    return new AttributeElement(replacement, parts);
-  }
-
-  /**
-   * See {@link Element#isWildcard()}
-   */
-  @Override
-  public boolean isWildcard() {
-    return false;
+  public NodeType type() {
+    return NodeType.ATTRIBUTE_ELEMENT;
   }
 
   /**
@@ -111,24 +88,13 @@ public class AttributeElement extends Element {
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof AttributeElement) {
-      AttributeElement other = (AttributeElement)obj;
-      return combinator == other.combinator && safeEquals(parts, other.parts);
-    }
-    return false;
-  }
-
-  @Override
-  public boolean equalsIgnoreCombinator(Object obj) {
-    if (obj instanceof AttributeElement) {
-      AttributeElement other = (AttributeElement)obj;
-      return safeEquals(parts, other.parts);
+      return safeEquals(parts, ((AttributeElement)obj).parts);
     }
     return false;
   }
 
   @Override
   public int hashCode() {
-    // Hash codes do not include the combinator
     return hashCode == 0 ? buildHashCode(parts) : hashCode;
   }
 

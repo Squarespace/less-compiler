@@ -43,14 +43,19 @@ public class Selector extends BaseNode {
   private static final byte FLAG_HAS_EXTEND = 0x08;
 
   /**
-   * Default capacity for the selector's element list.
+   * Default capacity for the selector's parts list.
    */
-  private static final int DEFAULT_CAPACITY = 4;
+  private static final int DEFAULT_CAPACITY = 6;
 
   /**
-   * List of elements in this selector.
+   * List of parts in this selector.
    */
-  protected List<Element> elements;
+  protected List<SelectorPart> parts;
+
+  /**
+   * Last part appended to this selector.
+   */
+  protected SelectorPart lastPart;
 
   /**
    * {@link ExtendList} attached to this selector.
@@ -89,17 +94,29 @@ public class Selector extends BaseNode {
   }
 
   /**
-   * Adds an element to the selector.
+   * Adds an part to the selector.
    */
-  public void add(Element element) {
-    elements = LessUtils.initList(elements, DEFAULT_CAPACITY);
-    elements.add(element);
-    if (element.needsEval()) {
+  public void add(SelectorPart part) {
+    parts = LessUtils.initList(parts, DEFAULT_CAPACITY);
+
+    // Handle sequences of combinator characters. If last combinator
+    // was DESC replace it with this part.
+    if (lastPart instanceof Combinator && part instanceof Combinator) {
+      Combinator lastCombinator = (Combinator)lastPart;
+      if (lastCombinator.combinatorType() == CombinatorType.DESC) {
+        parts.set(parts.size() - 1, part);
+      }
+    } else {
+      parts.add(part);
+    }
+
+    if (part.needsEval()) {
       flags |= FLAG_EVALUATE;
     }
-    if (element.isWildcard()) {
+    if (part instanceof WildcardElement) {
       flags |= FLAG_HAS_WILDCARD;
     }
+    lastPart = part;
   }
 
   public void extendList(ExtendList extendList) {
@@ -111,10 +128,10 @@ public class Selector extends BaseNode {
   }
 
   /**
-   * Returns the list of elements in this selector.
+   * Returns the list of parts in this selector.
    */
-  public List<Element> elements() {
-    return LessUtils.safeList(elements);
+  public List<SelectorPart> parts() {
+    return LessUtils.safeList(parts);
   }
 
   /**
@@ -162,17 +179,17 @@ public class Selector extends BaseNode {
   }
 
   /**
-   * Number of elements in the selector.
+   * Number of parts in the selector.
    */
   public int size() {
-    return (elements == null) ? 0 : elements.size();
+    return (parts == null) ? 0 : parts.size();
   }
 
   /**
-   * Indicates whether the selector has no elements.
+   * Indicates whether the selector has no parts.
    */
   public boolean isEmpty() {
-    return elements == null || elements.isEmpty();
+    return parts == null || parts.isEmpty();
   }
 
   /**
@@ -195,12 +212,14 @@ public class Selector extends BaseNode {
     // Selectors requiring evaluation are now rendered and parsed
     // to produce the canonical form.
 
-    // Render the elements to a temporary buffer.
+    // Render the parts to a temporary buffer.
     LessContext context = env.context();
     Buffer buf = context.acquireBuffer();
-    int size = elements.size();
+    int size = parts.size();
+    int last = size - 1;
     for (int i = 0; i < size; i++) {
-      NodeRenderer.renderElement(buf, (Element)elements.get(i).eval(env), i == 0);
+      SelectorPart part = (SelectorPart)parts.get(i).eval(env);
+      NodeRenderer.renderSelectorPart(buf, part, i == 0, i == last);
     }
 
     // Parse the rendered representation to produce the canonical form of the
@@ -216,8 +235,8 @@ public class Selector extends BaseNode {
       env.addWarning("Failed to parse selector: " + source);
 
       selector = new Selector();
-      for (Element element : elements) {
-        selector.add((Element)element.eval(env));
+      for (SelectorPart fragment : parts) {
+        selector.add((SelectorPart)fragment.eval(env));
       }
     }
 
@@ -258,9 +277,9 @@ public class Selector extends BaseNode {
     typeRepr(buf);
     posRepr(buf);
     buf.incrIndent();
-    if (elements != null && !elements.isEmpty()) {
+    if (parts != null && !parts.isEmpty()) {
       buf.append('\n');
-      ReprUtils.modelRepr(buf, "\n", true, elements);
+      ReprUtils.modelRepr(buf, "\n", true, parts);
     }
     if (extendList != null) {
       buf.append('\n');
@@ -276,7 +295,7 @@ public class Selector extends BaseNode {
 
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof Selector) ? safeEquals(elements, ((Selector)obj).elements) : false;
+    return (obj instanceof Selector) ? safeEquals(parts, ((Selector)obj).parts) : false;
   }
 
   @Override

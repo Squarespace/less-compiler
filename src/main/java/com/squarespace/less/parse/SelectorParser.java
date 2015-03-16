@@ -16,7 +16,20 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.Chars.AMPERSAND;
+import static com.squarespace.less.core.Chars.APOSTROPHE;
+import static com.squarespace.less.core.Chars.ASTERISK;
+import static com.squarespace.less.core.Chars.EOF;
+import static com.squarespace.less.core.Chars.LINE_FEED;
+import static com.squarespace.less.core.Chars.QUOTATION_MARK;
+import static com.squarespace.less.core.Chars.RIGHT_SQUARE_BRACKET;
+import static com.squarespace.less.core.Chars.TILDE;
+import static com.squarespace.less.model.CombinatorType.DESC;
+import static com.squarespace.less.parse.RecognizerPatterns.ATTRIBUTE_KEY;
 import static com.squarespace.less.parse.RecognizerPatterns.ATTRIBUTE_OP;
+import static com.squarespace.less.parse.RecognizerPatterns.ELEMENT0;
+import static com.squarespace.less.parse.RecognizerPatterns.ELEMENT1;
+import static com.squarespace.less.parse.RecognizerPatterns.ELEMENT2;
 import static com.squarespace.less.parse.RecognizerPatterns.IDENTIFIER;
 
 import java.util.Arrays;
@@ -29,11 +42,13 @@ import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.AttributeElement;
 import com.squarespace.less.model.Combinator;
-import com.squarespace.less.model.Element;
+import com.squarespace.less.model.CombinatorType;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Selector;
+import com.squarespace.less.model.SelectorPart;
 import com.squarespace.less.model.TextElement;
+import com.squarespace.less.model.WildcardElement;
 
 
 /**
@@ -57,15 +72,21 @@ public class SelectorParser extends LightweightStream {
   public Selector parse(String str) {
     init(str);
     Selector selector = null;
+
     while (true) {
-      Element element = parseElement();
-      if (element == null) {
+      // Parse the combinator but hold it to see if we get an element.
+      Combinator combinator = (Combinator) parseCombinator(selector == null);
+
+      SelectorPart part = parseSelectorPart();
+      if (part == null) {
         break;
       }
-      if (selector == null) {
-        selector = context.nodeBuilder().buildSelector();
+
+      selector = initSelector(context, selector);
+      if (combinator != null) {
+        selector.add(combinator);
       }
-      selector.add(element);
+      selector.add(part);
     }
     return (index != length) ? null : selector;
   }
@@ -73,29 +94,46 @@ public class SelectorParser extends LightweightStream {
   /**
    * Parse one combinator, element sequence. The combinator may be null.
    */
-  private Element parseElement() {
-    Combinator combinator = parseCombinator();
+  private SelectorPart parseSelectorPart() {
     skipWs();
     char ch = peek();
 
-    if (match(RecognizerPatterns.ELEMENT0)) {
-      return new TextElement(combinator, token);
+    // The parsing logic below runs a series of tests of the current
+    // stream position. When one fails to match it falls back to
+    // the next pattern. Note that no variables are parsed, since
+    // we do not expect to see them post-evaluation.
+    //
+    // In order of preference, the patterns attempted are:
+    //
+    //  element0   - decimal percent
+    //  element1   - main class/id pattern
+    //  asterisk   - universal selector
+    //  ampersand  - wild card selector
+    //  attribute  - rich attribute pattern
+    //  element2   - parenthesis-wrapped text element
 
-    } else if (match(RecognizerPatterns.ELEMENT1)) {
-      return new TextElement(combinator, token);
+    if (match(ELEMENT0)) {
+      return new TextElement(token);
 
-    } else if (ch == Chars.ASTERISK || ch == Chars.AMPERSAND) {
+    } else if (match(ELEMENT1)) {
+      return new TextElement(token);
+
+    } else if (ch == ASTERISK) {
       seek1();
-      return new TextElement(combinator, Character.toString(ch));
+      return new TextElement(Character.toString(ch));
+
+    } else if (ch == AMPERSAND) {
+      seek1();
+      return new WildcardElement();
     }
 
-    Element element = parseAttribute(combinator);
-    if (element != null) {
-      return element;
+    SelectorPart part = parseAttribute();
+    if (part != null) {
+      return part;
     }
 
-    if (match(RecognizerPatterns.ELEMENT2)) {
-      return new TextElement(combinator, token);
+    if (match(ELEMENT2)) {
+      return new TextElement(token);
     }
 
     // Note: we completely ignore curly variables here as this parser is only
@@ -106,31 +144,33 @@ public class SelectorParser extends LightweightStream {
   /**
    * Parse zero or one combinator characters, skipping over any extraneous whitespace.
    */
-  private Combinator parseCombinator() {
+  private Combinator parseCombinator(boolean selectorStart) {
     char prev = peek(-1);
     int skipped = skipWs();
     char ch = peek();
+
     if (CharClass.combinator(ch)) {
       seek1();
-      return Combinator.fromChar(ch);
+      return new Combinator(CombinatorType.fromChar(ch));
 
-    } else if (skipped > 0 || CharClass.whitespace(prev) || prev == Chars.EOF || prev == Chars.COMMA) {
-      return Combinator.DESC;
+    } else if (!selectorStart && (skipped > 0 || CharClass.whitespace(prev))) {
+      return new Combinator(DESC);
     }
+
     return null;
   }
 
   /**
    * Parse attribute element syntax.
    */
-  private Element parseAttribute(Combinator combinator) {
+  private SelectorPart parseAttribute() {
     if (!seekIf(Chars.LEFT_SQUARE_BRACKET)) {
       return null;
     }
 
     int saveIndex = index;
     Node key = null;
-    if (match(RecognizerPatterns.ATTRIBUTE_KEY)) {
+    if (match(ATTRIBUTE_KEY)) {
       key = new Anonymous(token);
     } else {
       key = parseQuoted();
@@ -140,7 +180,7 @@ public class SelectorParser extends LightweightStream {
       return null;
     }
 
-    AttributeElement element = new AttributeElement(combinator);
+    AttributeElement element = new AttributeElement();
     element.add(key);
     if (match(ATTRIBUTE_OP)) {
       Node operator = new Anonymous(token);
@@ -154,7 +194,7 @@ public class SelectorParser extends LightweightStream {
       }
     }
 
-    if (!seekIf(Chars.RIGHT_SQUARE_BRACKET)) {
+    if (!seekIf(RIGHT_SQUARE_BRACKET)) {
       index = saveIndex;
       return null;
     }
@@ -171,14 +211,14 @@ public class SelectorParser extends LightweightStream {
 
     // Check if this is the start of an escaped string.
     char ch = peek();
-    if (ch == Chars.TILDE) {
+    if (ch == TILDE) {
       escaped = true;
       offset++;
     }
 
     // Check if this is the start of a quoted string.
     char delim = peek(offset);
-    if (delim != Chars.APOSTROPHE && delim != Chars.QUOTATION_MARK) {
+    if (delim != APOSTROPHE && delim != QUOTATION_MARK) {
       return null;
     }
 
@@ -189,11 +229,11 @@ public class SelectorParser extends LightweightStream {
       seek1();
 
       // Stop if we've just found the terminating delimiter or EOF
-      if (ch == delim || ch == Chars.EOF) {
+      if (ch == delim || ch == EOF) {
         break;
       }
 
-      if (ch == Chars.LINE_FEED) {
+      if (ch == LINE_FEED) {
         // Should be a serious error, but not sure this can even happen at this point.
         // Just avoid appending it for now.
         continue;
@@ -207,7 +247,7 @@ public class SelectorParser extends LightweightStream {
 
       // Append the next character if not EOF, e.g. it may be an escaped delimiter.
       ch = peek();
-      if (ch != Chars.EOF) {
+      if (ch != EOF) {
         buf.append(ch);
         seek1();
       }
@@ -217,5 +257,7 @@ public class SelectorParser extends LightweightStream {
     return new Quoted(delim, escaped, parts);
   }
 
-
+  private Selector initSelector(LessContext context, Selector selector) {
+    return selector == null ? context.nodeBuilder().buildSelector() : selector;
+  }
 }

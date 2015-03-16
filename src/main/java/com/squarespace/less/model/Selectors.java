@@ -195,13 +195,14 @@ public class Selectors extends BaseNode {
   }
 
   /**
-   * Renders the {@link Node#repr()} for the list of elements in the selector.
+   * Renders the {@link Node#repr()} for the selector.
    */
   public static void reprSelector(Buffer buf, Selector selector) {
-    List<Element> elements = selector.elements();
-    int size = elements.size();
+    List<SelectorPart> parts = selector.parts();
+    int size = parts.size();
+    int last = size - 1;
     for (int i = 0; i < size; i++) {
-      reprElement(buf, elements.get(i), i == 0);
+      reprSelectorPart(buf, parts.get(i), i == 0, i == last);
     }
     ExtendList extendList = selector.extendList();
     if (extendList != null) {
@@ -210,30 +211,30 @@ public class Selectors extends BaseNode {
   }
 
   /**
-   * Renders the {@link Element}'s {@link Node#repr()} to the buffer.
+   * Renders the {@link SelectorPart}'s {@link Node#repr()} to the buffer.
    */
-  public static void reprElement(Buffer buf, Element element, boolean isFirst) {
-    Combinator combinator = element.combinator();
-    if (combinator != null) {
-      boolean isDescendant = combinator == Combinator.DESC;
-      char ch = combinator.getChar();
+  public static void reprSelectorPart(Buffer buf, SelectorPart part, boolean isFirst, boolean isLast) {
+    if (part instanceof Combinator) {
+      CombinatorType type = ((Combinator)part).combinatorType();
+      boolean isDescendant = type == CombinatorType.DESC;
       if (isFirst) {
         if (!isDescendant) {
-          buf.append(ch);
+          buf.append(type.repr());
         }
       } else {
         if (!buf.compress() && !isDescendant) {
           buf.append(' ');
         }
         if (!isDescendant || !CharClass.whitespace(buf.prevChar())) {
-          buf.append(ch);
+          buf.append(type.repr());
         }
       }
-      if (!buf.compress() && !element.isWildcard() && !CharClass.whitespace(buf.prevChar())) {
+      if (!buf.compress() && !isLast && !CharClass.whitespace(buf.prevChar())) {
         buf.append(' ');
       }
+    } else {
+      part.repr(buf);
     }
-    element.repr(buf);
   }
 
   /**

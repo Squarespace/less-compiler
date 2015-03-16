@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 SQUARESPACE, Inc.
+ * Copyright, 2015, Squarespace, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,44 +16,66 @@
 
 package com.squarespace.less.model;
 
+import static com.squarespace.less.core.LessUtils.safeEquals;
+
+import com.squarespace.less.core.Buffer;
+
 
 /**
- * Represents the set of known CSS combinators.
+ * Represents a combinator within a selector chain.
  */
-public enum Combinator {
+public class Combinator extends SelectorPart {
 
-  CHILD('>'),
-  DESC(' '),
-  NAMESPACE('|'),
-  SIB_ADJ('+'),
-  SIB_GEN('~');
+  private final CombinatorType combinatorType;
 
-  private final char ch;
-
-  private Combinator(char ch) {
-    this.ch = ch;
+  public Combinator(CombinatorType combinatorType) {
+    this.combinatorType = combinatorType;
   }
 
-  public char getChar() {
-    return ch;
+  /**
+   * Indicates the combinator type for this part of the selector.
+   */
+  public CombinatorType combinatorType() {
+    return combinatorType;
   }
 
-  public static Combinator fromChar(char ch) {
-    switch (ch) {
-      case '>':
-        return CHILD;
-      case ' ':
-        return DESC;
-      case '|':
-        return NAMESPACE;
-      case '+':
-        return SIB_ADJ;
-      case '~':
-        return SIB_GEN;
-      default:
-        break;
+  @Override
+  public NodeType type() {
+    return NodeType.COMBINATOR;
+  }
+
+  /**
+   * @see Node#repr(Buffer)
+   */
+  @Override
+  public void repr(Buffer buf) {
+    buf.append(combinatorType.repr());
+  }
+
+  /**
+   * @see Node#modelRepr(Buffer)
+   */
+  @Override
+  public void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append(' ').append(combinatorType.fullName());
+    buf.append(" '").append(combinatorType.repr()).append('\'');
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Combinator) {
+      return safeEquals(combinatorType, ((Combinator)obj).combinatorType);
     }
-    return null;
+    return false;
   }
 
+  @Override
+  public int hashCode() {
+    if (hashCode == 0) {
+      return buildHashCode(combinatorType == null ? '_' : combinatorType.repr());
+    }
+    return hashCode;
+  }
 }

@@ -16,7 +16,7 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.model.Combinator.CHILD;
+import static com.squarespace.less.model.CombinatorType.CHILD;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -58,19 +58,19 @@ public class MixinCallTest extends LessTestBase {
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(Parselets.MIXIN_CALL);
 
-    Node exp = mixincall(selector(element(null, ".x")));
+    Node exp = mixincall(selector(element(".x")));
     h.parseEquals(".x;", exp);
 
-    exp = mixincall(selector(element(null, ".x")), args(','));
+    exp = mixincall(selector(element(".x")), args(','));
     h.parseEquals(".x();", exp);
 
-    exp = mixincall(selector(element(null, ".mixin")), args(',', arg(var("@a")), arg(var("@b"))));
+    exp = mixincall(selector(element(".mixin")), args(',', arg(var("@a")), arg(var("@b"))));
     h.parseEquals(".mixin(@a, @b)", exp);
 
-    exp = mixincall(selector(element(null, ".x")), args(',', arg("@a", dim(1))));
+    exp = mixincall(selector(element(".x")), args(',', arg("@a", dim(1))));
     h.parseEquals(".x(@a: 1)", exp);
 
-    exp = mixincall(selector(element(null, "#ns"), element(CHILD, ".mixin")));
+    exp = mixincall(selector(element("#ns"), comb(CHILD), element(".mixin")));
     h.parseEquals("#ns > .mixin", exp);
   }
 
@@ -80,7 +80,7 @@ public class MixinCallTest extends LessTestBase {
 
     Node rs1 = ruleset(rule(prop("color"), color("red")));
     Node rs2 = ruleset(rule(prop("font-size"), dim(1, Unit.PX)));
-    Node exp = mixincall(selector(element(null, ".mixin")), args(',', arg(dim(1)), arg(rs1), arg(rs2)));
+    Node exp = mixincall(selector(element(".mixin")), args(',', arg(dim(1)), arg(rs1), arg(rs2)));
     h.parseEquals(".mixin(1, {color: red}, {font-size: 1px})", exp);
   }
 

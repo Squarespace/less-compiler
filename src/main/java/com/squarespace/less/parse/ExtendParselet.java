@@ -17,15 +17,17 @@
 package com.squarespace.less.parse;
 
 import static com.squarespace.less.core.SyntaxErrorMaker.extendMissingTarget;
+import static com.squarespace.less.parse.Parselets.ELEMENT;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.BaseNode;
-import com.squarespace.less.model.Element;
+import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Extend;
 import com.squarespace.less.model.ExtendList;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
+import com.squarespace.less.model.SelectorPart;
 
 
 /**
@@ -104,6 +106,7 @@ public class ExtendParselet implements Parselet {
   private Extend parseExtend(LessStream stm) throws LessException {
     Selector selector = null;
     stm.skipWs();
+
     while (true) {
       // Check if the "all" keyword ends the element sequence.
       if (stm.matchExtendAll()) {
@@ -113,8 +116,20 @@ public class ExtendParselet implements Parselet {
         return newExtend(selector, true);
       }
 
+      Combinator combinator = null;
+      if (selector == null) {
+        combinator = (Combinator) stm.parse(Parselets.COMBINATOR_START);
+      } else {
+        combinator = (Combinator) stm.parse(Parselets.COMBINATOR);
+      }
+
+      if (combinator != null) {
+        selector = selector == null ? stm.context().nodeBuilder().buildSelector() : selector;
+        selector.add(combinator);
+      }
+
       // Parse an element with optional combinator.
-      BaseNode elem = (BaseNode)stm.parse(Parselets.ELEMENT);
+      BaseNode elem = (BaseNode)stm.parse(ELEMENT);
 
       // No element was parsed, so we're done.
       if (elem == null) {
@@ -129,7 +144,8 @@ public class ExtendParselet implements Parselet {
         selector = stm.context().nodeBuilder().buildSelector();
         selector.copyPosition(elem);
       }
-      selector.add((Element)elem);
+
+      selector.add((SelectorPart)elem);
       stm.skipWs();
     }
   }

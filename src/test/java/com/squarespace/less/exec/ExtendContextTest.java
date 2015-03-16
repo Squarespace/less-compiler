@@ -16,8 +16,8 @@
 
 package com.squarespace.less.exec;
 
-import static com.squarespace.less.model.Combinator.CHILD;
-import static com.squarespace.less.model.Combinator.DESC;
+import static com.squarespace.less.model.CombinatorType.CHILD;
+import static com.squarespace.less.model.CombinatorType.DESC;
 import static org.testng.Assert.assertEquals;
 
 import java.util.List;
@@ -41,10 +41,10 @@ public class ExtendContextTest extends LessTestBase {
 
     ExtendList list = new ExtendList(false);
 
-    Selector selector = selector(element(".a"), element(CHILD, ".b"));
+    Selector selector = selector(element(".a"), comb(CHILD), element(".b"));
     list.add(new Extend(selector, false));
 
-    selector = selector(element(".a"), element(DESC, ".b"));
+    selector = selector(element(".a"), comb(DESC), element(".b"));
     list.add(new Extend(selector, false));
 
     selector = selector(element(".replace"));
@@ -53,7 +53,7 @@ public class ExtendContextTest extends LessTestBase {
     ExtendContext context = new ExtendContext();
     context.index(selector);
 
-    Selector query = selector(element(".a"), element(DESC, ".b"));
+    Selector query = selector(element(".a"), comb(DESC), element(".b"));
     List<Selector> result = context.resolve(query);
     assertEquals(result.size(), 1);
     assertEquals(result.get(0), selector(element(".replace")));
@@ -63,7 +63,7 @@ public class ExtendContextTest extends LessTestBase {
   public void testCombinatorPrefix() {
     ExtendList list = new ExtendList(false);
 
-    Selector selector = selector(element(".a"), element(CHILD, ".b"));
+    Selector selector = selector(element(".a"), comb(CHILD), element(".b"));
     list.add(new Extend(selector, false));
 
     selector = selector(element(".replace"));
@@ -72,7 +72,7 @@ public class ExtendContextTest extends LessTestBase {
     ExtendContext context = new ExtendContext();
     context.index(selector);
 
-    Selector query = selector(element(null, ".a"), element(CHILD, ".b"));
+    Selector query = selector(element(".a"), comb(CHILD), element(".b"));
     List<Selector> result = context.resolve(query);
     assertEquals(result.size(), 1);
     assertEquals(result.get(0), selector(element(".replace")));
@@ -92,4 +92,5 @@ public class ExtendContextTest extends LessTestBase {
     source = ".replace:extend(.a > .b + .c) {} .a > .b + .c { color: green; }";
     assertEquals(h.execute(source, opts), ".a>.b+.c,.replace{color:green}");
   }
+
 }

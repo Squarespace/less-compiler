@@ -18,9 +18,9 @@ package com.squarespace.less;
 
 import static com.squarespace.less.SyntaxErrorType.SELECTOR_END_GUARD;
 import static com.squarespace.less.SyntaxErrorType.SELECTOR_ONE_GUARD;
-import static com.squarespace.less.model.Combinator.CHILD;
-import static com.squarespace.less.model.Combinator.DESC;
-import static com.squarespace.less.model.Combinator.SIB_ADJ;
+import static com.squarespace.less.model.CombinatorType.CHILD;
+import static com.squarespace.less.model.CombinatorType.DESC;
+import static com.squarespace.less.model.CombinatorType.SIB_ADJ;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -29,7 +29,6 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.exec.ExecEnv;
-import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.parse.Parselets;
 
@@ -44,25 +43,24 @@ public class SelectorTest extends LessTestBase {
     assertNotEquals(selector(element(".x")), null);
     assertNotEquals(selector(element(".x")), prop("x"));
     assertNotEquals(selector(element(".x")), selector(element(".y")));
-    assertNotEquals(selector(element(DESC, ".x")), selector(element(CHILD, ".x")));
-    assertNotEquals(selector(element(null, ".x")), selector(element(CHILD, ".x")));
+    assertNotEquals(selector(element(".x")), selector(comb(CHILD), element(".x")));
   }
 
   @Test
   public void testModelReprSafety() {
-    selector(element(CHILD, ".foo"), element(".y")).toString();
+    selector(comb(CHILD), element(".foo"), element(".y")).toString();
   }
 
   @Test
   public void testRender() throws LessException {
-    Selector sel = selector(element("li"), element(null, ".bar"), element(CHILD, "span"), element(null, ".foo"),
-          element(DESC, "baz"));
+    Selector sel = selector(element("li"), element(".bar"), comb(CHILD), element("span"), element(".foo"),
+          comb(DESC), element("baz"));
 
     assertEquals(render(false, sel), "li.bar > span.foo baz");
     assertEquals(render(true, sel), "li.bar>span.foo baz");
 
-    sel = selector(element("p"), element(null, ".para"), element(SIB_ADJ, "span"), element(null, ".word"),
-        element(DESC, "b"));
+    sel = selector(element("p"), element(".para"), comb(SIB_ADJ), element("span"), element(".word"),
+        comb(DESC), element("b"));
 
     assertEquals(render(false, sel), "p.para + span.word b");
     assertEquals(render(true, sel), "p.para+span.word b");
@@ -72,11 +70,12 @@ public class SelectorTest extends LessTestBase {
   public void testParse() throws LessException {
     LessHarness h = new LessHarness(Parselets.SELECTOR);
 
-    h.parseEquals("p", selector(element(DESC, "p")));
-    h.parseEquals("> p", selector(element(Combinator.CHILD, "p")));
-    h.parseEquals("+ p.class", selector(element(Combinator.SIB_ADJ, "p"), element(null, ".class")));
+    h.parseEquals("p", selector(element("p")));
+    h.parseEquals(">p", selector(comb(CHILD), element("p")));
+    h.parseEquals("> p", selector(comb(CHILD), element("p")));
+    h.parseEquals("+ p.class", selector(comb(SIB_ADJ), element("p"), element(".class")));
 
-    Selector exp = selector(element("p"), attr(null, "class", "~=", quoted('"', false, "a")));
+    Selector exp = selector(element("p"), attr("class", "~=", quoted('"', false, "a")));
     h.parseEquals("p[class~=\"a\"]", exp);
   }
 

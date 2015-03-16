@@ -16,10 +16,10 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.model.Combinator.CHILD;
-import static com.squarespace.less.model.Combinator.DESC;
-import static com.squarespace.less.model.Combinator.SIB_ADJ;
-import static com.squarespace.less.model.Combinator.SIB_GEN;
+import static com.squarespace.less.model.CombinatorType.CHILD;
+import static com.squarespace.less.model.CombinatorType.DESC;
+import static com.squarespace.less.model.CombinatorType.SIB_ADJ;
+import static com.squarespace.less.model.CombinatorType.SIB_GEN;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Arrays;
@@ -65,11 +65,13 @@ public class ValueRendererTest extends LessTestBase {
   @Test
   public void testSelector() throws LessException {
     List<Selector> selectors = Arrays.asList(
-        selector(element(CHILD, "span"), element(DESC, "b")),
-        selector(element("p"), element(SIB_ADJ, "div"), element(CHILD, "span")),
-        selector(element("p"), element(null, ".class-1"), element(null, ".class-2")),
-        selector(element("ul"), element("li"), element(null, ".one"), element(SIB_GEN, "li"), element(null, ".two")),
-        selector(element("a"), element(null, ".b"), element("c"), element(CHILD, "d"))
+        selector(comb(CHILD), element("span"), comb(DESC), element("b")),
+        selector(element("p"), comb(SIB_ADJ), element("div"), comb(CHILD), element("span")),
+        selector(element("p"), element(".class-1"), element(".class-2")),
+        selector(
+              element("ul"), comb(DESC), element("li"),
+              element(".one"), comb(SIB_GEN), element("li"), element(".two")),
+        selector(element("a"), element(".b"), comb(DESC), element("c"), comb(CHILD), element("d"))
         );
 
     List<String> normal = Arrays.asList(

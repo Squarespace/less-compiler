@@ -16,7 +16,8 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.model.Combinator.DESC;
+import static com.squarespace.less.model.CombinatorType.CHILD;
+import static com.squarespace.less.model.CombinatorType.SIB_ADJ;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -48,7 +49,13 @@ public class SelectorsTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.SELECTORS);
 
     h.parseEquals("a, b",
-        selectors(selector(element(DESC, "a")), selector(element(DESC, "b"))));
+        selectors(selector(element("a")), selector(element("b"))));
+
+    h.parseEquals("a > b, c + d",
+        selectors(
+            selector(element("a"), comb(CHILD), element("b")),
+            selector(element("c"), comb(SIB_ADJ), element("d"))
+        ));
   }
 
 }

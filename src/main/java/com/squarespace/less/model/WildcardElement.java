@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 SQUARESPACE, Inc.
+ * Copyright, 2015, Squarespace, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,72 +16,38 @@
 
 package com.squarespace.less.model;
 
-import static com.squarespace.less.core.LessUtils.safeEquals;
-
 import com.squarespace.less.core.Buffer;
 
 
 /**
- * Represents an element or pseudo-element, not including
- * attribute selector syntax.
+ * Node representing the wildcard element "&".
  */
-public class TextElement extends SelectorPart {
-
-  /**
-   * Name of the element.
-   */
-  protected final String name;
-
-  /**
-   * Constructs a text element.
-   */
-  public TextElement(String name) {
-    this.name = name;
-  }
-
-  /**
-   * Returns the text element's name.
-   */
-  public String name() {
-    return name;
-  }
+public class WildcardElement extends SelectorPart {
 
   @Override
   public NodeType type() {
-    return NodeType.TEXT_ELEMENT;
+    return NodeType.WILDCARD_ELEMENT;
   }
 
-  /**
-   * See {@link Node#repr(Buffer)}
-   */
   @Override
   public void repr(Buffer buf) {
-    if (name != null) {
-      buf.append(name);
-    }
+    buf.append('&');
   }
 
-  /**
-   * See {@link Node#modelRepr(Buffer)}
-   */
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
-    buf.append(' ').append(name);
-  }
+  };
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof TextElement) {
-      return safeEquals(name, ((TextElement)obj).name);
-    }
-    return false;
+    return (obj instanceof WildcardElement);
   }
 
   @Override
   public int hashCode() {
-    return hashCode == 0 ? buildHashCode(name) : hashCode;
+    return hashCode == 0 ? buildHashCode("&") : hashCode;
   }
 
 }

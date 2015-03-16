@@ -60,7 +60,7 @@ public class MixinResolver {
     this.matcher = matcher;
     this.args = matcher.mixinArgs();
     this.callPath = matcher.mixinCall().path();
-    this.callPathLength = callPath.length();
+    this.callPathLength = callPath == null ? 0 : callPath.length();
     this.maxIndex = callPathLength - 1;
     this.results = new ArrayList<>(3);
   }

@@ -25,17 +25,16 @@ import com.squarespace.less.exec.ExecEnv;
 
 
 /**
- * An {@link Element} which wraps a value.
+ * Part of a selector which wraps a value.
  */
-public class ValueElement extends Element {
+public class ValueElement extends SelectorPart {
 
   /**
    * The element's value.
    */
   protected final Node value;
 
-  public ValueElement(Combinator comb, Node value) {
-    super(comb);
+  public ValueElement(Node value) {
     if (value == null) {
       throw new LessInternalException("Serious error: value cannot be null");
     }
@@ -49,12 +48,9 @@ public class ValueElement extends Element {
     return value;
   }
 
-  /**
-   * @see Element#copy(Combinator)
-   */
   @Override
-  public Element copy(Combinator replacement) {
-    return new ValueElement(replacement, value);
+  public NodeType type() {
+    return NodeType.VALUE_ELEMENT;
   }
 
   /**
@@ -70,18 +66,10 @@ public class ValueElement extends Element {
    */
   @Override
   public Node eval(ExecEnv env) throws LessException {
-    if (!needsEval()) {
-      return this;
+    if (needsEval()) {
+      return new ValueElement(value.eval(env));
     }
-    return new ValueElement(combinator(), value.eval(env));
-  }
-
-  /**
-   * See {@link Element#isWildcard()}
-   */
-  @Override
-  public boolean isWildcard() {
-    return false;
+    return this;
   }
 
   /**
@@ -90,6 +78,7 @@ public class ValueElement extends Element {
   @Override
   public void repr(Buffer buf) {
     boolean quoted = (value instanceof Quoted);
+    // TODO: handle forward-compatibility with 2.x syntax
     if (quoted) {
       buf.append('(');
     }
@@ -107,22 +96,11 @@ public class ValueElement extends Element {
     typeRepr(buf);
     posRepr(buf);
     buf.append(' ');
-    buf.append(combinator == null ? "<null>" : combinator.toString());
-    buf.append(' ');
     value.modelRepr(buf);
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof ValueElement) {
-      ValueElement other = (ValueElement)obj;
-      return combinator == other.combinator && safeEquals(value, other.value);
-    }
-    return false;
-  }
-
-  @Override
-  public boolean equalsIgnoreCombinator(Object obj) {
     if (obj instanceof ValueElement) {
       return safeEquals(value, ((ValueElement)obj).value);
     }
@@ -131,7 +109,6 @@ public class ValueElement extends Element {
 
   @Override
   public int hashCode() {
-    // Hash codes do not include the combinator
     return hashCode == 0 ? buildHashCode(value) : hashCode;
   }
 

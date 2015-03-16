@@ -16,19 +16,23 @@
 
 package com.squarespace.less.exec;
 
+import static com.squarespace.less.model.CombinatorType.DESC;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.CartesianProduct;
-import com.squarespace.less.model.Element;
+import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.ExtendList;
 import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.Selector;
+import com.squarespace.less.model.SelectorPart;
 import com.squarespace.less.model.Selectors;
 import com.squarespace.less.model.TextElement;
 import com.squarespace.less.model.ValueElement;
+import com.squarespace.less.model.WildcardElement;
 
 
 /**
@@ -49,6 +53,14 @@ public class SelectorUtils {
    *    the list of ancestors, and then return the cartesian product.
    */
   public static Selectors combine(Selectors ancestors, Selectors current) {
+    if (ancestors.isEmpty()) {
+      return filter(current);
+    }
+
+    if (current.isEmpty()) {
+      return filter(ancestors);
+    }
+
     Selectors result = new Selectors();
     for (Selector selector : current.selectors()) {
       ExtendList extendList = selector.extendList();
@@ -56,8 +68,15 @@ public class SelectorUtils {
       // When no wildcard is present, the selector is prepended to the ancestors.
       if (!selector.hasWildcard()) {
         List<List<Selector>> inputs = new ArrayList<>(2);
+
+        Selector child = new Selector();
+        child.add(new Combinator(DESC));
+        for (SelectorPart part : selector.parts()) {
+          child.add(part);
+        }
+
         inputs.add(ancestors.selectors());
-        inputs.add(Arrays.asList(selector));
+        inputs.add(Arrays.asList(child));
         flatten(inputs, result, extendList);
         continue;
       }
@@ -65,21 +84,26 @@ public class SelectorUtils {
       // Otherwise, substitute the ancestors after each wildcard element found.
       List<List<Selector>> inputs = new ArrayList<>();
       Selector temp = new Selector();
-      for (Element elem : selector.elements()) {
-        temp.add(elem);
+      for (SelectorPart elem : selector.parts()) {
 
-        if (elem.isWildcard()) {
+        // Replace each instance of the wildcard with the ancestor
+        // selectors.
+        if (elem instanceof WildcardElement) {
           inputs.add(Arrays.asList(temp));
           inputs.add(ancestors.selectors());
           temp = new Selector();
+
+        } else {
+          temp.add(elem);
         }
+
       }
 
       if (!temp.isEmpty()) {
         inputs.add(Arrays.asList(temp));
       }
 
-      SelectorUtils.flatten(inputs, result, extendList);
+      flatten(inputs, result, extendList);
     }
     return result;
   }
@@ -93,15 +117,55 @@ public class SelectorUtils {
     while (product.hasNext()) {
       Selector flat = new Selector();
       for (Selector tmp : product.next()) {
-        for (Element elem : tmp.elements()) {
+        for (SelectorPart elem : tmp.parts()) {
           flat.add(elem);
         }
       }
       if (extendList != null) {
         flat.extendList(extendList);
       }
-      result.add(flat);
+      result.add(filter(flat));
     }
+  }
+
+  /**
+   * Remove unnecessary and redundant parts from each selector in the group.
+   */
+  public static Selectors filter(Selectors selectors) {
+    Selectors result = new Selectors();
+    for (Selector selector : selectors.selectors()) {
+      result.add(filter(selector));
+    }
+    return result;
+  }
+
+  /**
+   * Remove unnecessary and redundant parts from a selector.
+   * Wildcard elements and trailing combinators are stripped.
+   */
+  public static Selector filter(Selector selector) {
+    Selector result = new Selector();
+    Combinator combinator = null;
+    for (SelectorPart part : selector.parts()) {
+      if (part instanceof Combinator) {
+        combinator = (Combinator)part;
+      } else {
+        if (part instanceof WildcardElement) {
+          combinator = null;
+          continue;
+
+        } else if (combinator != null) {
+          result.add(combinator);
+        }
+        result.add(part);
+        combinator = null;
+      }
+    }
+    ExtendList extendList = selector.extendList();
+    if (extendList != null) {
+      result.extendList(extendList);
+    }
+    return result;
   }
 
   /**
@@ -118,7 +182,7 @@ public class SelectorUtils {
       return null;
     }
 
-    List<Element> elements = selector.elements();
+    List<SelectorPart> elements = selector.parts();
     if (elements.isEmpty()) {
       return null;
     }
@@ -126,21 +190,27 @@ public class SelectorUtils {
     Buffer buf = new Buffer(0);
     int size = elements.size();
     for (int i = 0; i < size; i++) {
-      Element elem = elements.get(i);
-      if (elem.isWildcard()) {
+      SelectorPart elem = elements.get(i);
+      if (elem instanceof WildcardElement) {
         if (i == 0) {
           continue;
         }
         return null;
       }
 
+      if (elem instanceof Combinator) {
+        continue;
+      }
+
       // Ignore all non-text elements, since at the time this selector is being
       // expanded, only text elements can be used for mixin matching.
-      if (!(elem instanceof TextElement)) {
+      if (elem instanceof TextElement) {
+        buf.append(((TextElement)elem).name());
+
+      } else {
         return null;
       }
 
-      buf.append(((TextElement)elem).name());
     }
     return buf.toString();
   }
@@ -157,15 +227,15 @@ public class SelectorUtils {
     if (selector == null) {
       return false;
     }
-    List<Element> elements = selector.elements();
+    List<SelectorPart> elements = selector.parts();
     if (elements.isEmpty()) {
       return false;
     }
 
     int size = elements.size();
     for (int i = 0; i < size; i++) {
-      Element elem = elements.get(i);
-      if (elem.isWildcard()) {
+      SelectorPart elem = elements.get(i);
+      if (elem instanceof WildcardElement) {
         if (i == 0) {
           continue;
         }

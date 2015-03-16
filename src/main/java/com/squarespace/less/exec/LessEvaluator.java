@@ -367,9 +367,7 @@ public class LessEvaluator {
     env.resolveMixins(resolver);
     List<MixinMatch> matches = resolver.matches();
     if (matches.isEmpty()) {
-      LessException exc = new LessException(mixinUndefined(ctx.render(call.selector())));
-      exc.push(call);
-      throw exc;
+      throw new LessException(mixinUndefined(call.repr()));
     }
 
     Block results = new Block();
@@ -388,9 +386,7 @@ public class LessEvaluator {
     }
 
     if (calls == 0) {
-      LessException exc = new LessException(mixinUndefined(ctx.render(call.selector())));
-      exc.push(call);
-      throw exc;
+      throw new LessException(mixinUndefined(call.repr()));
     }
     return results;
   }

@@ -16,8 +16,6 @@
 
 package com.squarespace.less.core;
 
-import static com.squarespace.less.model.Combinator.DESC;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +29,7 @@ import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.Colors;
 import com.squarespace.less.model.Combinator;
+import com.squarespace.less.model.CombinatorType;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.CompositeProperty;
 import com.squarespace.less.model.Condition;
@@ -38,7 +37,6 @@ import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.DetachedRuleset;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Directive;
-import com.squarespace.less.model.Element;
 import com.squarespace.less.model.Expression;
 import com.squarespace.less.model.ExpressionList;
 import com.squarespace.less.model.Feature;
@@ -68,6 +66,7 @@ import com.squarespace.less.model.Ratio;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
+import com.squarespace.less.model.SelectorPart;
 import com.squarespace.less.model.Selectors;
 import com.squarespace.less.model.Shorthand;
 import com.squarespace.less.model.Stylesheet;
@@ -77,6 +76,7 @@ import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.Url;
 import com.squarespace.less.model.ValueElement;
 import com.squarespace.less.model.Variable;
+import com.squarespace.less.model.WildcardElement;
 
 
 /**
@@ -144,8 +144,8 @@ public class LessMaker {
     return new Assignment(name, val);
   }
 
-  public AttributeElement attr(Combinator comb, Object ... elems) {
-    AttributeElement elem = new AttributeElement(comb);
+  public AttributeElement attr(Object ... elems) {
+    AttributeElement elem = new AttributeElement();
     for (Object part : elems) {
       if (part instanceof String) {
         elem.add(new Anonymous((String)part));
@@ -193,6 +193,10 @@ public class LessMaker {
     return new Condition(op, node0, node1, negate);
   }
 
+  public Combinator comb(CombinatorType type) {
+    return new Combinator(type);
+  }
+
   public Definition def(String name, Node val) {
     return new Definition(name, val);
   }
@@ -225,20 +229,12 @@ public class LessMaker {
     return (value instanceof Block) ? new BlockDirective(name, (Block)value) : new Directive(name, value);
   }
 
-  public TextElement element(String name) {
-    return element(DESC, name);
+  public SelectorPart element(String name) {
+    return name.equals("&") ? new WildcardElement() : new TextElement(name);
   }
 
-  public ValueElement element(Variable ref) {
-    return element(null, ref);
-  }
-
-  public TextElement element(Combinator combinator, String name) {
-    return new TextElement(combinator, name);
-  }
-
-  public ValueElement element(Combinator combinator, Variable ref) {
-    return new ValueElement(combinator, ref);
+  public ValueElement element(Variable value) {
+    return new ValueElement(value);
   }
 
   public Expression expn(Node ... nodes) {
@@ -417,10 +413,10 @@ public class LessMaker {
     return new DetachedRuleset(block(nodes));
   }
 
-  public Selector selector(Element ... elements) {
+  public Selector selector(SelectorPart ... parts) {
     Selector result = new Selector();
-    for (Element elem : elements) {
-      result.add(elem);
+    for (SelectorPart part : parts) {
+      result.add(part);
     }
     return result;
   }
@@ -459,10 +455,6 @@ public class LessMaker {
 
   public Variable var(String name, boolean curly, boolean ruleset) {
     return new Variable(name, curly, ruleset);
-  }
-
-  public ValueElement varelem(Combinator combinator, Variable var) {
-    return new ValueElement(combinator, var);
   }
 
 }

@@ -64,7 +64,7 @@ public class ExtendTest extends LessTestBase {
     LessOptions opts = new LessOptions(true);
     LessHarness h = new LessHarness(Parselets.STYLESHEET);
     String result = h.execute("@name: ~'foo'; .@{name} { color: red; }", opts);
-    assertEquals(result, ".foo{color:red}");
+    assertEquals(".foo{color:red}", result);
   }
 
 }

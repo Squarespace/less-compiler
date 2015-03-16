@@ -220,7 +220,10 @@ public class Buffer {
     if (compress) {
       append('{');
     } else {
-      append(" {\n");
+      if (!CharClass.whitespace(prev)) {
+        append(' ');
+      }
+      append("{\n");
       incrIndent();
     }
   }
@@ -240,10 +243,9 @@ public class Buffer {
    * Emits a list separator (comma) with optional whitespace suppression.
    */
   public Buffer listSep() {
-    if (compress) {
-      append(',');
-    } else {
-      append(", ");
+    append(',');
+    if (!compress && !CharClass.whitespace(prev)) {
+      append(' ');
     }
     return this;
   }

@@ -48,6 +48,14 @@ public class Parselets {
     new ColorKeywordParselet()
   };
 
+  public static final Parselet[] COMBINATOR = new Parselet[] {
+    new CombinatorParselet(false)
+  };
+
+  public static final Parselet[] COMBINATOR_START = new Parselet[] {
+    new CombinatorParselet(true)
+  };
+
   public static final Parselet[] COMMENT = new Parselet[] {
     new CommentParselet()
   };
@@ -85,7 +93,7 @@ public class Parselets {
     new SelectorParselet()
   };
 
-  public static final Parselet[] ELEMENT_OR_EXTEND = new Parselet[] {
+  public static final Parselet[] EXTEND_OR_ELEMENT = new Parselet[] {
     new ExtendParselet(false),
     new ElementParselet()
   };

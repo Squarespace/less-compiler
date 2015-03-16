@@ -23,11 +23,10 @@ import java.util.List;
 import com.squarespace.less.core.HashPrefixTree;
 import com.squarespace.less.core.HashPrefixTree.HPTKeyComparator;
 import com.squarespace.less.core.HashPrefixTree.HPTMatch;
-import com.squarespace.less.model.Combinator;
-import com.squarespace.less.model.Element;
 import com.squarespace.less.model.Extend;
 import com.squarespace.less.model.ExtendList;
 import com.squarespace.less.model.Selector;
+import com.squarespace.less.model.SelectorPart;
 import com.squarespace.less.model.Selectors;
 
 
@@ -43,36 +42,9 @@ public class ExtendContext {
    * When matching the selector's first element's combinator we treat null
    * and DESC as equivalent.
    */
-  private final static HPTKeyComparator<Element> MAIN_COMPARATOR = new HPTKeyComparator<Element>() {
+  private final static HPTKeyComparator<SelectorPart> COMPARATOR = new HPTKeyComparator<SelectorPart>() {
     @Override
-    public boolean keysEqual(int queryKeyIndex, Element queryKey, Element treeKey) {
-      if (queryKeyIndex == 0) {
-        // Ignore the prefix null/DESC combinator.
-        Combinator queryCombinator = queryKey.combinator();
-        Combinator treeCombinator = treeKey.combinator();
-        if ((queryCombinator == null || queryCombinator == Combinator.DESC)
-            && (treeCombinator == null || treeCombinator == Combinator.DESC)) {
-          return queryKey.equalsIgnoreCombinator(treeKey);
-        }
-      }
-      return queryKey.hashCode() == treeKey.hashCode() && queryKey.equals(treeKey);
-    }
-  };
-
-  /**
-   * When performing a partial match, if the query selector's first element's
-   * combinator is null or DESC we ignore the tree's combinator.
-   */
-  private final static HPTKeyComparator<Element> PARTIAL_COMPARATOR = new HPTKeyComparator<Element>() {
-    @Override
-    public boolean keysEqual(int queryKeyIndex, Element queryKey, Element treeKey) {
-      if (queryKeyIndex == 0) {
-        // Ignore the tree key's null/DESC combinator.
-        Combinator treeCombinator = treeKey.combinator();
-        if (treeCombinator == null || treeCombinator == Combinator.DESC) {
-          return queryKey.equalsIgnoreCombinator(treeKey);
-        }
-      }
+    public boolean keysEqual(int queryKeyIndex, SelectorPart queryKey, SelectorPart treeKey) {
       return queryKey.hashCode() == treeKey.hashCode() && queryKey.equals(treeKey);
     }
   };
@@ -82,14 +54,14 @@ public class ExtendContext {
    * demand, to minimize overhead for Media blocks that contain no extended
    * selector groups.
    */
-  private final HashPrefixTree<Element, Selector> mainIndex = new HashPrefixTree<>(MAIN_COMPARATOR);
+  private final HashPrefixTree<SelectorPart, Selector> mainIndex = new HashPrefixTree<>(COMPARATOR);
 
   /**
    * Index of search/replace extend lists. The HPT's storage is initialized on
    * demand, to minimize overhead for Media blocks that contain no extended
    * selector groups.
    */
-  private final HashPrefixTree<Element, Selector> partialIndex = new HashPrefixTree<>(PARTIAL_COMPARATOR);
+  private final HashPrefixTree<SelectorPart, Selector> partialIndex = new HashPrefixTree<>(COMPARATOR);
 
   /**
    * Index the selector by its extend list.
@@ -145,7 +117,7 @@ public class ExtendContext {
    * selectors to append.
    */
   public List<Selector> resolve(Selector selector) {
-    List<Selector> result = mainIndex.search(selector.elements());
+    List<Selector> result = mainIndex.search(selector.parts());
     return (result == null) ? Collections.<Selector>emptyList() : result;
   }
 
@@ -154,7 +126,7 @@ public class ExtendContext {
    * Returns a list of selectors to append.
    */
   public List<Selector> searchReplace(Selector selector) {
-    List<Element> elements = selector.elements();
+    List<SelectorPart> elements = selector.parts();
     List<HPTMatch<Selector>> matches = partialIndex.searchSubsequences(elements);
     if (matches == null) {
       return Collections.emptyList();
@@ -180,20 +152,8 @@ public class ExtendContext {
           if (i == start) {
             // When we reach the point where we need to search/replace,
             // append the match's replacement elements.
-
-            // If the first element of the replacement has a combinator of
-            // null/DESC, we use the combinator on the first element we're replacing.
-
-            List<Element> replacements = replacement.elements();
-            int j = 0;
-            Combinator origCombinator = elements.get(i).combinator();
-            if (origCombinator != Combinator.DESC) {
-              Element first = replacements.get(0).copy(origCombinator);
-              build.add(first);
-              j++;
-            }
-            for (; j < replacements.size(); j++) {
-              build.add(replacements.get(j));
+            for (SelectorPart part : replacement.parts()) {
+              build.add(part);
             }
             continue;
           }
@@ -216,11 +176,11 @@ public class ExtendContext {
    * is "all" or normal.
    */
   private void insert(Selector selector, Extend extend) {
-    HashPrefixTree<Element, Selector> index = mainIndex;
+    HashPrefixTree<SelectorPart, Selector> index = mainIndex;
     if (extend.matchAll()) {
       index = partialIndex;
     }
-    index.insert(extend.selector().elements()).append(selector);
+    index.insert(extend.selector().parts()).append(selector);
   }
 
 }

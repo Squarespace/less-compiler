@@ -16,76 +16,96 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.Chars.AMPERSAND;
+import static com.squarespace.less.core.Chars.ASTERISK;
+import static com.squarespace.less.core.Chars.LEFT_PARENTHESIS;
+import static com.squarespace.less.core.Chars.LEFT_SQUARE_BRACKET;
+import static com.squarespace.less.core.Chars.RIGHT_PARENTHESIS;
+import static com.squarespace.less.core.Chars.RIGHT_SQUARE_BRACKET;
 import static com.squarespace.less.parse.Parselets.ELEMENT_SUB;
 import static com.squarespace.less.parse.Parselets.QUOTED;
 import static com.squarespace.less.parse.Parselets.VARIABLE_CURLY;
 
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.CharClass;
-import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.AttributeElement;
-import com.squarespace.less.model.Combinator;
-import com.squarespace.less.model.Element;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Paren;
+import com.squarespace.less.model.SelectorPart;
 import com.squarespace.less.model.TextElement;
 import com.squarespace.less.model.ValueElement;
 import com.squarespace.less.model.Variable;
+import com.squarespace.less.model.WildcardElement;
 
 
 /**
- * Parses pairs of combinators and elements.
+ * Parses various element {@link SelectorPart}s.
  */
 public class ElementParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
 
-    // Note: this quietly eats combinator characters not followed by a valid
-    // element. The combinator character will be parsed and when no
-    // element is found, we simply return null. This currently replicates the
-    // behavior of the upstream less.js parser.
-
-    Combinator comb = parseCombinator(stm);
     stm.skipWs();
     char ch = stm.peek();
 
+    // The parsing logic below runs a series of tests of the current
+    // stream position. When one fails to match it falls back to
+    // the next pattern.
+    //
+    // In order of preference, the patterns attempted are:
+    //
+    //  element0   - decimal percent
+    //  element1   - main class/id pattern
+    //  asterisk   - universal selector
+    //  ampersand  - wild card selector
+    //  attribute  - rich attribute pattern
+    //  element2   - parenthesis-wrapped text element
+    //  element3   - class/id prefix to a variable element
+    //  variable   - curly variable
+    //  sub        - parenthesis-wrapped variable / selector
+
     if (stm.matchElement0()) {
-      return new TextElement(comb, stm.token());
+      return new TextElement(stm.token());
 
     } else if (stm.matchElement1()) {
-      return new TextElement(comb, stm.token());
+      return new TextElement(stm.token());
 
-    } else if (ch == Chars.ASTERISK || ch == Chars.AMPERSAND) {
+    } else if (ch == ASTERISK) {
       stm.seek1();
-      return new TextElement(comb, "" + ch);
+      return new TextElement(Character.toString(ch));
+
+    } else if (ch == AMPERSAND) {
+      stm.seek1();
+      return new WildcardElement();
     }
 
-    Node elem = parseAttribute(stm, comb);
+    // If nothing is matched, attempt to parse an attribute element.
+    SelectorPart elem = parseAttribute(stm);
     if (elem != null) {
       return elem;
     }
 
     if (stm.matchElement2()) {
-      return new TextElement(comb, stm.token());
+      return new TextElement(stm.token());
 
     } else if (stm.matchElement3()) {
-      return new TextElement(comb, stm.token());
+      return new TextElement(stm.token());
 
     } else {
       Node var = stm.parse(VARIABLE_CURLY);
       if (var != null) {
-        return new ValueElement(comb, (Variable)var);
+        return new ValueElement((Variable)var);
       }
     }
 
     if (elem == null) {
-      elem = parseSub(stm);
-      if (elem != null) {
-        return new ValueElement(comb, elem);
+      Node node = parseSub(stm);
+      if (node != null) {
+        return new ValueElement(node);
       }
     }
+
     return null;
   }
 
@@ -93,8 +113,8 @@ public class ElementParselet implements Parselet {
    * For example input selector:  > p[class~="foo"]
    * This method parses the section between the '[' and ']' characters.
    */
-  private Element parseAttribute(LessStream stm, Combinator comb) throws LessException {
-    if (!stm.seekIf(Chars.LEFT_SQUARE_BRACKET)) {
+  private SelectorPart parseAttribute(LessStream stm) throws LessException {
+    if (!stm.seekIf(LEFT_SQUARE_BRACKET)) {
       return null;
     }
 
@@ -108,7 +128,7 @@ public class ElementParselet implements Parselet {
       return null;
     }
 
-    AttributeElement elem = new AttributeElement(comb);
+    AttributeElement elem = new AttributeElement();
     elem.add(key);
     if (stm.matchAttributeOp()) {
       Node oper = new Anonymous(stm.token());
@@ -122,38 +142,23 @@ public class ElementParselet implements Parselet {
       }
     }
 
-    if (!stm.seekIf(Chars.RIGHT_SQUARE_BRACKET)) {
+    if (!stm.seekIf(RIGHT_SQUARE_BRACKET)) {
       return null;
     }
     return elem;
   }
 
   /**
-   * Parse a single combinator character from the stream.
+   * Parses a parenthesis-wrapped variable or sub-selector.
    */
-  private Combinator parseCombinator(LessStream stm) throws LessException {
-    char prev = stm.peek(-1);
-    int skipped = stm.skipWs();
-    char ch = stm.peek();
-    boolean useDesc = (prev == Chars.EOF || prev == Chars.COMMA || prev == Chars.LEFT_PARENTHESIS);
-    if (CharClass.combinator(ch)) {
-      stm.seek1();
-      return Combinator.fromChar(ch);
-
-    } else if (skipped > 0 || CharClass.whitespace(prev) || useDesc) {
-      return Combinator.DESC;
-    }
-    return null;
-  }
-
   private Node parseSub(LessStream stm) throws LessException {
     stm.skipWs();
-    if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
+    if (!stm.seekIf(LEFT_PARENTHESIS)) {
       return null;
     }
     Node value = stm.parse(ELEMENT_SUB);
     stm.skipWs();
-    if (value != null && stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
+    if (value != null && stm.seekIf(RIGHT_PARENTHESIS)) {
       return new Paren(value);
     }
     return null;

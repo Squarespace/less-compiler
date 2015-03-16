@@ -16,10 +16,9 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.model.Combinator.CHILD;
-import static com.squarespace.less.model.Combinator.DESC;
-import static com.squarespace.less.model.Combinator.SIB_ADJ;
-import static com.squarespace.less.model.Combinator.SIB_GEN;
+import static com.squarespace.less.model.CombinatorType.CHILD;
+import static com.squarespace.less.model.CombinatorType.SIB_ADJ;
+import static com.squarespace.less.model.CombinatorType.SIB_GEN;
 
 import org.testng.annotations.Test;
 
@@ -32,23 +31,23 @@ public class ElementTest extends LessTestBase {
 
   @Test
   public void testElement() throws LessException {
-    LessHarness h = new LessHarness(Parselets.ELEMENT);
+    LessHarness h = new LessHarness(Parselets.SELECTOR);
 
-    h.parseEquals("h1", element(DESC, "h1"));
-    h.parseEquals(" h1", element(DESC, "h1"));
-    h.parseEquals("*", element("*"));
-    h.parseEquals(">foo", element(CHILD, "foo"));
-    h.parseEquals("+:hover", element(SIB_ADJ, ":hover"));
-    h.parseEquals("~.class-one", element(SIB_GEN, ".class-one"));
-    h.parseEquals(">&", element(CHILD, "&"));
+    h.parseEquals("h1", selector(element("h1")));
+    h.parseEquals(" h1", selector(element("h1")));
+    h.parseEquals("*", selector(element("*")));
+    h.parseEquals(">foo", selector(comb(CHILD), element("foo")));
+    h.parseEquals("+:hover", selector(comb(SIB_ADJ), element(":hover")));
+    h.parseEquals("~.class-one", selector(comb(SIB_GEN), element(".class-one")));
+    h.parseEquals(">&", selector(comb(CHILD), element("&")));
 
     // Attribute
-    h.parseEquals("[foo]", attr(DESC, anon("foo")));
-    h.parseEquals("[foo~=\"bar\"]", attr(DESC, anon("foo"), anon("~="), quoted('"', false, "bar")));
+    h.parseEquals("[foo]", selector(attr(anon("foo"))));
+    h.parseEquals("[foo~=\"bar\"]", selector(attr(anon("foo"), anon("~="), quoted('"', false, "bar"))));
 
     // Variable
-    h.parseEquals("@{a}", varelem(DESC, var("@a", true)));
-    h.parseEquals(">@{foo}", varelem(CHILD, var("@foo", true)));
+    h.parseEquals("@{a}", selector(element(var("@a", true))));
+    h.parseEquals(">@{foo}", selector(comb(CHILD), element(var("@foo", true))));
   }
 
 }
