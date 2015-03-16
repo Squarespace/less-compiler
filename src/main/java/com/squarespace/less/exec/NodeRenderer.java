@@ -335,7 +335,7 @@ public class NodeRenderer {
     List<Element> elements = selector.elements();
     int size = elements.size();
     for (int i = 0; i < size; i++) {
-      renderImpl(buf, elements.get(i), i == 0);
+      renderElement(buf, elements.get(i), i == 0);
     }
   }
 
@@ -344,7 +344,7 @@ public class NodeRenderer {
    * of this method is required to properly emit whitespace before and after combinators, depending
    * on if we're in compress mode or not.
    */
-  private static void renderImpl(Buffer buf, Element element, boolean isFirst) {
+  public static void renderElement(Buffer buf, Element element, boolean isFirst) {
     Combinator combinator = element.combinator();
     if (combinator != null) {
       boolean isDescendant = combinator == Combinator.DESC;
@@ -374,6 +374,13 @@ public class NodeRenderer {
       }
     }
 
+    renderElement(buf, element);
+  }
+
+  /**
+   * Render CSS for an element.
+   */
+  public static void renderElement(Buffer buf, Element element) {
     // Wildcard elements do not produce output
     if (element.isWildcard()) {
       return;
@@ -396,7 +403,6 @@ public class NodeRenderer {
       }
       buf.append(']');
     }
-
   }
 
   /** Render a URL node. */

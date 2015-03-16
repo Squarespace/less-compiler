@@ -222,6 +222,7 @@ public class LessParser {
             // Ensure the variable cache gets rebuilt, so any variable lookups
             // see definitions added by the import.
             block.resetVariableCache();
+            block.orFlags(tempBlock);
           }
         } catch (LessException e) {
           throw ParseUtils.parseError(e, newImport.fileName(), deferred.raw, newImport.parseOffset());

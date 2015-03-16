@@ -76,11 +76,17 @@ public class LessRoundTripTest extends LessSuiteBase {
     Stylesheet sheetTwo = parse(sourceTwo, importRoot);
 
     if (!sheetOne.equals(sheetTwo)) {
-      System.err.println("sheets not equal");
+      System.err.println("Syntax trees not equal");
+      System.err.println(sheetOne);
+      System.err.println("================================================");
+      System.err.println(sheetTwo);
       return false;
     }
     if (diff(sourceOne, sourceTwo) != null) {
-      System.err.println("diff not equal");
+      System.err.println("Diff of rendered output not equal:");
+      System.err.println(sourceOne);
+      System.err.println("================================================");
+      System.err.println(sourceTwo);
       return false;
     }
     return true;

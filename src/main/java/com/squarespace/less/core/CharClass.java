@@ -56,6 +56,10 @@ public class CharClass {
 
   public static final int ESCAPE = 0x4000;
 
+  public static final int HEXDIGIT = 0x8000;
+
+  public static final int DASH = 0x10000;
+
   /**
    * The characters we care about all live below this limit.
    */
@@ -207,7 +211,7 @@ public class CharClass {
         return SELECTOR_END | ENCODE_URI;
 
       case '-':
-        return CALL_START | DIMENSION_START | KEYWORD_START | PROPERTY_START | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return DASH | CALL_START | DIMENSION_START | KEYWORD_START | PROPERTY_START | ENCODE_URI | ENCODE_URI_COMPONENT;
 
       case '.':
         return DIMENSION_START | ENCODE_URI | ENCODE_URI_COMPONENT;
@@ -225,7 +229,7 @@ public class CharClass {
       case '7':
       case '8':
       case '9':
-        return DIGIT | DIMENSION_START | PROPERTY_START;
+        return DIGIT | DIMENSION_START | PROPERTY_START | HEXDIGIT;
 
       case ':':
         return ENCODE_URI | ESCAPE;
@@ -251,7 +255,7 @@ public class CharClass {
       case 'D':
       case 'E':
       case 'F':
-        return UPPERCASE | CALL_START | KEYWORD_START;
+        return UPPERCASE | CALL_START | KEYWORD_START | HEXDIGIT;
 
       case 'G':
       case 'H':
@@ -284,7 +288,7 @@ public class CharClass {
       case 'd':
       case 'e':
       case 'f':
-        return LOWERCASE | CALL_START | KEYWORD_START | PROPERTY_START;
+        return LOWERCASE | CALL_START | KEYWORD_START | PROPERTY_START | HEXDIGIT;
 
       case 'g':
       case 'h':

@@ -74,7 +74,7 @@ public class Patterns {
 
   public static final Pattern EXTEND = pattern(":extend\\(");
 
-  public static final Pattern EXTEND_ALL = pattern("all\\s*(\\)|,)");
+  public static final Pattern EXTEND_ALL = pattern("all\\s*[),]");
 
   public static final Pattern HEXCOLOR = pattern("#(" + _HEXCHAR + "{6}|" + _HEXCHAR + "{3})");
 

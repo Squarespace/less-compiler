@@ -30,6 +30,7 @@ import com.squarespace.less.exec.SelectorUtils;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.parse.Importer;
+import com.squarespace.less.parse.SelectorParser;
 
 
 /**
@@ -57,6 +58,8 @@ public class LessContext {
 
   private final LessOptions opts;
 
+  private final SelectorParser selectorParser;
+
   /**
    * Controls the importing of external stylesheets.
    */
@@ -80,6 +83,7 @@ public class LessContext {
     this.opts = opts;
     this.importer = new Importer(this, loader);
     this.comparator = new NodeComparator(this);
+    this.selectorParser = new SelectorParser(this);
   }
 
   public LessOptions options() {
@@ -104,6 +108,10 @@ public class LessContext {
 
   public MixinResolver mixinResolver() {
     return mixinResolver;
+  }
+
+  public SelectorParser selectorParser() {
+    return selectorParser;
   }
 
   public void sanityCheck() {
