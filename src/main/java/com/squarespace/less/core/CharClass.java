@@ -26,39 +26,43 @@ public class CharClass {
 
   // Character class bits that can be set/cleared in a bit mask
 
-  public static final int DIGIT = 0x01;
+  public static final int DIGIT = 1 << 0;
 
-  public static final int LOWERCASE = 0x02;
+  public static final int LOWERCASE = 1 << 1;
 
-  public static final int UPPERCASE = 0x04;
+  public static final int UPPERCASE = 1 << 2;
 
-  public static final int KEYWORD_START = 0x08;
+  public static final int KEYWORD_START = 1 << 3;
 
-  public static final int DIMENSION_START = 0x10;
+  public static final int DIMENSION_START = 1 << 4;
 
-  public static final int NONASCII = 0x20;
+  public static final int NONASCII = 1 << 5;
 
-  public static final int NONPRINTABLE = 0x40;
+  public static final int NONPRINTABLE = 1 << 6;
 
-  public static final int CALL_START = 0x80;
+  public static final int CALL_START = 1 << 7;
 
-  public static final int COMBINATOR = 0x100;
+  public static final int COMBINATOR = 1 << 8;
 
-  public static final int SELECTOR_END = 0x200;
+  public static final int SELECTOR_END = 1 << 9;
 
-  public static final int PROPERTY_START = 0x400;
+  public static final int PROPERTY_START = 1 << 10;
 
-  public static final int VARIABLE_START = 0x800;
+  public static final int VARIABLE_START = 1 << 11;
 
-  public static final int ENCODE_URI = 0x1000;
+  public static final int ENCODE_URI = 1 << 12;
 
-  public static final int ENCODE_URI_COMPONENT = 0x2000;
+  public static final int ENCODE_URI_COMPONENT = 1 << 13;
 
-  public static final int ESCAPE = 0x4000;
+  public static final int ESCAPE = 1 << 14;
 
-  public static final int HEXDIGIT = 0x8000;
+  public static final int HEXDIGIT = 1 << 15;
 
-  public static final int DASH = 0x10000;
+  public static final int DASH = 1 << 16;
+
+  public static final int UNDERSCORE = 1 << 17;
+
+  public static final int PERIOD = 1 << 18;
 
   /**
    * The characters we care about all live below this limit.
@@ -121,19 +125,22 @@ public class CharClass {
     return isMember(ch, UPPERCASE);
   }
 
+  /**
+   * V8 JavaScript engine's whitespace ranges.
+   */
   public static boolean whitespace(char ch) {
-    return (ch >= '\t' && ch <= '\r')
-        || (ch == ' ')
-        // v8 JavaScript engine's whitespace ranges follow
-        || (ch == '\u00a0')
-        || (ch == '\u1680')
-        || (ch == '\u180e')
-        || (ch >= '\u2000' && ch <= '\u200a')
-        || (ch >= '\u2028' && ch <= '\u2029')
-        || (ch == '\u202f')
-        || (ch == '\u205f')
-        || (ch == '\u3000')
-        || (ch == '\ufeff');
+    return (ch == ' ')
+        || (ch >= '\t' && ch <= '\r')
+        || (ch == '\u00a0')   // nbsp
+        || (ch == '\u1680')   // ogham space
+        || (ch == '\u180e')   // mongolian vowel separator
+        || (ch >= '\u2000' && ch <= '\u200a')   // [en space, ..., hair space]
+        || (ch == '\u2028')   // line separator
+        || (ch == '\u2029')   // paragraph separator
+        || (ch == '\u202f')   // narrow nbsp
+        || (ch == '\u205f')   // medium mathematical space
+        || (ch == '\u3000')   // ideographic space
+        || (ch == '\ufeff');  // byte order mark
   }
 
   public static boolean isMember(char ch, int cls) {
@@ -211,7 +218,13 @@ public class CharClass {
         return SELECTOR_END | ENCODE_URI;
 
       case '-':
-        return DASH | CALL_START | DIMENSION_START | KEYWORD_START | PROPERTY_START | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return DASH
+             | CALL_START
+             | DIMENSION_START
+             | KEYWORD_START
+             | PROPERTY_START
+             | ENCODE_URI
+             | ENCODE_URI_COMPONENT;
 
       case '.':
         return DIMENSION_START | ENCODE_URI | ENCODE_URI_COMPONENT;
@@ -280,7 +293,12 @@ public class CharClass {
         return UPPERCASE | CALL_START | KEYWORD_START;
 
       case '_':
-        return CALL_START | KEYWORD_START | PROPERTY_START | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return UNDERSCORE
+             | CALL_START
+             | KEYWORD_START
+             | PROPERTY_START
+             | ENCODE_URI
+             | ENCODE_URI_COMPONENT;
 
       case 'a':
       case 'b':

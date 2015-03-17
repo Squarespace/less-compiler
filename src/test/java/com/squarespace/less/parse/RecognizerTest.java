@@ -131,18 +131,18 @@ public class RecognizerTest {
   @Test
   public void testCharacterClass() {
 
-    // REGEX  (\d+\.\d+|\d+)
-    Recognizer pattern = choice(decimal(), digits());
-
+    // REGEX  \d*\.?\d+
+    Recognizer pattern = decimal();
+    assertEquals(1, match(pattern, "1"));
+    assertEquals(2, match(pattern, ".1"));
+    assertEquals(2, match(pattern, "1."));
     assertEquals(3, match(pattern, "123"));
     assertEquals(6, match(pattern, "123.45"));
+    assertEquals(6, match(pattern, "123.45abc"));
+    assertEquals(6, match(pattern, "123.45."));
 
-    assertEquals(9, match(pattern, 3, "___123.45"));
-
-    // REGEX  \d+(\.\d+)*
-    pattern = sequence(digits(), zeroOrMore(sequence(characters('.'), digits())));
-    assertEquals(3, match(pattern, "123"));
-    assertEquals(6, match(pattern, "123.45"));
+    assertEquals(FAIL, match(pattern, "."));
+    assertEquals(FAIL, match(pattern, ".x"));
 
     assertEquals(9, match(pattern, 3, "___123.45"));
 
@@ -342,6 +342,7 @@ public class RecognizerTest {
     assertEquals(7, match(pattern, "foo-bar"));
     assertEquals(8, match(pattern, "-foo-bar"));
     assertEquals(11, match(pattern, 3, "___-foo-bar"));
+    assertEquals(11, match(pattern, 3, "___foo__bar"));
 
     assertEquals(FAIL, match(pattern, ".foo-bar"));
   }

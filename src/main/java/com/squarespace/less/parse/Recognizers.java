@@ -16,6 +16,12 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.CharClass.DASH;
+import static com.squarespace.less.core.CharClass.DIGIT;
+import static com.squarespace.less.core.CharClass.LOWERCASE;
+import static com.squarespace.less.core.CharClass.UNDERSCORE;
+import static com.squarespace.less.core.CharClass.UPPERCASE;
+
 import com.squarespace.less.core.CharClass;
 
 
@@ -41,6 +47,8 @@ public class Recognizers {
   public static final int FAIL = -1;
 
   private static final Recognizer ANY = new Any();
+
+  private static final Recognizer WHITESPACE = new Whitespace();
 
   private Recognizers() {
   }
@@ -70,7 +78,7 @@ public class Recognizers {
   }
 
   public static Recognizer decimal() {
-    return sequence(digits(), characters('.'), digits());
+    return new Recognizers.Decimal();
   }
 
   public static Recognizer digit() {
@@ -121,12 +129,16 @@ public class Recognizers {
     return new Recognizers.Sequence(patterns);
   }
 
+  public static Recognizer whitespace() {
+    return WHITESPACE;
+  }
+
   public static Recognizer word() {
-    return charClass(CharClass.LOWERCASE | CharClass.UPPERCASE | CharClass.DIGIT);
+    return charClass(LOWERCASE | UPPERCASE | DIGIT | UNDERSCORE);
   }
 
   public static Recognizer worddash() {
-    return charClass(CharClass.LOWERCASE | CharClass.UPPERCASE | CharClass.DIGIT | CharClass.DASH);
+    return charClass(LOWERCASE | UPPERCASE | DIGIT | UNDERSCORE | DASH);
   }
 
   public static Recognizer zeroOrOne(Recognizer pattern) {
@@ -308,14 +320,43 @@ public class Recognizers {
       for (Recognizer pattern : patterns) {
         // Try choices until we see one that advances past current position.
         int res = pattern.match(seq, pos, length);
-        if (res == pos) {
-          save = pos;
-        } else if (res != FAIL) {
-          return res;
+        if (res > save) {
+          save = Math.max(save, res);
         }
       }
       return save;
     }
+  }
+
+  /**
+   * Optimized to match decimal with zero or more leading digits and
+   * one optional decimal point. Must have at least 1 digit to pass,
+   * regardless if decimal is leading or trailing.
+   */
+  static class Decimal implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int length) {
+      int save = pos;
+      int res = FAIL;
+      boolean dot = false;
+      while (pos < length) {
+        char ch = seq.charAt(pos);
+        if (ch == '.') {
+          if (dot) {
+            break;
+          }
+          dot = true;
+
+        } else if (!CharClass.digit(ch)) {
+          break;
+        }
+        pos++;
+        res = pos;
+      }
+      return (dot && (save == pos - 1)) ? FAIL : res;
+    }
+
   }
 
   /**
@@ -416,6 +457,22 @@ public class Recognizers {
     public Star(Recognizer pattern) {
       super(pattern, 0, 0);
     }
+  }
+
+
+  /**
+   * Use a method call to detect whitespace.
+   */
+  static class Whitespace implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int length) {
+      if (pos < length && CharClass.whitespace(seq.charAt(pos))) {
+        return pos + 1;
+      }
+      return FAIL;
+    }
+
   }
 
   interface Recognizer {

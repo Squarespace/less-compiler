@@ -17,6 +17,7 @@
 package com.squarespace.less.parse;
 
 import static com.squarespace.less.core.SyntaxErrorMaker.incompleteParse;
+import static com.squarespace.less.parse.RecognizerPatterns.DIGITS;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,6 +32,7 @@ import com.squarespace.less.core.Constants;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Node;
+import com.squarespace.less.parse.Recognizers.Recognizer;
 
 
 /**
@@ -38,49 +40,15 @@ import com.squarespace.less.model.Node;
  */
 public class LessStream extends Stream {
 
-  private final Matcher matcherAnd;
-
-  private final Matcher matcherAnonRuleValue;
-
   private final Matcher matcherAttributeKey;
 
   private final Matcher matcherAttributeOp;
 
-  private final Matcher matcherBoolOperator;
-
-  private final Matcher matcherCallName;
-
-  private final Matcher matcherDigits;
-
-  private final Matcher matcherDimensionUnit;
-
-  private final Matcher matcherDimensionValue;
-
   private final Matcher matcherDirective;
-
-  private final Matcher matcherElement0;
-
-  private final Matcher matcherElement1;
-
-  private final Matcher matcherElement2;
-
-  private final Matcher matcherElement3;
-
-  private final Matcher matcherExtend;
-
-  private final Matcher matcherExtendAll;
-
-  private final Matcher matcherHexColor;
-
-  private final Matcher matcherIdentifier;
-
-  private final Matcher matcherImportant;
 
   private final Matcher matcherKeyword;
 
   private final Matcher matcherMixinName;
-
-  private final Matcher matcherNot;
 
   private final Matcher matcherOpacity;
 
@@ -91,12 +59,6 @@ public class LessStream extends Stream {
   private final Matcher matcherShorthand;
 
   private final Matcher matcherUnicodeRange;
-
-  private final Matcher matcherUrlStart;
-
-  private final Matcher matcherWhen;
-
-  private final Matcher matcherWord;
 
   private final LessParser parser;
 
@@ -148,36 +110,16 @@ public class LessStream extends Stream {
     this.fileName = this.path.getFileName();
     this.parseEnv = (env == null) ? new ExecEnv(parser.context()) : env;
 
-    this.matcherAnd = Patterns.AND.matcher(raw);
-    this.matcherAnonRuleValue = Patterns.ANON_RULE_VALUE.matcher(raw);
     this.matcherAttributeKey = Patterns.ATTRIBUTE_KEY.matcher(raw);
     this.matcherAttributeOp = Patterns.ATTRIBUTE_OP.matcher(raw);
-    this.matcherBoolOperator = Patterns.BOOL_OPERATOR.matcher(raw);
-    this.matcherCallName = Patterns.CALL_NAME.matcher(raw);
-    this.matcherDigits = Patterns.DIGITS.matcher(raw);
-    this.matcherDimensionUnit = Patterns.DIMENSION_UNIT.matcher(raw);
-    this.matcherDimensionValue = Patterns.DIMENSION_VALUE.matcher(raw);
     this.matcherDirective = Patterns.DIRECTIVE.matcher(raw);
-    this.matcherElement0 = Patterns.ELEMENT0.matcher(raw);
-    this.matcherElement1 = Patterns.ELEMENT1.matcher(raw);
-    this.matcherElement2 = Patterns.ELEMENT2.matcher(raw);
-    this.matcherElement3 = Patterns.ELEMENT3.matcher(raw);
-    this.matcherExtend = Patterns.EXTEND.matcher(raw);
-    this.matcherExtendAll = Patterns.EXTEND_ALL.matcher(raw);
-    this.matcherHexColor = Patterns.HEXCOLOR.matcher(raw);
-    this.matcherIdentifier = Patterns.IDENTIFIER.matcher(raw);
-    this.matcherImportant = Patterns.IMPORTANT.matcher(raw);
     this.matcherKeyword = Patterns.KEYWORD.matcher(raw);
     this.matcherMixinName = Patterns.MIXIN_NAME.matcher(raw);
-    this.matcherNot = Patterns.NOT.matcher(raw);
     this.matcherOpacity = Patterns.OPACITY.matcher(raw);
     this.matcherProperty = Patterns.PROPERTY.matcher(raw);
     this.matcherRatio = Patterns.RATIO.matcher(raw);
     this.matcherShorthand = Patterns.SHORTHAND.matcher(raw);
     this.matcherUnicodeRange = Patterns.UNICODE_DESCRIPTOR.matcher(raw);
-    this.matcherUrlStart = Patterns.URLSTART.matcher(raw);
-    this.matcherWhen = Patterns.WHEN.matcher(raw);
-    this.matcherWord = Patterns.WORD.matcher(raw);
   }
 
   public LessException parseError(LessException exc) {
@@ -275,11 +217,11 @@ public class LessStream extends Stream {
   }
 
   public boolean matchAnd() {
-    return finish(match(matcherAnd));
+    return finish(match(RecognizerPatterns.AND));
   }
 
   public boolean matchAnonRuleValue() {
-    if (!match(matcherAnonRuleValue)) {
+    if (!match(RecognizerPatterns.ANON_RULE_VALUE)) {
       return false;
     }
     matchEnd--;
@@ -296,12 +238,12 @@ public class LessStream extends Stream {
     return finish(match(matcherAttributeOp));
   }
 
-  public boolean matchBoolOperator() {
-    return finish(match(matcherBoolOperator));
+  public boolean matchConditionOp() {
+    return finish(match(RecognizerPatterns.CONDITION_OP));
   }
 
   public boolean matchCallName() {
-    if (!match(matcherCallName)) {
+    if (!match(RecognizerPatterns.CALL_NAME)) {
       return false;
     }
     // Back up to before the parenthesis.
@@ -311,15 +253,15 @@ public class LessStream extends Stream {
   }
 
   public boolean matchDigits() {
-    return finish(match(matcherDigits));
+    return finish(match(DIGITS));
   }
 
   public boolean matchDimensionUnit() {
-    return finish(match(matcherDimensionUnit));
+    return finish(match(RecognizerPatterns.DIMENSION_UNIT));
   }
 
   public boolean matchDimensionValue() {
-    return finish(match(matcherDimensionValue));
+    return finish(match(RecognizerPatterns.DIMENSION_VALUE));
   }
 
   public boolean matchDirective() {
@@ -327,27 +269,27 @@ public class LessStream extends Stream {
   }
 
   public boolean matchElement0() {
-    return finish(match(matcherElement0));
+    return finish(match(RecognizerPatterns.ELEMENT0));
   }
 
   public boolean matchElement1() {
-    return finish(match(matcherElement1));
+    return finish(match(RecognizerPatterns.ELEMENT1));
   }
 
   public boolean matchElement2() {
-    return finish(match(matcherElement2));
+    return finish(match(RecognizerPatterns.ELEMENT2));
   }
 
   public boolean matchElement3() {
-    return finish(match(matcherElement3));
+    return finish(match(RecognizerPatterns.ELEMENT3));
   }
 
   public boolean matchExtend() {
-    return finish(match(matcherExtend));
+    return finish(match(RecognizerPatterns.EXTEND));
   }
 
   public boolean matchExtendAll() {
-    if (!match(matcherExtendAll)) {
+    if (!match(RecognizerPatterns.EXTEND_ALL)) {
       return false;
     }
     // Back up to before the comma or parenthesis.
@@ -358,15 +300,15 @@ public class LessStream extends Stream {
   }
 
   public boolean matchHexColor() {
-    return finish(match(matcherHexColor));
+    return finish(match(RecognizerPatterns.HEXCOLOR));
   }
 
   public boolean matchIdentifier() {
-    return finish(match(matcherIdentifier));
+    return finish(match(RecognizerPatterns.IDENTIFIER));
   }
 
   public boolean matchImportant() {
-    return finish(match(matcherImportant));
+    return finish(match(RecognizerPatterns.IMPORTANT));
   }
 
   public boolean matchKeyword() {
@@ -378,7 +320,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchNot() {
-    return finish(match(matcherNot));
+    return finish(match(RecognizerPatterns.NOT));
   }
 
   public boolean matchOpacity() {
@@ -398,15 +340,15 @@ public class LessStream extends Stream {
   }
 
   public boolean matchUrlStart() {
-    return finish(match(matcherUrlStart));
+    return finish(match(RecognizerPatterns.URLSTART));
   }
 
   public boolean matchWhen() {
-    return finish(match(matcherWhen));
+    return finish(match(RecognizerPatterns.WHEN));
   }
 
   public boolean matchWord() {
-    return finish(match(matcherWord));
+    return finish(match(RecognizerPatterns.WORD));
   }
 
   public boolean peekShorthand() {
@@ -425,6 +367,15 @@ public class LessStream extends Stream {
       matchEnd = matcher.end();
     }
     return matched;
+  }
+
+  private boolean match(Recognizer recognizer) {
+    int pos = recognizer.match(raw, index, length);
+    if (pos > index) {
+      matchEnd = pos;
+      return true;
+    }
+    return false;
   }
 
   private boolean finish(boolean result) {

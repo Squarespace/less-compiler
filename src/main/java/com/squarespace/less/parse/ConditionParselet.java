@@ -78,7 +78,7 @@ public class ConditionParselet implements Parselet {
     }
 
     stm.skipWs();
-    if (stm.matchBoolOperator()) {
+    if (stm.matchConditionOp()) {
       Operator op = Operator.fromString(stm.token());
       Node right = parseValue(stm);
       if (right != null) {

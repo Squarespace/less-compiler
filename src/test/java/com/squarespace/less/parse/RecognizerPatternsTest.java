@@ -16,7 +16,11 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.parse.RecognizerPatterns.AND;
 import static com.squarespace.less.parse.RecognizerPatterns.ATTRIBUTE_KEY;
+import static com.squarespace.less.parse.RecognizerPatterns.ATTRIBUTE_OP;
+import static com.squarespace.less.parse.RecognizerPatterns.CALL_NAME;
+import static com.squarespace.less.parse.RecognizerPatterns.CONDITION_OP;
 import static com.squarespace.less.parse.RecognizerPatterns.ELEMENT0;
 import static com.squarespace.less.parse.RecognizerPatterns.ELEMENT1;
 import static com.squarespace.less.parse.Recognizers.FAIL;
@@ -30,12 +34,46 @@ import com.squarespace.less.parse.Recognizers.Recognizer;
 public class RecognizerPatternsTest {
 
   @Test
+  public void testAnd() {
+    assertEquals(3, match(AND, "and"));
+    assertEquals(3, match(AND, "andx"));
+
+    assertEquals(FAIL, match(AND, "AND"));
+  }
+
+  @Test
   public void testAttributeKey() {
     assertEquals(1, match(ATTRIBUTE_KEY, "a"));
+    assertEquals(1, match(ATTRIBUTE_KEY, "a..."));
     assertEquals(2, match(ATTRIBUTE_KEY, "\\."));
     assertEquals(13, match(ATTRIBUTE_KEY, "foo-bar\\.-baz"));
+  }
 
-    assertEquals(1, match(ATTRIBUTE_KEY, "a..."));
+  @Test
+  public void testAttributeOp() {
+    assertEquals(2, match(ATTRIBUTE_OP, "~="));
+    assertEquals(2, match(ATTRIBUTE_OP, "*="));
+    assertEquals(1, match(ATTRIBUTE_OP, "===="));
+
+    assertEquals(FAIL, match(ATTRIBUTE_OP, "+="));
+  }
+
+  @Test
+  public void testConditionOp() {
+    assertEquals(2, match(CONDITION_OP, "<="));
+    assertEquals(2, match(CONDITION_OP, ">="));
+    assertEquals(2, match(CONDITION_OP, "=<"));
+    assertEquals(2, match(CONDITION_OP, "=="));
+    assertEquals(1, match(CONDITION_OP, "=~"));
+
+    assertEquals(FAIL, match(CONDITION_OP, "~="));
+  }
+
+  @Test
+  public void testCallName() {
+    assertEquals(12, match(CALL_NAME, "abc-123_def("));
+    assertEquals(14, match(CALL_NAME, "progid:foobar("));
+    assertEquals(2, match(CALL_NAME, "%("));
   }
 
   @Test
@@ -62,6 +100,42 @@ public class RecognizerPatternsTest {
     assertEquals(5, match(RecognizerPatterns.ELEMENT2, "(foo)"));
 
     assertEquals(FAIL, match(RecognizerPatterns.ELEMENT2, "()"));
+  }
+
+  @Test
+  public void testElement3() {
+    assertEquals(1, match(RecognizerPatterns.ELEMENT3, ".@{var}"));
+    assertEquals(1, match(RecognizerPatterns.ELEMENT3, "#@{var}"));
+
+    assertEquals(FAIL, match(RecognizerPatterns.ELEMENT3, ".#@{var}"));
+    assertEquals(FAIL, match(RecognizerPatterns.ELEMENT3, ".foo@{var}"));
+  }
+
+  @Test
+  public void testDimensionValue() {
+    assertEquals(1, match(RecognizerPatterns.DIMENSION_VALUE, "1"));
+    assertEquals(2, match(RecognizerPatterns.DIMENSION_VALUE, "1."));
+    assertEquals(3, match(RecognizerPatterns.DIMENSION_VALUE, "1.0"));
+    assertEquals(2, match(RecognizerPatterns.DIMENSION_VALUE, ".1"));
+    assertEquals(3, match(RecognizerPatterns.DIMENSION_VALUE, "0.1"));
+    assertEquals(5, match(RecognizerPatterns.DIMENSION_VALUE, "11.22"));
+
+    assertEquals(FAIL, match(RecognizerPatterns.DIMENSION_VALUE, "."));
+    assertEquals(FAIL, match(RecognizerPatterns.DIMENSION_VALUE, ".x"));
+    assertEquals(FAIL, match(RecognizerPatterns.DIMENSION_VALUE, "x."));
+  }
+
+  @Test
+  public void testHexColor() {
+    assertEquals(7, match(RecognizerPatterns.HEXCOLOR, "#000000"));
+    assertEquals(7, match(RecognizerPatterns.HEXCOLOR, "#123456"));
+    assertEquals(4, match(RecognizerPatterns.HEXCOLOR, "#123"));
+    assertEquals(4, match(RecognizerPatterns.HEXCOLOR, "#1234"));
+    assertEquals(7, match(RecognizerPatterns.HEXCOLOR, "#123456789"));
+
+    assertEquals(FAIL, match(RecognizerPatterns.HEXCOLOR, "#"));
+    assertEquals(FAIL, match(RecognizerPatterns.HEXCOLOR, "#1"));
+    assertEquals(FAIL, match(RecognizerPatterns.HEXCOLOR, "#12"));
   }
 
   private int match(Recognizer pattern, String str) {
