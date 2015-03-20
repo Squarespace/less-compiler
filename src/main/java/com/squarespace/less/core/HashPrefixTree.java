@@ -18,6 +18,7 @@ package com.squarespace.less.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -67,6 +68,11 @@ public class HashPrefixTree<K, V> {
   private HPTNode<K, V> root;
 
   /**
+   * Sequence of key ids for this tree.
+   */
+  private int keyIdSequence;
+
+  /**
    * Construct a tree with the given key comparator, using the current
    * system timestamp as the hash seed.
    */
@@ -112,7 +118,7 @@ public class HashPrefixTree<K, V> {
    * searching for keys that are not long enough to result in a full match,
    * based on the tree depth.
    */
-  public List<V> search(List<K> key) {
+  public HPTNode<K, V> search(List<K> key) {
     check(key);
     int size = key.size();
 
@@ -125,7 +131,10 @@ public class HashPrefixTree<K, V> {
       }
       current = find(current, i, key.get(i), false);
     }
-    return (current == null) ? null : current.values;
+    if (current == null || current.values == null) {
+      return null;
+    }
+    return current.values.isEmpty() ? null : current;
   }
 
   /**
@@ -156,7 +165,12 @@ public class HashPrefixTree<K, V> {
    * will fail fast.  For example, if the root does not contain "a" searching would
    * skip to step 5 above.
    */
+
   public List<HPTMatch<V>> searchSubsequences(List<K> key) {
+    return searchSubsequences(key, null);
+  }
+
+  public List<HPTMatch<V>> searchSubsequences(List<K> key, Set<Integer> dupeFilter) {
     check(key);
 
     // List of matches initialized on first match
@@ -186,8 +200,12 @@ public class HashPrefixTree<K, V> {
           if (matches == null) {
             matches = new ArrayList<>();
           }
-          // Add the match start/end indices, where end is exclusive.
-          matches.add(new HPTMatch<>(start, i + 1, current.values));
+
+          // If a dupe filter is present, avoid duplicate matches.
+          if (dupeFilter == null || !dupeFilter.contains(current.keyId)) {
+            // Add the match start/end indices, where end is exclusive.
+            matches.add(new HPTMatch<>(start, i + 1, current.keyId, current.values));
+          }
         }
       }
 
@@ -252,7 +270,7 @@ public class HashPrefixTree<K, V> {
   }
 
   private HPTNode<K, V> create(HPTNode<K, V> parent, int index, K keyPart) {
-    HPTNode<K, V> result = new HPTNode<>(keyPart);
+    HPTNode<K, V> result = new HPTNode<>(keyIdSequence++, keyPart);
     result.next = parent.children[index];
     parent.children[index] = result;
     parent.size++;
@@ -320,7 +338,7 @@ public class HashPrefixTree<K, V> {
    * Constructs the root of the tree with a larger initial capacity.
    */
   private HPTNode<K, V> buildRoot() {
-    HPTNode<K, V> node = new HPTNode<K, V>(null);
+    HPTNode<K, V> node = new HPTNode<K, V>(keyIdSequence++, null);
     node.children = reallocate(ROOT_CAPACITY);
     return node;
   }
@@ -329,6 +347,15 @@ public class HashPrefixTree<K, V> {
    * A node of the tree.
    */
   public static class HPTNode<K, V> {
+
+    /**
+     * Unique id of this key within this tree structure. We use
+     * this to filter out potential repeated matches.  For example,
+     * when we're doing 2 separate queries that are logically
+     * part of the same lookup, we want to avoid returning duplicate
+     * results on successive calls
+     */
+    private final int keyId;
 
     /**
      * Part of the key.
@@ -367,8 +394,13 @@ public class HashPrefixTree<K, V> {
     /**
      * Builds a new node for the given key segment.
      */
-    public HPTNode(K keyPart) {
+    public HPTNode(int keyId, K keyPart) {
+      this.keyId = keyId;
       this.keyPart = keyPart;
+    }
+
+    public int keyId() {
+      return keyId;
     }
 
     /**
@@ -383,6 +415,13 @@ public class HashPrefixTree<K, V> {
      */
     public int size() {
       return size;
+    }
+
+    /**
+     * Returns the list of values associated with this node.
+     */
+    public List<V> values() {
+      return values;
     }
 
     /**
@@ -403,17 +442,21 @@ public class HashPrefixTree<K, V> {
    * end index is exclusive.  Also collects all values matched by this
    * key segment.
    */
+  // TODO: make <K, V> and return nodes, not values.
   public static class HPTMatch<V> {
 
     private final int start;
 
     private final int end;
 
+    private final int keyId;
+
     private final List<V> values;
 
-    public HPTMatch(int start, int end, List<V> values) {
+    public HPTMatch(int start, int end, int keyId, List<V> values) {
       this.start = start;
       this.end = end;
+      this.keyId = keyId;
       this.values = values;
     }
 
@@ -429,6 +472,13 @@ public class HashPrefixTree<K, V> {
      */
     public int end() {
       return end;
+    }
+
+    /**
+     * Unique id of the key corresponding to this match.
+     */
+    public int keyId() {
+      return keyId;
     }
 
     /**

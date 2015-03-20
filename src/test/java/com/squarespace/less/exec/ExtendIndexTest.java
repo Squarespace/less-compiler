@@ -34,7 +34,7 @@ import com.squarespace.less.model.Selector;
 import com.squarespace.less.parse.Parselets;
 
 
-public class ExtendContextTest extends LessTestBase {
+public class ExtendIndexTest extends LessTestBase {
 
   @Test
   public void testBasicSearch() {
@@ -50,11 +50,12 @@ public class ExtendContextTest extends LessTestBase {
     selector = selector(element(".replace"));
     selector.extendList(list);
 
-    ExtendContext context = new ExtendContext();
-    context.index(selector);
+    ExtendIndex extendIndex = new ExtendIndex();
+    extendIndex.index(selector);
 
+    ExtendMatcher matcher = new ExtendMatcher();
     Selector query = selector(element(".a"), comb(DESC), element(".b"));
-    List<Selector> result = context.resolve(query);
+    List<Selector> result = matcher.extend(extendIndex, query, null);
     assertEquals(result.size(), 1);
     assertEquals(result.get(0), selector(element(".replace")));
   }
@@ -69,11 +70,12 @@ public class ExtendContextTest extends LessTestBase {
     selector = selector(element(".replace"));
     selector.extendList(list);
 
-    ExtendContext context = new ExtendContext();
-    context.index(selector);
+    ExtendIndex extendIndex = new ExtendIndex();
+    extendIndex.index(selector);
 
+    ExtendMatcher matcher = new ExtendMatcher();
     Selector query = selector(element(".a"), comb(CHILD), element(".b"));
-    List<Selector> result = context.resolve(query);
+    List<Selector> result = matcher.extend(extendIndex, query, null);
     assertEquals(result.size(), 1);
     assertEquals(result.get(0), selector(element(".replace")));
   }

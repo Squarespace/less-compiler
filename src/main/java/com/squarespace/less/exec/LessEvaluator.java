@@ -105,7 +105,7 @@ public class LessEvaluator {
    */
   private Media evaluateMedia(ExecEnv env, Media input) throws LessException {
     Media media = input.copy(env);
-    media.extendContext(new ExtendContext());
+    media.extendIndex(new ExtendIndex());
     env.push(media);
 
     Block block = media.block();
@@ -166,7 +166,7 @@ public class LessEvaluator {
    */
   private Stylesheet evaluateStylesheet(ExecEnv env, Stylesheet original) throws LessException {
     Stylesheet stylesheet = original.copy();
-    stylesheet.extendContext(new ExtendContext());
+    stylesheet.extendContext(new ExtendIndex());
     env.push(stylesheet);
 
     Block block = stylesheet.block();

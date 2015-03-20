@@ -46,7 +46,7 @@ public class RenderFrame {
 
   private Features features;
 
-  private ExtendContext extendContext;
+  private ExtendIndex extendContext;
 
   public RenderFrame() {
     this(null, null, 0);
@@ -57,9 +57,9 @@ public class RenderFrame {
     this.blockNode = blockNode;
     this.depth = depth;
     if (blockNode instanceof Stylesheet) {
-      this.extendContext = ((Stylesheet)blockNode).extendContext();
+      this.extendContext = ((Stylesheet)blockNode).extendIndex();
     } else if (blockNode instanceof Media) {
-      this.extendContext = ((Media)blockNode).extendContext();
+      this.extendContext = ((Media)blockNode).extendIndex();
     }
   }
 
@@ -67,7 +67,7 @@ public class RenderFrame {
     return blockNode;
   }
 
-  public ExtendContext extendContext() {
+  public ExtendIndex extendContext() {
     return extendContext;
   }
 

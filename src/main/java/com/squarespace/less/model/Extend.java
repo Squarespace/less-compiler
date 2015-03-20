@@ -28,17 +28,17 @@ import com.squarespace.less.exec.ExecEnv;
  */
 public class Extend extends BaseNode {
 
-  private final Selector selector;
+  private final Selector targetSelector;
 
   private final boolean matchAll;
 
-  public Extend(Selector selector, boolean matchAll) {
-    this.selector = selector;
+  public Extend(Selector target, boolean matchAll) {
+    this.targetSelector = target;
     this.matchAll = matchAll;
   }
 
-  public Selector selector() {
-    return selector;
+  public Selector targetSelector() {
+    return targetSelector;
   }
 
   public boolean matchAll() {
@@ -52,12 +52,12 @@ public class Extend extends BaseNode {
 
   @Override
   public boolean needsEval() {
-    return selector.needsEval();
+    return targetSelector.needsEval();
   }
 
   @Override
   public Node eval(ExecEnv env) throws LessException {
-    return selector.needsEval() ? new Extend((Selector)selector.eval(env), matchAll) : this;
+    return targetSelector.needsEval() ? new Extend((Selector)targetSelector.eval(env), matchAll) : this;
   }
 
   /**
@@ -65,7 +65,7 @@ public class Extend extends BaseNode {
    */
   @Override
   public void repr(Buffer buf) {
-    selector.repr(buf);
+    targetSelector.repr(buf);
     if (matchAll) {
       buf.append(" all");
     }
@@ -83,7 +83,7 @@ public class Extend extends BaseNode {
     }
     buf.append('\n');
     buf.incrIndent().indent();
-    selector.modelRepr(buf);
+    targetSelector.modelRepr(buf);
     buf.decrIndent();
   }
 
@@ -91,7 +91,7 @@ public class Extend extends BaseNode {
   public boolean equals(Object obj) {
     if (obj instanceof Extend) {
       Extend other = (Extend)obj;
-      return matchAll == other.matchAll && LessUtils.safeEquals(selector, other.selector);
+      return matchAll == other.matchAll && LessUtils.safeEquals(targetSelector, other.targetSelector);
     }
     return false;
   }

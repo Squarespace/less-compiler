@@ -64,19 +64,19 @@ public class HashPrefixTreeTest extends LessTestBase {
     tree.insert(key("ff")).append(14);
     tree.insert(key("gg")).append(15);
 
-    assertEquals(tree.search(key("aa", "bb", "cc")), asList(1));
-    assertEquals(tree.search(key("aa", "bb", "dd", "ee")), asList(2));
-    assertEquals(tree.search(key("aa", "bb", "cc", "dd")), asList(3));
-    assertEquals(tree.search(key("aa", "cc")), asList(4));
-    assertEquals(tree.search(key("aa")), asList(5));
-    assertEquals(tree.search(key("xx", "yy", "zz")), asList(6, 7, 8));
-    assertEquals(tree.search(key("qq", "rr")), asList(9));
-    assertEquals(tree.search(key("bb")), asList(10));
-    assertEquals(tree.search(key("cc")), asList(11));
-    assertEquals(tree.search(key("dd")), asList(12));
-    assertEquals(tree.search(key("ee")), asList(13));
-    assertEquals(tree.search(key("ff")), asList(14));
-    assertEquals(tree.search(key("gg")), asList(15));
+    assertEquals(tree.search(key("aa", "bb", "cc")).values(), asList(1));
+    assertEquals(tree.search(key("aa", "bb", "dd", "ee")).values(), asList(2));
+    assertEquals(tree.search(key("aa", "bb", "cc", "dd")).values(), asList(3));
+    assertEquals(tree.search(key("aa", "cc")).values(), asList(4));
+    assertEquals(tree.search(key("aa")).values(), asList(5));
+    assertEquals(tree.search(key("xx", "yy", "zz")).values(), asList(6, 7, 8));
+    assertEquals(tree.search(key("qq", "rr")).values(), asList(9));
+    assertEquals(tree.search(key("bb")).values(), asList(10));
+    assertEquals(tree.search(key("cc")).values(), asList(11));
+    assertEquals(tree.search(key("dd")).values(), asList(12));
+    assertEquals(tree.search(key("ee")).values(), asList(13));
+    assertEquals(tree.search(key("ff")).values(), asList(14));
+    assertEquals(tree.search(key("gg")).values(), asList(15));
   }
 
   @Test
@@ -86,8 +86,33 @@ public class HashPrefixTreeTest extends LessTestBase {
       tree.insert(key("one", "two", SYMBOLS.substring(i))).append(i);
     }
     for (int i = 0; i < SYMBOLS_LEN; i++) {
-      assertEquals(tree.search(key("one", "two", SYMBOLS.substring(i))), asList(i));
+      assertEquals(tree.search(key("one", "two", SYMBOLS.substring(i))).values(), asList(i));
     }
+  }
+
+  @Test
+  public void testDuplicateFiltering() {
+    HashPrefixTree<String, Integer> tree = new HashPrefixTree<>(STRING_COMPARATOR, 1309);
+    tree.insert(key("a")).append(0);
+    tree.insert(key("a", "b")).append(1);
+    tree.insert(key("c", "d")).append(2);
+    tree.insert(key("b", "c", "d")).append(3);
+
+    // Search for a key that will cover many of the entries in the tree.
+    Set<Integer> filter = new HashSet<>();
+    List<String> key = key("a", "b", "c", "d");
+    List<HPTMatch<Integer>> matches = tree.searchSubsequences(key, filter);
+    for (HPTMatch<Integer> match : matches) {
+      filter.add(match.keyId());
+    }
+
+    // Ensure we matched every key in the index
+    assertEquals(filter.size(), 4);
+
+    // Search for the same key and ensure no duplicate matches were retrieved
+    matches = tree.searchSubsequences(key, filter);
+    assertEquals(matches.size(), 0);
+    assertEquals(filter.size(), 4);
   }
 
   @Test
@@ -112,7 +137,7 @@ public class HashPrefixTreeTest extends LessTestBase {
 
       // Search
       for (int i = 0; i < keys.size(); i++) {
-        assertEquals(tree.search(keys.get(i)), asList(i, i));
+        assertEquals(tree.search(keys.get(i)).values(), asList(i, i));
       }
 
       for (int i = 0; i < missKeys.size(); i++) {
@@ -144,7 +169,7 @@ public class HashPrefixTreeTest extends LessTestBase {
       List<String> key = new ArrayList<>();
       key.add("root");
       key.addAll(keys.get(i));
-      assertEquals(tree.search(key), asList(i));
+      assertEquals(tree.search(key).values(), asList(i));
       assertEquals(tree.search(miss), null);
     }
   }

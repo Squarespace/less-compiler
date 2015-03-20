@@ -17,7 +17,7 @@
 package com.squarespace.less.model;
 
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.exec.ExtendContext;
+import com.squarespace.less.exec.ExtendIndex;
 
 
 /**
@@ -26,9 +26,9 @@ import com.squarespace.less.exec.ExtendContext;
 public class Stylesheet extends BlockNode {
 
   /**
-   * Tracks the extend lists as the stylesheet is traversed.
+   * Indexes the extend expressions as the stylesheet is traversed.
    */
-  protected ExtendContext extendContext;
+  protected ExtendIndex extendIndex;
 
   /**
    * Constructs an empty stylesheet.
@@ -39,24 +39,23 @@ public class Stylesheet extends BlockNode {
 
   /**
    * Constructs a stylesheet with the given {@link Block}
-   * @param block
    */
   public Stylesheet(Block block) {
     super(block);
   }
 
   /**
-   * Returns the extend list context for the stylesheet.
+   * Returns the extend index for the stylesheet.
    */
-  public ExtendContext extendContext() {
-    return extendContext;
+  public ExtendIndex extendIndex() {
+    return extendIndex;
   }
 
   /**
-   * Sets the extend context for this scope.
+   * Sets the extend expression index for this scope.
    */
-  public void extendContext(ExtendContext context) {
-    this.extendContext = context;
+  public void extendContext(ExtendIndex index) {
+    this.extendIndex = index;
   }
 
   /**

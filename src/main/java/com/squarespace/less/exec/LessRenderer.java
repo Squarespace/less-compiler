@@ -17,6 +17,7 @@
 package com.squarespace.less.exec;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
@@ -168,30 +169,43 @@ public class LessRenderer {
    * Render a {@link Ruleset}
    */
   private void renderRuleset(Ruleset ruleset) throws LessException {
+    Block block = ruleset.block();
+
+    // Skip rulesets that exist solely for extension.  No sense doing
+    // more work than we need to.
+    if (block.rules().isEmpty()) {
+      return;
+    }
+
     env.push(ruleset);
     model.push(NodeType.RULESET);
 
     Selectors selectors = env.frame().selectors();
     if (!selectors.isEmpty()) {
 
-      // Try matching each selector against the extend indexes. This
-      // will append any matched selectors. It the selector group was
-      // extended, this will return a copy with the extra selectors
-      // added.  This ensures the extended selectors are not added
-      // to the stack and inherited by nested rulesets.
-      Selectors extended = env.extend(selectors);
-
-      // Selectors are indented and delimited by the model.
+      // Selectors are indented and delimited by the model. We render
+      // them to this temporary buffer and add them to the model.
       Buffer buf = ctx.acquireBuffer();
-      for (Selector selector : extended.selectors()) {
+      for (Selector selector : selectors.selectors()) {
         NodeRenderer.render(buf, selector);
         model.header(buf.toString());
         buf.reset();
       }
+
+      // Try matching each selector against the extend indices. This
+      // will return a list of generated selectors.
+      List<Selector> extended = env.extend(selectors);
+      if (extended != null) {
+        for (Selector selector : extended) {
+          NodeRenderer.render(buf, selector);
+          model.header(buf.toString());
+          buf.reset();
+        }
+      }
       ctx.returnBuffer();
     }
 
-    renderBlock(ruleset.block(), true);
+    renderBlock(block, true);
     model.pop();
     env.pop();
   }

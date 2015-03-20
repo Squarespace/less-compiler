@@ -6,16 +6,6 @@ Strict math mode, default this in 2.x mode.
 
 Ensure all @import keywords work (inline, once, etc)
 
-Extend pseudo-class:
-
-    nav ul {
-      &:extend(.inline);
-      background: blue;
-    }
-    .inline {
-      color: red;
-    }
-
 Default mixins (see default() in functions)
 
     .mixin(blue) {
@@ -33,6 +23,19 @@ and emit a warning. Filter them from the output.
 
 Completed
 -----
+
+
+Extend pseudo-class:
+
+    nav ul {
+      &:extend(.inline);
+      background: blue;
+    }
+    .inline {
+      color: red;
+    }
+
+Extend cascade (extend generated selectors) and chaining (self-extension).
 
 Adding !important to definitions, merging accurately in rule:
 

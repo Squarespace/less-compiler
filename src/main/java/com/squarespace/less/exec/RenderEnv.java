@@ -44,9 +44,9 @@ public class RenderEnv {
   private final LessContext ctx;
 
   /**
-   * Current media scope extend context, if any.
+   * Current media scope extend index, if any.
    */
-  private final FlexList<ExtendContext> mediaExtendContext = new FlexList<>(4);
+  private final FlexList<ExtendIndex> mediaExtendStack = new FlexList<>(4);
 
   /**
    * Current {@link RenderFrame} we're pointing to in the implicit stack.
@@ -54,9 +54,14 @@ public class RenderEnv {
   private RenderFrame frame;
 
   /**
-   * Global extend context, if any.
+   * Global extend index, if any.
    */
-  private ExtendContext globalExtendContext;
+  private ExtendIndex globalExtendIndex;
+
+  /**
+   * Matches selectors against the extend indexes.
+   */
+  private ExtendMatcher extendMatcher;
 
   /**
    * Current stack depth.
@@ -94,46 +99,42 @@ public class RenderEnv {
   }
 
   public void indexSelector(Selector selector) {
-    if (!mediaExtendContext.isEmpty()) {
-      mediaExtendContext.last().index(selector);
-    } else if (globalExtendContext != null) {
-      globalExtendContext.index(selector);
+    if (!mediaExtendStack.isEmpty()) {
+      mediaExtendStack.last().index(selector);
+    } else if (globalExtendIndex != null) {
+      globalExtendIndex.index(selector);
     }
   }
 
   public void indexSelector(Selectors selectors, ExtendList extendList) {
-    if (!mediaExtendContext.isEmpty()) {
-      mediaExtendContext.last().index(selectors, extendList);
-    } else if (globalExtendContext != null) {
-      globalExtendContext.index(selectors, extendList);
+    if (!mediaExtendStack.isEmpty()) {
+      mediaExtendStack.last().index(selectors, extendList);
+    } else if (globalExtendIndex != null) {
+      globalExtendIndex.index(selectors, extendList);
     }
   }
 
   /**
-   * Extends the selector list by searching the extend context. We search
-   * up the stack to find all extend contexts, since multiple may apply.
+   * Perform extend expression matching against the given selector. It will
+   * first match the innermost Media-scoped index, and then the global
+   * index. It returns a list containing the original and generated selectors.
    */
-  public Selectors extend(Selectors selectors) {
+  public List<Selector> extend(Selectors selectors) {
     List<Selector> extended = null;
 
-    if (!mediaExtendContext.isEmpty()) {
-      extended = mediaExtendContext.last().extend(selectors, extended);
+    if (extendMatcher == null) {
+      extendMatcher = new ExtendMatcher();
     }
 
-    if (globalExtendContext != null) {
-      extended = globalExtendContext.extend(selectors, extended);
+    if (!mediaExtendStack.isEmpty()) {
+      extended = extendMatcher.extend(mediaExtendStack.last(), selectors, extended);
     }
 
-    if (extended == null || extended.isEmpty()) {
-      return selectors;
+    if (globalExtendIndex != null) {
+      extended = extendMatcher.extend(globalExtendIndex, selectors, extended);
     }
 
-    // We matched some selectors in the extend index. Append them.
-    Selectors result = selectors.copy();
-    for (Selector selector : extended) {
-      result.add(selector);
-    }
-    return result;
+    return extended;
   }
 
   /**
@@ -153,7 +154,7 @@ public class RenderEnv {
     switch (blockType) {
       case MEDIA:
         features = ((Media)blockNode).features();
-        mediaExtendContext.push(((Media)blockNode).extendContext());
+        mediaExtendStack.push(((Media)blockNode).extendIndex());
         break;
 
       case RULESET:
@@ -161,7 +162,7 @@ public class RenderEnv {
         break;
 
       case STYLESHEET:
-        globalExtendContext = ((Stylesheet)blockNode).extendContext();
+        globalExtendIndex = ((Stylesheet)blockNode).extendIndex();
         break;
 
       default:
@@ -190,7 +191,10 @@ public class RenderEnv {
     }
 
     if (frame.blockNode() instanceof Media) {
-      mediaExtendContext.pop();
+      ExtendIndex index = mediaExtendStack.pop();
+      index.resolveSelfExtends();
+    } else if (frame.blockNode() instanceof Stylesheet) {
+      globalExtendIndex.resolveSelfExtends();
     }
 
     depth--;
