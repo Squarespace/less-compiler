@@ -116,8 +116,8 @@ public class RenderEnv {
 
   /**
    * Perform extend expression matching against the given selector. It will
-   * first match the innermost Media-scoped index, and then the global
-   * index. It returns a list containing the original and generated selectors.
+   * match the current Media-scope index (if any) followed by the global index.
+   * It returns a list containing the original and generated selectors.
    */
   public List<Selector> extend(Selectors selectors) {
     List<Selector> extended = null;
@@ -154,7 +154,13 @@ public class RenderEnv {
     switch (blockType) {
       case MEDIA:
         features = ((Media)blockNode).features();
-        mediaExtendStack.push(((Media)blockNode).extendIndex());
+        ExtendIndex mediaExtendIndex = ((Media)blockNode).extendIndex();
+        mediaExtendStack.push(mediaExtendIndex);
+
+        // Special case for a MEDIA block. We may have globally-defined extend
+        // expressions that extend other extend expressions, so we need to resolve
+        // these before we render the rules under this MEDIA scope.
+        mediaExtendIndex.resolveSelfExtends(globalExtendIndex.capturedExtends());
         break;
 
       case RULESET:

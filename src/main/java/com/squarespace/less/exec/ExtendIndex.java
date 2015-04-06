@@ -77,7 +77,7 @@ public class ExtendIndex {
    * Capture all extend lists found, so we can check if they extend other extends
    * post-indexing.
    */
-  private final List<ExtendPair> extendCapture = new ArrayList<>();
+  private final List<CapturedExtend> capturedExtends = new ArrayList<>();
 
   /**
    * Index the selector by its extend list. This is used to process an
@@ -85,7 +85,7 @@ public class ExtendIndex {
    */
   public void index(Selector selector) {
     ExtendList extendList = selector.extendList();
-    extendCapture.add(new ExtendPair(extendList, selector));
+    capturedExtends.add(new CapturedExtend(extendList, selector));
     for (Extend extend : extendList.values()) {
       insert(selector, extend);
     }
@@ -97,11 +97,25 @@ public class ExtendIndex {
    */
   public void index(Selectors selectors, ExtendList extendList) {
     for (Selector selector : selectors.selectors()) {
-      extendCapture.add(new ExtendPair(extendList, selector));
+      capturedExtends.add(new CapturedExtend(extendList, selector));
       for (Extend extend : extendList.values()) {
         insert(selector, extend);
       }
     }
+  }
+
+  /**
+   * Return the list of captured extends index by this instance.
+   */
+  public List<CapturedExtend> capturedExtends() {
+    return capturedExtends;
+  }
+
+  /**
+   * Resolve the captured extends against this index.
+   */
+  public void resolveSelfExtends() {
+    resolveSelfExtends(capturedExtends);
   }
 
   /**
@@ -122,8 +136,8 @@ public class ExtendIndex {
    * match, so it will produce (.a .b .c) which (.replace) will fail to match unless
    * we perform this self extends resolution.
    */
-  public void resolveSelfExtends() {
-    for (ExtendPair pair : extendCapture) {
+  public void resolveSelfExtends(List<CapturedExtend> captured) {
+    for (CapturedExtend pair : captured) {
       for (Extend extend : pair.extendList.values()) {
         if (extend.matchAll()) {
           continue;
@@ -175,13 +189,13 @@ public class ExtendIndex {
     inverseTree.insert(selector.parts()).append(extend);
   }
 
-  private static class ExtendPair {
+  public static class CapturedExtend {
 
     private final ExtendList extendList;
 
     private final Selector selector;
 
-    public ExtendPair(ExtendList extendList, Selector selector) {
+    public CapturedExtend(ExtendList extendList, Selector selector) {
       this.extendList = extendList;
       this.selector = selector;
     }
