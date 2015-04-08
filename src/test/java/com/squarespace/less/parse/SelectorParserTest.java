@@ -16,7 +16,7 @@
 
 package com.squarespace.less.parse;
 
-import junit.framework.Assert;
+import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
@@ -51,7 +51,7 @@ public class SelectorParserTest extends LessTestBase {
     Node expected = h.parse(raw);
 
     SelectorParser parser = new SelectorParser(new LessContext());
-    Assert.assertEquals(expected, parser.parse(raw));
+    assertEquals(expected, parser.parse(raw));
   }
 
 }

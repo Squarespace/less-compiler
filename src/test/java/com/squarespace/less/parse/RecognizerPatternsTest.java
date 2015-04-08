@@ -24,7 +24,7 @@ import static com.squarespace.less.parse.RecognizerPatterns.CONDITION_OP;
 import static com.squarespace.less.parse.RecognizerPatterns.ELEMENT0;
 import static com.squarespace.less.parse.RecognizerPatterns.ELEMENT1;
 import static com.squarespace.less.parse.Recognizers.FAIL;
-import static junit.framework.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 

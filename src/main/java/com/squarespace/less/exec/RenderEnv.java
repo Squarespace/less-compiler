@@ -196,10 +196,11 @@ public class RenderEnv {
       throw new LessInternalException("Serious error: popped past the last frame!");
     }
 
-    if (frame.blockNode() instanceof Media) {
+    BlockNode blockNode = frame.blockNode();
+    if (blockNode instanceof Media) {
       ExtendIndex index = mediaExtendStack.pop();
       index.resolveSelfExtends();
-    } else if (frame.blockNode() instanceof Stylesheet) {
+    } else if (blockNode instanceof Stylesheet) {
       globalExtendIndex.resolveSelfExtends();
     }
 

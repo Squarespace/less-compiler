@@ -39,7 +39,7 @@ import static com.squarespace.less.parse.Recognizers.word;
 import static com.squarespace.less.parse.Recognizers.worddash;
 import static com.squarespace.less.parse.Recognizers.zeroOrMore;
 import static com.squarespace.less.parse.Recognizers.zeroOrOne;
-import static junit.framework.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 

@@ -16,7 +16,7 @@
 
 package com.squarespace.less.parse;
 
-import static junit.framework.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 

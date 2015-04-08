@@ -17,8 +17,9 @@
 package com.squarespace.less;
 
 import static com.squarespace.less.SyntaxErrorType.EXTEND_MISSING_TARGET;
+import static com.squarespace.less.SyntaxErrorType.INCOMPLETE_PARSE;
 import static com.squarespace.less.SyntaxErrorType.SELECTOR_END_EXTEND;
-import static junit.framework.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
@@ -55,16 +56,10 @@ public class ExtendTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.RULESET);
 
     h.parseFails(".foo:extend() { }", EXTEND_MISSING_TARGET);
+    h.parseFails(".foo:extend(bar", INCOMPLETE_PARSE);
+    h.parseFails(".foo:extend(bar);", INCOMPLETE_PARSE);
     h.parseFails(".foo:extend(bar) baz { color: red; }", SELECTOR_END_EXTEND);
     h.parseFails(".baz .foo:extend(bar baz all) .bar { }", SELECTOR_END_EXTEND);
-  }
-
-  @Test
-  public void testSelector() throws LessException {
-    LessOptions opts = new LessOptions(true);
-    LessHarness h = new LessHarness(Parselets.STYLESHEET);
-    String result = h.execute("@name: ~'foo'; .@{name} { color: red; }", opts);
-    assertEquals(".foo{color:red}", result);
   }
 
 }

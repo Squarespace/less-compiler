@@ -80,6 +80,14 @@ public class SelectorTest extends LessTestBase {
   }
 
   @Test
+  public void testVariableElement() throws LessException {
+    LessOptions opts = new LessOptions(true);
+    LessHarness h = new LessHarness(Parselets.STYLESHEET);
+    String result = h.execute("@name: ~'foo'; .@{name} { color: red; }", opts);
+    assertEquals(".foo{color:red}", result);
+  }
+
+  @Test
   public void testParseGuard() throws LessException {
     LessHarness h = new LessHarness(Parselets.SELECTORS);
 
