@@ -18,6 +18,7 @@ package com.squarespace.less.cli;
 
 import static com.squarespace.less.LessCompiler.LESSJS_VERSION;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +57,7 @@ public class LessC {
    * Main entry point for the command-line compiler.
    */
   public static void main(String[] rawArgs) {
-    System.exit(process(rawArgs, System.out, System.err));
+    System.exit(process(rawArgs, System.out, System.err, System.in));
   }
 
   /**
@@ -71,7 +72,7 @@ public class LessC {
    * Effectively this is the main() method, but separated so it can be
    * unit tested and all output captured.
    */
-  public static int process(String[] rawArgs, PrintStream out, PrintStream err) {
+  public static int process(String[] rawArgs, PrintStream out, PrintStream err, InputStream in) {
     LessC cmd = new LessC(err);
 
     // Bit of a catch-22 here at the moment, since we need to parse the arguments
@@ -86,7 +87,7 @@ public class LessC {
     if (args.batchMode()) {
       impl = new CompileBatch(args, out, err);
     } else {
-      impl = new CompileSingle(args, out, err);
+      impl = new CompileSingle(args, out, err, in);
     }
     return impl.process();
   }
@@ -166,12 +167,12 @@ public class LessC {
 
     parser.addArgument("input")
       .type(String.class)
-      .help("Input file or directory (batch mode).");
+      .help("Input file, or a directory in batch mode.");
 
     parser.addArgument("output")
       .type(String.class)
       .nargs("?")
-      .help("Output file or directory (batch mode).");
+      .help("Output file, or a directory in batch mode.");
 
     try {
       Namespace res = parser.parseArgs(args);

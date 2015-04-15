@@ -40,7 +40,8 @@ public class ErrorUtils {
    */
   public static String formatError(LessContext ctx, Path mainPath, LessException exc, int indent) {
     Buffer buf = ctx.acquireBuffer();
-    String error = formatError(buf, mainPath.toString(), exc, indent);
+    String pathName = (mainPath == null) ? "<source>" : mainPath.toString();
+    String error = formatError(buf, pathName, exc, indent);
     ctx.returnBuffer();
     return error;
   }

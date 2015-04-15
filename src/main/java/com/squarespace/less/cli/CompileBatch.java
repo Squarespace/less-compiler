@@ -40,7 +40,7 @@ import com.squarespace.less.model.Stylesheet;
 class CompileBatch extends BaseCompile {
 
   public CompileBatch(Args args, PrintStream out, PrintStream err) {
-    super(args, out, err);
+    super(args, out, err, System.in);
   }
 
   @Override
@@ -114,7 +114,7 @@ class CompileBatch extends BaseCompile {
           logElapsed(" ", compileStart, System.nanoTime());
 
         } catch (LessException e) {
-          err.println("\n\n" + ErrorUtils.formatError(ctx, path, e, 4) + SEPARATOR + "\n");
+          standardErr.println("\n\n" + ErrorUtils.formatError(ctx, path, e, 4) + SEPARATOR + "\n");
           error = true;
         }
       }
@@ -153,11 +153,11 @@ class CompileBatch extends BaseCompile {
       long start = System.nanoTime();
       result = compiler.parse(data, ctx, path);
       double elapsed = (System.nanoTime() - start) / 1000000.0;
-      err.printf(" %.3fms\n", elapsed);
+      standardErr.printf(" %.3fms\n", elapsed);
       return result;
 
     } catch (LessException e) {
-      err.println("\n\n" + ErrorUtils.formatError(ctx, path, e, 4) + SEPARATOR + "\n");
+      standardErr.println("\n\n" + ErrorUtils.formatError(ctx, path, e, 4) + SEPARATOR + "\n");
       return null;
     }
   }

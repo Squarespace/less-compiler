@@ -17,6 +17,7 @@
 package com.squarespace.less.cli;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,24 +35,33 @@ import com.squarespace.less.model.Stylesheet;
  */
 class CompileSingle extends BaseCompile {
 
-  public CompileSingle(Args args, PrintStream out, PrintStream err) {
-    super(args, out, err);
+  public CompileSingle(Args args, PrintStream out, PrintStream err, InputStream in) {
+    super(args, out, err, in);
   }
 
   @Override
   public int process() {
-    Path input = Paths.get(args.input());
-    if (!input.toFile().isFile()) {
-      return fail("the path '" + input + "' cannot be read.");
-    }
-
-    input = input.toAbsolutePath();
-
+    String argsInput = args.input();
     String source = null;
+    Path input = null;
+
     try {
-      source = LessUtils.readFile(input);
+      if (argsInput.equals("-")) {
+        // Load source from standard input
+        source = LessUtils.readStream(standardIn);
+
+      } else {
+        // Load source from a file
+        input = Paths.get(argsInput);
+        if (!input.toFile().isFile()) {
+          return fail("the path '" + input + "' cannot be read.");
+        }
+        input = input.toAbsolutePath();
+        source = LessUtils.readFile(input);
+      }
     } catch (IOException e) {
-      return fail("error reading '" + input + "': " + e.getMessage());
+      String streamName = (input == null) ? "<stdin>" : input.toString();
+      return fail("error reading '" + streamName + "': " + e.getMessage());
     }
 
     LessContext ctx = new LessContext(args.compilerOptions());
@@ -71,7 +81,7 @@ class CompileSingle extends BaseCompile {
             return fail(e.getMessage());
           }
         } else {
-          out.print(result);
+          standardOut.print(result);
         }
 
       } else {
@@ -80,21 +90,21 @@ class CompileSingle extends BaseCompile {
         switch (args.debugMode()) {
 
           case CANONICALIZE:
-            out.println(canonicalize(stylesheet));
+            standardOut.println(canonicalize(stylesheet));
             break;
 
           case EVAL:
             stylesheet = compiler.expand(stylesheet, ctx);
-            out.println(canonicalize(stylesheet));
+            standardOut.println(canonicalize(stylesheet));
             break;
 
           case EVALTREE:
             stylesheet = compiler.expand(stylesheet, ctx);
-            out.println(syntaxTree(stylesheet));
+            standardOut.println(syntaxTree(stylesheet));
             break;
 
           case PARSETREE:
-            out.println(syntaxTree(stylesheet));
+            standardOut.println(syntaxTree(stylesheet));
             break;
 
           default:
@@ -102,7 +112,7 @@ class CompileSingle extends BaseCompile {
       }
 
     } catch (LessException e) {
-      err.println("\n\n" + ErrorUtils.formatError(ctx, input, e, 4) + "\n");
+      standardErr.println("\n\n" + ErrorUtils.formatError(ctx, input, e, 4) + "\n");
       return ERR;
     }
 

@@ -16,6 +16,7 @@
 
 package com.squarespace.less.cli;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import com.squarespace.less.LessCompiler;
@@ -40,14 +41,17 @@ abstract class BaseCompile {
 
   protected final Args args;
 
-  protected final PrintStream out;
+  protected final PrintStream standardOut;
 
-  protected final PrintStream err;
+  protected final PrintStream standardErr;
 
-  public BaseCompile(Args args, PrintStream out, PrintStream err) {
+  protected final InputStream standardIn;
+
+  public BaseCompile(Args args, PrintStream out, PrintStream err, InputStream in) {
     this.args = args;
-    this.out = out;
-    this.err = err;
+    this.standardOut = out;
+    this.standardErr = err;
+    this.standardIn = in;
   }
 
   public abstract int process();
@@ -92,13 +96,13 @@ abstract class BaseCompile {
 
   protected void logElapsed(String prefix, long start, long end) {
     double compileElapsed = (end - start) / 1000000.0;
-    err.printf("%s %.3fms\n", prefix, compileElapsed);
+    standardErr.printf("%s %.3fms\n", prefix, compileElapsed);
   }
 
   protected void log(String msg) {
-    err.print(args.programName());
-    err.print(": ");
-    err.print(msg);
+    standardErr.print(args.programName());
+    standardErr.print(": ");
+    standardErr.println(msg);
   }
 
 }
