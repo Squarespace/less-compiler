@@ -89,9 +89,16 @@ public class LessUtils {
    */
   public static String readFile(Path path) throws IOException {
     try (InputStream file = Files.newInputStream(path)) {
-      try (InputStreamReader reader = new InputStreamReader(file, Constants.UTF8)) {
-        return readToString(reader);
-      }
+      return readStream(file);
+    }
+  }
+
+  /**
+   * Reads a UTF-8-encoded string into a string.
+   */
+  public static String readStream(InputStream stream) throws IOException {
+    try (InputStreamReader reader = new InputStreamReader(stream, Constants.UTF8)) {
+      return readToString(reader);
     }
   }
 

@@ -23,6 +23,9 @@ import static org.testng.Assert.fail;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,26 +45,34 @@ public class LessCTest {
 
   private File tempFile;
 
-  private ByteArrayOutputStream out;
+  private ByteArrayOutputStream standardOut;
 
-  private ByteArrayOutputStream err;
+  private ByteArrayOutputStream standardErr;
+
+  private PipedInputStream standardIn;
 
   private PrintStream savedOut;
 
   private PrintStream savedErr;
+
+  private InputStream savedIn;
 
   private SecurityManager savedSecurityManager;
 
   @BeforeMethod
   private void setUp() {
     // Trap output for the duration of a single test.
-    out = new ByteArrayOutputStream();
+    standardOut = new ByteArrayOutputStream();
     savedOut = System.out;
-    System.setOut(new PrintStream(out));
+    System.setOut(new PrintStream(standardOut));
 
-    err = new ByteArrayOutputStream();
+    standardErr = new ByteArrayOutputStream();
     savedErr = System.err;
-    System.setErr(new PrintStream(err));
+    System.setErr(new PrintStream(standardErr));
+
+    standardIn = new PipedInputStream();
+    savedIn = System.in;
+    System.setIn(standardIn);
 
     // Catch System.exit and report exit code.
     savedSecurityManager = System.getSecurityManager();
@@ -70,10 +81,15 @@ public class LessCTest {
 
   @AfterMethod
   private void tearDown() {
+    restoreStreams();
+  }
+
+  private void restoreStreams() {
     // Revert stream / exit intercepts.
     System.setSecurityManager(savedSecurityManager);
     System.setOut(savedOut);
     System.setErr(savedErr);
+    System.setIn(savedIn);
 
     // Clean up temp file / directory if its been used.
     if (tempFile != null) {
@@ -88,7 +104,15 @@ public class LessCTest {
     Path cssPath = suiteRootDir.resolve("css/directive.css");
     String expected = LessUtils.readFile(cssPath);
     compile(lessPath);
-    assertEquals(out.toString(), expected);
+    assertEquals(standardOut.toString(), expected);
+  }
+
+  @Test
+  public void testCompileFromStdin() throws LessException, IOException {
+    String source = ".ruleset { .child { color: red } }";
+    String expected = ".ruleset .child{color:red}";
+    compileStdin(source, "-", "--compress");
+    assertEquals(standardOut.toString(), expected);
   }
 
   @Test
@@ -104,14 +128,14 @@ public class LessCTest {
   public void testDebugParse() throws LessException, IOException {
     Path lessPath = suiteRootDir.resolve("less/directive.less");
     compile("--debug", "PARSETREE", lessPath.toString());
-    assertTrue(out.toString().contains("BLOCK_DIRECTIVE"));
+    assertTrue(standardOut.toString().contains("BLOCK_DIRECTIVE"));
   }
 
   @Test
   public void testDebugCanonical() throws LessException, IOException {
     Path lessPath = suiteRootDir.resolve("less/directive.less");
     compile("--debug", "CANONICALIZE", lessPath.toString());
-    assertTrue(out.toString().contains(".ruleset-font-face {"));
+    assertTrue(standardOut.toString().contains(".ruleset-font-face {"));
   }
 
   @Test
@@ -137,7 +161,7 @@ public class LessCTest {
 
     } catch (ExitException e) {
       assertEquals(e.status, 0);
-      assertTrue(out.toString().contains("lessc version"));
+      assertTrue(standardOut.toString().contains("lessc version"));
     }
 
     try {
@@ -146,7 +170,7 @@ public class LessCTest {
 
     } catch (ExitException e) {
       assertEquals(e.status, 1);
-      assertTrue(out.toString().contains("usage: lessc"));
+      assertTrue(standardOut.toString().contains("usage: lessc"));
     }
   }
 
@@ -157,7 +181,15 @@ public class LessCTest {
   }
 
   private int compile(String ... args) {
-    return LessC.process(args, new PrintStream(out), new PrintStream(err));
+    return LessC.process(args, new PrintStream(standardOut), new PrintStream(standardErr), System.in);
+  }
+
+  private int compileStdin(String source, String ... args) throws IOException {
+    PipedOutputStream stream = new PipedOutputStream();
+    standardIn.connect(stream);
+    stream.write(source.getBytes("UTF-8"));
+    stream.close();
+    return LessC.process(args, new PrintStream(standardOut), new PrintStream(standardErr), standardIn);
   }
 
 }
