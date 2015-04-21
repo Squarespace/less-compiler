@@ -70,30 +70,18 @@ public class VariableTest extends LessTestBase {
     h.executeFails(".foo { color: @c; }", VAR_UNDEFINED);
   }
 
-  @Test
-  public void testSelfReference() throws LessException {
-    GenericBlock defs = defs(
-        def("@value", var("@link1")),
-        def("@link1", var("@link2")),
-        def("@link2", var("@value"))
-        );
-    LessHarness h = new LessHarness(VARIABLE, defs);
-    h.evalFails("@value", VAR_UNDEFINED);
-    h.evalFails("@link1", VAR_UNDEFINED);
-    h.evalFails("@link2", VAR_UNDEFINED);
-  }
-
-  @Test
-  public void testSkipCircular() throws LessException {
-    GenericBlock frameOne = defs(
-        def("@color", color("red"))
-        );
-    GenericBlock frameTwo = defs(
-        def("@color", var("@color"))
-        );
-    LessHarness h = new LessHarness(VARIABLE, frameOne, frameTwo);
-    h.renderEquals("@color", "red");
-  }
+// DISABLED: may restore in future as a pragma feature
+//  @Test
+//  public void testSkipCircular() throws LessException {
+//    GenericBlock frameOne = defs(
+//        def("@color", color("red"))
+//        );
+//    GenericBlock frameTwo = defs(
+//        def("@color", var("@color"))
+//        );
+//    LessHarness h = new LessHarness(VARIABLE, frameOne, frameTwo);
+//    h.renderEquals("@color", "red");
+//  }
 
   @Test
   public void testIndirectReference() throws LessException {
