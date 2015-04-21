@@ -208,9 +208,15 @@ public class ExecEnv {
     int size = frames.size();
     for (int i = size - 1; i >= 0; i--) {
       Definition def = frames.get(i).resolveDefinition(name);
-      // If definition exists and is not currently being evaluated, return it.
-      // This skips over circular references, looking in a higher stack frame.
-      if (def != null && !def.evaluating()) {
+
+      // Future: pragma to skip over circular references, looking in a higher stack frame.
+      // To do that we check if the definition is evaluating (circular) and skip it:
+      //
+      // if (def != null && pragmaSkipCircular() && !def.evaluating()) {
+      // ...
+
+      // If definition exists, return it
+      if (def != null) {
         return def;
       }
     }

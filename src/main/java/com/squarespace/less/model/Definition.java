@@ -16,6 +16,7 @@
 
 package com.squarespace.less.model;
 
+import static com.squarespace.less.core.ExecuteErrorMaker.varCircularRef;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import java.nio.file.Path;
@@ -24,6 +25,33 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.exec.ExecEnv;
+
+
+// An experimental feature is to detect and skip circular references,
+// obtaining the definition from a higher scope.  This could be
+// activated with a pragma in future releases.
+//
+// For example:
+//
+// @foo: 1px;
+//
+//  .parent {
+//     // global @foo
+//     @bar: @foo + 2px;
+//
+//     .child {
+//         // @foo: 1px (global @foo) + 3px (.parent @bar)
+//         @foo: @foo + @bar;
+//         prop: @foo;
+//     }
+// }
+//
+// Result:
+//
+// .parent {
+//    prop: 4px;
+// }
+
 
 
 /**
@@ -137,7 +165,14 @@ public class Definition extends BaseNode {
    * Resolve the value for this definition.
    */
   public Node dereference(ExecEnv env) throws LessException {
-    // Mark as 'evaluating' so that we can detect and skip circular references.
+    // TODO: future pragma to detect and skip circular definitions,
+    // looking in a higher scope. remove the following line.
+    // see ExecEnv.resolveDefinition
+    if (evaluating) {
+      throw new LessException(varCircularRef(env));
+    }
+
+    // Mark as 'evaluating' so that we can detect circular references.
     evaluating = true;
     Node result = value.eval(env);
     evaluating = false;
