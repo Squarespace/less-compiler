@@ -1,2 +1,4 @@
 rootProject.name='less-compiler'
+include ':less-cli'
+include ':less-core'
 

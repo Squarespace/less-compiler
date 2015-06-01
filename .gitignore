@@ -1,15 +1,16 @@
 *.swp
 
-/.checkstyle
-/.classpath
-/.project
-/.settings
-/.gradle
+build/
+target/
+bin/
+test-output/
+
+.checkstyle
+.classpath
+.project
+.settings
+.gradle
 
 /lessc
-
-/build
-/target
-/test-output
-/bin/
+/gradlew.bat
 

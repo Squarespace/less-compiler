@@ -7,23 +7,31 @@ buildscript {
     mavenCentral()
     jcenter()
   }
+}
 
-  dependencies {
-    classpath 'com.github.townsfolk:gradle-release:1.2'
-    classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
-  }
+plugins {
+  id 'net.researchgate.release' version '2.0.2'
+  id "com.github.hierynomus.license" version "0.11.0"
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.12'
+  gradleVersion = '2.3'
+}
+
+project.ext {
+  buildDate = new java.util.Date()
+  buildCommit = ('git rev-parse HEAD').execute().text.trim()
+
+  isRelease = !version.endsWith('SNAPSHOT')
+  isUpload = false
+  isSign = false
 }
 
 // Sign release archives
-ext.isRelease = !version.endsWith('SNAPSHOT')
-ext.isUpload = false
 gradle.taskGraph.whenReady { taskGraph ->
-  ext.isUpload = gradle.taskGraph.hasTask(':uploadArchives') || gradle.taskGraph.hasTask(':uploadInternal')
-  if (isRelease && isUpload && gradle.taskGraph.allTasks.any { it instanceof Sign }) { 
+  ext.isUpload = taskGraph.allTasks.any { it instanceof Upload }
+  ext.isSign = taskGraph.allTasks.any { it instanceof Sign }
+  if (isRelease && isUpload && isSign) {
     def password = System.console().readPassword('\n\n\n===>  Signing key password: ')
     allprojects { ext.'signing.password' = password }
   }
@@ -64,26 +72,30 @@ def configurePom(def pom) {
   }
 }
 
-allprojects {
+release {
+  requireBranch = ''
+}
+
+clean {
+  delete 'lessc'
+}
+
+task makeCli(dependsOn: ':less-command:makeCli') {
+}
+
+subprojects {
   apply plugin: 'java'
   apply plugin: 'eclipse'
-  apply plugin: 'application'
   apply plugin: 'license'
   apply plugin: 'checkstyle'
   apply plugin: 'jacoco'
   apply plugin: 'signing'
   apply plugin: 'maven'
-  apply plugin: 'release'
 
   group 'com.squarespace.less'
 
   sourceCompatibility = 1.7
   targetCompatibility = 1.7
-
-  project.ext {
-    BUILD_DATE = new java.util.Date()
-    BUILD_COMMIT = ('git rev-parse HEAD').execute().text.trim()
-  }
 
   license {
     header rootProject.file('conf/apache-2.0-header.txt')
@@ -94,14 +106,6 @@ allprojects {
 
   repositories {
     mavenCentral()
-  }
-
-  dependencies {
-    compile 'org.apache.commons:commons-lang3:3.1'
-    compile 'net.sourceforge.argparse4j:argparse4j:0.4.4'
-
-    testCompile 'org.testng:testng:6.8.7'
-    testCompile 'com.googlecode.java-diff-utils:diffutils:1.3.0'
   }
 
   checkstyle {
@@ -157,8 +161,8 @@ allprojects {
       include '**/build.properties'
       filter(ReplaceTokens, tokens: [
         'build.version': project.version,
-        'build.date': BUILD_DATE.toString(),
-        'build.commit': BUILD_COMMIT
+        'build.date': buildDate.toString(),
+        'build.commit': buildCommit
       ])
     }
 
@@ -170,51 +174,11 @@ allprojects {
   // Ensure this always runs, to generate fresh build.properties
   processResources.outputs.upToDateWhen{ false }
 
-  task execJar(type: Jar, dependsOn: classes) {
-    classifier = 'exec'
-    manifest {
-      attributes 'Main-Class': 'com.squarespace.less.cli.LessC'
-    }
-    from files(sourceSets.main.output.classesDir)
-    from files(sourceSets.main.output.resourcesDir)
-    from {
-      configurations.runtime.collect {
-        it.isDirectory() ? it : zipTree(it)
-      }
-    }
-  }
-
-  artifacts {
-    archives sourcesJar
-    archives testJar
-    archives javadocJar
-    archives execJar
-  }
-
-  mainClassName = 'com.squarespace.less.cli.LessC'
-
-  jar {
-    manifest {
-      attributes 'Main-Class': "${mainClassName}"
-    }
-  }
-
-  task makeCli(type: Exec, dependsOn: execJar,
-    description: 'Create executable "lessc" command') {
-
-    def inputScript = "src/main/resources/scripts/lessc.in"
-    def inputArchive = execJar.archivePath
-    workingDir '.'
-    executable 'bash'
-    args '-c', "cat ${inputScript} ${inputArchive} >lessc; chmod ug+x lessc"
-  }
-
-  clean {
-    delete 'lessc'
-  }
-
   uploadArchives {
     repositories.mavenDeployer {
+      beforeDeployment { 
+        MavenDeployment deployment -> signing.signPom(deployment) 
+      }
       repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
         authentication(
           userName: System.getenv('OSS_USERNAME'),
@@ -242,6 +206,9 @@ allprojects {
       configuration = configurations.archives
 
       repositories.mavenDeployer {
+        beforeDeployment { 
+          MavenDeployment deployment -> signing.signPom(deployment) 
+        }
         repository(url: NEXUS_INTERNAL_RELEASE_URL)
         snapshotRepository(url: NEXUS_INTERNAL_SNAPSHOT_URL)
         configurePom(pom)
