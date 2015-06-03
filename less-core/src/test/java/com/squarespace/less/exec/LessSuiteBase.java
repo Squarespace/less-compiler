@@ -16,11 +16,14 @@
 
 package com.squarespace.less.exec;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+
+import org.testng.annotations.BeforeSuite;
 
 import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessContext;
@@ -28,7 +31,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.FlexList;
-import com.squarespace.less.core.LessTestBase;
+import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Node;
@@ -45,16 +48,56 @@ import difflib.Patch;
  */
 public class LessSuiteBase {
 
+  protected static final String PROTOCOL_FILE = "file";
+
+  protected static final String PROTOCOL_JAR = "jar";
+
   protected static final String GLOB_LESS = "glob:*.less";
 
-  protected static final String SUITE_RESOURCE = "test-suite";
+  protected static final String TEST_SUITE_RESOURCE = "test-suite/";
+
+  protected static Path testSuiteTempDir;
+
+  /**
+   * The test-suite is a collection of LESS files which can be compiled and compared
+   * to the expected output. This resides in a directory, but when less-core is
+   * assembled it lives inside the less-core jar. In order for command line tools
+   * to be able to execute the test suite, we need to detect the jar and extract
+   * it to a temporary directory.  We annotate it to only run once per suite.
+   */
+  @BeforeSuite()
+  public void setUpTestSuite() {
+    URL url = testSuiteUrl();
+    String protocol = url.getProtocol();
+    if (protocol.equals(PROTOCOL_FILE)) {
+      // The test-suite is available in a local directory. Do nothing.
+
+    } else if (protocol.equals(PROTOCOL_JAR)) {
+      try {
+        testSuiteTempDir = LessUtils.extractTempJarResource(url);
+
+      } catch (IOException e) {
+        throw new RuntimeException("Failed to extract test suite to temporary directory", e);
+      }
+
+    } else {
+      throw new RuntimeException("cannot locate the test-suite using unknown protocol: " + protocol);
+    }
+  }
 
   public static Path testSuiteRoot() {
-    URL top = LessTestBase.class.getClassLoader().getResource(SUITE_RESOURCE);
-    if (top == null) {
-      throw new RuntimeException("Cannot locate test suite resource '" + SUITE_RESOURCE + "'");
+    if (testSuiteTempDir != null) {
+      return testSuiteTempDir;
     }
-    return Paths.get(top.getPath());
+    return Paths.get(testSuiteUrl().getPath());
+  }
+
+  private static URL testSuiteUrl() {
+    URL url = LessSuiteBase.class.getClassLoader().getResource(TEST_SUITE_RESOURCE);
+    if (url == null) {
+      throw new RuntimeException("Cannot locate the test suite on the classpath!");
+    }
+    return url;
   }
 
   protected Stylesheet parse(String source, Path importRoot) throws LessException {

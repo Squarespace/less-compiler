@@ -39,9 +39,7 @@ import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.LessSuiteBase;
 
 
-public class LessCTest {
-
-  private static final Path suiteRootDir = LessSuiteBase.testSuiteRoot();
+public class LessCTest extends LessSuiteBase {
 
   private File tempFile;
 
@@ -100,8 +98,8 @@ public class LessCTest {
 
   @Test
   public void testCompileToStdout() throws LessException, IOException {
-    String lessPath = suiteRootDir.resolve("less/directive.less").toString();
-    Path cssPath = suiteRootDir.resolve("css/directive.css");
+    String lessPath = testSuiteRoot().resolve("less/directive.less").toString();
+    Path cssPath = testSuiteRoot().resolve("css/directive.css");
     String expected = LessUtils.readFile(cssPath);
     compile(lessPath);
     assertEquals(standardOut.toString(), expected);
@@ -117,8 +115,8 @@ public class LessCTest {
 
   @Test
   public void testCompileToFile() throws LessException, IOException {
-    Path lessPath = suiteRootDir.resolve("less/directive.less");
-    Path expectedPath = suiteRootDir.resolve("css/directive.css");
+    Path lessPath = testSuiteRoot().resolve("less/directive.less");
+    Path expectedPath = testSuiteRoot().resolve("css/directive.css");
     tempFile = Files.createTempFile("lessc-unit-test", ".css").toFile();
     compile(lessPath.toString(), tempFile.toString());
     assertFilesEqual(expectedPath, tempFile.toPath());
@@ -126,26 +124,26 @@ public class LessCTest {
 
   @Test
   public void testDebugParse() throws LessException, IOException {
-    Path lessPath = suiteRootDir.resolve("less/directive.less");
+    Path lessPath = testSuiteRoot().resolve("less/directive.less");
     compile("--debug", "PARSETREE", lessPath.toString());
     assertTrue(standardOut.toString().contains("BLOCK_DIRECTIVE"));
   }
 
   @Test
   public void testDebugCanonical() throws LessException, IOException {
-    Path lessPath = suiteRootDir.resolve("less/directive.less");
+    Path lessPath = testSuiteRoot().resolve("less/directive.less");
     compile("--debug", "CANONICALIZE", lessPath.toString());
     assertTrue(standardOut.toString().contains(".ruleset-font-face {"));
   }
 
   @Test
   public void testBatchCompile() throws LessException, IOException {
-    Path lessPath = suiteRootDir.resolve("less");
+    Path lessPath = testSuiteRoot().resolve("less");
     tempFile = Files.createTempDirectory("lessc-unit-test").toFile();
     compile("--batch", lessPath.toString(), tempFile.toString());
 
     // Compare contents of all files in expected and actual directories.
-    Path cssPath = suiteRootDir.resolve("css");
+    Path cssPath = testSuiteRoot().resolve("css");
     String pattern = "glob:*.css";
     for (Path expectedPath : LessUtils.getMatchingFiles(cssPath, pattern)) {
       Path actualPath = tempFile.toPath().resolve(expectedPath.getFileName());

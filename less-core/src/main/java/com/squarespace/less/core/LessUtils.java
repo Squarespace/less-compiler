@@ -19,11 +19,13 @@ package com.squarespace.less.core;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -38,6 +40,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 import com.squarespace.less.model.Expression;
 import com.squarespace.less.model.ExpressionList;
@@ -210,6 +214,62 @@ public class LessUtils {
       output.append(temp, 0, n);
     }
     return output.toString();
+  }
+
+  /**
+   * Extracts a resource from a JAR into a temporary directory. The JAR URL
+   * must point to the full path to the resource.
+   *
+   * Example:   jar:file:/path/to/file.jar!/my-resource/
+   *
+   * The method of splitting the JAR/resource paths using the "!/" pattern
+   * is essentially how the Sun URLConnection class parses it.
+   */
+  public static Path extractTempJarResource(URL jarUrl) throws IOException {
+
+    // Locate the boundary between JAR and resource paths, and split on the boundary.
+    String rawPath = jarUrl.getPath().replaceFirst("file:", "");
+    int n = rawPath.indexOf("!/");
+
+    if (n == -1) {
+      throw new IOException("bad url for jar: no '!/' found in " + jarUrl);
+    }
+
+    String jarPath = rawPath.substring(0, n);
+    String filePath = rawPath.substring(n + 2);
+
+    // Setup a temporary directory to extract the files into, and ensure it gets
+    // automagically cleaned up.
+    Path tempDir = Files.createTempDirectory("less-core-temp-");
+    tempDir.toFile().deleteOnExit();
+
+    // Extract the files and return the full path to the extracted resource.
+    try (JarInputStream stream = new JarInputStream(new FileInputStream(jarPath))) {
+      while (true) {
+        JarEntry entry = stream.getNextJarEntry();
+        if (entry == null) {
+          break;
+        }
+
+        // Only extract resources starting with our desired path.
+        String name = entry.getName();
+        if (!name.startsWith(filePath)) {
+          continue;
+        }
+
+        // Create dirs / copy files.
+        Path tempPath = tempDir.resolve(name);
+        if (entry.isDirectory()) {
+          tempPath.toFile().mkdirs();
+        } else {
+          Files.copy(stream, tempPath);
+        }
+        stream.closeEntry();
+      }
+    }
+
+    // Return full path to extracted temporary resource.
+    return tempDir.resolve(filePath);
   }
 
 }

@@ -117,6 +117,9 @@ subprojects {
   test {
     useTestNG()
     finalizedBy jacocoTestReport
+    jacoco {
+      append = false
+    }
   }
 
   jacoco {
