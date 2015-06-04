@@ -12,11 +12,11 @@ buildscript {
 plugins {
   id 'net.researchgate.release' version '2.0.2'
   id 'com.github.hierynomus.license' version '0.11.0'
-  id 'com.glonk.eclipse-checkstyle' version '0.0.2'
+  id 'com.glonk.eclipse-checkstyle' version '0.0.3'
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.3'
+  gradleVersion = '2.4'
 }
 
 project.ext {
@@ -81,7 +81,7 @@ clean {
   delete 'lessc'
 }
 
-task makeCli(dependsOn: ':less-command:makeCli') {
+task makeCli(dependsOn: ':less-cli:makeCli') {
 }
 
 subprojects {
@@ -137,6 +137,7 @@ subprojects {
   }
 
   eclipseCheckstyle {
+    syncFormatter = true
     exclude = ['derived']
   }
 
@@ -147,7 +148,10 @@ subprojects {
 
   task testJar(type: Jar, dependsOn: testClasses) {
     classifier = 'tests'
-    from sourceSets.test.output
+    from(
+      sourceSets.main.output,
+      sourceSets.test.output
+    )
   }
 
   task sourcesJar(type: Jar, dependsOn:classes) {
