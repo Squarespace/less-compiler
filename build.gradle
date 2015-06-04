@@ -11,7 +11,8 @@ buildscript {
 
 plugins {
   id 'net.researchgate.release' version '2.0.2'
-  id "com.github.hierynomus.license" version "0.11.0"
+  id 'com.github.hierynomus.license' version '0.11.0'
+  id 'com.glonk.eclipse-checkstyle' version '0.0.2'
 }
 
 task wrapper(type: Wrapper) {
@@ -86,8 +87,9 @@ task makeCli(dependsOn: ':less-command:makeCli') {
 subprojects {
   apply plugin: 'java'
   apply plugin: 'eclipse'
-  apply plugin: 'license'
   apply plugin: 'checkstyle'
+  apply plugin: 'com.glonk.eclipse-checkstyle'
+  apply plugin: 'license'
   apply plugin: 'jacoco'
   apply plugin: 'signing'
   apply plugin: 'maven'
@@ -134,9 +136,8 @@ subprojects {
     }
   }
 
-  eclipse.project {
-    natures 'net.sf.eclipsecs.core.CheckstyleNature'
-    buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
+  eclipseCheckstyle {
+    exclude = ['derived']
   }
 
   signing {
