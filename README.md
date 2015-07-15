@@ -3,6 +3,8 @@
 
 A Java implementation of the LESS CSS preprocessor language.
 
+[![Build Status](https://travis-ci.org/Squarespace/less-compiler.svg?branch=master)](https://travis-ci.org/Squarespace/less-compiler)
+
 Current [Less.js][lessjs] compatibility level: 1.3.3
 
 License: [Apache 2.0](LICENSE.txt) ([summary][license-tldr])
