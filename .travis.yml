@@ -10,5 +10,5 @@ branches:
     - master
     - 2.x
 
-script: "./gradlew check test --stacktrace --continue"
+script: "./gradlew check test --info --continue"
 
