@@ -1,4 +1,7 @@
 *.swp
+*.bat
+
+.DS_Store
 
 /.checkstyle
 /.classpath
