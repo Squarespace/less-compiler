@@ -8,6 +8,7 @@ jdk:
 branches:
   only:
     - master
+    - 2.x
 
 script: "./gradlew check test --stacktrace --continue"
 
