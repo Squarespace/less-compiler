@@ -45,7 +45,7 @@ public class LessC {
 
   private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().startsWith("window");
 
-  private static final String LESS_REPOSITORY = "http://github.com/squarespace/squarespace-less";
+  private static final String LESS_REPOSITORY = "http://github.com/squarespace/less-compiler";
 
   private static final String IMPLEMENTATION = "[Java, Squarespace]";
 

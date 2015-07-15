@@ -139,7 +139,7 @@ public class LessCTest extends LessSuiteBase {
   @Test
   public void testBatchCompile() throws LessException, IOException {
     Path lessPath = testSuiteRoot().resolve("less");
-    tempFile = Files.createTempDirectory("lessc-unit-test").toFile();
+    tempFile = Files.createTempDirectory("lessc-batch-unit-test").toFile();
     compile("--batch", lessPath.toString(), tempFile.toString());
 
     // Compare contents of all files in expected and actual directories.
@@ -175,7 +175,8 @@ public class LessCTest extends LessSuiteBase {
   private void assertFilesEqual(Path expectedPath, Path actualPath) throws IOException {
     String srcData = LessUtils.readFile(expectedPath);
     String dstData = LessUtils.readFile(actualPath);
-    assertEquals(srcData, dstData, "Comparison for file " + expectedPath.getFileName() + " failed.");
+    assertEquals(srcData, dstData, "Comparison for file " + expectedPath.toAbsolutePath()
+        + " failed from " + actualPath.toAbsolutePath());
   }
 
   private int compile(String ... args) {
