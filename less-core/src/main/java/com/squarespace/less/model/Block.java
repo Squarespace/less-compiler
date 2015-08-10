@@ -169,6 +169,16 @@ public class Block extends BaseNode {
   }
 
   /**
+   * Shortcut to splice {@code other} Block's rules into this block.
+   * Returns the number of rules that were spliced into place.
+   */
+  public int splice(int start, int num, Block other) {
+    FlexList<Node> otherRules = other.rules();
+    rules.splice(start, num, otherRules);
+    return otherRules.size();
+  }
+
+  /**
    * Indicates whether block is marked for deferred evaluation.
    */
   public boolean deferred() {

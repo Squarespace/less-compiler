@@ -215,9 +215,7 @@ public class LessParser {
           if (evaluateImport(context.importer(), this, env, tempBlock, newImport)) {
 
             // Splice imported rules into block, replacing the import node.
-            FlexList<Node> nested = tempBlock.rules();
-            rules.splice(i, 1, nested);
-            i += nested.size() - 1;
+            i += block.splice(i, 1, tempBlock) - 1;
 
             // Ensure the variable cache gets rebuilt, so any variable lookups
             // see definitions added by the import.
