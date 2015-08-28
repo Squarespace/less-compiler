@@ -8,7 +8,10 @@ jdk:
 branches:
   only:
     - master
-    - 2.x
+    - 1.x
 
 script: "./gradlew check test --info --continue"
+
+after_success:
+    - ./gradlew jacocoTestReport coveralls --info
 
