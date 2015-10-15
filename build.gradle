@@ -85,6 +85,12 @@ clean {
 task makeCli(dependsOn: ':less-cli:makeCli') {
 }
 
+allprojects {
+  repositories {
+    mavenCentral()
+  }
+}
+
 subprojects {
   apply plugin: 'java'
   apply plugin: 'eclipse'
@@ -226,4 +232,6 @@ subprojects {
     }
   }
 }
+
+apply from: 'gradle/coverage.gradle'
 
