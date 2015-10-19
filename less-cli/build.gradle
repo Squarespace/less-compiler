@@ -1,5 +1,10 @@
 
+plugins {
+  id 'be.insaneprogramming.gradle.animalsniffer' version '1.4.0'
+}
+
 apply plugin: 'application'
+apply plugin: 'be.insaneprogramming.gradle.animalsniffer'
 
 dependencies {
   compile project(':less-core')
@@ -47,5 +52,9 @@ artifacts {
   archives testJar
   archives javadocJar
   archives execJar
+}
+
+animalsniffer {
+  signature = 'org.codehaus.mojo.signature:java17:+@signature'
 }
 
