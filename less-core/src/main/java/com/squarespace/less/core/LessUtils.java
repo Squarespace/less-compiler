@@ -144,6 +144,19 @@ public class LessUtils {
   }
 
   /**
+   * Loads a resource from the Java package relative to {@code cls}, raising an
+   * IOException if it fails.
+   */
+  public static String loadResource(Class<?> cls, String path) throws IOException {
+    try (InputStream stream = cls.getResourceAsStream(path)) {
+      if (stream == null) {
+        throw new IOException(path + " resource not found");
+      }
+      return readStream(stream);
+    }
+  }
+
+  /**
    * Returns a list of all files matching the given pattern. If {@code recursive} is true
    * will recurse into all directories below {@code rootPath}.
    */

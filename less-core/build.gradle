@@ -1,5 +1,6 @@
 
 plugins {
+  id 'me.champeau.gradle.jmh' version '0.2.0'
   id 'be.insaneprogramming.gradle.animalsniffer' version '1.4.0'
 }
 
@@ -7,10 +8,10 @@ apply plugin: 'be.insaneprogramming.gradle.animalsniffer'
 
 description = 'LESS compiler'
 dependencies {
-  compile 'org.apache.commons:commons-lang3:3.1'
+  compile "org.apache.commons:commons-lang3:${commonsLangVersion}"
 
-  testCompile 'org.testng:testng:6.8.7'
-  testCompile 'com.googlecode.java-diff-utils:diffutils:1.3.0'
+  testCompile "org.testng:testng:${testngVersion}"
+  testCompile "com.googlecode.java-diff-utils:diffutils:${diffutilsVersion}"
 }
 
 configurations {
@@ -24,6 +25,15 @@ artifacts {
   archives testJar
   archives javadocJar
   tests testJar
+}
+
+jmh {
+  jmhVersion = '1.11.1'
+  forceGC = true
+}
+
+plugins.withType(EclipsePlugin) {
+  project.eclipse.classpath.plusConfigurations += [ configurations.jmh ]
 }
 
 animalsniffer {
