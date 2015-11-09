@@ -144,8 +144,8 @@ public class LessRenderer {
 
     // Iterate looking for rule-level extends and other block nodes.
     // We use the flags to try to avoid scanning blocks unnecessarily.
-    Block block = blockNode.block();
-    if (block.hasNestedBlock() || block.hasNestedExtend()) {
+    if (canIndex(blockNode)) {
+      Block block = blockNode.block();
       FlexList<Node> rules = block.rules();
       int size = rules.size();
       for (int i = 0; i < size; i++) {
@@ -163,6 +163,31 @@ public class LessRenderer {
     }
 
     env.pop();
+  }
+
+  /**
+   * The switch below defines a type white list and criteria for entry of a
+   * block node for purposes of indexing EXTEND lists.
+   *
+   * When indexing extends we must ignore block nodes within the tree which
+   * are not intended to be rendered. A MIXIN definition exists to be
+   * resolved and invoked by a MIXIN_CALL, but the definition itself is
+   * never rendered into CSS.
+   */
+  private boolean canIndex(BlockNode blockNode) {
+    switch (blockNode.type()) {
+      case BLOCK_DIRECTIVE:
+      case DETACHED_RULESET:
+      case MEDIA:
+      case RULESET:
+      case STYLESHEET:
+        Block block = blockNode.block();
+        return block.hasNestedBlock() || block.hasNestedExtend();
+
+      default:
+        break;
+    }
+    return false;
   }
 
   /**

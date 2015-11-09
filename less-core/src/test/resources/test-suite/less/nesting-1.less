@@ -1,0 +1,31 @@
+
+.mixin1() {
+  @media (foo: 1) {
+    .child1 {
+      color: red;
+    }
+    .mixin2();
+  }
+}
+
+.mixin2() {
+  @media (bar: 2) {
+    .child2 {
+      font-size: 10px;
+    }
+    .mixin3();
+  }
+}
+
+.mixin3() {
+  @media (quux: 3) {
+    .child3 {
+      border: black;
+    }
+  }
+}
+
+.parent {
+  .mixin1();
+}
+

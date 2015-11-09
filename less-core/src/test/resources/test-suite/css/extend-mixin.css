@@ -1,0 +1,8 @@
+.a.b.c,
+.parent .replace-1 .replace-2.c,
+.a.parent .replace-1 .replace-2 {
+  content: 1;
+}
+.a .b .c {
+  content: 2;
+}

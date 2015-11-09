@@ -1,0 +1,15 @@
+@media (foo: 1) {
+  .parent .child1 {
+    color: red;
+  }
+}
+@media (foo: 1) and (bar: 2) {
+  .parent .child2 {
+    font-size: 10px;
+  }
+}
+@media (foo: 1) and (bar: 2) and (quux: 3) {
+  .parent .child3 {
+    border: #000;
+  }
+}

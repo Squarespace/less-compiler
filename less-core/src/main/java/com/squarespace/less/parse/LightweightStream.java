@@ -45,7 +45,7 @@ public abstract class LightweightStream {
 
   /**
    * Most recently parsed token. This value should only be used if the
-   * {@link #match(Recognizer)} method returns true.
+   * {@link LightweightStream#match(Recognizer)} method returns true.
    */
   protected String token;
 
