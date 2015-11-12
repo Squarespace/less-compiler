@@ -103,6 +103,10 @@ allprojects {
     include '**/*.java'
   }
 
+  release {
+    requireBranch = '1.x'
+  }
+
   repositories {
     mavenCentral()
   }
