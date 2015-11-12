@@ -41,8 +41,8 @@ if (JavaVersion.current().isJava8Compatible()) {
 def configurePom(def pom) {
   pom.project {
     name 'less-compiler'
-    description 'LESS compiler based on less.js'
-    url 'https://github.com/squarespace/squarespace-less'
+    description 'LESS compiler in Java based on less.js'
+    url 'https://github.com/squarespace/less-compiler'
 
     licenses {
       license {
@@ -53,15 +53,24 @@ def configurePom(def pom) {
     }
 
     scm {
-      connection 'scm:git:git@github.com:squarespace/squarespace-less.git'
-      url 'scm:git:git@github.com:squarespace/squarespace-less.git'
-      developerConnection 'scm:git:git@github.com:squarespace/squarespace-less.git'
+      connection 'scm:git:git@github.com:squarespace/less-compiler.git'
+      url 'scm:git:git@github.com:squarespace/less-compiler.git'
+      developerConnection 'scm:git:git@github.com:squarespace/less-compiler.git'
     }
 
     issueManagement {
       system 'github'
-      url 'https://github.com/squarespace/squarespace-less/issues'
+      url 'https://github.com/squarespace/less-compiler/issues'
     }
+
+    developers {
+      developer {
+        id 'pathensley'
+        name 'Patrick Hensley'
+        email 'pathensley@gmail.com'
+      }
+    }
+
   }
 }
 
@@ -216,18 +225,21 @@ allprojects {
 
   uploadArchives {
     repositories.mavenDeployer {
-      repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-        authentication(
-          userName: System.getenv('OSS_USERNAME'),
-          password: System.getenv('OSS_PASSWORD')
-        )
+      beforeDeployment {
+        MavenDeployment deployment -> signing.signPom(deployment)
       }
 
-      snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-        authentication(
-          userName: System.getenv('OSS_USERNAME'),
-          password: System.getenv('OSS_PASSWORD')
-        )
+      if (project.hasProperty('OSS_USERNAME') && project.hasProperty('OSS_PASSWORD')) {
+        repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+          authentication(userName: OSS_USERNAME, password: OSS_PASSWORD)
+        }
+
+        snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+          authentication(userName: OSS_USERNAME, password: OSS_PASSWORD)
+        }
+
+      } else {
+        logger.error('Missing OSS_USERNAME, OSS_PASSWORD properties.')
       }
 
       configurePom(pom)
