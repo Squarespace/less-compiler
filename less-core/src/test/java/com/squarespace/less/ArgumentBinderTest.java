@@ -39,7 +39,7 @@ import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 import com.squarespace.less.parse.Parselet;
 import com.squarespace.less.parse.Parselets;
 
@@ -129,8 +129,8 @@ public class ArgumentBinderTest extends LessTestBase {
 
     assertBinds("(true, @a: 1)", "(true, 2px)", defs(
 
-        def("@a", dim(2, Unit.PX)),
-        def("@arguments", dim(2, Unit.PX))
+        def("@a", dim(2, Units.PX)),
+        def("@arguments", dim(2, Units.PX))
         ));
 
     assertBinds("(...)", "(1, 2, 3)", defs(
@@ -140,9 +140,9 @@ public class ArgumentBinderTest extends LessTestBase {
 
     assertBinds("(@a: 1, @b ...)", "(12em, 1, 2, 3)", defs(
 
-        def("@a", dim(12, Unit.EM)),
+        def("@a", dim(12, Units.EM)),
         def("@b", expn(dim(1), dim(2), dim(3))),
-        def("@arguments", expn(dim(12, Unit.EM), dim(1), dim(2), dim(3)))
+        def("@arguments", expn(dim(12, Units.EM), dim(1), dim(2), dim(3)))
         ));
 
     assertBinds("(@b: 2, @a: 1)", "(@a: 3, @b: 4)", defs(

@@ -25,7 +25,7 @@ import com.squarespace.less.exec.Registry;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.RGBColor;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 /**
@@ -69,14 +69,14 @@ public class ColorChannelFunctions implements Registry<Function> {
   public static final Function LIGHTNESS = new Function("lightness", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      return new Dimension(Math.round(hsl(args.get(0)).lightness() * 100.0), Unit.PERCENTAGE);
+      return new Dimension(Math.round(hsl(args.get(0)).lightness() * 100.0), Units.PERCENTAGE);
     }
   };
 
   public static final Function LUMA = new Function("luma", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      return new Dimension(Math.round(rgb(args.get(0)).luma() * 100.0), Unit.PERCENTAGE);
+      return new Dimension(Math.round(rgb(args.get(0)).luma() * 100.0), Units.PERCENTAGE);
     }
   };
 
@@ -91,7 +91,7 @@ public class ColorChannelFunctions implements Registry<Function> {
   public static final Function SATURATION = new Function("saturation", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      return new Dimension(Math.round(hsl(args.get(0)).saturation() * 100.0), Unit.PERCENTAGE);
+      return new Dimension(Math.round(hsl(args.get(0)).saturation() * 100.0), Units.PERCENTAGE);
     }
   };
 

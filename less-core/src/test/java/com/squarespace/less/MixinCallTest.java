@@ -17,6 +17,7 @@
 package com.squarespace.less;
 
 import static com.squarespace.less.model.CombinatorType.CHILD;
+import static com.squarespace.less.model.Units.PX;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -27,7 +28,6 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
-import com.squarespace.less.model.Unit;
 import com.squarespace.less.parse.Parselets;
 
 
@@ -79,7 +79,7 @@ public class MixinCallTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.MIXIN_CALL);
 
     Node rs1 = ruleset(rule(prop("color"), color("red")));
-    Node rs2 = ruleset(rule(prop("font-size"), dim(1, Unit.PX)));
+    Node rs2 = ruleset(rule(prop("font-size"), dim(1, PX)));
     Node exp = mixincall(selector(element(".mixin")), args(',', arg(dim(1)), arg(rs1), arg(rs2)));
     h.parseEquals(".mixin(1, {color: red}, {font-size: 1px})", exp);
   }

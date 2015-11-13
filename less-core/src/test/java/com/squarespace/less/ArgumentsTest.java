@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Argument;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 import com.squarespace.less.parse.Parselets;
 
 
@@ -63,7 +63,7 @@ public class ArgumentsTest extends LessTestBase {
         args(',', arg(null, var("@b"))));
 
     h.parseEquals("(@b: 12px)",
-        args(',', arg("@b", dim(12, Unit.PX))));
+        args(',', arg("@b", dim(12, Units.PX))));
 
     h.parseEquals("('@{x} y @{z}')",
         args(',', arg(null, quoted('\'', false, var("@x", true), anon(" y "), var("@z", true)))));

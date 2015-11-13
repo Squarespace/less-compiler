@@ -126,7 +126,7 @@ public class Dimension extends BaseNode {
     double factor = UnitConversions.factor(dim.unit, unit);
     double scaled = dim.value;
     if (factor == 0.0) {
-      if (dim.unit != Unit.PERCENTAGE) {
+      if (dim.unit != Units.PERCENTAGE) {
         // Emit a warning if we're converting between incompatible units
         LessErrorInfo info = incompatibleUnits(unit, dim.unit);
         if (!opts.hideWarnings()) {

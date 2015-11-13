@@ -131,7 +131,7 @@ subprojects {
   }
 
   checkstyle {
-    toolVersion = '5.7'
+    toolVersion = '6.12.1'
     ignoreFailures = false
     configFile = rootProject.file('checkstyle.xml')
     configProperties = [samedir: "${rootDir}"]

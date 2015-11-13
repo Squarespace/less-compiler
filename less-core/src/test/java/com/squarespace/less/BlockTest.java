@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.Rule;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 public class BlockTest extends LessTestBase {
@@ -50,7 +50,7 @@ public class BlockTest extends LessTestBase {
 
   @Test
   public void testDebugDefinitions() throws LessException {
-    Definition defA = def("@a", dim(123, Unit.PX));
+    Definition defA = def("@a", dim(123, Units.PX));
     Definition defB = def("@b", anon("foo"));
     Rule rule = rule(prop("foo"), dim(321));
 

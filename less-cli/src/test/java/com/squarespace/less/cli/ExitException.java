@@ -21,7 +21,7 @@ class ExitException extends SecurityException {
 
   final int status;
 
-  public ExitException(int status) {
+  ExitException(int status) {
     this.status = status;
   }
 

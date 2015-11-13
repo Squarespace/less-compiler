@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 public class VariableTest extends LessTestBase {
@@ -86,7 +86,7 @@ public class VariableTest extends LessTestBase {
   @Test
   public void testIndirectReference() throws LessException {
     GenericBlock defs = defs(
-        def("@value", dim(12, Unit.PX)),
+        def("@value", dim(12, Units.PX)),
         def("@real", quoted('"', false, var("@value"))),
         def("@one", kwd("real")),
         def("@two", quoted('"', true, "real"))
@@ -103,7 +103,7 @@ public class VariableTest extends LessTestBase {
         def("@link1", var("@white")),
         def("@white", color("#fff")),
         def("@color", color("#123")),
-        def("@num", dim(1, Unit.PX))
+        def("@num", dim(1, Units.PX))
         );
     LessHarness h = new LessHarness(VARIABLE, defs);
     h.renderEquals("@var", "#fff");
@@ -114,9 +114,9 @@ public class VariableTest extends LessTestBase {
   @Test
   public void testEmbeddedReferences() throws LessException {
     GenericBlock defs = defs(
-        def("@a", dim(1, Unit.EM)),
+        def("@a", dim(1, Units.EM)),
         def("@b", quoted('"', false, anon("foo"))),
-        def("@c", dim(2, Unit.PX)),
+        def("@c", dim(2, Units.PX)),
         def("@d", quoted('"', false, anon("\"bar\""))),
         def("@e", color("#123456"))
         );

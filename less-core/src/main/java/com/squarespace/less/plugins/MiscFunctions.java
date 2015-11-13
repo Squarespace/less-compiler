@@ -33,6 +33,7 @@ import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.RGBColor;
 import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.UnitConversions;
+import com.squarespace.less.model.Units;
 
 
 /**
@@ -74,7 +75,7 @@ public class MiscFunctions implements Registry<Function> {
       Unit unit = dim.unit();
       if (unit == null) {
         return new Anonymous();
-      } else if (Unit.PERCENTAGE.equals(unit)) {
+      } else if (Units.PERCENTAGE.equals(unit)) {
         return new Quoted('"', false, Arrays.<Node>asList(new Anonymous("%")));
       }
       return new Keyword(unit.repr());

@@ -71,7 +71,7 @@ public class ArgSpecTest extends LessTestBase {
       argspec(2, DIMENSION);
       fail("Expected IllegalArgumentException");
     } catch (IllegalArgumentException e) {
-      //
+      // fallthrough
     }
 
   }

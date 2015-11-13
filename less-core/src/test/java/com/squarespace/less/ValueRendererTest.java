@@ -31,7 +31,7 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 public class ValueRendererTest extends LessTestBase {
@@ -44,15 +44,15 @@ public class ValueRendererTest extends LessTestBase {
 
   @Test
   public void testDimension() throws LessException {
-    assertEquals(render(dim(12, Unit.PX)), "12px");
-    assertEquals(render(dim(3.14, Unit.IN)), "3.14in");
+    assertEquals(render(dim(12, Units.PX)), "12px");
+    assertEquals(render(dim(3.14, Units.IN)), "3.14in");
     assertEquals(render(dim(2.1819)), "2.1819");
   }
 
   @Test
   public void testParenthesis() throws LessException {
     assertEquals(render(paren(kwd("foo"))), "(foo)");
-    assertEquals(render(paren(dim(12, Unit.CM))), "(12cm)");
+    assertEquals(render(paren(dim(12, Units.CM))), "(12cm)");
   }
 
   @Test

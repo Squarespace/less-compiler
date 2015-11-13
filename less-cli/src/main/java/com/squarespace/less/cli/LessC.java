@@ -54,18 +54,18 @@ public class LessC {
   private final PrintStream err;
 
   /**
-   * Main entry point for the command-line compiler.
-   */
-  public static void main(String[] rawArgs) {
-    System.exit(process(rawArgs, System.out, System.err, System.in));
-  }
-
-  /**
    * Constructs a command-line compiler which writes output to the
    * given out and err streams.
    */
   public LessC(PrintStream err) {
     this.err = err;
+  }
+
+  /**
+   * Main entry point for the command-line compiler.
+   */
+  public static void main(String[] rawArgs) {
+    System.exit(process(rawArgs, System.out, System.err, System.in));
   }
 
   /**

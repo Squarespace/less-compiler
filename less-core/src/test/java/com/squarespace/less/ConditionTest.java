@@ -42,7 +42,7 @@ import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.True;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 import com.squarespace.less.parse.Parselets;
 
 
@@ -70,10 +70,10 @@ public class ConditionTest extends LessTestBase {
   public void testCompare() throws LessException {
     Dimension two = dim(2);
     Dimension four = dim(4);
-    Dimension twoS = dim(2, Unit.S);
-    Dimension twoKMS = dim(2000, Unit.MS);
-    Dimension fourS = dim(4, Unit.S);
-    Dimension twoPX = dim(2, Unit.PX);
+    Dimension twoS = dim(2, Units.S);
+    Dimension twoKMS = dim(2000, Units.MS);
+    Dimension fourS = dim(4, Units.S);
+    Dimension twoPX = dim(2, Units.PX);
     Quoted strTrue = quoted('"', false, "true");
     Quoted bareTrue = quoted('"', true, "true");
 
@@ -181,7 +181,7 @@ public class ConditionTest extends LessTestBase {
 //    h.parseEquals("(1!=2)", cond(NOT_EQUAL, dim(1), dim(2)));
 //    h.parseEquals("(1<>2)", cond(NOT_EQUAL, dim(1), dim(2)));
 
-    h.parseEquals("(@b=1px)", cond(EQUAL, var("@b"), dim(1, Unit.PX)));
+    h.parseEquals("(@b=1px)", cond(EQUAL, var("@b"), dim(1, Units.PX)));
     h.parseEquals("(@a=true)", cond(EQUAL, var("@a"), new True()));
 //    h.parseEquals("(1px!=2px)", cond(NOT_EQUAL, dim(1, Unit.PX), dim(2, Unit.PX)));
     h.parseEquals("('foo'<='bar')", cond(LESS_THAN_OR_EQUAL, quoted('\'', false, "foo"), quoted('\'', false, "bar")));

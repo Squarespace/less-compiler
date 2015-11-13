@@ -18,7 +18,7 @@ package com.squarespace.less;
 
 import static com.squarespace.less.model.Operator.DIVIDE;
 import static com.squarespace.less.model.PropertyMergeMode.SPACE;
-import static com.squarespace.less.model.Unit.PX;
+import static com.squarespace.less.model.Units.PX;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
@@ -31,7 +31,6 @@ import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Stylesheet;
-import com.squarespace.less.model.Unit;
 import com.squarespace.less.parse.LessParser;
 import com.squarespace.less.parse.LessStream;
 import com.squarespace.less.parse.Parselets;
@@ -53,7 +52,7 @@ public class RuleTest extends LessTestBase {
 
   @Test
   public void testModelReprSafety() {
-    rule(prop("font-size"), dim(12, Unit.PX), true).toString();
+    rule(prop("font-size"), dim(12, PX), true).toString();
   }
 
   @Test
@@ -61,7 +60,7 @@ public class RuleTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.RULE);
 
     h.parseEquals("foo  :   #123;", rule(prop("foo"), color("#123")));
-    h.parseEquals("foo: 12px", rule(prop("foo"), dim(12, Unit.PX)));
+    h.parseEquals("foo: 12px", rule(prop("foo"), dim(12, PX)));
     h.parseEquals("foo: foo: foo: 123   ;", rule(prop("foo"), anon("foo: foo: 123")));
 
     Node expected = rule(prop("foo"), expn(comment(" x ", true), dim(1), comment(" y ", true), dim(2)));

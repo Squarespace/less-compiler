@@ -142,14 +142,14 @@ public class ColorBlendingFunctions implements Registry<Function> {
   };
 
   private static double exclusion(double c1, double c2) {
-    return (c1 + c2 * (255 - c1 - c1)) / 255.0;
+    return c1 + c2 * (255 - c1 - c1) / 255.0;
   }
 
   private static double hardlight(double c1, double c2) {
     if (c2 < 128) {
-      return (2 * c2 * c1) / 255.0;
+      return 2 * c2 * c1 / 255.0;
     }
-    return (255 - 2 * (255 - c2) * (255 - c1)) / 255.0;
+    return 255 - 2 * (255 - c2) * (255 - c1) / 255.0;
   }
 
   private static double negation(double c1, double c2) {

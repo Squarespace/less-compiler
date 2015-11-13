@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 public class ShorthandTest extends LessTestBase {
@@ -40,7 +41,7 @@ public class ShorthandTest extends LessTestBase {
 
   @Test
   public void testModelReprSafety() {
-    shorthand(dim(1), dim(2, Unit.PX)).toString();
+    shorthand(dim(1), dim(2, Units.PX)).toString();
   }
 
   @Test
@@ -48,7 +49,7 @@ public class ShorthandTest extends LessTestBase {
     LessHarness h = new LessHarness(SHORTHAND);
 
     Unit vm = new Unit("vm", "vm units");
-    h.parseEquals("small/12px", shorthand(kwd("small"), dim(12, Unit.PX)));
+    h.parseEquals("small/12px", shorthand(kwd("small"), dim(12, Units.PX)));
     h.parseEquals("15vm/23vm", shorthand(dim(15, vm), dim(23, vm)));
     h.parseEquals("foo/3.14", shorthand(kwd("foo"), dim(3.14)));
     h.parseEquals("@a/@b", shorthand(var("@a"), var("@b")));

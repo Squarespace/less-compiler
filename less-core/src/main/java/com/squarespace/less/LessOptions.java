@@ -159,7 +159,7 @@ public class LessOptions {
     }
   }
 
-  private static enum Option {
+  private enum Option {
     COMPRESS,
     DEBUG,
     HIDE_WARNINGS,

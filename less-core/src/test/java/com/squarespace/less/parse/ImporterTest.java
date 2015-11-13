@@ -205,7 +205,7 @@ public class ImporterTest extends LessTestBase {
 
     private final Set<Path> pathSet = new HashSet<>();
 
-    public TestLoader(Path root, String ... paths) {
+    TestLoader(Path root, String ... paths) {
       for (String path : paths) {
         pathSet.add(root.resolve(path).toAbsolutePath().normalize());
       }

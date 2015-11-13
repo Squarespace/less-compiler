@@ -174,11 +174,11 @@ public class Recognizers {
 
     private final int limit;
 
-    public Cardinality(Recognizer pattern, int limit) {
+    Cardinality(Recognizer pattern, int limit) {
       this(pattern, 0, limit);
     }
 
-    public Cardinality(Recognizer pattern, int start, int limit) {
+    Cardinality(Recognizer pattern, int start, int limit) {
       this.pattern = pattern;
       this.start = start;
       this.limit = limit;
@@ -214,7 +214,7 @@ public class Recognizers {
 
     private final char[] chars;
 
-    public Characters(boolean invert, char first, char ... chars) {
+    Characters(boolean invert, char first, char ... chars) {
       this.invert = invert;
       this.first = first;
       this.chars = chars;
@@ -248,11 +248,11 @@ public class Recognizers {
 
     private final boolean invert;
 
-    public CharacterClass(int charClass) {
+    CharacterClass(int charClass) {
       this(charClass, false);
     }
 
-    public CharacterClass(int charClass, boolean invert) {
+    CharacterClass(int charClass, boolean invert) {
       this.bitmask = charClass;
       this.invert = invert;
     }
@@ -281,11 +281,11 @@ public class Recognizers {
 
     private final char end;
 
-    public CharacterRange(char start, char end) {
+    CharacterRange(char start, char end) {
       this(false, start, end);
     }
 
-    public CharacterRange(boolean invert, char start, char end) {
+    CharacterRange(boolean invert, char start, char end) {
       this.invert = invert;
       this.start = start;
       this.end = end;
@@ -310,7 +310,7 @@ public class Recognizers {
 
     private final Recognizer[] patterns;
 
-    public Choice(Recognizer[] patterns) {
+    Choice(Recognizer[] patterns) {
       this.patterns = patterns;
     }
 
@@ -368,7 +368,7 @@ public class Recognizers {
 
     private final int literalLength;
 
-    public Literal(String value) {
+    Literal(String value) {
       this.literal = value;
       this.literalLength = literal.length();
     }
@@ -395,7 +395,7 @@ public class Recognizers {
 
     private final Recognizer pattern;
 
-    public LookAhead(Recognizer pattern) {
+    LookAhead(Recognizer pattern) {
       this.pattern = pattern;
     }
 
@@ -410,7 +410,7 @@ public class Recognizers {
    * One or more.
    */
   static class Plus extends Cardinality {
-    public Plus(Recognizer pattern) {
+    Plus(Recognizer pattern) {
       super(pattern, 1, 0);
     }
   }
@@ -419,7 +419,7 @@ public class Recognizers {
    * Zero or one.
    */
   static class QuestionMark extends Cardinality {
-    public QuestionMark(Recognizer pattern) {
+    QuestionMark(Recognizer pattern) {
       super(pattern, 0, 1);
     }
   }
@@ -431,7 +431,7 @@ public class Recognizers {
 
     private final Recognizer[] patterns;
 
-    public Sequence(Recognizer[] patterns) {
+    Sequence(Recognizer[] patterns) {
       this.patterns = patterns;
     }
 
@@ -454,7 +454,7 @@ public class Recognizers {
    * Zero or more.
    */
   static class Star extends Cardinality {
-    public Star(Recognizer pattern) {
+    Star(Recognizer pattern) {
       super(pattern, 0, 0);
     }
   }

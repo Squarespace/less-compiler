@@ -20,8 +20,8 @@ import static com.squarespace.less.ExecuteErrorType.ARG_COUNT;
 import static com.squarespace.less.ExecuteErrorType.INVALID_ARG;
 import static com.squarespace.less.ExecuteErrorType.UNKNOWN_UNIT;
 import static com.squarespace.less.core.Constants.TRUE;
-import static com.squarespace.less.model.Unit.MM;
-import static com.squarespace.less.model.Unit.PT;
+import static com.squarespace.less.model.Units.MM;
+import static com.squarespace.less.model.Units.PT;
 
 import org.testng.annotations.Test;
 
@@ -30,6 +30,7 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 import com.squarespace.less.parse.Parselets;
 
 
@@ -78,9 +79,9 @@ public class MiscFunctionsTest extends LessTestBase {
   public void testUnit() throws LessException {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 
-    h.evalEquals("unit(1, px)", dim(1, Unit.PX));
-    h.evalEquals("unit(1, 'px')", dim(1, Unit.PX));
-    h.evalEquals("unit(3em, pt)", dim(3, Unit.PT));
+    h.evalEquals("unit(1, px)", dim(1, Units.PX));
+    h.evalEquals("unit(1, 'px')", dim(1, Units.PX));
+    h.evalEquals("unit(3em, pt)", dim(3, Units.PT));
     h.evalEquals("unit(3em)", dim(3));
     h.evalEquals("unit(3em, quark)", dim(3, Unit.get("quark")));
 

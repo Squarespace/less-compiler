@@ -28,7 +28,7 @@ import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.HSLColor;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.RGBColor;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 /**
@@ -160,7 +160,7 @@ public class ColorOperationsFunctions implements Registry<Function> {
       HSLColor hsl = hsl(args.get(0));
       Dimension amount = (Dimension)args.get(1);
       double value = amount.value();
-      if (Unit.PERCENTAGE.equals(amount.unit())) {
+      if (Units.PERCENTAGE.equals(amount.unit())) {
         value = (value / 100.0) * 360;
       }
       double hue = (hsl.hue() + value) % 360;

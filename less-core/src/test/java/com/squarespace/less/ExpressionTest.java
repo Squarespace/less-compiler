@@ -17,7 +17,7 @@
 package com.squarespace.less;
 
 import static com.squarespace.less.model.Operator.ADD;
-import static com.squarespace.less.model.Unit.PX;
+import static com.squarespace.less.model.Units.PX;
 
 import org.testng.annotations.Test;
 

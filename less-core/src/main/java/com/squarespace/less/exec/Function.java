@@ -24,7 +24,7 @@ import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.HSLColor;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.RGBColor;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 /**
@@ -84,7 +84,7 @@ public abstract class Function {
    */
   public static double percent(Node node) throws LessException {
     Dimension dim = (Dimension)node;
-    return Unit.PERCENTAGE.equals(dim.unit()) ? dim.value() * 0.01 : dim.value();
+    return Units.PERCENTAGE.equals(dim.unit()) ? dim.value() * 0.01 : dim.value();
   }
 
   /**
@@ -100,7 +100,7 @@ public abstract class Function {
   public static double scaled(Node node, double scale) throws LessException {
     Dimension dim = (Dimension)node;
     double value = number(node);
-    return Unit.PERCENTAGE.equals(dim.unit()) ? (value * .01) * scale : value;
+    return Units.PERCENTAGE.equals(dim.unit()) ? (value * .01) * scale : value;
   }
 
   /**

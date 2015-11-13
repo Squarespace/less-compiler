@@ -26,6 +26,7 @@ import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.UnitConversions;
+import com.squarespace.less.model.Units;
 
 
 /**
@@ -47,7 +48,7 @@ public class MathFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       double value = Math.asin(((Dimension)args.get(0)).value());
-      return new Dimension(value, Unit.RAD);
+      return new Dimension(value, Units.RAD);
     }
   };
 
@@ -55,7 +56,7 @@ public class MathFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       double value = Math.acos(((Dimension)args.get(0)).value());
-      return new Dimension(value, Unit.RAD);
+      return new Dimension(value, Units.RAD);
     }
   };
 
@@ -63,7 +64,7 @@ public class MathFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       double value = Math.atan(((Dimension)args.get(0)).value());
-      return new Dimension(value, Unit.RAD);
+      return new Dimension(value, Units.RAD);
     }
   };
 
@@ -123,7 +124,7 @@ public class MathFunctions implements Registry<Function> {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Dimension dim = (Dimension)args.get(0);
-      return new Dimension(dim.value() * 100, Unit.PERCENTAGE);
+      return new Dimension(dim.value() * 100, Units.PERCENTAGE);
     }
   };
 
@@ -218,7 +219,7 @@ public class MathFunctions implements Registry<Function> {
 
   private static Node trigResult(TrigFunction function, Node argument) {
     Dimension dim = (Dimension)argument;
-    double factor = UnitConversions.factor(dim.unit(), Unit.RAD);
+    double factor = UnitConversions.factor(dim.unit(), Units.RAD);
     double result = dim.value() * factor;
     switch (function) {
       case SIN:

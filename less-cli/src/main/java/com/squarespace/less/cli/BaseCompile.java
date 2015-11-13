@@ -47,7 +47,7 @@ abstract class BaseCompile {
 
   protected final InputStream standardIn;
 
-  public BaseCompile(Args args, PrintStream out, PrintStream err, InputStream in) {
+  BaseCompile(Args args, PrintStream out, PrintStream err, InputStream in) {
     this.args = args;
     this.standardOut = out;
     this.standardErr = err;

@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 public class AssignmentTest extends LessTestBase {
@@ -46,7 +46,7 @@ public class AssignmentTest extends LessTestBase {
   @Test
   public void testAssignment() throws LessException {
     LessHarness h = new LessHarness(ASSIGNMENT);
-    h.parseEquals("foo=1px", assign("foo", dim(1, Unit.PX)));
+    h.parseEquals("foo=1px", assign("foo", dim(1, Units.PX)));
     h.parseEquals("foo=@bar", assign("foo", var("@bar")));
   }
 

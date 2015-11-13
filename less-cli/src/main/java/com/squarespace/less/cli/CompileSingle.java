@@ -35,7 +35,7 @@ import com.squarespace.less.model.Stylesheet;
  */
 class CompileSingle extends BaseCompile {
 
-  public CompileSingle(Args args, PrintStream out, PrintStream err, InputStream in) {
+  CompileSingle(Args args, PrintStream out, PrintStream err, InputStream in) {
     super(args, out, err, in);
   }
 

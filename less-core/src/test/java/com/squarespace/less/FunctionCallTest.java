@@ -16,12 +16,13 @@
 
 package com.squarespace.less;
 
+import static com.squarespace.less.model.Units.PX;
+
 import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.Unit;
 import com.squarespace.less.parse.Parselets;
 
 
@@ -38,7 +39,7 @@ public class FunctionCallTest extends LessTestBase {
     h.parseEquals("name(\"x@{y}z\")", call("name", str));
 
     Node foo1 = assign("foo", dim(1));
-    Node bar2px = assign("bar", dim(2, Unit.PX));
+    Node bar2px = assign("bar", dim(2, PX));
     h.parseEquals("name(foo=1, bar=2px)", call("name", foo1, bar2px));
   }
 

@@ -26,105 +26,6 @@ import java.util.Map;
  */
 public class Unit {
 
-  /** percentage */
-  public static final Unit PERCENTAGE = unit("%", "percentage");
-
-
-  // ABSOLUTE LENGTHS
-
-  /** centimeters */
-  public static final Unit CM = unit("cm", "centimeters");
-
-  /** millimeters */
-  public static final Unit MM = unit("mm", "millimeters");
-
-  /** inches (1in == 2.54cm) */
-  public static final Unit IN = unit("in", "inches");
-
-  /** pixels (1px == 1/96in) */
-  public static final Unit PX = unit("px", "pixels");
-
-  /** points (1pt == 1/72in) */
-  public static final Unit PT = unit("pt", "points");
-
-  /** picas  (1pc == 12pt) */
-  public static final Unit PC = unit("pc", "picas");
-
-
-  // FONT-RELATIVE LENGTHS
-
-  /** width of the '0' (ZERO U+0030) glyph in the element's font */
-  public static final Unit CH = unit("ch", "advance measure of '0' glyph");
-
-  /** font size of element */
-  public static final Unit EM = unit("em", "element font size");
-
-  /** x-height of the element's font */
-  public static final Unit EX = unit("ex", "x-height of element's font");
-
-  /** font size of the root element */
-  public static final Unit REM = unit("rem", "font size of root element");
-
-
-  // VIEWPORT-RELATIVE LENGTHS
-
-  /** 1% of viewport's height */
-  public static final Unit VH = unit("vh", "viewport's height");
-
-  /** 1% of viewport's width */
-  public static final Unit VW = unit("vw", "viewport's width");
-
-  /** 1% of viewport's smaller dimension */
-  public static final Unit VMIN = unit("vmin", "viewport's smaller dimension");
-
-  /** 1% of viewport's larger dimension */
-  public static final Unit VMAX = unit("vmax", "viewport's larger dimension");
-
-
-  // TIME
-
-  /** seconds */
-  public static final Unit S = unit("s", "seconds");
-
-  /** milliseconds */
-  public static final Unit MS = unit("ms", "milliseconds");
-
-
-  // RESOLUTIONS
-
-  /** dots per inch */
-  public static final Unit DPI = unit("dpi", "dots per inch");
-
-  /** dots per centimeter */
-  public static final Unit DPCM = unit("dpcm", "dots per centimeter");
-
-  /** dots per 'px' unit (1dppx == 96dpi) */
-  public static final Unit DPPX = unit("dppx", "dots per 'px' unit");
-
-
-  // FREQUENCIES
-
-  /** Hertz */
-  public static final Unit HZ = unit("hz", "hertz");
-
-  /** KiloHertz (1khz == 1000hz) */
-  public static final Unit KHZ = unit("khz", "kilohertz");
-
-
-  // ANGLES
-
-  /** Degrees */
-  public static final Unit DEG = unit("deg", "degrees");
-
-  /** Gradians */
-  public static final Unit GRAD = unit("grad", "gradians");
-
-  /** Radians */
-  public static final Unit RAD = unit("rad", "radians");
-
-  /** Turns */
-  public static final Unit TURN = unit("turn", "turns");
-
   /**
    * Mapping from a static unit's representation to its value.
    */
@@ -199,6 +100,13 @@ public class Unit {
   }
 
   /**
+   * Returns the current value of the unit identifier sequence.
+   */
+  public static int idSequence() {
+    return idSequence;
+  }
+
+  /**
    * Get the unit for a given raw string.
    */
   public static Unit get(String raw) {
@@ -211,7 +119,7 @@ public class Unit {
    * Build a static unit definition.  These will be used far more often
    * than custom units, so we generate a unique id for fast comparisons.
    */
-  private static Unit unit(String repr, String humanRepr) {
+  public static Unit define(String repr, String humanRepr) {
     Unit unit = new Unit(idSequence++, repr, humanRepr);
     UNIT_MAP.put(repr, unit);
     return unit;

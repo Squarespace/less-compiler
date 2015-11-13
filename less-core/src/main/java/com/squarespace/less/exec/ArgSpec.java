@@ -35,7 +35,7 @@ import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 /**
@@ -80,7 +80,7 @@ public class ArgSpec {
         throw new LessException(invalidArg(index + 1, DIMENSION, arg.type()));
       }
       Dimension dim = (Dimension)arg;
-      if (dim.unit() == null || Unit.PERCENTAGE.equals(dim.unit())) {
+      if (dim.unit() == null || Units.PERCENTAGE.equals(dim.unit())) {
         return;
       }
       throw new LessException(invalidArg(index + 1, "a unit-less number or a percentage", arg.type()));
@@ -275,7 +275,7 @@ public class ArgSpec {
 
     private final NodeType type;
 
-    public ArgTypeValidator(NodeType type) {
+    ArgTypeValidator(NodeType type) {
       this.type = type;
     }
 

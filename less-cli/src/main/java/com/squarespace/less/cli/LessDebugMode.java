@@ -39,7 +39,7 @@ public enum LessDebugMode {
 
   private String description;
 
-  private LessDebugMode(String desc) {
+  LessDebugMode(String desc) {
     this.description = desc;
   }
 

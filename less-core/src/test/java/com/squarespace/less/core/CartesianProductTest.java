@@ -42,7 +42,7 @@ public class CartesianProductTest {
       product.next();
       Assert.fail("Expected IllegalStateException");
     } catch (NoSuchElementException e) {
-      //
+      // fallthrough
     }
   }
 

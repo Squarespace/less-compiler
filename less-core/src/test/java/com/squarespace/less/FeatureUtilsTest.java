@@ -16,6 +16,7 @@
 
 package com.squarespace.less;
 
+import static com.squarespace.less.model.Units.PX;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
@@ -28,7 +29,6 @@ import com.squarespace.less.model.Features;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Paren;
-import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.Variable;
 
 
@@ -43,7 +43,7 @@ public class FeatureUtilsTest extends LessTestBase {
     Keyword kd = kwd("d");
     Variable va = var("@a");
     Paren foo = paren(rule(prop("foo"), va));
-    Paren bar = paren(rule(prop("bar"), dim(12, Unit.PX)));
+    Paren bar = paren(rule(prop("bar"), dim(12, PX)));
 
     // IN: a b { c {
     Features ancestors = features(expn(ka, kb));

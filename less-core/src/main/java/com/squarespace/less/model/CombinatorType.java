@@ -32,7 +32,7 @@ public enum CombinatorType {
 
   private final String fullName;
 
-  private CombinatorType(char ch, String fullName) {
+  CombinatorType(char ch, String fullName) {
     this.repr = ch;
     this.fullName = fullName;
   }

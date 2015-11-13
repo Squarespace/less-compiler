@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 public class UnitConversionsTest {
@@ -30,12 +31,12 @@ public class UnitConversionsTest {
   public void testBasic() {
     // A little sparse, but this exists to simply confirm that the order of the
     // arguments are correct: factor(from, to).
-    assertEquals(factor(Unit.IN, Unit.PX), 96.0);
-    assertEquals(factor(Unit.PX, Unit.IN), 1.0 / 96.0);
-    assertEquals(factor(Unit.KHZ, Unit.HZ), 1000.0);
-    assertEquals(factor(Unit.HZ, Unit.KHZ), 1 / 1000.0);
+    assertEquals(factor(Units.IN, Units.PX), 96.0);
+    assertEquals(factor(Units.PX, Units.IN), 1.0 / 96.0);
+    assertEquals(factor(Units.KHZ, Units.HZ), 1000.0);
+    assertEquals(factor(Units.HZ, Units.KHZ), 1 / 1000.0);
 
-    assertEquals(factor(Unit.IN, new Unit("quark")), 1.0);
+    assertEquals(factor(Units.IN, new Unit("quark")), 1.0);
   }
 
 }

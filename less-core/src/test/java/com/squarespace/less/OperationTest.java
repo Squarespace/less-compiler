@@ -20,6 +20,14 @@ import static com.squarespace.less.model.Operator.ADD;
 import static com.squarespace.less.model.Operator.DIVIDE;
 import static com.squarespace.less.model.Operator.MULTIPLY;
 import static com.squarespace.less.model.Operator.SUBTRACT;
+import static com.squarespace.less.model.Units.CM;
+import static com.squarespace.less.model.Units.DEG;
+import static com.squarespace.less.model.Units.EM;
+import static com.squarespace.less.model.Units.IN;
+import static com.squarespace.less.model.Units.KHZ;
+import static com.squarespace.less.model.Units.MS;
+import static com.squarespace.less.model.Units.PERCENTAGE;
+import static com.squarespace.less.model.Units.PX;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.fail;
@@ -30,7 +38,6 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Operator;
-import com.squarespace.less.model.Unit;
 import com.squarespace.less.parse.Parselets;
 
 
@@ -68,8 +75,8 @@ public class OperationTest extends LessTestBase {
     GenericBlock defs = defs(
         def("@two", dim(2)),
         def("@ten", oper(Operator.MULTIPLY, var("@two"), dim(5))),
-        def("@tenPX", dim(10, Unit.PX)),
-        def("@tenIN", dim(10, Unit.IN))
+        def("@tenPX", dim(10, PX)),
+        def("@tenIN", dim(10, IN))
     );
 
     LessHarness h = new LessHarness(Parselets.ADDITION, defs);
@@ -94,47 +101,47 @@ public class OperationTest extends LessTestBase {
     h.evalEquals("-@ten * 32", dim(-320));
 
     // implicit units
-    h.evalEquals("2 * 1px", dim(2, Unit.PX));
-    h.evalEquals("7 + 3em + 1em", dim(11, Unit.EM));
-    h.evalEquals("3cm - 4 + 4", dim(3, Unit.CM));
+    h.evalEquals("2 * 1px", dim(2, PX));
+    h.evalEquals("7 + 3em + 1em", dim(11, EM));
+    h.evalEquals("3cm - 4 + 4", dim(3, CM));
 
     // unit conversions
-    h.evalEquals(".5in + 48px", dim(1, Unit.IN));
-    h.evalEquals("30ms + 1s + 200ms", dim(1230, Unit.MS));
-    h.evalEquals("180deg - .25turn", dim(90, Unit.DEG));
-    h.evalEquals("10khz - 9000hz", dim(1, Unit.KHZ));
+    h.evalEquals(".5in + 48px", dim(1, IN));
+    h.evalEquals("30ms + 1s + 200ms", dim(1230, MS));
+    h.evalEquals("180deg - .25turn", dim(90, DEG));
+    h.evalEquals("10khz - 9000hz", dim(1, KHZ));
 
     // unit conversions with variables
-    h.evalEquals("1px + @tenIN + @tenPX", dim(971, Unit.PX));
-    h.evalEquals("@tenIN + 48px", dim(10.5, Unit.IN));
+    h.evalEquals("1px + @tenIN + @tenPX", dim(971, PX));
+    h.evalEquals("@tenIN + 48px", dim(10.5, IN));
 
     // incomplete, ignored trailing operators
     h.evalEquals("1+2*", dim(3));
 
     // percentages
-    h.evalEquals("100% * 10px", dim(1000, Unit.PERCENTAGE));
-    h.evalEquals("10% * 10px", dim(100, Unit.PERCENTAGE));
-    h.evalEquals("10em * 50%", dim(500, Unit.EM));
+    h.evalEquals("100% * 10px", dim(1000, PERCENTAGE));
+    h.evalEquals("10% * 10px", dim(100, PERCENTAGE));
+    h.evalEquals("10em * 50%", dim(500, EM));
 
-    h.evalEquals("10px / 100%", dim(0.1, Unit.PX));
-    h.evalEquals("100em / 50%", dim(2, Unit.EM));
+    h.evalEquals("10px / 100%", dim(0.1, PX));
+    h.evalEquals("100em / 50%", dim(2, EM));
 
     // adding/subtracting percentages
-    h.evalEquals("10px + 10%", dim(20, Unit.PX));
-    h.evalEquals("20px - 10%", dim(10, Unit.PX));
-    h.evalEquals("100px / 100%", dim(1, Unit.PX));
-    h.evalEquals("100px / 200%", dim(0.5, Unit.PX));
-    h.evalEquals("100px / 50%", dim(2, Unit.PX));
+    h.evalEquals("10px + 10%", dim(20, PX));
+    h.evalEquals("20px - 10%", dim(10, PX));
+    h.evalEquals("100px / 100%", dim(1, PX));
+    h.evalEquals("100px / 200%", dim(0.5, PX));
+    h.evalEquals("100px / 50%", dim(2, PX));
 
-    h.evalEquals("50% + 10%", dim(60, Unit.PERCENTAGE));
-    h.evalEquals("50% - 10%", dim(40, Unit.PERCENTAGE));
-    h.evalEquals("100% * 50%", dim(5000, Unit.PERCENTAGE));
-    h.evalEquals("20% * 50%", dim(1000, Unit.PERCENTAGE));
-    h.evalEquals("100% / 10%", dim(10, Unit.PERCENTAGE));
+    h.evalEquals("50% + 10%", dim(60, PERCENTAGE));
+    h.evalEquals("50% - 10%", dim(40, PERCENTAGE));
+    h.evalEquals("100% * 50%", dim(5000, PERCENTAGE));
+    h.evalEquals("20% * 50%", dim(1000, PERCENTAGE));
+    h.evalEquals("100% / 10%", dim(10, PERCENTAGE));
 
-    h.evalEquals("30% + 10", dim(40, Unit.PERCENTAGE));
-    h.evalEquals("30% - 10", dim(20, Unit.PERCENTAGE));
-    h.evalEquals("30% / 10", dim(3, Unit.PERCENTAGE));
+    h.evalEquals("30% + 10", dim(40, PERCENTAGE));
+    h.evalEquals("30% - 10", dim(20, PERCENTAGE));
+    h.evalEquals("30% / 10", dim(3, PERCENTAGE));
   }
 
   @Test

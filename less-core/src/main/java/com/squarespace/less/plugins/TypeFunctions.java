@@ -33,6 +33,7 @@ import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 import com.squarespace.less.model.Url;
 
 
@@ -50,7 +51,7 @@ public class TypeFunctions implements Registry<Function> {
     }
   };
 
-  public static final Function ISEM = new DimensionUnitFunction("isem", Unit.EM);
+  public static final Function ISEM = new DimensionUnitFunction("isem", Units.EM);
 
   public static final Function ISKEYWORD = new Function("iskeyword", "*") {
     @Override
@@ -73,9 +74,9 @@ public class TypeFunctions implements Registry<Function> {
     }
   };
 
-  public static final Function ISPERCENTAGE = new DimensionUnitFunction("ispercentage", Unit.PERCENTAGE);
+  public static final Function ISPERCENTAGE = new DimensionUnitFunction("ispercentage", Units.PERCENTAGE);
 
-  public static final Function ISPIXEL = new DimensionUnitFunction("ispixel", Unit.PX);
+  public static final Function ISPIXEL = new DimensionUnitFunction("ispixel", Units.PX);
 
   // TODO: ISRULESET
 
@@ -127,7 +128,7 @@ public class TypeFunctions implements Registry<Function> {
 
     private Unit unit;
 
-    public DimensionUnitFunction(String name, Unit unit) {
+    DimensionUnitFunction(String name, Unit unit) {
       super(name, "*");
       this.unit = unit;
     }

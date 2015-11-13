@@ -16,13 +16,14 @@
 
 package com.squarespace.less;
 
+import static com.squarespace.less.model.Units.PX;
+
 import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Paren;
-import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.Variable;
 import com.squarespace.less.parse.Parselets;
 
@@ -58,7 +59,7 @@ public class FeaturesTest extends LessTestBase {
         features(expn(paren(feature(prop("min-width"), var("@width"))))));
 
     h.parseEquals("a and (b: 12px) and c",
-        features(expn(kwd("a"), kwd("and"), paren(feature(prop("b"), dim(12, Unit.PX))), kwd("and"), kwd("c"))));
+        features(expn(kwd("a"), kwd("and"), paren(feature(prop("b"), dim(12, PX))), kwd("and"), kwd("c"))));
   }
 
 }

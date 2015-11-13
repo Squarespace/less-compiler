@@ -16,23 +16,23 @@
 
 package com.squarespace.less.model;
 
-import static com.squarespace.less.model.Unit.CM;
-import static com.squarespace.less.model.Unit.DEG;
-import static com.squarespace.less.model.Unit.DPCM;
-import static com.squarespace.less.model.Unit.DPI;
-import static com.squarespace.less.model.Unit.DPPX;
-import static com.squarespace.less.model.Unit.GRAD;
-import static com.squarespace.less.model.Unit.HZ;
-import static com.squarespace.less.model.Unit.IN;
-import static com.squarespace.less.model.Unit.KHZ;
-import static com.squarespace.less.model.Unit.MM;
-import static com.squarespace.less.model.Unit.MS;
-import static com.squarespace.less.model.Unit.PC;
-import static com.squarespace.less.model.Unit.PT;
-import static com.squarespace.less.model.Unit.PX;
-import static com.squarespace.less.model.Unit.RAD;
-import static com.squarespace.less.model.Unit.S;
-import static com.squarespace.less.model.Unit.TURN;
+import static com.squarespace.less.model.Units.CM;
+import static com.squarespace.less.model.Units.DEG;
+import static com.squarespace.less.model.Units.DPCM;
+import static com.squarespace.less.model.Units.DPI;
+import static com.squarespace.less.model.Units.DPPX;
+import static com.squarespace.less.model.Units.GRAD;
+import static com.squarespace.less.model.Units.HZ;
+import static com.squarespace.less.model.Units.IN;
+import static com.squarespace.less.model.Units.KHZ;
+import static com.squarespace.less.model.Units.MM;
+import static com.squarespace.less.model.Units.MS;
+import static com.squarespace.less.model.Units.PC;
+import static com.squarespace.less.model.Units.PT;
+import static com.squarespace.less.model.Units.PX;
+import static com.squarespace.less.model.Units.RAD;
+import static com.squarespace.less.model.Units.S;
+import static com.squarespace.less.model.Units.TURN;
 
 import java.util.Collection;
 
@@ -44,9 +44,14 @@ import java.util.Collection;
 public class UnitConversions {
 
   /**
+   * Size of each conversion array dimension.
+   */
+  private static final int SIZE = Unit.idSequence();
+
+  /**
    * Table of conversion factors between units.
    */
-  private static final double[][] CONVERSIONS;
+  private static final double[][] CONVERSIONS = new double[SIZE][SIZE];
 
   /**
    * Constructs a 2-way conversion between the {@code from} and {@code to} units
@@ -64,8 +69,6 @@ public class UnitConversions {
    */
   static {
     Collection<Unit> values = Unit.values();
-    int size = values.size();
-    CONVERSIONS = new double[size][size];
     for (Unit unit : values) {
       create(unit, unit, 1.0);
     }

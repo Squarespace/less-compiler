@@ -244,7 +244,7 @@ public class LessParser {
      */
     private final String raw;
 
-    public Deferred(List<ExecEnv> envs, String raw) {
+    Deferred(List<ExecEnv> envs, String raw) {
       this.envs = envs;
       this.raw = raw;
     }

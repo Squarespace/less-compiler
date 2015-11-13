@@ -194,7 +194,7 @@ public class CssModel {
 
     private boolean populated = false;
 
-    public CssBlock(NodeType type) {
+    CssBlock(NodeType type) {
       this.type = type;
       switch (type) {
 
@@ -311,7 +311,7 @@ public class CssModel {
 
     private final String value;
 
-    public CssValue(String value) {
+    CssValue(String value) {
       this.value = value;
     }
 
@@ -340,7 +340,7 @@ public class CssModel {
 
     private final String value;
 
-    public CssComment(String value) {
+    CssComment(String value) {
       this.value = value;
     }
 

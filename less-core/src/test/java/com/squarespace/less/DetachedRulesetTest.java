@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 import com.squarespace.less.parse.Parselets;
 
 
@@ -35,7 +35,7 @@ public class DetachedRulesetTest extends LessTestBase {
 
     Node expected = def("@foo", ruleset(
       rule(prop("color"), color("red")),
-      rule(prop("font-size"), dim(12, Unit.PX))
+      rule(prop("font-size"), dim(12, Units.PX))
     ));
     h.parseEquals("@foo: { color: red; font-size: 12px }", expected);
   }

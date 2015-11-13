@@ -53,6 +53,7 @@ import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.RGBColor;
 import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.UnitConversions;
+import com.squarespace.less.model.Units;
 
 
 /**
@@ -239,8 +240,8 @@ public class NodeComparator {
   private Comparison compareDimensions(Dimension left, Dimension right) {
     Unit unit0 = left.unit();
     Unit unit1 = right.unit();
-    unit0 = Unit.PERCENTAGE.equals(unit0) ? null : unit0;
-    unit1 = Unit.PERCENTAGE.equals(unit1) ? null : unit1;
+    unit0 = Units.PERCENTAGE.equals(unit0) ? null : unit0;
+    unit1 = Units.PERCENTAGE.equals(unit1) ? null : unit1;
 
     double factor = 1.0;
     double value0 = left.value();

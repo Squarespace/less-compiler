@@ -28,7 +28,7 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Ruleset;
-import com.squarespace.less.model.Unit;
+import com.squarespace.less.model.Units;
 
 
 public class RulesetTest extends LessTestBase {
@@ -67,7 +67,7 @@ public class RulesetTest extends LessTestBase {
 
     // Unicode character in selector
     exp = ruleset(selector(element(".♫")));
-    exp.add(rule(prop("length"), dim(52, Unit.S)));
+    exp.add(rule(prop("length"), dim(52, Units.S)));
     h.parseEquals(".♫ { length: 52s; }", exp);
   }
 
