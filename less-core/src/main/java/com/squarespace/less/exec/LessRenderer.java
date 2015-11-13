@@ -27,12 +27,10 @@ import com.squarespace.less.core.FlexList;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockDirective;
-import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.DetachedRuleset;
 import com.squarespace.less.model.Directive;
-import com.squarespace.less.model.ExtendList;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Import;
 import com.squarespace.less.model.ImportMarker;
@@ -109,7 +107,8 @@ public class LessRenderer {
    * rendered output.
    */
   private String render() throws LessException {
-    indexExtends(stylesheet);
+    LessIndexer indexer = new LessIndexer(env);
+    indexer.index(stylesheet);
 
     env.push(stylesheet);
     Block block = stylesheet.block();
@@ -122,72 +121,6 @@ public class LessRenderer {
     env.pop();
 
     return model.render();
-  }
-
-  /**
-   * Scan the stylesheet for extends and index them.
-   */
-  private void indexExtends(BlockNode blockNode) throws LessException {
-    env.push(blockNode);
-
-    // If one of the selectors has an extend list, index it.
-    if (blockNode instanceof Ruleset) {
-      Selectors selectors = env.frame().selectors();
-      if (selectors.hasExtend()) {
-        for (Selector selector : selectors.selectors()) {
-          if (selector.hasExtend()) {
-            env.indexSelector(selector);
-          }
-        }
-      }
-    }
-
-    // Iterate looking for rule-level extends and other block nodes.
-    // We use the flags to try to avoid scanning blocks unnecessarily.
-    if (canIndex(blockNode)) {
-      Block block = blockNode.block();
-      FlexList<Node> rules = block.rules();
-      int size = rules.size();
-      for (int i = 0; i < size; i++) {
-        Node node = rules.get(i);
-
-        if (node instanceof BlockNode) {
-          // Recurse into the block.
-          indexExtends((BlockNode)node);
-
-        } else if (node instanceof ExtendList) {
-          // Index the rule-level extend.
-          env.indexSelector(env.frame().selectors(), (ExtendList)node);
-        }
-      }
-    }
-
-    env.pop();
-  }
-
-  /**
-   * The switch below defines a type white list and criteria for entry of a
-   * block node for purposes of indexing EXTEND lists.
-   *
-   * When indexing extends we must ignore block nodes within the tree which
-   * are not intended to be rendered. A MIXIN definition exists to be
-   * resolved and invoked by a MIXIN_CALL, but the definition itself is
-   * never rendered into CSS.
-   */
-  private boolean canIndex(BlockNode blockNode) {
-    switch (blockNode.type()) {
-      case BLOCK_DIRECTIVE:
-      case DETACHED_RULESET:
-      case MEDIA:
-      case RULESET:
-      case STYLESHEET:
-        Block block = blockNode.block();
-        return block.hasNestedBlock() || block.hasNestedExtend();
-
-      default:
-        break;
-    }
-    return false;
   }
 
   /**
