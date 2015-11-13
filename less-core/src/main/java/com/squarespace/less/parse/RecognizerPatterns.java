@@ -126,7 +126,7 @@ public class RecognizerPatterns {
         sequence(characters('='), zeroOrOne(characters('=', '<'))),
         sequence(characters('<', '>'), zeroOrOne(characters('=')))
       );
- }
+  }
 
   /**
    * Regular expression  "([\\w-_]+|%|progid:[\\w\\.]+)\\("
@@ -201,7 +201,7 @@ public class RecognizerPatterns {
    * Regular expression  "[\\.#](?=@)"
    */
   private static Recognizer buildElement3() {
-    return (sequence(characters('.', '#'), lookAhead(characters('@'))));
+    return sequence(characters('.', '#'), lookAhead(characters('@')));
   }
 
   /**

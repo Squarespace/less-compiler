@@ -113,7 +113,7 @@ public class PrimaryParselet implements Parselet {
 
     // If features are attached to this import, we wrap its rules in a Media.
     Features features = importNode.features();
-    boolean wrapMedia = (features != null && !features.isEmpty());
+    boolean wrapMedia = features != null && !features.isEmpty();
     if (wrapMedia) {
       // Create a MEDIA block and push it onto the stack. Imported
       // rules will be appended to the media block instead of the

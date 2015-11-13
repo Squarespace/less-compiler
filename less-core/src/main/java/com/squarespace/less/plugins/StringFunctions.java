@@ -107,7 +107,7 @@ public class StringFunctions implements Registry<Function> {
           color.forceHex(true);
           arg = color;
         }
-        boolean escape = (ch == 's' || ch == 'S');
+        boolean escape = ch == 's' || ch == 'S';
         String value = asString(env, arg, escape);
         if (CharClass.uppercase(ch)) {
           value = EncodeUtils.encodeURIComponent(value);

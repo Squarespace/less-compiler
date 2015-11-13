@@ -54,7 +54,7 @@ public class ArgSpecTest extends LessTestBase {
 
     spec = argspec(".");
     valid(spec);
-    valid(spec, dim(1), dim(2), (dim(3)));
+    valid(spec, dim(1), dim(2), dim(3));
 
     spec = argspec("*");
     valid(spec, dim(1));
@@ -71,6 +71,7 @@ public class ArgSpecTest extends LessTestBase {
       argspec(2, DIMENSION);
       fail("Expected IllegalArgumentException");
     } catch (IllegalArgumentException e) {
+      //
     }
 
   }
@@ -88,6 +89,7 @@ public class ArgSpecTest extends LessTestBase {
       spec.validate(env(), dummy(spec), nodes);
       fail("Expected LessException for " + spec);
     } catch (LessException e) {
+      // fallthrough
     }
   }
 

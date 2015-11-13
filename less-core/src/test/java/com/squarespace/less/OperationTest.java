@@ -154,26 +154,7 @@ public class OperationTest extends LessTestBase {
   @Test
   public void testBadColorMath() throws LessException {
     String[] strings = new String[] {
-        "#000 + 1px", "12em + #fff", "2 / #010101", "2 - #010101"
-        };
-
-    LessHarness h = new LessHarness(Parselets.ADDITION);
-
-    // XXX: change to use evalFail
-    for (String str : strings) {
-      try {
-        h.evaluate(str);
-        fail("Expected operation to raise an exception: " + str);
-      } catch (LessException e) {
-      }
-    }
-  }
-
-  @Test
-  public void testBadMath() throws LessException {
-    String[] strings = new String[] {
-        "foo + 1",
-        "1 * foo"
+      "#000 + 1px", "12em + #fff", "2 / #010101", "2 - #010101"
     };
 
     LessHarness h = new LessHarness(Parselets.ADDITION);
@@ -184,6 +165,27 @@ public class OperationTest extends LessTestBase {
         h.evaluate(str);
         fail("Expected operation to raise an exception: " + str);
       } catch (LessException e) {
+        // fallthrough
+      }
+    }
+  }
+
+  @Test
+  public void testBadMath() throws LessException {
+    String[] strings = new String[] {
+      "foo + 1",
+      "1 * foo"
+    };
+
+    LessHarness h = new LessHarness(Parselets.ADDITION);
+
+    // XXX: change to use evalFail
+    for (String str : strings) {
+      try {
+        h.evaluate(str);
+        fail("Expected operation to raise an exception: " + str);
+      } catch (LessException e) {
+        // fallthrough
       }
     }
   }

@@ -99,6 +99,7 @@ public class ColorTest extends LessTestBase {
         RGBColor.fromHex(hex);
         fail("Expected exception while parsing hex color '" + hex + "'");
       } catch (IllegalArgumentException e) {
+        // fallthrough
       }
     }
   }

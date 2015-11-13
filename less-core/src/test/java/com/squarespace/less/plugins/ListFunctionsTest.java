@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.squarespace.less.plugins;
 
 import static com.squarespace.less.ExecuteErrorType.ARG_COUNT;

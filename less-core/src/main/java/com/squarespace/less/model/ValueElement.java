@@ -77,7 +77,7 @@ public class ValueElement extends SelectorPart {
    */
   @Override
   public void repr(Buffer buf) {
-    boolean quoted = (value instanceof Quoted);
+    boolean quoted = value instanceof Quoted;
     // TODO: handle forward-compatibility with 2.x syntax
     if (quoted) {
       buf.append('(');

@@ -222,7 +222,7 @@ public class Stream {
       j++;
     }
     furthest = Math.max(index, furthest);
-    return (j == patternLen);
+    return j == patternLen;
   }
 
 

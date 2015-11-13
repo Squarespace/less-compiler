@@ -424,6 +424,7 @@ public class Block extends BaseNode {
         if (mode != PropertyMergeMode.NONE) {
           flags |= FLAG_HAS_MERGE_MODES;
         }
+        break;
       }
 
       default:

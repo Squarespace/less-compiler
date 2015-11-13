@@ -35,28 +35,6 @@ import static com.squarespace.less.core.CharClass.UPPERCASE;
 public class EncodeUtils {
 
   /**
-   * Defines the character classes that are transformed by the
-   * {@link #encodeURI(String)} method.
-   */
-  private static final int ENCODE_URI_CLASS = ENCODE_URI | LOWERCASE | UPPERCASE | DIGIT;
-
-  /**
-   * Defines the character classes that are transformed by the
-   * {@link #encodeURIComponent(String)} method.
-   */
-  private static final int ENCODE_URI_COMPONENT_CLASS = ENCODE_URI_COMPONENT | LOWERCASE | UPPERCASE | DIGIT;
-
-  private EncodeUtils() {
-  }
-
-  /**
-   * Interface for testing a character's membership in a class.
-   */
-  private interface CharTest {
-    boolean member(char ch);
-  }
-
-  /**
    * Tests character membership for {@link #encodeURI(String)}
    */
   private static final CharTest ENCODE_URI_TEST = new CharTest() {
@@ -85,6 +63,28 @@ public class EncodeUtils {
       return CharClass.isMember(ch, ENCODE_URI_CLASS) && !CharClass.isMember(ch, CharClass.ESCAPE);
     }
   };
+
+  /**
+   * Defines the character classes that are transformed by the
+   * {@link #encodeURI(String)} method.
+   */
+  private static final int ENCODE_URI_CLASS = ENCODE_URI | LOWERCASE | UPPERCASE | DIGIT;
+
+  /**
+   * Defines the character classes that are transformed by the
+   * {@link #encodeURIComponent(String)} method.
+   */
+  private static final int ENCODE_URI_COMPONENT_CLASS = ENCODE_URI_COMPONENT | LOWERCASE | UPPERCASE | DIGIT;
+
+  private EncodeUtils() {
+  }
+
+  /**
+   * Interface for testing a character's membership in a class.
+   */
+  private interface CharTest {
+    boolean member(char ch);
+  }
 
   /**
    * Implementation of JavaScript's encodeURI function.

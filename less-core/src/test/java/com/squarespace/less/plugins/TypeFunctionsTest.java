@@ -52,7 +52,7 @@ public class TypeFunctionsTest extends LessTestBase {
     h.evalEquals("isem('foo')", FALSE);
   }
 
-@Test
+  @Test
   public void testIsKeyword() throws LessException {
     LessHarness h = harness();
 

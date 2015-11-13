@@ -104,7 +104,7 @@ public class NodeComparator {
       return compareSameType(left, right);
     }
 
-    boolean skip = (rightType == ANONYMOUS || rightType == QUOTED);
+    boolean skip = rightType == ANONYMOUS || rightType == QUOTED;
     if (SPECIAL_COMPARE.contains(leftType) && !skip) {
       return compareImpl(left, right);
 
@@ -239,8 +239,8 @@ public class NodeComparator {
   private Comparison compareDimensions(Dimension left, Dimension right) {
     Unit unit0 = left.unit();
     Unit unit1 = right.unit();
-    unit0 = (Unit.PERCENTAGE.equals(unit0) ? null : unit0);
-    unit1 = (Unit.PERCENTAGE.equals(unit1) ? null : unit1);
+    unit0 = Unit.PERCENTAGE.equals(unit0) ? null : unit0;
+    unit1 = Unit.PERCENTAGE.equals(unit1) ? null : unit1;
 
     double factor = 1.0;
     double value0 = left.value();

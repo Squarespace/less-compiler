@@ -364,7 +364,7 @@ public class CssModel {
   /**
    * Abstract node in a CSS model.
    */
-  static abstract class CssNode {
+  abstract static class CssNode {
 
     public boolean isValue() {
       return true;

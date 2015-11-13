@@ -35,9 +35,9 @@ public class Patterns {
 
   // Common
 
-  private static final String _HEXCHAR = "[A-Fa-f0-9]";
+  public static final String _HEXCHAR = "[A-Fa-f0-9]";
 
-  private static final String _HEXWILD = "[A-Fa-f0-9?]";
+  public static final String _HEXWILD = "[A-Fa-f0-9?]";
 
   // Regular expressions.
 

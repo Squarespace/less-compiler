@@ -38,11 +38,11 @@ public class WildcardElement extends SelectorPart {
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
     posRepr(buf);
-  };
+  }
 
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof WildcardElement);
+    return obj instanceof WildcardElement;
   }
 
   @Override

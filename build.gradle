@@ -137,6 +137,11 @@ subprojects {
     configProperties = [samedir: "${rootDir}"]
   }
 
+  eclipseCheckstyle {
+    syncFormatter = true
+    exclude = ['derived']
+  }
+
   test {
     useTestNG()
     finalizedBy jacocoTestReport
@@ -155,11 +160,6 @@ subprojects {
     reports {
       html.destination = "${buildDir}/jacoco-report"
     }
-  }
-
-  eclipseCheckstyle {
-    syncFormatter = true
-    exclude = ['derived']
   }
 
   signing {

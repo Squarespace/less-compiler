@@ -382,7 +382,7 @@ public class LessMaker {
   }
 
   public RGBColor rgb(int red, int green, int blue) {
-   return rgb(red, green, blue, 1.0);
+    return rgb(red, green, blue, 1.0);
   }
 
   public RGBColor rgb(int red, int green, int blue, double alpha) {

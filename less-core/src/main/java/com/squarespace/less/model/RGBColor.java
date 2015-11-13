@@ -256,10 +256,10 @@ public class RGBColor extends BaseColor {
     int i = (int)Math.floor((hue / 60) % 6);
     double f = (hue / 60.0) - i;
     double[] values = new double[] {
-        value,
-        value * (1 - saturation),
-        value * (1 - f * saturation),
-        value * (1 - (1 - f) * saturation)
+      value,
+      value * (1 - saturation),
+      value * (1 - f * saturation),
+      value * (1 - (1 - f) * saturation)
     };
     double red = values[HSV_PERMUTATIONS[i][0]] * 255.0;
     double green = values[HSV_PERMUTATIONS[i][1]] * 255.0;
@@ -292,7 +292,7 @@ public class RGBColor extends BaseColor {
       char b1 = hexchar(blue & 0x0F);
 
       // Check if the color can be emitted as a 3-character hex sequence.
-      boolean hex3 = (r0 == r1 && g0 == g1 && b0 == b1);
+      boolean hex3 = r0 == r1 && g0 == g1 && b0 == b1;
 
       if (!forceHex) {
         // Check if an equivalent color keyword exists that is shorter

@@ -40,7 +40,7 @@ public class MathFunctions implements Registry<Function> {
     public Node invoke(ExecEnv env, java.util.List<Node> args) throws LessException {
       Dimension dim = (Dimension)args.get(0);
       return new Dimension(Math.abs(dim.value()), dim.unit());
-    };
+    }
   };
 
   public static final Function ASIN = new Function("asin", "d") {
@@ -203,7 +203,7 @@ public class MathFunctions implements Registry<Function> {
         return null;
 
       } else {
-        value = (minimum) ? Math.min(value, dim.value()) : Math.max(value, dim.value());
+        value = minimum ? Math.min(value, dim.value()) : Math.max(value, dim.value());
       }
 
     }

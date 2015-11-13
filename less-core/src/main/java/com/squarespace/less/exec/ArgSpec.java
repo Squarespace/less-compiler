@@ -44,6 +44,50 @@ import com.squarespace.less.model.Unit;
 public class ArgSpec {
 
   /**
+   * Validator which accepts any node type.
+   */
+  private static final ArgValidator ARG_ANY = new ArgValidator() {
+    @Override
+    public void validate(int index, Node arg) throws LessException {
+      // any node type is valid.
+    }
+  };
+
+  /**
+   * Validator which only accepts a unit-less number.
+   */
+  private static final ArgValidator ARG_NUMBER = new ArgValidator() {
+    @Override
+    public void validate(int index, Node arg) throws LessException {
+      if (arg.type() != DIMENSION) {
+        throw new LessException(invalidArg(index + 1, DIMENSION, arg.type()));
+      }
+      Dimension dim = (Dimension)arg;
+      if (dim.unit() == null) {
+        return;
+      }
+      throw new LessException(invalidArg(index, "a unit-less number", arg.type()));
+    }
+  };
+
+  /**
+   * Validator which only accepts numbers in percentage units.
+   */
+  private static final ArgValidator ARG_PERCENTAGE = new ArgValidator() {
+    @Override
+    public void validate(int index, Node arg) throws LessException {
+      if (arg.type() != DIMENSION) {
+        throw new LessException(invalidArg(index + 1, DIMENSION, arg.type()));
+      }
+      Dimension dim = (Dimension)arg;
+      if (dim.unit() == null || Unit.PERCENTAGE.equals(dim.unit())) {
+        return;
+      }
+      throw new LessException(invalidArg(index + 1, "a unit-less number or a percentage", arg.type()));
+    }
+  };
+
+  /**
    * Validate the arguments before invoking a function.
    */
   private final List<ArgValidator> validators;
@@ -72,7 +116,7 @@ public class ArgSpec {
    */
   public ArgSpec(int minArgs, NodeType ... types) {
     this(minArgs, build(types));
- }
+  }
 
   /**
    * Constructs an instance which ensures that the arguments are valid,
@@ -243,49 +287,5 @@ public class ArgSpec {
     }
 
   }
-
-  /**
-   * Validator which accepts any node type.
-   */
-  private static final ArgValidator ARG_ANY = new ArgValidator() {
-    @Override
-    public void validate(int index, Node arg) throws LessException {
-      // any node type is valid.
-    };
-  };
-
-  /**
-   * Validator which only accepts a unit-less number.
-   */
-  private static final ArgValidator ARG_NUMBER = new ArgValidator() {
-    @Override
-    public void validate(int index, Node arg) throws LessException {
-      if (arg.type() != DIMENSION) {
-        throw new LessException(invalidArg(index + 1, DIMENSION, arg.type()));
-      }
-      Dimension dim = (Dimension)arg;
-      if (dim.unit() == null) {
-        return;
-      }
-      throw new LessException(invalidArg(index, "a unit-less number", arg.type()));
-    }
-  };
-
-  /**
-   * Validator which only accepts numbers in percentage units.
-   */
-  private static final ArgValidator ARG_PERCENTAGE = new ArgValidator() {
-    @Override
-    public void validate(int index, Node arg) throws LessException {
-      if (arg.type() != DIMENSION) {
-        throw new LessException(invalidArg(index + 1, DIMENSION, arg.type()));
-      }
-      Dimension dim = (Dimension)arg;
-      if (dim.unit() == null || Unit.PERCENTAGE.equals(dim.unit())) {
-        return;
-      }
-      throw new LessException(invalidArg(index + 1, "a unit-less number or a percentage", arg.type()));
-    }
-  };
 
 }

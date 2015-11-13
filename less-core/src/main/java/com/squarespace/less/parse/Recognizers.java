@@ -199,7 +199,7 @@ public class Recognizers {
           break;
         }
       }
-      return (start > 0 ? (count < start ? FAIL : result) : result);
+      return start > 0 ? (count < start ? FAIL : result) : result;
     }
   }
 

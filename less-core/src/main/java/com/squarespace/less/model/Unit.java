@@ -26,21 +26,6 @@ import java.util.Map;
  */
 public class Unit {
 
-  /**
-   * Build a static unit definition.  These will be used far more often
-   * than custom units, so we generate a unique id for fast comparisons.
-   */
-  private static Unit unit(String repr, String humanRepr) {
-    Unit unit = new Unit(idSequence++, repr, humanRepr);
-    UNIT_MAP.put(repr, unit);
-    return unit;
-  }
-
-  /**
-   * Mapping from a static unit's representation to its value.
-   */
-  private static final Map<String, Unit> UNIT_MAP = new HashMap<>();
-
   /** percentage */
   public static final Unit PERCENTAGE = unit("%", "percentage");
 
@@ -141,6 +126,11 @@ public class Unit {
   public static final Unit TURN = unit("turn", "turns");
 
   /**
+   * Mapping from a static unit's representation to its value.
+   */
+  private static final Map<String, Unit> UNIT_MAP = new HashMap<>();
+
+  /**
    * Increasing sequential id for fast unit comparisons. Custom unit is 0.
    */
   private static int idSequence = 1;
@@ -215,6 +205,16 @@ public class Unit {
     String value = raw.toLowerCase();
     Unit unit = UNIT_MAP.get(value);
     return (unit == null) ? new Unit(value, value) : unit;
+  }
+
+  /**
+   * Build a static unit definition.  These will be used far more often
+   * than custom units, so we generate a unique id for fast comparisons.
+   */
+  private static Unit unit(String repr, String humanRepr) {
+    Unit unit = new Unit(idSequence++, repr, humanRepr);
+    UNIT_MAP.put(repr, unit);
+    return unit;
   }
 
   @Override

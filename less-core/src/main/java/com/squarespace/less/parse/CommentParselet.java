@@ -40,7 +40,7 @@ public class CommentParselet implements Parselet {
     }
 
     ch = stm.peek(1);
-    boolean block = (ch == Chars.ASTERISK);
+    boolean block = ch == Chars.ASTERISK;
     boolean comment = (ch == Chars.SLASH) || block;
     if (!comment) {
       return null;
@@ -54,7 +54,7 @@ public class CommentParselet implements Parselet {
     int end = stm.length;
 
     // Match a comment ending sequence, "\n" or "*/"
-    CharPattern pattern = (block) ? Patterns.BLOCK_COMMENT_END : Patterns.LINE_COMMENT_END;
+    CharPattern pattern = block ? Patterns.BLOCK_COMMENT_END : Patterns.LINE_COMMENT_END;
     if (stm.seek(pattern)) {
       end = stm.index - pattern.length();
     }

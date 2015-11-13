@@ -111,7 +111,7 @@ public class RuleParselet implements Parselet {
   }
 
   private boolean important(LessStream stm) {
-    return (stm.peek() == Chars.EXCLAMATION_MARK && stm.matchImportant());
+    return stm.peek() == Chars.EXCLAMATION_MARK && stm.matchImportant();
   }
 
   static boolean endPeek(LessStream stm) {

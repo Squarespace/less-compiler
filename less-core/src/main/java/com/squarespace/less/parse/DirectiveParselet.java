@@ -98,20 +98,20 @@ public class DirectiveParselet implements Parselet {
       case "@right-top":
       case "@right-middle":
       case "@right-bottom":
-          hasBlock = true;
-          break;
+        hasBlock = true;
+        break;
 
       case "@page":
       case "@document":
       case "@supports":
       case "@keyframes":
-          hasBlock = true;
-          hasIdentifier = true;
-          break;
+        hasBlock = true;
+        hasIdentifier = true;
+        break;
 
       case "@namespace":
-          hasExpression = true;
-          break;
+        hasExpression = true;
+        break;
 
       default:
         break;
@@ -189,7 +189,7 @@ public class DirectiveParselet implements Parselet {
   }
 
   private Node parseRest(LessStream stm, boolean hasExpression) throws LessException {
-    Node value = (hasExpression) ? stm.parse(EXPRESSION) : stm.parse(ENTITY);
+    Node value = hasExpression ? stm.parse(EXPRESSION) : stm.parse(ENTITY);
     stm.skipWs();
     if (stm.seekIf(Chars.SEMICOLON)) {
       return value;

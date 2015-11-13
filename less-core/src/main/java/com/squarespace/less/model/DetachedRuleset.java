@@ -65,14 +65,14 @@ public class DetachedRuleset extends BlockNode {
     buf.decrIndent().append('\n');
   }
 
-    @Override
-    public boolean equals(Object obj) {
-      return (obj instanceof DetachedRuleset) ? super.equals(obj) : false;
-    }
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof DetachedRuleset) ? super.equals(obj) : false;
+  }
 
-    @Override
-    public int hashCode() {
-      return super.hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
 
 }

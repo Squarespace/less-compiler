@@ -119,7 +119,7 @@ public class FlexListTest {
     list1.splice(0, 10, EMPTY);
     expected = FlexList.<Object>create(new Object[] { });
     assertEquals(list1, expected);
-}
+  }
 
   @Test
   public void testBounds() {
@@ -171,7 +171,7 @@ public class FlexListTest {
       list.pop();
       fail("Expected NoSuchElementException to be thrown");
     } catch (NoSuchElementException e) {
-
+      // fallthrough
     }
   }
 

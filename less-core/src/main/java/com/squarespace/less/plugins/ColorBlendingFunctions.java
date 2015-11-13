@@ -86,9 +86,9 @@ public class ColorBlendingFunctions implements Registry<Function> {
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       RGBColor c1 = rgb(args.get(0));
       RGBColor c2 = rgb(args.get(1));
-      double red = (c1.red() * c2.red() / 255.0);
-      double green = (c1.green() * c2.green() / 255.0);
-      double blue = (c1.blue() * c2.blue() / 255.0);
+      double red = c1.red() * c2.red() / 255.0;
+      double green = c1.green() * c2.green() / 255.0;
+      double blue = c1.blue() * c2.blue() / 255.0;
       return new RGBColor(red, green, blue);
     }
   };
@@ -142,14 +142,14 @@ public class ColorBlendingFunctions implements Registry<Function> {
   };
 
   private static double exclusion(double c1, double c2) {
-    return (c1 + c2 * (255 - c1 - c1) / 255.0);
+    return (c1 + c2 * (255 - c1 - c1)) / 255.0;
   }
 
   private static double hardlight(double c1, double c2) {
     if (c2 < 128) {
-      return (2 * c2 * c1 / 255.0);
+      return (2 * c2 * c1) / 255.0;
     }
-    return (255 - 2 * (255 - c2) * (255 - c1) / 255.0);
+    return (255 - 2 * (255 - c2) * (255 - c1)) / 255.0;
   }
 
   private static double negation(double c1, double c2) {
