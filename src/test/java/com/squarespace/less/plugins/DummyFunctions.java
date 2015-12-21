@@ -22,6 +22,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
 
@@ -30,6 +31,11 @@ import com.squarespace.less.model.Node;
  * Dummy functions, only used for testing the general Function framework.
  */
 public class DummyFunctions implements Registry<Function> {
+
+  @Override
+  public void registerPlugins(SymbolTable<Function> table) {
+    table.add(DUMMY3);
+  }
 
   public static final Function DUMMY3 = new Function("dummy3", "nnn") {
     @Override

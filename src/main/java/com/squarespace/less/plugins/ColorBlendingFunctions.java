@@ -22,6 +22,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.RGBColor;
 
@@ -32,6 +33,19 @@ import com.squarespace.less.model.RGBColor;
  * http://lesscss.org/functions/#color-blending
  */
 public class ColorBlendingFunctions implements Registry<Function> {
+
+  @Override
+  public void registerPlugins(SymbolTable<Function> table) {
+    table.add(AVERAGE);
+    table.add(DIFFERENCE);
+    table.add(EXCLUSION);
+    table.add(HARDLIGHT);
+    table.add(MULTIPLY);
+    table.add(NEGATION);
+    table.add(OVERLAY);
+    table.add(SCREEN);
+    table.add(SOFTLIGHT);
+  }
 
   public static final Function AVERAGE = new Function("average", "cc") {
     @Override

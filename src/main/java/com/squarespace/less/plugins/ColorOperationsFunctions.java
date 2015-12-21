@@ -22,6 +22,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.Colors;
 import com.squarespace.less.model.Dimension;
@@ -37,6 +38,23 @@ import com.squarespace.less.model.Unit;
  * http://lesscss.org/functions/#color-operations
  */
 public class ColorOperationsFunctions implements Registry<Function> {
+
+  @Override
+  public void registerPlugins(SymbolTable<Function> table) {
+    table.add(CONTRAST);
+    table.add(DARKEN);
+    table.add(DESATURATE);
+    table.add(FADE);
+    table.add(FADEIN);
+    table.add(FADEOUT);
+    table.add(GREYSCALE);
+    table.add(LIGHTEN);
+    table.add(MIX);
+    table.add(SATURATE);
+    table.add(SHADE);
+    table.add(SPIN);
+    table.add(TINT);
+  }
 
   public static final Function CONTRAST = new Function("contrast", "*:ccp") {
     @Override

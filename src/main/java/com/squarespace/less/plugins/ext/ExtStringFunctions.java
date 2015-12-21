@@ -27,6 +27,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Quoted;
@@ -41,6 +42,11 @@ import com.squarespace.less.model.Quoted;
  * be enabled only in contexts where inputs are known to be safe.
  */
 public class ExtStringFunctions implements Registry<Function> {
+
+  @Override
+  public void registerPlugins(SymbolTable<Function> table) {
+    table.add(REPLACE);
+  }
 
   /**
    * WARNING: this is current experimental.

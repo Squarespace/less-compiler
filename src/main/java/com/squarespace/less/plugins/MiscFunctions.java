@@ -25,6 +25,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Keyword;
@@ -41,6 +42,14 @@ import com.squarespace.less.model.UnitConversions;
  * http://lesscss.org/functions/#misc-functions
  */
 public class MiscFunctions implements Registry<Function> {
+
+  @Override
+  public void registerPlugins(SymbolTable<Function> table) {
+    table.add(COLOR);
+    table.add(CONVERT);
+    table.add(GET_UNIT);
+    table.add(UNIT);
+  }
 
   public static final Function COLOR = new Function("color", "s") {
     @Override

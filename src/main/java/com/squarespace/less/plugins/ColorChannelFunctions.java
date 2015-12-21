@@ -22,6 +22,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.RGBColor;
@@ -34,6 +35,18 @@ import com.squarespace.less.model.Unit;
  * http://lesscss.org/functions/#color-channel
  */
 public class ColorChannelFunctions implements Registry<Function> {
+
+  @Override
+  public void registerPlugins(SymbolTable<Function> table) {
+    table.add(ALPHA);
+    table.add(BLUE);
+    table.add(GREEN);
+    table.add(HUE);
+    table.add(LIGHTNESS);
+    table.add(LUMA);
+    table.add(RED);
+    table.add(SATURATION);
+  }
 
   public static final Function ALPHA = new Function("alpha", "c") {
     @Override

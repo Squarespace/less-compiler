@@ -16,7 +16,6 @@
 
 package com.squarespace.less.exec;
 
-import com.squarespace.less.core.TypeRef;
 
 
 /**
@@ -30,29 +29,33 @@ public class FunctionTable extends SymbolTable<Function> {
   private static final int NUM_BUCKETS = 64;
 
   /**
-   * Tells the {@link SymbolTable} to manage {@link Function}s.
-   */
-  private static final TypeRef<Function> TYPE_REF = new TypeRef<Function>() { };
-
-  /**
    * Construct a table with the default number of hashmap buckets.
    */
   public FunctionTable() {
-    super(TYPE_REF, NUM_BUCKETS);
+    super(NUM_BUCKETS);
   }
 
   /**
    * Construct a table with the given number of hashmap buckets.
    */
   public FunctionTable(int numBuckets) {
-    super(TYPE_REF, numBuckets);
+    super(numBuckets);
+  }
+
+  /**
+   * Register all functions in the given package.
+   *
+   * @param pkg  package to scan for implementations
+   */
+  public void register(Registry<Function> pkg) {
+    pkg.registerPlugins(this);
   }
 
   /**
    * Registers a {@link Function} under its {@link Function#name()}
    */
   @Override
-  public void registerSymbol(Object impl) {
+  public void add(Object impl) {
     Function func = (Function)impl;
     put(func.name(), func);
   }

@@ -22,6 +22,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Unit;
@@ -35,6 +36,26 @@ import com.squarespace.less.model.UnitConversions;
  */
 public class MathFunctions implements Registry<Function> {
 
+  @Override
+  public void registerPlugins(SymbolTable<Function> table) {
+    table.add(ABS);
+    table.add(ACOS);
+    table.add(ASIN);
+    table.add(ATAN);
+    table.add(CEIL);
+    table.add(COS);
+    table.add(FLOOR);
+    table.add(MAX);
+    table.add(MIN);
+    table.add(MOD);
+    table.add(PERCENTAGE);
+    table.add(PI);
+    table.add(POW);
+    table.add(ROUND);
+    table.add(SIN);
+    table.add(SQRT);
+    table.add(TAN);
+  }
 
   public static final Function ABS = new Function("abs", "d") {
     public Node invoke(ExecEnv env, java.util.List<Node> args) throws LessException {

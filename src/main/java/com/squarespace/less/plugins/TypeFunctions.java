@@ -26,6 +26,7 @@ import com.squarespace.less.core.Constants;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Keyword;
@@ -41,6 +42,19 @@ import com.squarespace.less.model.Url;
  * http://lesscss.org/functions/#type-functions
  */
 public class TypeFunctions implements Registry<Function> {
+
+  @Override
+  public void registerPlugins(SymbolTable<Function> table) {
+    table.add(ISCOLOR);
+    table.add(ISEM);
+    table.add(ISKEYWORD);
+    table.add(ISNUMBER);
+    table.add(ISPERCENTAGE);
+    table.add(ISPIXEL);
+    table.add(ISSTRING);
+    table.add(ISUNIT);
+    table.add(ISURL);
+  }
 
   public static final Function ISCOLOR = new Function("iscolor", "*") {
     @Override

@@ -27,6 +27,7 @@ import com.squarespace.less.core.EncodeUtils;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.Node;
@@ -41,6 +42,13 @@ import com.squarespace.less.model.RGBColor;
  * http://lesscss.org/functions/#string-functions
  */
 public class StringFunctions implements Registry<Function> {
+
+  @Override
+  public void registerPlugins(SymbolTable<Function> table) {
+    table.add(E);
+    table.add(ESCAPE);
+    table.add(FORMAT);
+  }
 
   public static final Function E = new Function("e", "s") {
     @Override

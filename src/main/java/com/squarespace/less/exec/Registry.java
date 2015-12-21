@@ -22,4 +22,6 @@ package com.squarespace.less.exec;
  */
 public interface Registry<V> {
 
+  void registerPlugins(SymbolTable<V> table);
+
 }

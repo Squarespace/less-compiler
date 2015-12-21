@@ -22,6 +22,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
+import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.ExpressionList;
 import com.squarespace.less.model.Node;
@@ -33,6 +34,12 @@ import com.squarespace.less.model.Node;
  * http://lesscss.org/functions/#list-functions
  */
 public class ListFunctions implements Registry<Function> {
+
+  @Override
+  public void registerPlugins(SymbolTable<Function> table) {
+    table.add(EXTRACT);
+    table.add(LENGTH);
+  }
 
   public static final Function LENGTH = new Function("length", "*.") {
     @Override
