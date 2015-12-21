@@ -174,7 +174,7 @@ public class LessSuiteTest extends LessSuiteBase {
 
     private String source;
 
-    public ErrorCase(LessErrorType errorType, String failMessage, String source) {
+    ErrorCase(LessErrorType errorType, String failMessage, String source) {
       this.errorType = errorType;
       this.failMessage = failMessage;
       this.source = source;

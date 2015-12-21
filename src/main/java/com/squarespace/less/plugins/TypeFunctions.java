@@ -126,7 +126,7 @@ public class TypeFunctions implements Registry<Function> {
 
     private Unit unit;
 
-    public DimensionUnitFunction(String name, Unit unit) {
+    DimensionUnitFunction(String name, Unit unit) {
       super(name, "*");
       this.unit = unit;
     }

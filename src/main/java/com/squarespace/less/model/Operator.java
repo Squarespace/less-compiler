@@ -48,7 +48,7 @@ public enum Operator {
   /**
    * Constructs an operator with the given representations.
    */
-  private Operator(String repr, String humanRepr) {
+  Operator(String repr, String humanRepr) {
     this.repr = repr;
     this.humanRepr = humanRepr;
   }

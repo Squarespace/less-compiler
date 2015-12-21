@@ -30,7 +30,7 @@ public enum Combinator {
 
   private final char ch;
 
-  private Combinator(char ch) {
+  Combinator(char ch) {
     this.ch = ch;
   }
 

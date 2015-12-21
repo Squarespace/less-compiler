@@ -39,7 +39,7 @@ import com.squarespace.less.model.Stylesheet;
  */
 class CompileBatch extends BaseCompile {
 
-  public CompileBatch(Args args, PrintStream out, PrintStream err) {
+  CompileBatch(Args args, PrintStream out, PrintStream err) {
     super(args, out, err, System.in);
   }
 

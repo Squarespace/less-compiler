@@ -15,6 +15,10 @@ buildscript {
   }
 }
 
+plugins {
+  id 'com.glonk.eclipse-checkstyle' version '0.0.4'
+}
+
 task wrapper(type: Wrapper) {
   gradleVersion = '2.7'
 }
@@ -123,6 +127,11 @@ allprojects {
     toolVersion = '5.7'
     ignoreFailures = false
     configFile = rootProject.file('checkstyle.xml')
+  }
+
+  eclipseCheckstyle {
+    syncFormatter = true
+    exclude = ['derived']
   }
 
   test {

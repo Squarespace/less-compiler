@@ -231,7 +231,7 @@ public class ArgSpec {
 
     private final NodeType type;
 
-    public ArgTypeValidator(NodeType type) {
+    ArgTypeValidator(NodeType type) {
       this.type = type;
     }
 

@@ -103,7 +103,7 @@ public enum ExecuteErrorType implements LessErrorType {
 
   private MapFormat messageFormat;
 
-  private ExecuteErrorType(String rawFormat) {
+  ExecuteErrorType(String rawFormat) {
     this.prefixFormat = new MapFormat(PREFIX, NULL_PLACEHOLDER);
     this.messageFormat = new MapFormat(rawFormat, NULL_PLACEHOLDER);
   }

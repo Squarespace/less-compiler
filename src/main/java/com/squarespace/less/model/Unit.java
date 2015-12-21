@@ -135,7 +135,7 @@ public enum Unit {
   /**
    * Construct a unit with the given representations.
    */
-  private Unit(String repr, String humanRepr) {
+  Unit(String repr, String humanRepr) {
     this.repr = repr;
     this.humanRepr = humanRepr;
   }

@@ -310,11 +310,11 @@ public class StackFormatter {
 
     public boolean indent;
 
-    public Entry(Path fileName, int lineNo, String repr) {
+    Entry(Path fileName, int lineNo, String repr) {
       this(fileName == null ? null : fileName.toString(), Integer.toString(lineNo), repr);
     }
 
-    public Entry(String fileName, String lineNo, String repr) {
+    Entry(String fileName, String lineNo, String repr) {
       this.fileName = fileName;
       this.lineNo = lineNo;
       this.repr = repr;
