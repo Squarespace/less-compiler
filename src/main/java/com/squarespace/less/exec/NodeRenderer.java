@@ -295,8 +295,11 @@ public class NodeRenderer {
   private static void renderImpl(Buffer buf, Selector selector) {
     List<Element> elements = selector.elements();
     int size = elements.size();
+    boolean afterWildcard = false;
     for (int i = 0; i < size; i++) {
-      renderImpl(buf, elements.get(i), i == 0);
+      Element element = elements.get(i);
+      renderImpl(buf, element, i == 0, afterWildcard);
+      afterWildcard = element.isWildcard();
     }
   }
 
@@ -305,24 +308,18 @@ public class NodeRenderer {
    * of this method is required to properly emit whitespace before and after combinators, depending
    * on if we're in compress mode or not.
    */
-  private static void renderImpl(Buffer buf, Element element, boolean isFirst) {
+  private static void renderImpl(Buffer buf, Element element, boolean isFirst, boolean afterWildcard) {
     Combinator combinator = element.combinator();
-    if (combinator != null) {
-      boolean isDescendant = combinator == Combinator.DESC;
-      if (isDescendant && element.isWildcard()) {
-        // This combination just emits useless whitespace. Ignore.
-        return;
-      }
-
+    boolean isDescendant = combinator == Combinator.DESC;
+    if (combinator != null && !afterWildcard) {
       char ch = combinator.getChar();
-
       if (isFirst) {
         if (!isDescendant) {
           buf.append(ch);
         }
 
       } else {
-        if (!buf.compress() && !isDescendant) {
+        if (!buf.compress() && !isDescendant && !CharClass.whitespace(buf.prevChar())) {
           buf.append(' ');
         }
         if (!isDescendant || !CharClass.whitespace(buf.prevChar())) {
@@ -330,7 +327,7 @@ public class NodeRenderer {
         }
       }
 
-      if (!buf.compress() && !element.isWildcard() && !CharClass.whitespace(buf.prevChar())) {
+      if (!buf.compress() && !CharClass.whitespace(buf.prevChar())) {
         buf.append(' ');
       }
     }
@@ -340,6 +337,10 @@ public class NodeRenderer {
       return;
     }
 
+    renderElement(buf, element);
+  }
+
+  private static void renderElement(Buffer buf, Element element) {
     if (element instanceof TextElement) {
       ((TextElement)element).repr(buf);
 
@@ -357,7 +358,6 @@ public class NodeRenderer {
       }
       buf.append(']');
     }
-
   }
 
   /** Render a URL node. */

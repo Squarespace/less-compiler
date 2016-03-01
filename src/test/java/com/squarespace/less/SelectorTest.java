@@ -78,6 +78,14 @@ public class SelectorTest extends LessTestBase {
     h.parseEquals("p[class~=\"a\"]", exp);
   }
 
+  @Test
+  public void testWildcardNoAncestors() throws LessException {
+    LessHarness h = new LessHarness(Parselets.STYLESHEET);
+    LessOptions opts = new LessOptions(true);
+    assertEquals(h.execute(".ruleset & & & { color: red; }"), ".ruleset {\n  color: red;\n}\n");
+    assertEquals(h.execute(".ruleset & & & { color: red; }", opts), ".ruleset{color:red}");
+  }
+
   private String render(boolean compress, Selector selector) throws LessException {
     LessContext ctx = new LessContext(new LessOptions(compress));
     ExecEnv env = ctx.newEnv();

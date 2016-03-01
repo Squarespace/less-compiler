@@ -1,0 +1,36 @@
+.two + .one {
+  color: red;
+}
+.four.two #three {
+  color: red;
+}
+.c.b.a {
+  color: red;
+}
+.b.a {
+  color: red;
+}
++ .a {
+  color: red;
+}
+.f .d + .e.a.b.c {
+  color: red;
+}
+.d.b .a .c .a,
+.e.b .a .c .a {
+  color: red;
+}
+.c + .c,
+.c + .c.c + .c,
+.c.c.c {
+  color: red;
+}
+.c {
+  color: red;
+}
+.a.b.a + .c.a {
+  color: red;
+}
++ .a > .a + .a.b {
+  color: red;
+}

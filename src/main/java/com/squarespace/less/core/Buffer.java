@@ -217,10 +217,12 @@ public class Buffer {
    * Opens a nested block (left curly bracket) with optional whitespace suppression.
    */
   public void blockOpen() {
-    if (compress) {
-      append('{');
-    } else {
-      append(" {\n");
+    if (!compress && !CharClass.whitespace(prev)) {
+      append(' ');
+    }
+    append('{');
+    if (!compress) {
+      append('\n');
       incrIndent();
     }
   }

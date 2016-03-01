@@ -65,12 +65,18 @@ public class SelectorUtils {
       List<List<Selector>> inputs = new ArrayList<>();
       Selector temp = new Selector();
       for (Element elem : selector.elements()) {
-        temp.add(elem);
 
         if (elem.isWildcard()) {
-          inputs.add(Arrays.asList(temp));
-          inputs.add(ancestors.selectors());
-          temp = new Selector();
+          // Only expand wildcards when there is at least 1 ancestor selector
+          if (!ancestors.selectors().isEmpty()) {
+            temp.add(elem);
+            inputs.add(Arrays.asList(temp));
+            inputs.add(ancestors.selectors());
+            temp = new Selector();
+          }
+
+        } else {
+          temp.add(elem);
         }
       }
 
