@@ -1,0 +1,15 @@
+
+.a.b.c {
+  content: 1;
+}
+
+.a .b .c {
+  content: 2;
+}
+
+.replace-3 {
+  .replace-4 {
+    &:extend( .d.e all, .c.d all );
+  }
+}
+

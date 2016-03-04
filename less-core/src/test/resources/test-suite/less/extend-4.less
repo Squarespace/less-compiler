@@ -1,0 +1,17 @@
+
+.replace-1 {
+  .replace-2 {
+    &:extend( .b.c all, .a.b all );
+  }
+}
+
+@import 'extend-imports/child.less';
+
+.c.d.e {
+  content: 3;
+}
+
+.c .d .e {
+  content: 4;
+}
+

@@ -7,11 +7,11 @@
     content: import 1;
 }
 
-@import 'child-@{name1}.less';
+@import 'dynamic-imports/child-@{name1}.less';
 
 // the @name2 definition in variables.less will be
 // used, since its after the @name2 definition imported
 // in child-1.less above
-@import '@dynamic-{var}iables.less';
+@import 'dynamic-imports/dynamic-@{var}iables.less';
 
 

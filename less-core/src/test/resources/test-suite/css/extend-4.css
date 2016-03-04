@@ -1,0 +1,16 @@
+.a.b.c,
+.replace-1 .replace-2.c,
+.a.replace-1 .replace-2 {
+  content: 1;
+}
+.a .b .c {
+  content: 2;
+}
+.c.d.e,
+.replace-3 .replace-4.e,
+.c.replace-3 .replace-4 {
+  content: 3;
+}
+.c .d .e {
+  content: 4;
+}

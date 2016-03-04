@@ -38,7 +38,7 @@ import com.squarespace.less.core.LessUtils;
  */
 public class LessSuiteTest extends LessSuiteBase {
 
-  private static final boolean VERBOSE = false;
+  private static final boolean VERBOSE = true;
 
   @Test
   public void testSuite() throws IOException {

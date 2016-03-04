@@ -7,9 +7,9 @@
 
 // the @name2 definition in variables.less will be
 // overridden by @name2 defined in child-1.less
-@import '@dynamic-{var}iables.less';
+@import 'dynamic-imports/dynamic-@{var}iables.less';
 
-@import 'child-@{name1}.less';
+@import 'dynamic-imports/child-@{name1}.less';
 
 @name1: '1';
 
