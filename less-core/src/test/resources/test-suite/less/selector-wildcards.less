@@ -1,0 +1,71 @@
+
+.one {
+  .two+& {
+    color: red;
+  }
+}
+
+.two #three {
+  .four& {
+    color: red;
+  }
+}
+
+.a {
+  .b& {
+    .c& {
+      color: red;
+    }
+  }
+}
+
+> .a {
+  .b& {
+    color: red;
+  }
+}
+
+.a {
+  +& {
+    color: red;
+  }
+}
+
+.a.b.c {
+  .d + .e& {
+    .f & {
+      color: red;
+    }
+  }
+}
+
+.a {
+  .b & .c & {
+    .d&,
+    .e& {
+      color: red;
+    }
+  }
+}
+
+.c {
+  & + &, & + && + &, &&& {
+    color: red;
+  }
+}
+
+.c + & + & + & {
+  color: red;
+}
+
+.a {
+  &.b&+.c& {
+    color: red;
+  }
+}
+
+.a {
+  +&>&+&.b {
+    color: red;
+  }
+}
