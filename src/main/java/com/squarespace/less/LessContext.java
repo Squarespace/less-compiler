@@ -159,6 +159,7 @@ public class LessContext {
 
   public void enterImport() {
     this.importDepth++;
+    stats.importDepth(this.importDepth);
   }
 
   public void exitImport() {
@@ -171,6 +172,7 @@ public class LessContext {
 
   public void enterMixin() {
     this.mixinDepth++;
+    stats.mixinDepth(this.mixinDepth);
   }
 
   public void exitMixin() {

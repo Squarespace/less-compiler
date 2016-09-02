@@ -70,10 +70,13 @@ abstract class BaseCompile {
 
   protected void emitStats(LessStats stats) {
     log(" Statistics:\n");
-    log("     parse time: " + stats.parseTimeMs() + "ms\n");
-    log("   compile time: " + stats.compileTimeMs() + "ms\n");
-    log(" disk wait time: " + stats.diskWaitTimeMs() + "ms\n");
-    log("   import count: " + stats.importCount() + "\n");
+    log("      parse time: " + stats.parseTimeMs() + "ms");
+    log("    compile time: " + stats.compileTimeMs() + "ms");
+    log("  disk wait time: " + stats.diskWaitTimeMs() + "ms");
+    log("    import count: " + stats.importCount());
+    log("max import depth: " + stats.maxImportDepth());
+    log(" max mixin depth: " + stats.maxMixinDepth());
+    log("\n");
   }
 
   protected void emitMemory(String phase) {

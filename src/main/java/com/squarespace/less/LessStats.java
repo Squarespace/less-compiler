@@ -36,6 +36,10 @@ public class LessStats {
 
   private int totalSize;
 
+  private int maxImportDepth;
+
+  private int maxMixinDepth;
+
   /** Time spent parsing (including imports) */
   public double parseTimeMs() {
     return parseTimeMs;
@@ -66,9 +70,29 @@ public class LessStats {
     return totalSize;
   }
 
+  /** Maximum import recursion depth reached */
+  public int maxImportDepth() {
+    return maxImportDepth;
+  }
+
+  /** Maximum mixin recursion depth reached */
+  public int maxMixinDepth() {
+    return maxMixinDepth;
+  }
+
   /** Time in nanoseconds */
   public long now() {
     return System.nanoTime();
+  }
+
+  /** Sets maximum import depth reached for this compile */
+  public void importDepth(int depth) {
+    this.maxImportDepth = Math.max(this.maxImportDepth, depth);
+  }
+
+  /** Sets maximum mixin depth reached for this compile */
+  public void mixinDepth(int depth) {
+    this.maxMixinDepth = Math.max(this.maxMixinDepth, depth);
   }
 
   /** Indicate that a parse operation is complete. */
