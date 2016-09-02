@@ -73,11 +73,22 @@ public class LessImporter {
     if (rawPath == null) {
       return importNode;
     }
+
+    // Mark import recursion start.
+    context.enterImport();
+
+    int limit = context.options().importRecursionLimit();
+    if (context.importDepth() > limit) {
+      throw new LessException(importError(rawPath, "Recursion limit of " + limit + " exceeded"));
+    }
+
     Stylesheet sheet = importStylesheet(rawPath, importNode);
     if (sheet == null) {
       // When import-once is used, we disappear the import node.
+      context.exitImport();
       return new Block(0);
     }
+
     Block block = sheet.block();
     Features features = importNode.features();
     if (features != null && !features.isEmpty()) {
@@ -89,6 +100,7 @@ public class LessImporter {
       block.prependNode(new ImportMarker(importNode, true));
       block.appendNode(new ImportMarker(importNode, false));
     }
+    context.exitImport();
     return block;
   }
 

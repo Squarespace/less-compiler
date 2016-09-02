@@ -362,8 +362,8 @@ public class LessEvaluator {
 
     // Limits the overall depth if the mixin call stack.
     LessContext ctx = env.context();
-    if (ctx.mixinDepth() >= opts.recursionLimit()) {
-      throw new LessException(mixinRecurse(call.path(), opts.recursionLimit()));
+    if (ctx.mixinDepth() >= opts.mixinRecursionLimit()) {
+      throw new LessException(mixinRecurse(call.path(), opts.mixinRecursionLimit()));
     }
 
     // Enter the mixin body and execute it.
@@ -410,8 +410,8 @@ public class LessEvaluator {
 
     // Limits the overall depth if the mixin call stack.
     LessContext ctx = env.context();
-    if (ctx.mixinDepth() >= opts.recursionLimit()) {
-      throw new LessException(mixinRecurse(call.path(), opts.recursionLimit()));
+    if (ctx.mixinDepth() >= opts.mixinRecursionLimit()) {
+      throw new LessException(mixinRecurse(call.path(), opts.mixinRecursionLimit()));
     }
 
     ctx.enterMixin();

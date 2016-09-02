@@ -41,7 +41,9 @@ public class LessOptions {
 
   private int indent = DEFAULT_INDENT;
 
-  private int recursionLimit = DEFAULT_RECURSION_LIMIT;
+  private int mixinRecursionLimit = DEFAULT_RECURSION_LIMIT;
+
+  private int importRecursionLimit = DEFAULT_RECURSION_LIMIT;
 
   public LessOptions() {
   }
@@ -83,8 +85,12 @@ public class LessOptions {
     return flags.contains(Option.LINE_NUMBERS);
   }
 
-  public int recursionLimit() {
-    return recursionLimit;
+  public int importRecursionLimit() {
+    return importRecursionLimit;
+  }
+
+  public int mixinRecursionLimit() {
+    return mixinRecursionLimit;
   }
 
   public boolean strict() {
@@ -135,8 +141,12 @@ public class LessOptions {
     set(flag, Option.LINE_NUMBERS);
   }
 
-  public void recursionLimit(int limit) {
-    this.recursionLimit = limit;
+  public void importRecursionLimit(int limit) {
+    this.importRecursionLimit = limit;
+  }
+
+  public void mixinRecursionLimit(int limit) {
+    this.mixinRecursionLimit = limit;
   }
 
   public void strict(boolean flag) {
