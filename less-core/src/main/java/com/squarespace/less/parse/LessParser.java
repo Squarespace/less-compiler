@@ -29,7 +29,6 @@ import java.util.Set;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.FlexList;
-import com.squarespace.less.core.SyntaxErrorMaker;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Import;
