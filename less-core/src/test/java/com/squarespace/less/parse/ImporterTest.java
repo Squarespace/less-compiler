@@ -19,6 +19,7 @@ package com.squarespace.less.parse;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -161,10 +162,36 @@ public class ImporterTest extends LessTestBase {
     LessOptions opts = buildOptions();
     LessContext ctx = new LessContext(opts, loader);
     ctx.setFunctionTable(COMPILER.functionTable());
+
     String source = "@import 'base.less'; .ruleset { color: @color; font-size: @size; }";
     String result = COMPILER.compile(source, ctx, path("foo.less"));
 
     assertEquals(result, ".child{font-size:12px}.ruleset{color:#abc;font-size:12px}");
+  }
+
+  @Test
+  public void testImporterRecursionLimit() throws LessException {
+    int imports = 100;
+    Map<Path, String> map = new HashMap<>();
+    for (int i = 0; i < imports; i++) {
+      map.put(path(i + ".less"), "@import '" + (i + 1) + ".less';\n");
+    }
+    map.put(path(imports + ".less"), ".parent { color: red; }\n");
+
+    int recursionLimit = 90;
+    LessLoader loader = new HashMapLessLoader(map);
+    LessOptions opts = buildOptions();
+    opts.importRecursionLimit(recursionLimit);
+    LessContext ctx = new LessContext(opts, loader);
+    ctx.setFunctionTable(COMPILER.functionTable());
+
+    String source = "@import '1.less';";
+    try {
+      COMPILER.compile(source, ctx, path("foo.less"));
+      fail("Expected import recursion limit exception");
+    } catch (LessException e) {
+      assertTrue(e.getMessage().contains("limit of " + recursionLimit + " exceeded"));
+    }
   }
 
   private static Path path(String path) {
