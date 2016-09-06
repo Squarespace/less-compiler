@@ -132,10 +132,17 @@ public class LessC {
       .action(Arguments.storeTrue())
       .help("Syntax check only (lint).");
 
-    parser.addArgument("--recursion-limit", "-r")
+    parser.addArgument("--mixin-recursion-limit", "-r")
       .metavar("LIMIT")
       .type(Integer.class)
+      .setDefault(LessOptions.DEFAULT_RECURSION_LIMIT)
       .help("Sets the recursion depth limit.");
+
+    parser.addArgument("--import-recursion-limit", "-R")
+      .metavar("LIMIT")
+      .type(Integer.class)
+      .setDefault(LessOptions.DEFAULT_RECURSION_LIMIT)
+      .help("Sets the import recursion depth limit.");
 
     parser.addArgument("--statistics", "-s")
       .action(Arguments.storeTrue())
@@ -183,7 +190,8 @@ public class LessC {
       opts.importOnce(res.getBoolean("import_once"));
       opts.importPaths(parseImportPaths(res));
       opts.indent(res.getInt("indent"));
-      opts.recursionLimit(res.getInt("recursion_limit"));
+      opts.mixinRecursionLimit(res.getInt("mixin_recursion_limit"));
+      opts.importRecursionLimit(res.getInt("import_recursion_limit"));
       opts.strict(res.getBoolean("strict"));
       opts.tracing(res.getBoolean("tracing"));
       opts.hideWarnings(false);

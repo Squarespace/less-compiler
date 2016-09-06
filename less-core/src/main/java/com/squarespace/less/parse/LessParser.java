@@ -16,6 +16,7 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.SyntaxErrorMaker.importError;
 import static com.squarespace.less.core.SyntaxErrorMaker.recursiveImport;
 import static com.squarespace.less.parse.PrimaryParselet.evaluateImport;
 
@@ -28,6 +29,7 @@ import java.util.Set;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.FlexList;
+import com.squarespace.less.core.SyntaxErrorMaker;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Import;
@@ -126,13 +128,21 @@ public class LessParser {
       LessStream current = this.streams.last();
       throw current.parseError(new LessException(recursiveImport(filePath)));
     }
+
+    // Ensure we don't exceed the maximum allowed import recursion depth
+    int limit = context.options().importRecursionLimit();
+    if (context.importDepth() > limit) {
+      LessStream current = this.streams.last();
+      throw current.parseError(
+          new LessException(importError(filePath, "Recursion limit of " + limit + " exceeded")));
+    }
+
+    context.enterImport();
     this.streamPaths.add(filePath);
 
     LessStream stream = null;
     stream = new LessStream(this, raw, filePath, env);
     this.streams.push(stream);
-
-    // TODO: in the future we may want enforce some limit on maximum import depth.
 
     return stream;
   }
@@ -141,6 +151,7 @@ public class LessParser {
    * Pops the current stream.
    */
   public LessStream pop() {
+    context.exitImport();
     LessStream stream = this.streams.pop();
     this.streamPaths.remove(stream.path());
     List<ExecEnv> envs = stream.deferreds();

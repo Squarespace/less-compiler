@@ -69,6 +69,8 @@ public class LessContext {
 
   private NodeBuilder nodeBuilder = DEFAULT_NODE_BUILDER;
 
+  private int importDepth;
+
   private int mixinDepth;
 
   public LessContext() {
@@ -166,8 +168,22 @@ public class LessContext {
     return result;
   }
 
+  public void enterImport() {
+    this.importDepth++;
+    stats.importDepth(this.importDepth);
+  }
+
+  public void exitImport() {
+    this.importDepth--;
+  }
+
+  public int importDepth() {
+    return this.importDepth;
+  }
+
   public void enterMixin() {
     this.mixinDepth++;
+    stats.mixinDepth(this.mixinDepth);
   }
 
   public void exitMixin() {

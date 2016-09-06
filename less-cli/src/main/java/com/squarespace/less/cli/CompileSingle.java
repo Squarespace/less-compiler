@@ -64,6 +64,7 @@ class CompileSingle extends BaseCompile {
       return fail("error reading '" + streamName + "': " + e.getMessage());
     }
 
+    int code = OK;
     LessContext ctx = new LessContext(args.compilerOptions());
     ctx.setFunctionTable(compiler.functionTable());
     try {
@@ -113,7 +114,7 @@ class CompileSingle extends BaseCompile {
 
     } catch (LessException e) {
       standardErr.println("\n\n" + ErrorUtils.formatError(ctx, input, e, 4) + "\n");
-      return ERR;
+      code = ERR;
     }
 
     if (args.statsEnabled()) {
@@ -125,7 +126,7 @@ class CompileSingle extends BaseCompile {
     }
 
     ctx.sanityCheck();
-    return OK;
+    return code;
   }
 
 }
