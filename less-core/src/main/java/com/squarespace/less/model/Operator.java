@@ -99,7 +99,8 @@ public enum Operator {
       case "=<":
         return LESS_THAN_OR_EQUAL;
 
-      // Extension: these forms not in less.js 2.4 but some users may prefer them to "not (a = b)".
+        // Extension: these forms not in less.js 2.4 but some users may prefer them to "not (a = b)".
+        // TODO: future
 //      case "!=":
 //      case "<>":
 //        return NOT_EQUAL;
