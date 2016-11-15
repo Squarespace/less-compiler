@@ -67,6 +67,9 @@ public abstract class BaseColor extends BaseNode {
    * Convert a color name to its {@link RGBColor} instance.
    */
   public static RGBColor fromName(String name) {
+    if (name.equals("transparent")) {
+      return new KeywordColor(name, 0, 0, 0);
+    }
     int[] c = Colors.nameToRGB(name);
     if (c != null) {
       return new RGBColor(c[0], c[1], c[2], true);
