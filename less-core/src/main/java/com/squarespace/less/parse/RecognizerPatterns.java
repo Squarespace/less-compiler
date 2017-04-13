@@ -18,28 +18,28 @@ package com.squarespace.less.parse;
 
 import static com.squarespace.less.core.CharClass.LOWERCASE;
 import static com.squarespace.less.core.CharClass.UPPERCASE;
-import static com.squarespace.less.parse.Recognizers.any;
-import static com.squarespace.less.parse.Recognizers.cardinality;
-import static com.squarespace.less.parse.Recognizers.charClass;
-import static com.squarespace.less.parse.Recognizers.characters;
-import static com.squarespace.less.parse.Recognizers.choice;
-import static com.squarespace.less.parse.Recognizers.decimal;
-import static com.squarespace.less.parse.Recognizers.digits;
-import static com.squarespace.less.parse.Recognizers.hexdigit;
-import static com.squarespace.less.parse.Recognizers.literal;
-import static com.squarespace.less.parse.Recognizers.lookAhead;
-import static com.squarespace.less.parse.Recognizers.notAscii;
-import static com.squarespace.less.parse.Recognizers.notCharacters;
-import static com.squarespace.less.parse.Recognizers.notHexdigit;
-import static com.squarespace.less.parse.Recognizers.oneOrMore;
-import static com.squarespace.less.parse.Recognizers.sequence;
-import static com.squarespace.less.parse.Recognizers.whitespace;
-import static com.squarespace.less.parse.Recognizers.word;
-import static com.squarespace.less.parse.Recognizers.worddash;
-import static com.squarespace.less.parse.Recognizers.zeroOrMore;
-import static com.squarespace.less.parse.Recognizers.zeroOrOne;
+import static com.squarespace.compiler.match.Recognizers.any;
+import static com.squarespace.compiler.match.Recognizers.cardinality;
+import static com.squarespace.compiler.match.Recognizers.charClass;
+import static com.squarespace.compiler.match.Recognizers.characters;
+import static com.squarespace.compiler.match.Recognizers.choice;
+import static com.squarespace.compiler.match.Recognizers.decimal;
+import static com.squarespace.compiler.match.Recognizers.digits;
+import static com.squarespace.compiler.match.Recognizers.hexdigit;
+import static com.squarespace.compiler.match.Recognizers.literal;
+import static com.squarespace.compiler.match.Recognizers.lookAhead;
+import static com.squarespace.compiler.match.Recognizers.notAscii;
+import static com.squarespace.compiler.match.Recognizers.notCharacters;
+import static com.squarespace.compiler.match.Recognizers.notHexdigit;
+import static com.squarespace.compiler.match.Recognizers.oneOrMore;
+import static com.squarespace.compiler.match.Recognizers.sequence;
+import static com.squarespace.compiler.match.Recognizers.whitespace;
+import static com.squarespace.compiler.match.Recognizers.word;
+import static com.squarespace.compiler.match.Recognizers.worddash;
+import static com.squarespace.compiler.match.Recognizers.zeroOrMore;
+import static com.squarespace.compiler.match.Recognizers.zeroOrOne;
 
-import com.squarespace.less.parse.Recognizers.Recognizer;
+import com.squarespace.compiler.match.Recognizers.Recognizer;
 
 
 /**

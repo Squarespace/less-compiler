@@ -8,6 +8,7 @@ apply plugin: 'be.insaneprogramming.gradle.animalsniffer'
 
 description = 'LESS compiler'
 dependencies {
+  compile "com.squarespace.compiler:compiler-core:${ccVersion}"
   compile "org.apache.commons:commons-lang3:${commonsLangVersion}"
 
   testCompile "org.testng:testng:${testngVersion}"

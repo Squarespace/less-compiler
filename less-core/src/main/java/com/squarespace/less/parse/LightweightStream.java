@@ -18,7 +18,7 @@ package com.squarespace.less.parse;
 
 import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
-import com.squarespace.less.parse.Recognizers.Recognizer;
+import com.squarespace.compiler.match.Recognizers.Recognizer;
 
 
 /**
@@ -45,7 +45,7 @@ public abstract class LightweightStream {
 
   /**
    * Most recently parsed token. This value should only be used if the
-   * {@link LightweightStream#match(Recognizer)} method returns true.
+   * match(Recognizer) method returns true.
    */
   protected String token;
 

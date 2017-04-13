@@ -20,10 +20,10 @@ import static com.squarespace.less.core.ExecuteErrorMaker.formatFunctionArgs;
 
 import java.util.List;
 
+import com.squarespace.compiler.text.EncodeUtils;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.CharClass;
-import com.squarespace.less.core.EncodeUtils;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;

@@ -26,6 +26,8 @@ public class CharClass {
 
   // Character class bits that can be set/cleared in a bit mask
 
+  public static final int NONE = 0;
+  
   public static final int DIGIT = 1 << 0;
 
   public static final int LOWERCASE = 1 << 1;
@@ -50,19 +52,13 @@ public class CharClass {
 
   public static final int VARIABLE_START = 1 << 11;
 
-  public static final int ENCODE_URI = 1 << 12;
+  public static final int HEXDIGIT = 1 << 12;
 
-  public static final int ENCODE_URI_COMPONENT = 1 << 13;
+  public static final int DASH = 1 << 13;
 
-  public static final int ESCAPE = 1 << 14;
+  public static final int UNDERSCORE = 1 << 14;
 
-  public static final int HEXDIGIT = 1 << 15;
-
-  public static final int DASH = 1 << 16;
-
-  public static final int UNDERSCORE = 1 << 17;
-
-  public static final int PERIOD = 1 << 18;
+  public static final int PERIOD = 1 << 15;
 
   /**
    * The characters we care about all live below this limit.
@@ -185,52 +181,42 @@ public class CharClass {
         return NONPRINTABLE;
 
       case '!':
-        return ENCODE_URI | ENCODE_URI_COMPONENT;
-
       case '#':
-        return ENCODE_URI | ESCAPE;
-
       case '$':
-        return ENCODE_URI;
+        return NONE;
 
       case '%':
         return CALL_START;
 
       case '&':
-        return ENCODE_URI;
-
       case '\'':
-        return ENCODE_URI | ENCODE_URI_COMPONENT;
-
       case '(':
-        return ENCODE_URI | ENCODE_URI_COMPONENT | ESCAPE;
+        return NONE;
 
       case ')':
-        return SELECTOR_END | ENCODE_URI | ENCODE_URI_COMPONENT | ESCAPE;
+        return SELECTOR_END;
 
       case '*':
-        return PROPERTY_START | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return PROPERTY_START;
 
       case '+':
-        return DIMENSION_START | COMBINATOR | ENCODE_URI;
+        return DIMENSION_START | COMBINATOR;
 
       case ',':
-        return SELECTOR_END | ENCODE_URI;
+        return SELECTOR_END;
 
       case '-':
         return DASH
              | CALL_START
              | DIMENSION_START
              | KEYWORD_START
-             | PROPERTY_START
-             | ENCODE_URI
-             | ENCODE_URI_COMPONENT;
+             | PROPERTY_START;
 
       case '.':
-        return DIMENSION_START | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return DIMENSION_START;
 
       case '/':
-        return ENCODE_URI;
+        return NONE;
 
       case '0':
       case '1':
@@ -245,22 +231,22 @@ public class CharClass {
         return DIGIT | DIMENSION_START | PROPERTY_START | HEXDIGIT;
 
       case ':':
-        return ENCODE_URI | ESCAPE;
+        return NONE;
 
       case ';':
-        return SELECTOR_END | ENCODE_URI | ESCAPE;
+        return SELECTOR_END;
 
       case '=':
-        return ENCODE_URI | ESCAPE;
+        return NONE;
 
       case '>':
         return COMBINATOR;
 
       case '?':
-        return ENCODE_URI;
+        return NONE;
 
       case '@':
-        return VARIABLE_START | ENCODE_URI;
+        return VARIABLE_START;
 
       case 'A':
       case 'B':
@@ -296,9 +282,7 @@ public class CharClass {
         return UNDERSCORE
              | CALL_START
              | KEYWORD_START
-             | PROPERTY_START
-             | ENCODE_URI
-             | ENCODE_URI_COMPONENT;
+             | PROPERTY_START;
 
       case 'a':
       case 'b':
@@ -340,13 +324,13 @@ public class CharClass {
         return SELECTOR_END;
 
       case '~':
-        return COMBINATOR | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return COMBINATOR;
 
       default:
         break;
     }
 
-    return (ch >= Chars.NO_BREAK_SPACE) ? NONASCII : 0;
+    return ch < Chars.NO_BREAK_SPACE ? NONE : NONASCII;
   }
 
 }

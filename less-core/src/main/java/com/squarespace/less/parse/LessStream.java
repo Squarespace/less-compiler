@@ -32,7 +32,7 @@ import com.squarespace.less.core.Constants;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.parse.Recognizers.Recognizer;
+import com.squarespace.compiler.match.Recognizers.Recognizer;
 
 
 /**

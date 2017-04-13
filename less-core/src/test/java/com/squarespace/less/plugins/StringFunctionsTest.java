@@ -39,6 +39,7 @@ public class StringFunctionsTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
 
     h.evalEquals("escape(' (hi) ')", anon("%20%28hi%29%20"));
+    h.evalEquals("escape('a=1')", anon("a%3d1"));
   }
 
   @Test

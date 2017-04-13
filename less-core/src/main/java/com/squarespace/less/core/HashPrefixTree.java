@@ -32,7 +32,7 @@ import java.util.Set;
  * Each level in the tree uses a simple hash table that uses chaining
  * for hash collision overflow.
  *
- * Keys can only be added to the HashTrie, not removed. Removal is currently
+ * Keys can only be added to the HashPrefixTree, not removed. Removal is currently
  * not a requirement.
  */
 public class HashPrefixTree<K, V> {
