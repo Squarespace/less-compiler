@@ -25,6 +25,7 @@ project.ext {
   ccVersion = '1.0.3'
   commonsLangVersion = '3.1'
   diffutilsVersion = '1.3.0'
+  snifferVersion = '1.15'
   testngVersion = '6.10'
 
   buildDate = new java.util.Date()
@@ -122,8 +123,18 @@ subprojects {
 
   group 'com.squarespace.less'
 
-  sourceCompatibility = 1.7
-  targetCompatibility = 1.7
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  configurations {
+    animalSniffer
+    javaApiSignature
+  }
+
+  dependencies {
+    animalSniffer("org.codehaus.mojo:animal-sniffer-ant-tasks:${snifferVersion}")
+    javaApiSignature("org.codehaus.mojo.signature:java18:1.0@signature")
+  }
 
   license {
     header rootProject.file('conf/apache-2.0-header.txt')
@@ -190,6 +201,28 @@ subprojects {
     classifier = 'javadoc'
     from javadoc.destinationDir
   }
+
+  task copyJavaApiSignature(type: Copy) {
+      from configurations.javaApiSignature
+      into "$buildDir/javaApiSignature/"
+      rename '.*signature', 'javaApi.signature'
+  }
+
+  task checkJavaApiSignature << {
+      ant.taskdef(
+        name: 'animalSniffer',
+        classname: 'org.codehaus.mojo.animal_sniffer.ant.CheckSignatureTask',
+        classpath: configurations.animalSniffer.asPath
+      )
+      ant.animalSniffer(
+        signature: "$buildDir/javaApiSignature/javaApi.signature",
+        classpath: configurations.compile.asPath
+      ) { path(path: "$buildDir/classes/main") }
+  }
+
+  checkJavaApiSignature.dependsOn compileJava
+  checkJavaApiSignature.dependsOn copyJavaApiSignature
+  check.dependsOn checkJavaApiSignature
 
   processResources {
     from (sourceSets.main.resources.srcDirs) {
