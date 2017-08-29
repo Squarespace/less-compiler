@@ -66,6 +66,9 @@ public enum Unit {
   // [bug / typo in less 1.3.3 'vm']
   VM ("vm", ""),
 
+  // GRID
+
+  FR ("fr", "fractions"),
 
   // TIME
 
@@ -108,7 +111,7 @@ public enum Unit {
    * NOTE: 'vm' is not a real unit, but is added here since less.js references it
    */
   public static final String REGEX =
-      "px|%|em|pc|ex|in|deg|s|ms|pt|cm|mm|rad|grad|turn|dpi|dpcm|dppx|rem|vw|vh|vmin|vmax|ch|hz|khz|vm";
+      "px|%|em|pc|ex|in|deg|s|ms|pt|cm|mm|rad|grad|turn|fr|dpi|dpcm|dppx|rem|vw|vh|vmin|vmax|ch|hz|khz|vm";
 
   /**
    * Mapping from a unit's representation to its value.
