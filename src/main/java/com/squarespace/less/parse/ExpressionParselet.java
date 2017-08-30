@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.core.Chars;
+import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Expression;
 import com.squarespace.less.model.Node;
 
@@ -41,6 +43,14 @@ public class ExpressionParselet implements Parselet {
     List<Node> entities = new ArrayList<>();
     do {
       entities.add(node);
+
+      // Peek for '/' delimiter here.
+      stm.skipWs();
+      if (stm.peek() == Chars.SLASH && stm.peek(1) != Chars.ASTERISK) {
+        stm.seek1();
+        entities.add(new Anonymous(Character.toString(Chars.SLASH)));
+      }
+
       node = stm.parse(EXPRESSION_SUB);
     } while (node != null);
     return entities.size() == 1 ? entities.get(0) : new Expression(entities);

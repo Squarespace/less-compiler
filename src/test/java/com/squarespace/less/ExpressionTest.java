@@ -41,4 +41,10 @@ public class ExpressionTest extends LessTestBase {
     h.parseEquals("'bar' 3 + 1", expn(quoted('\'', false, "bar"), oper(ADD, dim(3), dim(1))));
   }
 
+  @Test
+  public void testParseKeywordDimension() throws LessException {
+    LessHarness h = new LessHarness(Parselets.EXPRESSION);
+    h.parseEquals("center/5px", expn(kwd("center"), anon("/"), dim(5, PX)));
+  }
+
 }
