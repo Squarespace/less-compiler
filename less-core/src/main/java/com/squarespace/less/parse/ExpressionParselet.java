@@ -21,7 +21,9 @@ import static com.squarespace.less.parse.Parselets.EXPRESSION_SUB;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.squarespace.compiler.text.Chars;
 import com.squarespace.less.LessException;
+import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Expression;
 import com.squarespace.less.model.Node;
 
@@ -33,25 +35,28 @@ public class ExpressionParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Node first = stm.parse(EXPRESSION_SUB);
-    if (first == null) {
+    Node node = stm.parse(EXPRESSION_SUB);
+    if (node == null) {
       return null;
     }
 
-    // Check if a 2nd entity exists. If not, just return the first.
-    Node next = stm.parse(EXPRESSION_SUB);
-    if (next == null) {
-      return first;
-    }
-
-    // Two or more exist, create a wrapper.
     List<Node> entities = new ArrayList<>(4);
-    entities.add(first);
     do {
-      entities.add(next);
-      next = stm.parse(EXPRESSION_SUB);
-    } while (next != null);
+      // Check for '/' delimited pairs that don't parse as shorthand syntax.
+      stm.skipWs();
+      if (stm.peek() == Chars.SLASH && stm.peek(1) != Chars.ASTERISK) {
+        stm.seek1();
+        entities.add(new Anonymous(Character.toString(Chars.SLASH)));
+      }
+
+      entities.add(node);
+      node = stm.parse(EXPRESSION_SUB);
+    } while (node != null);
+
+    // Flatten if expression only contains a single element
+    if (entities.size() == 1) {
+      return entities.get(0);
+    }
     return new Expression(entities);
   }
-
 }
