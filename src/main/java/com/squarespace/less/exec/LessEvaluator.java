@@ -55,12 +55,12 @@ public class LessEvaluator {
   /**
    * Context for the current compile.
    */
-  private final LessContext ctx;
+  protected final LessContext ctx;
 
   /**
    * Options for the current compile.
    */
-  private final LessOptions opts;
+  protected final LessOptions opts;
 
   public LessEvaluator(LessContext ctx) {
     this.ctx = ctx;
@@ -83,7 +83,7 @@ public class LessEvaluator {
   /**
    * Evaluate a BLOCK_DIRECTIVE node.
    */
-  private BlockDirective evaluateBlockDirective(ExecEnv env, BlockDirective input) throws LessException {
+  protected BlockDirective evaluateBlockDirective(ExecEnv env, BlockDirective input) throws LessException {
     BlockDirective directive = input.copy();
     env.push(directive);
 
@@ -98,7 +98,7 @@ public class LessEvaluator {
   /**
    * Evaluate a MEDIA node.
    */
-  private Media evaluateMedia(ExecEnv env, Media input) throws LessException {
+  protected Media evaluateMedia(ExecEnv env, Media input) throws LessException {
     Media media = input.copy(env);
     env.push(media);
 
@@ -113,7 +113,7 @@ public class LessEvaluator {
   /**
    * Evaluate a RULESET node.
    */
-  private Ruleset evaluateRuleset(ExecEnv env, Ruleset input, boolean forceImportant) throws LessException {
+  protected Ruleset evaluateRuleset(ExecEnv env, Ruleset input, boolean forceImportant) throws LessException {
     Ruleset original = (Ruleset)input.original();
     Ruleset ruleset = input.copy(env);
 
@@ -132,7 +132,7 @@ public class LessEvaluator {
   /**
    * Evaluate a STYLESHEET node.
    */
-  private Stylesheet evaluateStylesheet(ExecEnv env, Stylesheet original) throws LessException {
+  protected Stylesheet evaluateStylesheet(ExecEnv env, Stylesheet original) throws LessException {
     Stylesheet stylesheet = original.copy();
     env.push(stylesheet);
 
@@ -148,7 +148,7 @@ public class LessEvaluator {
    * Iterate over all of the rules in the block and evaluate them, replacing each rule in
    * the list with the result of the evaluation.
    */
-  private void evaluateRules(ExecEnv env, Block block, boolean forceImportant) throws LessException {
+  protected void evaluateRules(ExecEnv env, Block block, boolean forceImportant) throws LessException {
     FlexList<Node> rules = block.rules();
 
     Import currentImport = null;
@@ -246,7 +246,7 @@ public class LessEvaluator {
    * Each successful call will produce multiple rules. We replace the call with
    * the rules it produced.
    */
-  private void expandMixins(ExecEnv env, Block block) throws LessException {
+  protected void expandMixins(ExecEnv env, Block block) throws LessException {
     if (!block.hasMixinCalls()) {
       return;
     }
@@ -278,7 +278,7 @@ public class LessEvaluator {
    * the call must (a) bind arguments and be called, or (b) bind arguments but evaluate
    * the mixin's guard to FALSE.
    */
-  private Block executeMixinCall(ExecEnv env, MixinCall call) throws LessException {
+  protected Block executeMixinCall(ExecEnv env, MixinCall call) throws LessException {
     MixinMatcher matcher = new MixinMatcher(env, call);
     MixinResolver resolver = ctx.mixinResolver();
     resolver.reset(matcher);
@@ -324,7 +324,7 @@ public class LessEvaluator {
    * If the guard evaluates to TRUE, we execute the mixin's block and merge the produced
    * rules into the 'collector' block.
    */
-  private boolean executeMixin(ExecEnv env, Block collector, MixinMatcher matcher, MixinMatch match)
+  protected boolean executeMixin(ExecEnv env, Block collector, MixinMatcher matcher, MixinMatch match)
       throws LessException {
 
     MixinCall call = matcher.mixinCall();
@@ -403,7 +403,7 @@ public class LessEvaluator {
   /**
    * Executes a RULESET as a mixin.
    */
-  private boolean executeRulesetMixin(ExecEnv env, Block collector, MixinMatcher matcher, MixinMatch match)
+  protected boolean executeRulesetMixin(ExecEnv env, Block collector, MixinMatcher matcher, MixinMatch match)
       throws LessException {
     MixinCall call = matcher.mixinCall();
     Ruleset ruleset = (Ruleset)match.mixin();
