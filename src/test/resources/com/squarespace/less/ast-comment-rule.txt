@@ -1,0 +1,10 @@
+:PROPERTIES
+parser=PRIMARY_SUB
+
+:LESS
+/* comment
+
+*/
+
+:REPR
+[COMMENT, ' comment\n\n', 1, true]

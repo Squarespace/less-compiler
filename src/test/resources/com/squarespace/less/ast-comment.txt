@@ -1,0 +1,29 @@
+:PROPERTIES
+parser=COMMENT
+
+:LESS
+// comment 1
+
+:REPR
+[COMMENT, ' comment 1', 0, false]
+
+
+:LESS
+/** 
+comment 2 
+
+*/
+
+:REPR
+[COMMENT, '* \ncomment 2 \n\n', 1, false]
+
+
+:LESS
+/*! comment bang
+
+another line
+
+*/
+
+:REPR
+[COMMENT, '! comment bang\n\nanother line\n\n', 1, false]

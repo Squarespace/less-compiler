@@ -1,0 +1,70 @@
+:PROPERTIES
+parser=MIXIN
+
+:LESS
+.foo() {
+  color: red;
+}
+
+:REPR
+[MIXIN, '.foo', [MIXIN_PARAMS, [], false, 0], NULL, [
+  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+]]
+
+
+:LESS
+.foo(@foo: 10, blue) {
+  color: @foo;
+}
+
+:REPR
+[MIXIN, '.foo', [MIXIN_PARAMS, [
+  [PARAMETER, '@foo', [DIMENSION, 10, null], false],
+  [PARAMETER, null, [COLOR, 0, 0, 255, 1.0], false]
+], false, 1], NULL, [
+  [RULE, [PROPERTY, 'color'], [VARIABLE, '@foo'], false]
+]]
+
+
+:LESS
+.foo(@sz) when (@sz > 10px) {
+  font-size: @sz;
+}
+
+:REPR
+[MIXIN, '.foo', [MIXIN_PARAMS, [
+  [PARAMETER, '@sz', NULL, false]
+], false, 1], [GUARD, [
+  [CONDITION, '>', [VARIABLE, '@sz'], [DIMENSION, 10, 'px'], false]
+]], [
+  [RULE, [PROPERTY, 'font-size'], [VARIABLE, '@sz'], false]
+]]
+
+
+:LESS
+.foo(@a; @rest ...) {
+  color: blue;
+}
+
+:REPR
+[MIXIN, '.foo', [MIXIN_PARAMS, [
+  [PARAMETER, '@a', NULL, false],
+  [PARAMETER, '@rest', NULL, true]
+], true, 1], NULL, [
+  [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 255, 1.0], false]
+]]
+
+
+:LESS
+.foo(1; 2; 3) {
+  color: red;
+}
+
+:REPR
+[MIXIN, '.foo', [MIXIN_PARAMS, [
+  [PARAMETER, null, [DIMENSION, 1, null], false],
+  [PARAMETER, null, [DIMENSION, 2, null], false],
+  [PARAMETER, null, [DIMENSION, 3, null], false]
+], false, 3], NULL, [
+  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+]]

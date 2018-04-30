@@ -106,6 +106,14 @@ class CompileSingle extends BaseCompile {
             standardOut.println(syntaxTree(stylesheet));
             break;
 
+          case JSONAST:
+            standardOut.println(jsonAst(stylesheet));
+            break;
+
+          case JSONREPR:
+            standardOut.println(jsonRepr(stylesheet));
+            break;
+
           case PARSETREE:
             standardOut.println(syntaxTree(stylesheet));
             break;

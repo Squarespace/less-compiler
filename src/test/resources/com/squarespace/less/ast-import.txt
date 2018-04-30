@@ -1,0 +1,45 @@
+:PROPERTIES
+parser=DIRECTIVE
+
+:LESS
+@import "foo.css";
+
+:REPR
+[IMPORT, [QUOTED, 1, false, [
+  [ANONYMOUS, 'foo.css']
+]], 0, NULL]
+
+
+:LESS
+@import-once "bar.css";
+
+:REPR
+[IMPORT, [QUOTED, 1, false, [
+  [ANONYMOUS, 'bar.css']
+]], 1, NULL]
+
+
+:LESS
+@import "foo.css" screen and mobile;
+
+:REPR
+[IMPORT, [QUOTED, 1, false, [
+  [ANONYMOUS, 'foo.css']
+]], 0, [FEATURES, [
+  [EXPRESSION, [
+    [KEYWORD, 'screen'],
+    [KEYWORD, 'and'],
+    [KEYWORD, 'mobile']
+  ]]
+]]]
+
+
+:LESS
+@import url(foo.css) mobile;
+
+:REPR
+[IMPORT, [URL, [ANONYMOUS, 'foo.css']], 0, [FEATURES, [
+  [EXPRESSION, [
+    [KEYWORD, 'mobile']
+  ]]
+]]]

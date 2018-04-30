@@ -1,0 +1,21 @@
+:PROPERTIES
+parser=MIXIN_CALL_ARGS
+
+:LESS
+(@a)
+
+:REPR
+[MIXIN_ARGS, 0, [
+  [ARGUMENT, null, [VARIABLE, '@a']]
+]]
+
+
+:LESS
+(@foo: 12px, blue, true)
+
+:REPR
+[MIXIN_ARGS, 0, [
+  [ARGUMENT, '@foo', [DIMENSION, 12, 'px']],
+  [ARGUMENT, null, [COLOR, 0, 0, 255, 1.0]],
+  [ARGUMENT, null, [KEYWORD, 'true']]
+]]

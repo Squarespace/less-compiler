@@ -1,0 +1,79 @@
+:PROPERTIES
+parser=SELECTORS
+
+:LESS
+> foo.bar, section a.external-link
+
+:REPR
+[SELECTORS, [
+  [SELECTOR, [
+    [TEXT_ELEMENT, '>', 'foo'],
+    [TEXT_ELEMENT, null, '.bar']
+  ]],
+  [SELECTOR, [
+    [TEXT_ELEMENT, ' ', 'section'],
+    [TEXT_ELEMENT, ' ', 'a'],
+    [TEXT_ELEMENT, null, '.external-link']
+  ]]
+]]
+
+
+:LESS
+(~'.@{a}-@{b}')
+
+:REPR
+[SELECTORS, [
+  [SELECTOR, [
+    [VALUE_ELEMENT, ' ', [QUOTED, 0, true, [
+      [ANONYMOUS, '.'],
+      [VARIABLE, '@a'],
+      [ANONYMOUS, '-'],
+      [VARIABLE, '@b']
+    ]]]
+  ]]
+]]
+
+
+:LESS
+> * + & > & foo
+
+:REPR
+[SELECTORS, [
+  [SELECTOR, [
+    [TEXT_ELEMENT, '>', '*'],
+    [TEXT_ELEMENT, '+', '&'],
+    [TEXT_ELEMENT, '>', '&'],
+    [TEXT_ELEMENT, ' ', 'foo']
+  ]]
+]]
+
+
+:LESS
+[hidden]
+
+:REPR
+[SELECTORS, [
+  [SELECTOR, [
+    [ATTR_ELEMENT, ' ', [
+      [ANONYMOUS, 'hidden']
+    ]]
+  ]]
+]]
+
+
+:LESS
+.a[href~='squarespace']
+
+:REPR
+[SELECTORS, [
+  [SELECTOR, [
+    [TEXT_ELEMENT, ' ', '.a'],
+    [ATTR_ELEMENT, null, [
+      [ANONYMOUS, 'href'],
+      [ANONYMOUS, '~='],
+      [QUOTED, 0, false, [
+        [ANONYMOUS, 'squarespace']
+      ]]
+    ]]
+  ]]
+]]

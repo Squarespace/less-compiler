@@ -32,6 +32,10 @@ public class KeywordColor extends RGBColor {
     this.keyword = keyword;
   }
 
+  public String keyword() {
+    return keyword;
+  }
+
   @Override
   public void repr(Buffer buf) {
     buf.append(keyword);

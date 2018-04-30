@@ -1,0 +1,24 @@
+:PROPERTIES
+parser=DIRECTIVE
+
+:LESS
+@font-face {
+  font-family: Helvetica;
+}
+
+:REPR
+[BLOCK_DIRECTIVE, '@font-face', [
+  [RULE, [PROPERTY, 'font-family'], [KEYWORD, 'Helvetica'], false]
+]]
+
+
+:LESS
+@namespace sqs url('http://squarespace.com');
+
+:REPR
+[DIRECTIVE, '@namespace', [EXPRESSION, [
+  [KEYWORD, 'sqs'],
+  [URL, [QUOTED, 0, false, [
+    [ANONYMOUS, 'http://squarespace.com']
+  ]]]
+]]]

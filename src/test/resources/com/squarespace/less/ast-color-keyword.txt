@@ -1,0 +1,15 @@
+:PROPERTIES
+parser=COLOR_KEYWORD
+
+:LESS
+red
+
+:REPR
+[COLOR, 255, 0, 0, 1.0]
+
+
+:LESS
+black
+
+:REPR
+[COLOR, 0, 0, 0, 1.0]

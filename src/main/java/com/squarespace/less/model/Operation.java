@@ -55,6 +55,13 @@ public class Operation extends BaseNode {
   }
 
   /**
+   * The operator to apply to the operands.
+   */
+  public Operator operator() {
+    return operator;
+  }
+
+  /**
    * Returns the left-hand operand.
    */
   public Node left() {

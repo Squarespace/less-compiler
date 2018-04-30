@@ -1,0 +1,43 @@
+:PROPERTIES
+parser=DIMENSION
+
+:LESS
+1234
+
+:REPR
+[DIMENSION, 1234, null]
+
+
+:LESS
+3.14159
+
+:REPR
+[DIMENSION, 3.14159, null]
+
+
+:LESS
+12px
+
+:REPR
+[DIMENSION, 12, 'px']
+
+
+:LESS
+16pt
+
+:REPR
+[DIMENSION, 16, 'pt']
+
+
+:LESS
+2em
+
+:REPR
+[DIMENSION, 2, 'em']
+
+
+:LESS
+30.5%
+
+:REPR
+[DIMENSION, 30.5, '%']

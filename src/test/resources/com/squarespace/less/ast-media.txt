@@ -1,0 +1,29 @@
+:PROPERTIES
+parser=MEDIA
+
+:LESS
+@media screen and (min-width: 100px) {
+  color: red;
+}
+
+:REPR
+[MEDIA, [FEATURES, [
+  [EXPRESSION, [
+    [KEYWORD, 'screen'],
+    [KEYWORD, 'and'],
+    [PAREN, [FEATURE, [PROPERTY, 'min-width'], [DIMENSION, 100, 'px']]]
+  ]]
+]], [
+  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+]]
+
+
+:LESS
+@media {
+  color: red;
+}
+
+:REPR
+[MEDIA, NULL, [
+  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+]]

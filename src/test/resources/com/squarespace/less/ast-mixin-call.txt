@@ -1,0 +1,27 @@
+:PROPERTIES
+parser=MIXIN_CALL
+
+:LESS
+.foo();
+
+:REPR
+[MIXIN_CALL, [SELECTOR, [
+  [TEXT_ELEMENT, null, '.foo']
+]], [MIXIN_ARGS, 0, []], false]
+
+
+:LESS
+.foo(1; 2; 3, 4, 5) !important;
+
+:REPR
+[MIXIN_CALL, [SELECTOR, [
+  [TEXT_ELEMENT, null, '.foo']
+]], [MIXIN_ARGS, 1, [
+  [ARGUMENT, null, [DIMENSION, 1, null]],
+  [ARGUMENT, null, [DIMENSION, 2, null]],
+  [ARGUMENT, null, [EXPRESSION_LIST, [
+    [DIMENSION, 3, null],
+    [DIMENSION, 4, null],
+    [DIMENSION, 5, null]
+  ]]]
+]], true]

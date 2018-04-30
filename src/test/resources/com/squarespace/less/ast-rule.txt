@@ -1,0 +1,29 @@
+:PROPERTIES
+parser=RULE
+
+:LESS
+font-size: 10;
+
+:REPR
+[RULE, [PROPERTY, 'font-size'], [DIMENSION, 10, null], false]
+
+
+:LESS
+@color: #abc;
+
+:REPR
+[DEFINITION, '@color', [COLOR, 170, 187, 204, 1.0]]
+ 
+ 
+:LESS
+@backgroundColor: #abcdef;
+
+:REPR
+[DEFINITION, '@backgroundColor', [COLOR, 171, 205, 239, 1.0]]
+
+
+:LESS
+font-size: 10 !important;
+
+:REPR
+[RULE, [PROPERTY, 'font-size'], [DIMENSION, 10, null], true]

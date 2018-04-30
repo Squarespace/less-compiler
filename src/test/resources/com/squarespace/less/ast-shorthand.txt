@@ -1,0 +1,8 @@
+:PROPERTIES
+parser=SHORTHAND
+
+:LESS
+@foo/10
+
+:REPR
+[SHORTHAND, [VARIABLE, '@foo'], [DIMENSION, 10, null]]

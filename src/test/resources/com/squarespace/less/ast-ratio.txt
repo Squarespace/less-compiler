@@ -1,0 +1,8 @@
+:PROPERTIES
+parser=RATIO
+
+:LESS
+10/20
+
+:REPR
+[RATIO, '10/20']

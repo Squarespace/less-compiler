@@ -19,6 +19,7 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 import com.squarespace.less.core.Buffer;
@@ -109,7 +110,7 @@ public class MixinCall extends BaseNode {
    */
   public List<String> path() {
     if (selectorPath == null) {
-
+      return Collections.emptyList();
     }
     return this.selectorPath;
   }

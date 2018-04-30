@@ -161,7 +161,6 @@ public class MixinMatcher {
 
       } else if (variadic != null) {
         variadic.add(arg.value());
-
       } else {
         // No names left and no variadic exists to collect overflow
         // We should never reach this point since patternMatch() would have also failed.

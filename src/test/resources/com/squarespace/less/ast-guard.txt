@@ -1,0 +1,10 @@
+:PROPERTIES
+parser=GUARD
+
+:LESS
+when (@foo > 10px) and (@bar = white)
+
+:REPR
+[GUARD, [
+  [CONDITION, 'and', [CONDITION, '>', [VARIABLE, '@foo'], [DIMENSION, 10, 'px'], false], [CONDITION, '=', [VARIABLE, '@bar'], [COLOR, 255, 255, 255, 1.0], false], false]
+]]

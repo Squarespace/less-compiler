@@ -1,0 +1,21 @@
+:PROPERTIES
+parser=RULESET
+
+:LESS
+.foo, .bar {
+  font-size: 10px;
+  color: red;
+}
+
+:REPR
+[RULESET, [SELECTORS, [
+  [SELECTOR, [
+    [TEXT_ELEMENT, ' ', '.foo']
+  ]],
+  [SELECTOR, [
+    [TEXT_ELEMENT, ' ', '.bar']
+  ]]
+]], [
+  [RULE, [PROPERTY, 'font-size'], [DIMENSION, 10, 'px'], false],
+  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+]]

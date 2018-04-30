@@ -109,6 +109,10 @@ public enum Operator {
     return null;
   }
 
+  public String repr() {
+    return repr;
+  }
+
   @Override
   public String toString() {
     return repr;

@@ -1,0 +1,8 @@
+:PROPERTIES
+parser=ADDITION
+
+:LESS
+@foo + 5px
+
+:REPR
+[OPERATION, '+', [VARIABLE, '@foo'], [DIMENSION, 5, 'px']]

@@ -109,7 +109,7 @@ public class LessSuiteBase {
    * Create a diff between the expected and actual strings. If any
    * differences are found, format an error message.
    */
-  protected String diff(String expected, String actual) {
+  public static String diff(String expected, String actual) {
     List<String> expList = Arrays.asList(expected.split("\n"));
     List<String> actList = Arrays.asList(actual.split("\n"));
     Patch<String> patch = DiffUtils.diff(expList, actList);

@@ -34,6 +34,12 @@ public enum LessDebugMode {
   EVALTREE
   ("Performs an EVAL and emits the pre-render syntax tree."),
 
+  JSONAST
+  ("Emits the JSON AST for the canonical representation of the parsed template"),
+
+  JSONREPR
+  ("Emits a pseudocode representation of the contents of a JSON AST for debugging / testing"),
+
   PARSETREE
   ("Parses the file and displays the internal syntax tree (potentially extremely verbose)");
 

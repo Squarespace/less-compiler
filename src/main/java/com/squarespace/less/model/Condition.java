@@ -72,6 +72,13 @@ public class Condition extends BaseNode {
   }
 
   /**
+   * Returns the operator.
+   */
+  public Operator operator() {
+    return operator;
+  }
+
+  /**
    * Returns the left operand.
    */
   public Node left() {
@@ -83,6 +90,10 @@ public class Condition extends BaseNode {
    */
   public Node right() {
     return right;
+  }
+
+  public boolean negate() {
+    return negate;
   }
 
   /**

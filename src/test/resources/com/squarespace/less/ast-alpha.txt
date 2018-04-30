@@ -1,0 +1,8 @@
+:PROPERTIES
+parser=ALPHA
+
+:LESS
+opacity=1)
+
+:REPR
+[ALPHA, [DIMENSION, 1, null]]

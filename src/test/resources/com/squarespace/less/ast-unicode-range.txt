@@ -1,0 +1,13 @@
+:PROPERTIES
+parser=RULE
+
+:LESS
+a1: U+??????, U+0???, U+0-7F, U+A5;
+
+:REPR
+[RULE, [PROPERTY, 'a1'], [EXPRESSION_LIST, [
+  [UNICODE_RANGE, 'U+??????'],
+  [UNICODE_RANGE, 'U+0???'],
+  [UNICODE_RANGE, 'U+0-7F'],
+  [UNICODE_RANGE, 'U+A5']
+]], false]

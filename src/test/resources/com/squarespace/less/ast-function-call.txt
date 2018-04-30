@@ -1,0 +1,22 @@
+:PROPERTIES
+parser=FUNCTION_CALL
+
+:LESS
+rgb(10, 20, 30, 0.5)
+
+:REPR
+[FUNCTION_CALL, 'rgb', [
+  [DIMENSION, 10, null],
+  [DIMENSION, 20, null],
+  [DIMENSION, 30, null],
+  [DIMENSION, 0.5, null]
+]]
+
+
+:LESS
+foo(bar=1px)
+
+:REPR
+[FUNCTION_CALL, 'foo', [
+  [ASSIGNMENT, 'bar', [DIMENSION, 1, 'px']]
+]]

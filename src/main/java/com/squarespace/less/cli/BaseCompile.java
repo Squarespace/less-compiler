@@ -19,10 +19,14 @@ package com.squarespace.less.cli;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
 import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessStats;
 import com.squarespace.less.cli.LessC.Args;
 import com.squarespace.less.core.Buffer;
+import com.squarespace.less.jsonast.AstEmitter;
+import com.squarespace.less.jsonast.AstPrinter;
 import com.squarespace.less.model.Stylesheet;
 
 
@@ -60,6 +64,17 @@ abstract class BaseCompile {
     Buffer buf = new Buffer(args.compilerOptions().indent());
     stylesheet.repr(buf);
     return buf.toString();
+  }
+
+  protected String jsonAst(Stylesheet stylesheet) {
+    return AstEmitter.render(stylesheet);
+  }
+
+  protected String jsonRepr(Stylesheet stylesheet) {
+    String raw = jsonAst(stylesheet);
+    JsonObject json = Json.parse(raw).asObject();
+    AstPrinter printer = new AstPrinter(json);
+    return printer.print();
   }
 
   protected String syntaxTree(Stylesheet stylesheet) {
