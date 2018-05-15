@@ -17,5 +17,5 @@ parser=RULESET
   ]]
 ]], [
   [RULE, [PROPERTY, 'font-size'], [DIMENSION, 10, 'px'], false],
-  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
 ]]

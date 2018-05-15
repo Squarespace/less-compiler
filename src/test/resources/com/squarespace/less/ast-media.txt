@@ -14,7 +14,7 @@ parser=MEDIA
     [PAREN, [FEATURE, [PROPERTY, 'min-width'], [DIMENSION, 100, 'px']]]
   ]]
 ]], [
-  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
 ]]
 
 
@@ -25,5 +25,5 @@ parser=MEDIA
 
 :REPR
 [MEDIA, NULL, [
-  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+  [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
 ]]

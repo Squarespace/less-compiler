@@ -16,6 +16,6 @@ parser=MIXIN_CALL_ARGS
 :REPR
 [MIXIN_ARGS, 0, [
   [ARGUMENT, '@foo', [DIMENSION, 12, 'px']],
-  [ARGUMENT, null, [COLOR, 0, 0, 255, 1.0]],
+  [ARGUMENT, null, [COLOR, 0, 0, 255, 1.0, null]],
   [ARGUMENT, null, [KEYWORD, 'true']]
 ]]

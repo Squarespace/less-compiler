@@ -125,7 +125,7 @@ allprojects {
   }
 
   checkstyle {
-    toolVersion = '5.7'
+    toolVersion = '5.9'
     ignoreFailures = false
     configFile = rootProject.file('checkstyle.xml')
   }

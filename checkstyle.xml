@@ -9,6 +9,12 @@
     <module name="FileLength"/>
     <module name="FileTabCharacter"/>
 
+		<module name="SuppressionCommentFilter">
+			<property name="offCommentFormat" value="CSOFF\:\s+([\w\|]+)"/>
+			<property name="onCommentFormat" value="CSON\:\s+([\w\|]+)"/>
+			<property name="checkFormat" value="$1"/>
+		</module>
+
     <module name="SuppressionFilter">
         <property name="file" value="${samedir}/suppressions.xml" default="./suppressions.xml"/>
     </module>
@@ -63,7 +69,7 @@
             <property name="max" value="120"/>
         </module>
         <module name="MethodLength">
-            <property name="max" value="200"/>
+            <property name="max" value="600"/>
         </module>
         <!--module name="ParameterNumber"/-->
 

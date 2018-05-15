@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2018 SQUARESPACE, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.squarespace.less;
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
@@ -80,6 +96,9 @@ public class AstTestCaseParser {
               }
               c.add(currLess, buf.toString());
               currLess = null;
+              break;
+
+            default:
               break;
           }
           buf.setLength(0);
@@ -204,7 +223,7 @@ public class AstTestCaseParser {
     throw new TestNGException("Unsupported parselet name '" + name + "'");
   }
 
-  private static final Map<String, Parselet[]> PARSELETS = new HashMap<String, Parselet[]>() {{
+  private static final Map<String, Parselet[]> PARSELETS = new HashMap<String, Parselet[]>() { {
     put("ADDITION", Parselets.ADDITION);
     put("ALPHA", Parselets.ALPHA);
     put("COLOR", Parselets.COLOR);
@@ -227,7 +246,7 @@ public class AstTestCaseParser {
     put("SELECTORS", Parselets.SELECTORS);
     put("SHORTHAND", Parselets.SHORTHAND);
     put("STYLESHEET", Parselets.STYLESHEET);
-  }};
+  } };
 
 }
 

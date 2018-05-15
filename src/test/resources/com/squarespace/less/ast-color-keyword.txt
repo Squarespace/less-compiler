@@ -5,11 +5,25 @@ parser=COLOR_KEYWORD
 red
 
 :REPR
-[COLOR, 255, 0, 0, 1.0]
+[COLOR, 255, 0, 0, 1.0, null]
 
 
 :LESS
 black
 
 :REPR
-[COLOR, 0, 0, 0, 1.0]
+[COLOR, 0, 0, 0, 1.0, null]
+
+
+:LESS
+blue
+
+:REPR
+[COLOR, 0, 0, 255, 1.0, null]
+
+
+:LESS
+transparent
+
+:REPR
+[COLOR, 0, 0, 0, 1.0, 'transparent']

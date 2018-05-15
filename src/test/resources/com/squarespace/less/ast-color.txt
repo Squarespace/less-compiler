@@ -5,11 +5,11 @@ parser=COLOR
 #fed
 
 :REPR
-[COLOR, 255, 238, 221, 1.0]
+[COLOR, 255, 238, 221, 1.0, null]
 
 
 :LESS
 #123456
 
 :REPR
-[COLOR, 18, 52, 86, 1.0]
+[COLOR, 18, 52, 86, 1.0, null]
