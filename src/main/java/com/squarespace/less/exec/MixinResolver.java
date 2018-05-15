@@ -18,9 +18,9 @@ package com.squarespace.less.exec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.FlexList;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.MixinCallArgs;
@@ -76,15 +76,20 @@ public class MixinResolver {
       return false;
     }
 
-    FlexList<Node> rules = block.rules();
-    if (rules.isEmpty()) {
+    Map<String, List<Node>> mixins = block.mixins();
+    if (mixins == null) {
       return false;
     }
 
-    // TODO: future mixin resolution optimization to cache ruleset/mixins in
-    // a separate field on the block to reduce size of these inner loops.
-    // this should improve execution times for large stylesheets with many
-    // imports.
+    // We prune the mixin search space at every level, leveraging
+    // the mixin path prefix index to avoid scanning non-matching blocks.
+    // We also iterate directly over only mixin nodes.
+
+    String key = this.callPath.get(index);
+    List<Node> rules = mixins.get(key);
+    if (rules == null || rules.isEmpty()) {
+      return false;
+    }
 
     boolean matched = false;
     int size = rules.size();

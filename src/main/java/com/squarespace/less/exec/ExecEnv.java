@@ -16,6 +16,9 @@
 
 package com.squarespace.less.exec;
 
+import java.util.List;
+import java.util.Map;
+
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
@@ -23,6 +26,7 @@ import com.squarespace.less.core.FlexList;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Definition;
+import com.squarespace.less.model.Node;
 
 
 /**
@@ -186,10 +190,18 @@ public class ExecEnv {
    * Iterate up the stack, trying to resolve the mixin against each block.
    */
   public boolean resolveMixins(MixinResolver resolver) throws LessException {
-    int size = frames.size();
-    for (int i = size - 1; i >= 0; i--) {
-      if (resolver.match(frames.get(i))) {
-        return true;
+    List<String> path = resolver.callPath;
+    String prefix = path.get(0);
+    int end = frames.size() - 1;
+    for (int i = end; i >= 0; i--) {
+      // Prune the mixin search space at the top level. If no paths
+      // have our desired prefix we skip the block entirely.
+      Block block = frames.get(i);
+      Map<String, List<Node>> mixins = block.mixins();
+      if (mixins != null && mixins.containsKey(prefix)) {
+        if (resolver.match(block)) {
+          return true;
+        }
       }
     }
     return false;

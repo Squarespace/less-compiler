@@ -16,7 +16,9 @@
 
 package com.squarespace.less.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.squarespace.less.core.Buffer;
@@ -76,6 +78,12 @@ public class Block extends BaseNode {
   protected Map<String, Definition> variables;
 
   /**
+   * Ordered list of mixin definitions contained in this block that share a
+   * common prefix.
+   */
+  protected Map<String, List<Node>> mixins;
+
+  /**
    * Initial flags controlling this block. On creation we need to build the
    * variable cache.
    */
@@ -98,9 +106,10 @@ public class Block extends BaseNode {
   /**
    * Private constructor, used by the {@link Block#copy()} method.
    */
-  private Block(FlexList<Node> rules, byte flags) {
+  private Block(FlexList<Node> rules, byte flags, Map<String, List<Node>> mixins) {
     this.rules = rules;
     this.flags = flags;
+    this.mixins = mixins;
   }
 
   /**
@@ -138,8 +147,11 @@ public class Block extends BaseNode {
    * the tail of this instance.
    */
   public void appendBlock(Block block) {
-    flags |= block.flags;
-    rules.append(block.rules);
+    FlexList<Node> rules = block.rules();
+    int size = rules.size();
+    for (int i = 0; i < size; i++) {
+      this.appendNode(rules.get(i));
+    }
   }
 
   /**
@@ -147,6 +159,18 @@ public class Block extends BaseNode {
    */
   public FlexList<Node> rules() {
     return rules;
+  }
+
+  public void splice(int start, int num, FlexList<Node> other) {
+    this.rules.splice(start, num, other);
+    int size = other.size();
+    for (int i = 0; i < size; i++) {
+      setFlags(other.get(i));
+    }
+  }
+
+  public Map<String, List<Node>> mixins() {
+    return this.mixins;
   }
 
   /**
@@ -207,7 +231,7 @@ public class Block extends BaseNode {
    * Create a shallow copy of this block.
    */
   public Block copy() {
-    return new Block(rules.copy(), flags);
+    return new Block(rules.copy(), flags, mixins);
   }
 
   /**
@@ -306,14 +330,45 @@ public class Block extends BaseNode {
   }
 
   /**
-   * Sets this block's flags based on type of this node.
+   * Updates this block's flags and mixin index.
    */
   private void setFlags(Node node) {
     if (node instanceof Import) {
       flags |= FLAG_HAS_IMPORTS;
     } else if (node instanceof MixinCall) {
       flags |= FLAG_HAS_MIXIN_CALLS;
+    } else if (node instanceof Mixin) {
+      this.indexMixin(((Mixin)node).name, node);
+    } else if (node instanceof Ruleset) {
+      Ruleset ruleset = (Ruleset)node;
+      Selectors selectors = ruleset.selectors();
+      if (selectors.hasMixinPath()) {
+        for (Selector selector : selectors.selectors()) {
+          List<String> path = selector.mixinPath();
+          if (path != null) {
+            this.indexMixin(path.get(0), node);
+          }
+        }
+      }
     }
   }
 
+  private void indexMixin(String prefix, Node node) {
+    // Optimization for fast prefix matching of mixin paths.
+    // Index the ruleset and mixin paths by the first segment
+    // of their path. This lets is prune the search tree drastically
+    // by (a) ignoring branches with no valid prefix and (b) iterating
+    // over just the mixins when a prefix is valid.
+
+    if (this.mixins == null) {
+      this.mixins = new HashMap<>();
+    }
+
+    List<Node> nodes = this.mixins.get(prefix);
+    if (nodes == null) {
+      nodes = new ArrayList<>();
+      this.mixins.put(prefix, nodes);
+    }
+    nodes.add(node);
+  }
 }
