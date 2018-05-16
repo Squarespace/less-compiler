@@ -137,4 +137,9 @@ public class AstEmitterTest {
     runner.run("ast-unicode-range.txt");
   }
 
+  @Test
+  public void testWhitespace() throws Exception {
+    runner.run("ast-whitespace.txt");
+  }
+
 }

@@ -58,6 +58,7 @@ public class AstEncoder extends AstBuffer {
     out.append("{\"strings\":");
     renderStrings(out, table);
 
+    // Experimental.
     if (savePositions) {
       out.append(",\"paths\":");
       renderStrings(out, paths);

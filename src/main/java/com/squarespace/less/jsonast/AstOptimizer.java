@@ -106,26 +106,26 @@ public class AstOptimizer extends AstBuffer {
     int len = s.length();
     for (int i = 0; i < len; i++) {
       char c = s.charAt(i);
-      if (c < 0x20) {
-        tmp.append(REPLACEMENTS[c]);
-      } else {
-        switch (c) {
-          case '"': tmp.append("\\\""); break;
-          case '\\': tmp.append("\\\\"); break;
-          case '\t': tmp.append("\\t"); break;
-          case '\b': tmp.append("\\b"); break;
-          case '\n': tmp.append("\\n"); break;
-          case '\r': tmp.append("\\r"); break;
-          case '\f': tmp.append("\\f"); break;
+      switch (c) {
+        case '"': tmp.append("\\\""); break;
+        case '\\': tmp.append("\\\\"); break;
+        case '\t': tmp.append("\\t"); break;
+        case '\b': tmp.append("\\b"); break;
+        case '\n': tmp.append("\\n"); break;
+        case '\r': tmp.append("\\r");  break;
+        case '\f': tmp.append("\\f"); break;
 
-          // Fixes for eval(json) per https://github.com/google/gson/issues/341
-          case '\u2028': tmp.append("\\u2028"); break;
-          case '\u2029': tmp.append("\\u2029"); break;
+        // Fixes for eval(json) per https://github.com/google/gson/issues/341
+        case '\u2028': tmp.append("\\u2028"); break;
+        case '\u2029': tmp.append("\\u2029"); break;
 
-          default:
+        default:
+          if (c < 0x20) {
+            tmp.append(REPLACEMENTS[c]);
+          } else {
             tmp.append(c);
-            break;
-        }
+          }
+          break;
       }
     }
     return tmp.toString();

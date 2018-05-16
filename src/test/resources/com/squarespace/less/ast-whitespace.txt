@@ -1,0 +1,37 @@
+:PROPERTIES
+parser=STYLESHEET
+
+:LESS
+.foo {
+  color: red;
+}
+
+/*
+note: the next 2 lines have invisibles.
+ tab:	
+  ff:
+*/
+
+.bar {
+  color: blue;
+}
+
+
+:REPR
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.foo']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
+  ]],
+  [COMMENT, '\nnote: the next 2 lines have invisibles.\n tab:\t\n  ff:\f\n', 1, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.bar']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 255, 1.0, null], false]
+  ]]
+]]
