@@ -146,6 +146,9 @@ public class MixinCall extends BaseNode {
     if (args != null) {
       args.repr(buf);
     }
+    if (important) {
+      buf.append(" !important");
+    }
   }
 
   /**
