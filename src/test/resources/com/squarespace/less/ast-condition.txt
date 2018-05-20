@@ -5,13 +5,13 @@ parser=CONDITION
 (@foo > 10px) and (@bar = white)
 
 :REPR
-[CONDITION, 'and', [CONDITION, '>', [VARIABLE, '@foo'], [DIMENSION, 10, 'px'], false], [CONDITION, '=', [VARIABLE, '@bar'], [COLOR, 255, 255, 255, 1.0, null], false], false]
+[CONDITION, 'and', [CONDITION, '>', [VARIABLE, '@foo', false, false], [DIMENSION, 10, 'px'], false], [CONDITION, '=', [VARIABLE, '@bar', false, false], [COLOR, 255, 255, 255, 1.0, null], false], false]
 
 :LESS
 not (@foo < 10px)
 
 :REPR
-[CONDITION, '<', [VARIABLE, '@foo'], [DIMENSION, 10, 'px'], true]
+[CONDITION, '<', [VARIABLE, '@foo', false, false], [DIMENSION, 10, 'px'], true]
 
 
 :LESS

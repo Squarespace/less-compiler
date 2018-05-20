@@ -235,7 +235,7 @@ public class AstPrinter {
     { UNICODE_RANGE, STR },
     { URL, VALUE },
     { VALUE_ELEMENT, STR, VALUE },
-    { VARIABLE, STR },
+    { VARIABLE, STR, BOOL, BOOL },
   };
 
   private static final Map<Integer, String> NAMES = new HashMap<Integer, String>() { {

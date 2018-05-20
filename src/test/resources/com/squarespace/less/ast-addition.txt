@@ -5,4 +5,4 @@ parser=ADDITION
 @foo + 5px
 
 :REPR
-[OPERATION, '+', [VARIABLE, '@foo'], [DIMENSION, 5, 'px']]
+[OPERATION, '+', [VARIABLE, '@foo', false, false], [DIMENSION, 5, 'px']]

@@ -138,6 +138,11 @@ public class AstEmitterTest {
   }
 
   @Test
+  public void testVariables() throws Exception {
+    runner.run("ast-variables.txt");
+  }
+
+  @Test
   public void testWhitespace() throws Exception {
     runner.run("ast-whitespace.txt");
   }

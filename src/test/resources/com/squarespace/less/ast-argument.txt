@@ -6,7 +6,7 @@ parser=MIXIN_CALL_ARGS
 
 :REPR
 [MIXIN_ARGS, 0, [
-  [ARGUMENT, null, [VARIABLE, '@a']]
+  [ARGUMENT, null, [VARIABLE, '@a', false, false]]
 ]]
 
 

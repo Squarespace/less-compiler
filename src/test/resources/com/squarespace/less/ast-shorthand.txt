@@ -5,4 +5,4 @@ parser=SHORTHAND
 @foo/10
 
 :REPR
-[SHORTHAND, [VARIABLE, '@foo'], [DIMENSION, 10, null]]
+[SHORTHAND, [VARIABLE, '@foo', false, false], [DIMENSION, 10, null]]

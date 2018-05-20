@@ -696,6 +696,10 @@ public class AstEmitter {
         open(VARIABLE, n);
         sep();
         string(o.name());
+        sep();
+        number(o.indirect() ? 1 : 0);
+        sep();
+        number(o.curly() ? 1 : 0);
         close();
         break;
       }

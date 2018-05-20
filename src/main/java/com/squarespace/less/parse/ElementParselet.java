@@ -133,7 +133,12 @@ public class ElementParselet implements Parselet {
       stm.seek1();
       return Combinator.fromChar(ch);
 
-    } else if (skipped > 0 || CharClass.whitespace(prev) || prev == Chars.EOF || prev == Chars.COMMA) {
+    } else if (skipped > 0
+        || CharClass.whitespace(prev)
+        || prev == Chars.EOF
+        || prev == Chars.COMMA
+        || prev == Chars.LEFT_CURLY_BRACKET
+        || prev == Chars.RIGHT_CURLY_BRACKET) {
       return Combinator.DESC;
     }
     return null;

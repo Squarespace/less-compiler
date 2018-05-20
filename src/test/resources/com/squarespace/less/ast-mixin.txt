@@ -22,7 +22,7 @@ parser=MIXIN
   [PARAMETER, '@foo', [DIMENSION, 10, null], false],
   [PARAMETER, null, [COLOR, 0, 0, 255, 1.0, null], false]
 ], false, 1], NULL, [
-  [RULE, [PROPERTY, 'color'], [VARIABLE, '@foo'], false]
+  [RULE, [PROPERTY, 'color'], [VARIABLE, '@foo', false, false], false]
 ]]
 
 
@@ -35,9 +35,9 @@ parser=MIXIN
 [MIXIN, '.foo', [MIXIN_PARAMS, [
   [PARAMETER, '@sz', NULL, false]
 ], false, 1], [GUARD, [
-  [CONDITION, '>', [VARIABLE, '@sz'], [DIMENSION, 10, 'px'], false]
+  [CONDITION, '>', [VARIABLE, '@sz', false, false], [DIMENSION, 10, 'px'], false]
 ]], [
-  [RULE, [PROPERTY, 'font-size'], [VARIABLE, '@sz'], false]
+  [RULE, [PROPERTY, 'font-size'], [VARIABLE, '@sz', false, false], false]
 ]]
 
 
