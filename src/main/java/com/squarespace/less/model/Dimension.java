@@ -180,7 +180,7 @@ public class Dimension extends BaseNode {
         break;
 
       case SUBTRACT:
-          result = value - scaled;
+        result = value - scaled;
         break;
 
       default:

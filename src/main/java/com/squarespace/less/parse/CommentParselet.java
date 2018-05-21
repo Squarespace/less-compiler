@@ -59,6 +59,7 @@ public class CommentParselet implements Parselet {
       end = stm.index - pattern.length();
     }
 
+    stm.setOpenSpace();
     return stm.context().nodeBuilder().buildComment(stm.raw.substring(start, end), block, ruleLevel);
   }
 

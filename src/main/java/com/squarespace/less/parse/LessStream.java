@@ -33,74 +33,41 @@ import com.squarespace.less.model.Node;
 public class LessStream extends Stream {
 
   private final Matcher matcherAnd;
-
   private final Matcher matcherAnonRuleValue;
-
   private final Matcher matcherAttributeKey;
-
   private final Matcher matcherAttributeOp;
-
   private final Matcher matcherBoolOperator;
-
   private final Matcher matcherCallName;
-
   private final Matcher matcherDigits;
-
   private final Matcher matcherDimensionUnit;
-
   private final Matcher matcherDimensionValue;
-
   private final Matcher matcherDirective;
-
   private final Matcher matcherElement0;
-
   private final Matcher matcherElement1;
-
   private final Matcher matcherElement2;
-
   private final Matcher matcherElement3;
-
   private final Matcher matcherHexColor;
-
   private final Matcher matcherIdentifier;
-
   private final Matcher matcherImportant;
-
   private final Matcher matcherKeyword;
-
   private final Matcher matcherMixinName;
-
   private final Matcher matcherNot;
-
   private final Matcher matcherOpacity;
-
   private final Matcher matcherProperty;
-
   private final Matcher matcherRatio;
-
   private final Matcher matcherShorthand;
-
   private final Matcher matcherUnicodeRange;
-
   private final Matcher matcherUrlStart;
-
   private final Matcher matcherWhen;
-
   private final Matcher matcherWord;
-
   private final LessContext context;
-
   private final Path rootPath;
-
   private final Path fileName;
 
   private int matchEnd = -1;
-
   private Mark tokenPosition = new Mark();
-
-  private String token;
-
   private Mark position = new Mark();
+  private String token;
 
   public LessStream(LessContext ctx, String raw) {
     this(ctx, raw, null, null);

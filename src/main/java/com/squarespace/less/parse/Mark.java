@@ -20,10 +20,9 @@ package com.squarespace.less.parse;
 public class Mark {
 
   public int index;
-
   public int lineOffset;
-
   public int charOffset;
+  public int flags;
 
   @Override
   public String toString() {

@@ -19,6 +19,7 @@ package com.squarespace.less.parse;
 import static com.squarespace.less.parse.Parselets.ELEMENT_SUB;
 import static com.squarespace.less.parse.Parselets.QUOTED;
 import static com.squarespace.less.parse.Parselets.VARIABLE_CURLY;
+import static com.squarespace.less.parse.Stream.FLAG_OPENSPACE;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.CharClass;
@@ -126,6 +127,8 @@ public class ElementParselet implements Parselet {
    * Parse a single combinator character from the stream.
    */
   private Combinator parseCombinator(LessStream stm) throws LessException {
+    boolean block = stm.hasFlag(FLAG_OPENSPACE);
+
     char prev = stm.peek(-1);
     int skipped = stm.skipWs();
     char ch = stm.peek();
@@ -133,7 +136,8 @@ public class ElementParselet implements Parselet {
       stm.seek1();
       return Combinator.fromChar(ch);
 
-    } else if (skipped > 0
+    } else if (block
+        || skipped > 0
         || CharClass.whitespace(prev)
         || prev == Chars.EOF
         || prev == Chars.COMMA) {

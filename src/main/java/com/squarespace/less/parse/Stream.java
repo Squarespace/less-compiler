@@ -28,19 +28,15 @@ import com.squarespace.less.core.Chars;
  */
 public class Stream {
 
+  public static final int FLAG_OPENSPACE = 1;
   protected static final boolean DEBUG = false;
-
   protected final String raw;
-
   protected final int length;
-
   protected int index;
-
   protected int furthest;
-
   protected int lineOffset;
-
   protected int charOffset;
+  private int flags = 0;
 
   public Stream(String raw) {
     this.raw = raw;
@@ -70,6 +66,10 @@ public class Stream {
     return index;
   }
 
+  public boolean hasFlag(int flag) {
+    return (flags & flag) != 0;
+  }
+
   public Mark mark() {
     Mark pos = new Mark();
     mark(pos);
@@ -83,6 +83,7 @@ public class Stream {
     mark.index = index;
     mark.lineOffset = lineOffset;
     mark.charOffset = charOffset;
+    mark.flags = flags;
   }
 
   /**
@@ -92,6 +93,7 @@ public class Stream {
     index = mark.index;
     lineOffset = mark.lineOffset;
     charOffset = mark.charOffset;
+    flags = mark.flags;
     return index;
   }
 
@@ -133,6 +135,22 @@ public class Stream {
     }
     furthest = Math.max(index, furthest);
     return peek();
+  }
+
+  /**
+   * Seek past a block open/close character, or other character that closes a
+   * rule-level token, and set the FLAG_OPENSPACE flag. This indicates
+   * to the ElementParselet that we've effectively entered "open space", so
+   * the combinator can be set to DESC even if previous character is not
+   * whitespace.
+   */
+  public void seekOpenSpace() {
+    seek1();
+    setOpenSpace();
+  }
+
+  public void setOpenSpace() {
+    flags |= FLAG_OPENSPACE;
   }
 
   /**
@@ -236,6 +254,7 @@ public class Stream {
     } else {
       charOffset++;
     }
+    flags &= ~FLAG_OPENSPACE;
   }
 
   /**

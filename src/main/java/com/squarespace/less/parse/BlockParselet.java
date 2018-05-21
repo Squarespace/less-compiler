@@ -37,7 +37,8 @@ public class BlockParselet implements Parselet {
     }
 
     Mark mark = stm.mark();
-    stm.seek1();
+    stm.seekOpenSpace();
+
     Block block = (Block)stm.parse(PRIMARY);
     stm.skipEmpty();
 
@@ -45,7 +46,8 @@ public class BlockParselet implements Parselet {
       stm.restore(mark);
       return null;
     }
-    stm.seek1();
+
+    stm.seekOpenSpace();
     return block;
   }
 

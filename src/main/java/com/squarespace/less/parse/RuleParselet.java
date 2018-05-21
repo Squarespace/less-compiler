@@ -91,11 +91,13 @@ public class RuleParselet implements Parselet {
         // Note that !important is ingored for definitions.
         Definition def = stm.context().nodeBuilder().buildDefinition(name, value);
         def.fileName(stm.fileName());
+        stm.setOpenSpace();
         return def;
 
       } else {
         Rule rule = stm.context().nodeBuilder().buildRule((Property)key, value, important);
         rule.fileName(stm.fileName());
+        stm.setOpenSpace();
         return rule;
       }
     }
