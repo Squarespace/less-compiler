@@ -136,9 +136,7 @@ public class ElementParselet implements Parselet {
     } else if (skipped > 0
         || CharClass.whitespace(prev)
         || prev == Chars.EOF
-        || prev == Chars.COMMA
-        || prev == Chars.LEFT_CURLY_BRACKET
-        || prev == Chars.RIGHT_CURLY_BRACKET) {
+        || prev == Chars.COMMA) {
       return Combinator.DESC;
     }
     return null;
