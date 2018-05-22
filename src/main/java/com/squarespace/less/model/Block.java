@@ -109,7 +109,21 @@ public class Block extends BaseNode {
   private Block(FlexList<Node> rules, byte flags, Map<String, List<Node>> mixins) {
     this.rules = rules;
     this.flags = flags;
-    this.mixins = mixins;
+    this.mixins = copyMixins(mixins);
+  }
+
+  /**
+   * Deep copy the mixin index.
+   */
+  private Map<String, List<Node>> copyMixins(Map<String, List<Node>> mixins) {
+    if (mixins == null) {
+      return null;
+    }
+    Map<String, List<Node>> result = new HashMap<>();
+    for (Map.Entry<String, List<Node>> entry : mixins.entrySet()) {
+      result.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+    }
+    return result;
   }
 
   /**
