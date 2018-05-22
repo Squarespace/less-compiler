@@ -123,6 +123,7 @@ public class MixinCallArgs extends BaseNode {
    */
   @Override
   public void repr(Buffer buf) {
+    boolean expnList = false;
     buf.append('(');
     if (args != null) {
       int size = args.size();
@@ -133,8 +134,14 @@ public class MixinCallArgs extends BaseNode {
             buf.append(' ');
           }
         }
-        args.get(i).repr(buf);
+        Argument arg = args.get(i);
+        expnList = expnList || (arg.value != null &&  arg.value.type() == NodeType.EXPRESSION_LIST);
+        arg.repr(buf);
       }
+    }
+
+    if (delimiter == ';' && expnList) {
+      buf.append(';');
     }
     buf.append(')');
   }
