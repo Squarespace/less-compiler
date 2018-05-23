@@ -1,0 +1,26 @@
+:PROPERTIES
+parser=STYLESHEET
+
+:LESS
+@foo: 'bar';
+@bar: 12px;
+
+.foo {
+  font-size: @bar;
+}
+
+
+:REPR
+[STYLESHEET, 1, [
+  [DEFINITION, '@foo', [QUOTED, 0, false, [
+    [ANONYMOUS, 'bar']
+  ]]],
+  [DEFINITION, '@bar', [DIMENSION, 12, 'px']],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.foo']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font-size'], [VARIABLE, '@bar', false, false], false]
+  ]]
+]]
