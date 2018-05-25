@@ -730,14 +730,16 @@ public class AstEmitter {
   private void emitBlock(Block block) {
     FlexList<? extends Node> rules = block.rules();
     int size = rules.size();
+    boolean emitted = false;
     buf.append('[');
     for (int i = 0; i < size; i++) {
-      if (i > 0) {
-        sep();
-      }
       Node rule = rules.get(i);
       if (rule != null) {
+        if (emitted) {
+          sep();
+        }
         emit(rules.get(i));
+        emitted = true;
       }
     }
     buf.append(']');

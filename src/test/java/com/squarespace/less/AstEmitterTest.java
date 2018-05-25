@@ -16,11 +16,62 @@
 
 package com.squarespace.less;
 
+import java.io.InputStream;
+
 import org.testng.annotations.Test;
+
+import com.squarespace.less.core.FlexList;
+import com.squarespace.less.core.LessUtils;
+import com.squarespace.less.exec.LessSuiteBase;
+import com.squarespace.less.model.BlockNode;
+import com.squarespace.less.model.Node;
+import com.squarespace.less.model.NodeType;
+import com.squarespace.less.model.Stylesheet;
 
 public class AstEmitterTest {
 
   private final AstTestCaseRunner runner = new AstTestCaseRunner(AstEmitterTest.class);
+  private final LessCompiler compiler = new LessCompiler();
+
+  @Test
+  public void testNullify() throws Exception {
+    LessOptions opts = new LessOptions();
+    LessContext ctx = new LessContext(opts);
+    Stylesheet sheet = compiler.parse(read("generic.less"), ctx);
+    nullify(sheet);
+
+    String actual = sheet.repr();
+    String expected = read("generic-repr.less");
+    String diff = LessSuiteBase.diff(expected, actual);
+    if (!actual.equals(expected)) {
+      throw new AssertionError("Found differences in repr:\n" + diff);
+    }
+
+    actual = compiler.render(sheet, ctx);
+    expected = read("generic.css");
+    diff = LessSuiteBase.diff(expected, actual);
+    if (!actual.equals(expected)) {
+      throw new AssertionError("Found differences in css:\n" + diff);
+    }
+  }
+
+  private String read(String path) throws Exception {
+    try (InputStream stream = getClass().getResourceAsStream(path)) {
+      return LessUtils.readStream(stream);
+    }
+  }
+
+  private void nullify(BlockNode blockNode) {
+    FlexList<Node> rules = blockNode.block().rules();
+    for (int i = 0; i < rules.size(); i++) {
+      Node rule = rules.get(i);
+      if (rule.type() == NodeType.COMMENT) {
+        rules.set(i, null);
+      } else if (rule instanceof BlockNode) {
+        nullify((BlockNode)rule);
+      }
+    }
+  }
 
   @Test
   public void testAddition() throws Exception {

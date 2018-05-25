@@ -154,7 +154,9 @@ public class LessEvaluator {
     Import currentImport = null;
     for (int i = 0; i < rules.size(); i++) {
       Node node = rules.get(i);
-
+      if (node == null) {
+        continue;
+      }
       try {
         switch (node.type()) {
 

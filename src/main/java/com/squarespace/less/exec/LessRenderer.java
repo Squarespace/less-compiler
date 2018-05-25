@@ -201,6 +201,9 @@ public class LessRenderer {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node node = rules.get(i);
+      if (node == null) {
+        continue;
+      }
       switch (node.type()) {
 
         case BLOCK_DIRECTIVE:

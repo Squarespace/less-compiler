@@ -1,0 +1,14 @@
+.parent {
+  font-size: 10px;
+}
+.parent .child {
+  color: red;
+}
+@media screen {
+  .parent {
+    font-size: 10px;
+  }
+  .parent .child {
+    color: blue;
+  }
+}
