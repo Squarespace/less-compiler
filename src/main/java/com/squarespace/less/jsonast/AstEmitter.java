@@ -29,6 +29,7 @@ import com.squarespace.less.model.Argument;
 import com.squarespace.less.model.Assignment;
 import com.squarespace.less.model.AttributeElement;
 import com.squarespace.less.model.BaseColor;
+import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Combinator;
@@ -229,7 +230,7 @@ public class AstEmitter {
         sep();
         string(o.name());
         sep();
-        emit(o.block().rules());
+        emitBlock(o.block());
         close();
         break;
       }
@@ -460,7 +461,7 @@ public class AstEmitter {
         sep();
         emit(o.features());
         sep();
-        emit(o.block().rules());
+        emitBlock(o.block());
         close();
         break;
       }
@@ -476,7 +477,7 @@ public class AstEmitter {
         sep();
         emit(o.guard());
         sep();
-        emit(o.block().rules());
+        emitBlock(o.block());
         close();
         break;
       }
@@ -614,7 +615,7 @@ public class AstEmitter {
         sep();
         emit(o.selectors());
         sep();
-        emit(o.block().rules());
+        emitBlock(o.block());
         close();
         break;
       }
@@ -658,7 +659,7 @@ public class AstEmitter {
         sep();
         number(VERSION);
         sep();
-        emit(o.block().rules());
+        emitBlock(o.block());
         close();
         break;
       }
@@ -726,14 +727,18 @@ public class AstEmitter {
     buf.append(']');
   }
 
-  private void emit(FlexList<? extends Node> nodes) {
-    int size = nodes.size();
+  private void emitBlock(Block block) {
+    FlexList<? extends Node> rules = block.rules();
+    int size = rules.size();
     buf.append('[');
     for (int i = 0; i < size; i++) {
       if (i > 0) {
         sep();
       }
-      emit(nodes.get(i));
+      Node rule = rules.get(i);
+      if (rule != null) {
+        emit(rules.get(i));
+      }
     }
     buf.append(']');
   }
