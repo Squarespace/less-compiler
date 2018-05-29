@@ -217,7 +217,7 @@ public class AstPrinter {
     { MIXIN, STR, VALUE, VALUE, LIST },
     { MIXIN_ARGS, NUM, LIST },
     { MIXIN_CALL, VALUE, VALUE, BOOL },
-    { MIXIN_PARAMS, LIST, BOOL, NUM },
+    { MIXIN_PARAMS, LIST },
     { OPERATION, STR, VALUE, VALUE },
     { PARAMETER, STR, VALUE, BOOL },
     { PAREN, VALUE },

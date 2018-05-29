@@ -20,9 +20,12 @@ import java.io.InputStream;
 
 import org.testng.annotations.Test;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.ParseException;
 import com.squarespace.less.core.FlexList;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.exec.LessSuiteBase;
+import com.squarespace.less.jsonast.AstEmitter;
 import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
@@ -52,6 +55,13 @@ public class AstEmitterTest {
     diff = LessSuiteBase.diff(expected, actual);
     if (!actual.equals(expected)) {
       throw new AssertionError("Found differences in css:\n" + diff);
+    }
+
+    actual = AstEmitter.render(sheet);
+    try {
+      Json.parse(actual);
+    } catch (ParseException e) {
+      throw new AssertionError(e);
     }
   }
 

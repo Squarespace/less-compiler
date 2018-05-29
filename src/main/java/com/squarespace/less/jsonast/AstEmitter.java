@@ -514,10 +514,6 @@ public class AstEmitter {
         open(MIXIN_PARAMS, n);
         sep();
         emit(o.params());
-        sep();
-        number(o.variadic() ? 1 : 0);
-        sep();
-        number(o.required());
         close();
         break;
       }

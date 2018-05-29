@@ -7,7 +7,7 @@ parser=MIXIN
 }
 
 :REPR
-[MIXIN, '.foo', [MIXIN_PARAMS, [], false, 0], NULL, [
+[MIXIN, '.foo', [MIXIN_PARAMS, []], NULL, [
   [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
 ]]
 
@@ -21,7 +21,7 @@ parser=MIXIN
 [MIXIN, '.foo', [MIXIN_PARAMS, [
   [PARAMETER, '@foo', [DIMENSION, 10, null], false],
   [PARAMETER, null, [COLOR, 0, 0, 255, 1.0, null], false]
-], false, 1], NULL, [
+]], NULL, [
   [RULE, [PROPERTY, 'color'], [VARIABLE, '@foo', false, false], false]
 ]]
 
@@ -34,7 +34,7 @@ parser=MIXIN
 :REPR
 [MIXIN, '.foo', [MIXIN_PARAMS, [
   [PARAMETER, '@sz', NULL, false]
-], false, 1], [GUARD, [
+]], [GUARD, [
   [CONDITION, '>', [VARIABLE, '@sz', false, false], [DIMENSION, 10, 'px'], false]
 ]], [
   [RULE, [PROPERTY, 'font-size'], [VARIABLE, '@sz', false, false], false]
@@ -50,7 +50,7 @@ parser=MIXIN
 [MIXIN, '.foo', [MIXIN_PARAMS, [
   [PARAMETER, '@a', NULL, false],
   [PARAMETER, '@rest', NULL, true]
-], true, 1], NULL, [
+]], NULL, [
   [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 255, 1.0, null], false]
 ]]
 
@@ -65,6 +65,6 @@ parser=MIXIN
   [PARAMETER, null, [DIMENSION, 1, null], false],
   [PARAMETER, null, [DIMENSION, 2, null], false],
   [PARAMETER, null, [DIMENSION, 3, null], false]
-], false, 3], NULL, [
+]], NULL, [
   [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
 ]]
