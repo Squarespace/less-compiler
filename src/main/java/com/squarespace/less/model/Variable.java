@@ -23,6 +23,7 @@ import static com.squarespace.less.model.NodeType.VARIABLE;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
+import com.squarespace.less.core.ExecuteErrorMaker;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.exec.ExecEnv;
 
@@ -127,6 +128,9 @@ public class Variable extends BaseNode {
     Definition def = env.resolveDefinition(name);
     if (def == null) {
       throw new LessException(varUndefined(name));
+    }
+    if (def.evaluating()) {
+      throw new LessException(ExecuteErrorMaker.varCircularRef(name));
     }
     return dereference(def, env);
   }
