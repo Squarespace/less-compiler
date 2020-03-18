@@ -16,12 +16,13 @@
 
 package com.squarespace.less.core;
 
-
 /**
  * General-purpose buffer. Wraps a {@link StringBuilder} with some
  * LESS-specific methods.
  */
 public class Buffer {
+
+  public static final int DEFAULT_PRECISION = 8;
 
   /**
    * Internal buffer.
@@ -54,25 +55,38 @@ public class Buffer {
   private int indentCurr;
 
   /**
+   *
+   */
+  private int numericScale;
+
+  /**
    * Constructs a buffer with the given indent size, with whitespace compression disabled.
    */
   public Buffer(int indentSize) {
-    this(indentSize, false);
+    this(indentSize, false, DEFAULT_PRECISION);
   }
 
   /**
    * Constructs a buffer with the given indent size and whitespace compression.
    */
   public Buffer(int indentSize, boolean compress) {
+    this(indentSize, compress, DEFAULT_PRECISION);
+  }
+
+  /**
+   * Constructs a buffer with the given indent size, whitespace compression, and numeric precision.
+   */
+  public Buffer(int indentSize, boolean compress, int numericScale) {
     this.indentSize = indentSize;
     this.compress = compress;
+    this.numericScale = numericScale;
   }
 
   /**
    * Return a fresh buffer with the same initialization options as this one.
    */
   public Buffer newBuffer() {
-    return new Buffer(indentSize, compress);
+    return new Buffer(indentSize, compress, numericScale);
   }
 
   /**
@@ -80,6 +94,13 @@ public class Buffer {
    */
   public boolean compress() {
     return compress;
+  }
+
+  /**
+   * Returns the maximum scale for decimal rounding.
+   */
+  public int numericScale() {
+    return this.numericScale;
   }
 
   /**

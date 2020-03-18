@@ -17,6 +17,7 @@
 package com.squarespace.less.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
@@ -118,7 +119,10 @@ public abstract class BaseNode implements Node {
       buf.append(lval);
     } else {
       // Strip trailing zeros and avoid scientific notation.
-      String repr = BigDecimal.valueOf(value).stripTrailingZeros().toPlainString();
+      String repr = BigDecimal.valueOf(value)
+          .setScale(buf.numericScale(), RoundingMode.HALF_EVEN)
+          .stripTrailingZeros()
+          .toPlainString();
       // Strip leading zeros for positive and negative numbers.
       if (value >= 0 && value < 1.0) {
         buf.append(repr.substring(1));

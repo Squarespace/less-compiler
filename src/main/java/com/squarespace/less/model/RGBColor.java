@@ -159,10 +159,18 @@ public class RGBColor extends BaseColor {
   }
 
   /**
-   * Compute the luma value for this color.
+   * Compute the luma value for this color. Now includes gamma correction.
    */
   public double luma() {
-    return (0.2126 * (red / 255.0) + 0.7152 * (green / 255.0) + 0.0722 * (blue / 255.0)) * alpha;
+    double r = red / 255.0;
+    double g = green / 255.0;
+    double b = blue / 255.0;
+
+    r = (r <= 0.03928) ? r / 12.92 : Math.pow(((r + 0.055) / 1.055), 2.4);
+    g = (g <= 0.03928) ? g / 12.92 : Math.pow(((g + 0.055) / 1.055), 2.4);
+    b = (b <= 0.03928) ? b / 12.92 : Math.pow(((b + 0.055) / 1.055), 2.4);
+
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 
   /**

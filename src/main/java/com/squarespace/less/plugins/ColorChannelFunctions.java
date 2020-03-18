@@ -16,8 +16,6 @@
 
 package com.squarespace.less.plugins;
 
-import static com.squarespace.less.exec.Function.rgb;
-
 import java.util.List;
 
 import com.squarespace.less.LessException;
@@ -89,23 +87,31 @@ public class ColorChannelFunctions implements Registry<Function> {
     }
   };
 
+  /**
+   * Luma with gamma correction.
+   */
   public static final Function LUMA = new Function("luma", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      return legacyLuma(args);
+      RGBColor color = rgb(args.get(0));
+      return new Dimension(color.luma() * color.alpha() * 100, Unit.PERCENTAGE);
     }
   };
 
+  /**
+   * Legacy luma.
+   */
   public static final Function LUMINANCE = new Function("luminance", "c") {
     @Override
     public Node invoke(ExecEnv env, java.util.List<Node> args) throws LessException {
-      return legacyLuma(args);
+      RGBColor color = rgb(args.get(0));
+      double luminance =
+          (0.2126 * color.red() / 255)
+          + (0.7152 * color.green() / 255)
+          + (0.0722 * color.blue() / 255);
+      return new Dimension(Math.round(luminance * color.alpha() * 100), Unit.PERCENTAGE);
     }
   };
-
-  private static Node legacyLuma(List<Node> args) throws LessException {
-    return new Dimension(Math.round(rgb(args.get(0)).luma() * 100.0), Unit.PERCENTAGE);
-  }
 
   public static final Function RED = new Function("red", "c") {
     @Override
