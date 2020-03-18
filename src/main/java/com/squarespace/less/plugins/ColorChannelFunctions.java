@@ -16,6 +16,8 @@
 
 package com.squarespace.less.plugins;
 
+import static com.squarespace.less.exec.Function.rgb;
+
 import java.util.List;
 
 import com.squarespace.less.LessException;
@@ -44,6 +46,7 @@ public class ColorChannelFunctions implements Registry<Function> {
     table.add(HUE);
     table.add(LIGHTNESS);
     table.add(LUMA);
+    table.add(LUMINANCE);
     table.add(RED);
     table.add(SATURATION);
   }
@@ -89,9 +92,20 @@ public class ColorChannelFunctions implements Registry<Function> {
   public static final Function LUMA = new Function("luma", "c") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      return new Dimension(Math.round(rgb(args.get(0)).luma() * 100.0), Unit.PERCENTAGE);
+      return legacyLuma(args);
     }
   };
+
+  public static final Function LUMINANCE = new Function("luminance", "c") {
+    @Override
+    public Node invoke(ExecEnv env, java.util.List<Node> args) throws LessException {
+      return legacyLuma(args);
+    }
+  };
+
+  private static Node legacyLuma(List<Node> args) throws LessException {
+    return new Dimension(Math.round(rgb(args.get(0)).luma() * 100.0), Unit.PERCENTAGE);
+  }
 
   public static final Function RED = new Function("red", "c") {
     @Override
