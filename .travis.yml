@@ -1,8 +1,9 @@
 
+dist: trusty
 language: java
 
 jdk:
-  - oraclejdk9
+  - oraclejdk8
 
 branches:
   only:
