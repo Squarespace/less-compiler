@@ -88,6 +88,7 @@ abstract class BaseCompile {
     log("      parse time: " + stats.parseTimeMs() + "ms");
     log("    compile time: " + stats.compileTimeMs() + "ms");
     log("  disk wait time: " + stats.diskWaitTimeMs() + "ms");
+    log("      total size: " + stats.totalSize());
     log("    import count: " + stats.importCount());
     log("max import depth: " + stats.maxImportDepth());
     log(" max mixin depth: " + stats.maxMixinDepth());
