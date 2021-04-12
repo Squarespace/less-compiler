@@ -38,8 +38,9 @@ public class MixinParselet implements Parselet {
     if (ch != Chars.PERIOD && ch != Chars.NUMBER_SIGN) {
       return null;
     }
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     if (!stm.matchMixinName()) {
+      stm.popMark();
       return null;
     }
 
@@ -47,6 +48,7 @@ public class MixinParselet implements Parselet {
     MixinParams params = (MixinParams)stm.parse(MIXIN_PARAMS);
     if (params == null) {
       stm.restore(mark);
+      stm.popMark();
       return null;
     }
     stm.parse(COMMENT);
@@ -57,11 +59,13 @@ public class MixinParselet implements Parselet {
     Node block = stm.parse(BLOCK);
     if (block == null) {
       stm.restore(mark);
+      stm.popMark();
       return null;
     }
 
     Mixin mixin = stm.context().nodeBuilder().buildMixin(name, params, guard, (Block)block);
     mixin.markOriginal();
+    stm.popMark();
     return mixin;
   }
 

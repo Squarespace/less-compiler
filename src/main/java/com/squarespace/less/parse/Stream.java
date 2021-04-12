@@ -29,6 +29,7 @@ import com.squarespace.less.core.Chars;
  */
 public class Stream {
 
+  public static final int MARK_DIM = 4;
   public static final int FLAG_OPENSPACE = 1;
   protected static final boolean DEBUG = false;
   protected final String raw;
@@ -38,6 +39,14 @@ public class Stream {
   protected int lineOffset;
   protected int charOffset;
   private int flags = 0;
+
+  // We replace the Mark type with the following int[4] stack.
+  // Ideally we could stack-allocate our Mark objects, since they're
+  // scoped to a Java stack frame, but Java only allows heap allocation
+  // of these objects at the moment.
+  protected int marksptr = 0;
+  private int capacity = 32;
+  private int[][] marks = new int[capacity][MARK_DIM];
 
   public Stream(String raw) {
     this.raw = raw;
@@ -59,6 +68,56 @@ public class Stream {
 //          index, length, lineOffset, charOffset, esc);
 //  }
 
+  /**
+   * Mark current position in the stream so that we can restore it later.
+   */
+  public int[] mark() {
+    // check if we need to grow the marker depth
+    if (marksptr == capacity) {
+      int sz = capacity * 2;
+      int[][] newmarks = new int[sz][MARK_DIM];
+      System.arraycopy(marks, 0, newmarks, 0, capacity);
+      this.marks = newmarks;
+      capacity = sz;
+    }
+
+    // Record the mark
+    int[] m = marks[marksptr];
+    m[0] = index;
+    m[1] = lineOffset;
+    m[2] = charOffset;
+    m[3] = flags;
+    marksptr++;
+    return m;
+  }
+
+  /**
+   * Restore the stream to the marked position.
+   */
+  public int restore(int[] m) {
+    this.index = m[0];
+    this.lineOffset = m[1];
+    this.charOffset = m[2];
+    this.flags = m[3];
+    return this.index;
+  }
+
+  /**
+   * Pop a marked position off the stack.
+   */
+  public void popMark() {
+    marksptr--;
+    if (marksptr < 0) {
+      marksptr = 0;
+    }
+  }
+
+//  private void log(String what) {
+//    StackTraceElement[] elems = Thread.currentThread().getStackTrace();
+//    String where = elems[3].getClassName() + "." + elems[3].getMethodName();
+//    System.out.println(what + ": " + where);
+//  }
+
   public String raw() {
     return raw;
   }
@@ -69,33 +128,6 @@ public class Stream {
 
   public boolean hasFlag(int flag) {
     return (flags & flag) != 0;
-  }
-
-  public Mark mark() {
-    Mark pos = new Mark();
-    mark(pos);
-    return pos;
-  }
-
-  /**
-   * Mark current position in the stream so that we can restore it later.
-   */
-  public void mark(Mark mark) {
-    mark.index = index;
-    mark.lineOffset = lineOffset;
-    mark.charOffset = charOffset;
-    mark.flags = flags;
-  }
-
-  /**
-   * Restore the stream to the marked position.
-   */
-  public int restore(Mark mark) {
-    index = mark.index;
-    lineOffset = mark.lineOffset;
-    charOffset = mark.charOffset;
-    flags = mark.flags;
-    return index;
   }
 
   /**

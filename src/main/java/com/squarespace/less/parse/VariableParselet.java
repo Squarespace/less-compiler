@@ -27,10 +27,11 @@ public class VariableParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) {
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     boolean indirect = false;
     int pos = 0;
     if (stm.peek() != Chars.AT_SIGN) {
+      stm.popMark();
       return null;
     }
     pos++;
@@ -43,9 +44,11 @@ public class VariableParselet implements Parselet {
     stm.seek(pos);
     if (!stm.matchIdentifier()) {
       stm.restore(mark);
+      stm.popMark();
       return null;
     }
     String name = '@' + stm.token();
+    stm.popMark();
     return stm.context().nodeBuilder().buildVariable(indirect ? '@' + name : name, false);
   }
 

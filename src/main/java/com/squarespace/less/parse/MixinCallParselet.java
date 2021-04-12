@@ -36,7 +36,7 @@ public class MixinCallParselet implements Parselet {
     if (ch != Chars.PERIOD && ch != Chars.NUMBER_SIGN) {
       return null;
     }
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     Selector selector = new Selector();
     Combinator comb = null;
     while (stm.matchMixinName()) {
@@ -57,6 +57,7 @@ public class MixinCallParselet implements Parselet {
     // If we failed to parse a valid selector, reset and bail out.
     if (selector.isEmpty()) {
       stm.restore(mark);
+      stm.popMark();
       return null;
     }
 
@@ -77,10 +78,12 @@ public class MixinCallParselet implements Parselet {
     }
     if (call != null) {
       call.fileName(stm.fileName());
+      stm.popMark();
       return call;
     }
 
     stm.restore(mark);
+    stm.popMark();
     return null;
   }
 

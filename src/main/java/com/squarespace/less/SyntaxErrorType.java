@@ -50,7 +50,10 @@ public enum SyntaxErrorType implements LessErrorType {
   ("Cannot mix semicolon and comma as delimiters"),
 
   QUOTED_BARE_LF
-  ("Quoted string contains a bare line feed");
+  ("Quoted string contains a bare line feed"),
+
+  BUG
+  ("Bug in the parser's stream marking");
 
   private static final String PREFIX = "SyntaxError %(code)s ";
 
@@ -63,10 +66,12 @@ public enum SyntaxErrorType implements LessErrorType {
     this.messageFormat = new MapFormat(rawFormat, NULL_PLACEHOLDER);
   }
 
+  @Override
   public String prefix(Map<String, Object> params) {
     return prefixFormat.apply(params);
   }
 
+  @Override
   public String message(Map<String, Object> params) {
     return messageFormat.apply(params);
   }

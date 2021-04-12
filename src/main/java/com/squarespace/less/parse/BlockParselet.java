@@ -36,7 +36,7 @@ public class BlockParselet implements Parselet {
       return null;
     }
 
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     stm.seekOpenSpace();
 
     Block block = (Block)stm.parse(PRIMARY);
@@ -44,9 +44,11 @@ public class BlockParselet implements Parselet {
 
     if (stm.peek() != Chars.RIGHT_CURLY_BRACKET) {
       stm.restore(mark);
+      stm.popMark();
       return null;
     }
 
+    stm.popMark();
     stm.seekOpenSpace();
     return block;
   }

@@ -41,17 +41,20 @@ public class VariableCurlyParselet implements Parselet {
     }
     pos++;
 
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     stm.seek(pos);
     if (!stm.matchIdentifier()) {
       stm.restore(mark);
+      stm.popMark();
       return null;
     }
     String token = '@' + stm.token();
     if (!stm.seekIf(Chars.RIGHT_CURLY_BRACKET)) {
       stm.restore(mark);
+      stm.popMark();
       return null;
     }
+    stm.popMark();
     return stm.context().nodeBuilder().buildVariable(indirect ? '@' + token : token, true);
   }
 

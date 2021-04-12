@@ -24,17 +24,20 @@ public class UrlParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Mark mark = stm.mark();
+
+    int[] mark = stm.mark();
     if (!stm.matchUrlStart()) {
       return null;
     }
     Node result = FunctionCallParselet.parseUrl(stm);
     if (result != null) {
+      stm.popMark();
       return result;
     }
 
     // Unreachable since parseUrl will throw if url(..) is invalid.
     stm.restore(mark);
+    stm.popMark();
     return null;
   }
 

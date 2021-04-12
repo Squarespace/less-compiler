@@ -50,9 +50,10 @@ public class FeatureParselet implements Parselet {
   }
 
   private Node parseOne(LessStream stm) throws LessException {
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     Node node = stm.parse(KEYWORD);
     if (node != null) {
+      stm.popMark();
       return node;
 
     } else if (stm.seekIf(Chars.LEFT_PARENTHESIS)) {
@@ -61,28 +62,33 @@ public class FeatureParselet implements Parselet {
       stm.skipWs();
       if (stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
         if (prop != null && node != null) {
+          stm.popMark();
           return new Paren(new Feature(prop, node));
 
         } else if (node != null) {
+          stm.popMark();
           return new Paren(node);
         }
       }
     }
 
     stm.restore(mark);
+    stm.popMark();
     return null;
   }
 
   private Property parseProperty(LessStream stm) throws LessException {
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     Node prop = stm.parse(PROPERTY);
     if (prop != null) {
       stm.skipWs();
       if (stm.seekIf(Chars.COLON)) {
+        stm.popMark();
         return (Property)prop;
       }
     }
     stm.restore(mark);
+    stm.popMark();
     return null;
   }
 

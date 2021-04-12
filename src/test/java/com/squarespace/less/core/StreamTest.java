@@ -22,7 +22,6 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.parse.Mark;
 import com.squarespace.less.parse.Patterns;
 import com.squarespace.less.parse.Stream;
 
@@ -53,7 +52,7 @@ public class StreamTest {
   @Test
   public void testFurthest() {
     Stream stm = new Stream("abcdefghijkl");
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     stm.seek(8);
     stm.restore(mark);
     mark = stm.mark();
@@ -86,9 +85,8 @@ public class StreamTest {
 
   @Test
   public void testMarkRestore() {
-    Mark pos = new Mark();
     Stream stm = new Stream("abcde");
-    stm.mark(pos);
+    int[] pos = stm.mark();
     stm.seek(2);
     assertEquals(stm.peek(), 'c');
     stm.restore(pos);
@@ -96,7 +94,8 @@ public class StreamTest {
 
     stm.seek1();
     assertEquals(stm.peek(), 'b');
-    stm.mark(pos);
+    stm.popMark();
+    pos = stm.mark();
     stm.seek(10);
     assertEquals(stm.peek(), Chars.EOF);
     stm.restore(pos);

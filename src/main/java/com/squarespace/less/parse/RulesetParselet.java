@@ -30,20 +30,23 @@ public class RulesetParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     Selectors group = (Selectors) stm.parse(SELECTORS);
     if (group == null) {
+      stm.popMark();
       return null;
     }
 
     Node block = stm.parse(BLOCK);
     if (block == null) {
       stm.restore(mark);
+      stm.popMark();
       return null;
     }
 
     Ruleset ruleset = stm.context().nodeBuilder().buildRuleset(group, (Block)block);
     ruleset.fileName(stm.fileName());
+    stm.popMark();
     return ruleset;
   }
 

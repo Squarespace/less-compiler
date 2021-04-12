@@ -41,9 +41,10 @@ public class DirectiveParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     stm.skipWs();
     if (stm.peek() != Chars.AT_SIGN || !stm.matchDirective()) {
+      stm.popMark();
       return null;
     }
     String name = stm.token();
@@ -66,9 +67,11 @@ public class DirectiveParselet implements Parselet {
         if (result == null) {
           stm.restore(mark);
         }
+        stm.popMark();
         return result;
 
       case "@media":
+        stm.popMark();
         return parseMedia(stm);
 
       case "@font-face":
@@ -117,17 +120,20 @@ public class DirectiveParselet implements Parselet {
       if (block != null) {
         BlockDirective directive = stm.context().nodeBuilder().buildBlockDirective(name, (Block)block);
         directive.fileName(stm.fileName());
+        stm.popMark();
         return directive;
       }
 
     } else {
       Node value = parseRest(stm, hasExpression);
       if (value != null) {
+        stm.popMark();
         return stm.context().nodeBuilder().buildDirective(name, value);
       }
     }
 
     stm.restore(mark);
+    stm.popMark();
     return null;
   }
 

@@ -40,10 +40,11 @@ public class RuleParselet implements Parselet {
       return null;
     }
 
-    Mark ruleMark = stm.mark();
+    int[] ruleMark = stm.mark();
     Node key = parseKey(stm);
     if (key == null) {
       stm.restore(ruleMark);
+      stm.popMark();
       return null;
     }
 
@@ -56,7 +57,7 @@ public class RuleParselet implements Parselet {
     Node value = null;
     stm.skipWs();
 
-    Mark valueMark = stm.mark();
+    int[] valueMark = stm.mark();
     if (name.equals("font")) {
       value = stm.parse(FONT);
 
@@ -92,17 +93,23 @@ public class RuleParselet implements Parselet {
         Definition def = stm.context().nodeBuilder().buildDefinition(name, value);
         def.fileName(stm.fileName());
         stm.setOpenSpace();
+        stm.popMark();
+        stm.popMark();
         return def;
 
       } else {
         Rule rule = stm.context().nodeBuilder().buildRule(key, value, important);
         rule.fileName(stm.fileName());
         stm.setOpenSpace();
+        stm.popMark();
+        stm.popMark();
         return rule;
       }
     }
 
     stm.restore(ruleMark);
+    stm.popMark();
+    stm.popMark();
     return null;
   }
 

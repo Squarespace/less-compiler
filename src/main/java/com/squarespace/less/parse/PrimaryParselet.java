@@ -32,11 +32,13 @@ public class PrimaryParselet implements Parselet {
     stm.skipEmpty();
 
     // Save current stream position before parsing each primary rule type.
-    Mark position = stm.mark();
+//    Mark position = stm.mark();
+
+    int[] pos = stm.mark();
     while ((node = stm.parse(PRIMARY_SUB)) != null) {
       // Assign stream position to successfully-parsed rule.
-      node.setLineOffset(position.lineOffset);
-      node.setCharOffset(position.charOffset);
+      node.setLineOffset(pos[1]);
+      node.setCharOffset(pos[2]);
 
       // Importing a stylesheet can return a block, so we need to expand it here.
       if (node instanceof Block) {
@@ -45,8 +47,10 @@ public class PrimaryParselet implements Parselet {
         block.appendNode(node);
       }
       stm.skipEmpty();
-      stm.mark(position);
+      stm.popMark();
+      pos = stm.mark();
     }
+    stm.popMark();
     stm.skipEmpty();
     return block;
   }

@@ -33,10 +33,11 @@ public class MixinParamsParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     stm.skipWs();
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
       stm.restore(mark);
+      stm.popMark();
       return null;
     }
 
@@ -67,8 +68,10 @@ public class MixinParamsParselet implements Parselet {
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
       stm.restore(mark);
+      stm.popMark();
       return null;
     }
+    stm.popMark();
     return params;
   }
 

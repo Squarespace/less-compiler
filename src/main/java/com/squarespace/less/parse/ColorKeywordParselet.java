@@ -30,12 +30,14 @@ public class ColorKeywordParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Mark mark = stm.mark();
+    int[] mark = stm.mark();
     Node node = stm.parse(KEYWORD);
     if (node instanceof BaseColor) {
+      stm.popMark();
       return node;
     }
     stm.restore(mark);
+    stm.popMark();
     return null;
   }
 

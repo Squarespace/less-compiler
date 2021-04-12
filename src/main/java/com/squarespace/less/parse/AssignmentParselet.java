@@ -31,24 +31,28 @@ public class AssignmentParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Mark position = stm.mark();
+    int[] pos = stm.mark();
     if (!stm.matchWord()) {
+      stm.popMark();
       return null;
     }
     String name = stm.token();
 
     stm.skipWs();
     if (!stm.seekIf(Chars.EQUALS_SIGN)) {
-      stm.restore(position);
+      stm.restore(pos);
+      stm.popMark();
       return null;
     }
 
     Node value = stm.parse(ENTITY);
     if (value == null) {
-      stm.restore(position);
+      stm.restore(pos);
+      stm.popMark();
       return null;
     }
 
+    stm.popMark();
     return new Assignment(name, value);
   }
 

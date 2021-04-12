@@ -39,20 +39,23 @@ public class FunctionCallParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    Mark position = stm.mark();
+    int[] mark = stm.mark();
     if (!CLASSIFIER.callStart(stm.peek()) || !stm.matchCallName()) {
+      stm.popMark();
       return null;
     }
 
     String name = stm.token();
     String nameLC = name.toLowerCase();
     if (nameLC.equals("url")) {
+      stm.popMark();
       return parseUrl(stm);
 
     } else if (nameLC.equals("alpha")) {
       // Special handling for IE's alpha function.
       Node result = stm.parse(Parselets.ALPHA);
       if (result != null) {
+        stm.popMark();
         return result;
       }
       // Fall through, assuming the built-in alpha function.
@@ -72,9 +75,11 @@ public class FunctionCallParselet implements Parselet {
 
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      stm.restore(position);
+      stm.restore(mark);
+      stm.popMark();
       return null;
     }
+    stm.popMark();
     return call;
   }
 
