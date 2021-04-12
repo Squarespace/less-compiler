@@ -7,3 +7,15 @@
 > * + .parent > .parent foo {
   font-size: 1px;
 }
+.foored #foo.foo {
+  color: red;
+}
+:nth-child(3):nth-child(3) {
+  second-use: deprecated;
+}
+.foo["bar"="baz"] {
+  color: red;
+}
+.foo["bar"~=baz] {
+  color: red;
+}

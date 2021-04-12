@@ -17,3 +17,24 @@
         font-size: 1px;
     }
 }
+
+@theme: foo;
+@selector: ~".@{theme}";
+@{selector}red {
+  #@{theme}.@{theme} {
+    color: red;
+  }
+}
+
+@num: 3;
+:nth-child(@{num}):nth-child(@num) {
+  second-use: deprecated;
+}
+
+.foo["bar"="baz"] {
+  color: red;
+}
+
+.foo["bar"~=baz] {
+  color: red;
+}

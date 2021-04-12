@@ -32,7 +32,6 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Paren;
 import com.squarespace.less.model.TextElement;
 import com.squarespace.less.model.ValueElement;
-import com.squarespace.less.model.Variable;
 
 
 /**
@@ -71,15 +70,13 @@ public class ElementParselet implements Parselet {
     } else {
       Node var = stm.parse(VARIABLE_CURLY);
       if (var != null) {
-        return new ValueElement(comb, (Variable)var);
+        return new ValueElement(comb, var);
       }
     }
 
-    if (elem == null) {
-      elem = parseSub(stm);
-      if (elem != null) {
-        return new ValueElement(comb, elem);
-      }
+    elem = parseSub(stm);
+    if (elem != null) {
+      return new ValueElement(comb, elem);
     }
     return null;
   }
