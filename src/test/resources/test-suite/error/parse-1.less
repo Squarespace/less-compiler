@@ -76,3 +76,58 @@
 
 .mixin(@arg) when (@var < {) { }
 
+//:SyntaxErrorType.INCOMPLETE_PARSE    incomplete math
+
+.parent {
+    foo: 1 +
+
+//:SyntaxErrorType.EXPECTED  alpha needs right paren
+
+.parent {
+    opacity: alpha(opacity=1    
+
+
+//:SyntaxErrorType.JAVASCRIPT_DISABLED  no javascript
+
+.parent {
+    foo: `this.foo.toJS()`;
+
+
+//:SyntaxErrorType.JAVASCRIPT_DISABLED  no javascript
+
+.parent {
+    foo: ~`this.foo.toJS()`;
+    
+//:SyntaxErrorType.EXPECTED   bad url
+
+.parent {
+    background: url('../assets/logo.png'
+
+//:SyntaxErrorType.INCOMPLETE_PARSE   bad url
+
+.parent {
+    background: url%
+
+//:SyntaxErrorType.EXPECTED  mixin call right paren
+
+.parent {
+    .mixin(
+}
+
+//:SyntaxErrorType.MIXED_DELIMITERS  can't mix delimiters in mixin call
+
+.parent {
+    .mixin(@a: 1; @b: 2, @c: 3)
+
+//:SyntaxErrorType.EXPECTED   expression for named argument
+
+.parent {
+    .mixin(@xyz: 1, @zyx:
+
+//:SyntaxErrorType.EXPECTED  incomplete variadic pattern
+
+.mixin(@a, ..)
+
+//:SyntaxErrorType.EXPECTED  incomplete variadic pattern
+
+.mixin(@a, .#.)

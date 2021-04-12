@@ -60,6 +60,7 @@ public class DimensionTest extends LessTestBase {
     h.parseEquals("0.7011", dim(0.7011));
     h.parseEquals("10px", dim(10, Unit.PX));
     h.parseEquals("30.1dpi", dim(30.1, Unit.DPI));
+    h.parseFails("apx", SyntaxErrorType.INCOMPLETE_PARSE);
   }
 
 }

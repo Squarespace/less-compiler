@@ -38,6 +38,7 @@ public class UrlParselet implements Parselet {
       }
     }
 
+    // Unreachable since parseUrl will throw if url(..) is invalid.
     stm.restore(mark);
     return null;
   }

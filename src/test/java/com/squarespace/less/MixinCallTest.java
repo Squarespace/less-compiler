@@ -71,6 +71,9 @@ public class MixinCallTest extends LessTestBase {
 
     exp = mixincall(selector(element(null, "#ns"), element(CHILD, ".mixin")));
     h.parseEquals("#ns > .mixin", exp);
+
+    h.parseFails(".mixin(@xyz: 1, @zyx:", SyntaxErrorType.EXPECTED);
+    h.parseFails(".%", SyntaxErrorType.INCOMPLETE_PARSE);
   }
 
 }

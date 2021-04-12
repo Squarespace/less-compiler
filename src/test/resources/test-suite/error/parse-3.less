@@ -2,3 +2,49 @@
 
 @import "_imported-error.less";
 
+//:SyntaxErrorType.INCOMPLETE_PARSE slash or asterisk
+
+.parent {
+    /x
+
+
+//:SyntaxErrorType.INCOMPLETE_PARSE  directive expects a block
+
+@left-top 1
+
+//:SyntaxErrorType.INCOMPLETE_PARSE  directive expects expression
+
+@foobar baz(
+
+//:SyntaxErrorType.INCOMPLETE_PARSE  media query expects feature
+
+@media (=
+
+//:SyntaxErrorType.INCOMPLETE_PARSE  media query expects feature
+
+@media (baz
+
+//:SyntaxErrorType.INCOMPLETE_PARSE  media query expects feature
+
+@media (baz =
+
+//:SyntaxErrorType.INCOMPLETE_PARSE  media query expects feature
+
+@media (foo: ?
+
+//:SyntaxErrorType.INCOMPLETE_PARSE  media query expects feature
+
+@media (foo:)
+
+//:SyntaxErrorType.INCOMPLETE_PARSE  media query expects feature
+
+@media ()
+
+//:SyntaxErrorType.INCOMPLETE_PARSE  media query expects feature
+
+@media (foo: bar), ()
+
+//:SyntaxErrorType.INCOMPLETE_PARSE  media query expects right paren
+
+@media (foo: bar
+

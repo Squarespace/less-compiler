@@ -49,6 +49,7 @@ public class LessSuiteTest extends LessSuiteBase {
     for (Path lessPath : LessUtils.getMatchingFiles(lessRoot, GLOB_LESS)) {
       String fileName = "less/" + lessPath.getFileName();
 
+
       if (VERBOSE) {
         System.err.println("Processing: " + fileName);
       }

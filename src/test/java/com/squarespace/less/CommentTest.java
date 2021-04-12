@@ -48,6 +48,7 @@ public class CommentTest extends LessTestBase {
     h.parseEquals("/* foo */", comment(" foo ", true));
     h.parseEquals("// foo", comment(" foo", false));
     h.parseEquals("// a //", comment(" a //", false));
+    h.parseFails("/x", SyntaxErrorType.INCOMPLETE_PARSE);
   }
 
   @Test
@@ -56,5 +57,4 @@ public class CommentTest extends LessTestBase {
     String actual = h.execute("/* foo *//*! bar *//* foo */", new LessOptions(true));
     assertEquals(actual, "/*! bar */\n");
   }
-
 }
