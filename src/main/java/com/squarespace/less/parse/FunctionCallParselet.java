@@ -16,12 +16,12 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
 import static com.squarespace.less.core.SyntaxErrorMaker.expected;
 import static com.squarespace.less.parse.Parselets.FUNCTION_CALL_ARGS;
 import static com.squarespace.less.parse.Parselets.FUNCTION_CALL_SUB;
 
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.ExpressionList;
@@ -38,7 +38,7 @@ public class FunctionCallParselet implements Parselet {
   @Override
   public Node parse(LessStream stm) throws LessException {
     Mark position = stm.mark();
-    if (!CharClass.callStart(stm.peek()) || !stm.matchCallName()) {
+    if (!CLASSIFIER.callStart(stm.peek()) || !stm.matchCallName()) {
       return null;
     }
 

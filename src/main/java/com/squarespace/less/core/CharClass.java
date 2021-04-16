@@ -16,13 +16,14 @@
 
 package com.squarespace.less.core;
 
+import com.squarespace.less.match.CharClassifier;
 
 /**
  * Custom character classifications for CSS/LESS. Builds an internal table which
  * contains flags for each character from 0x00 through 0x80. Used in place of
  * a switch() or if/else block for each character class.
  */
-public class CharClass {
+public class CharClass implements CharClassifier {
 
   // Character class bits that can be set/cleared in a bit mask
 
@@ -73,51 +74,53 @@ public class CharClass {
     }
   }
 
-  public static boolean callStart(char ch) {
+  public static final CharClass CLASSIFIER = new CharClass();
+
+  public boolean callStart(char ch) {
     return isMember(ch, CALL_START);
   }
 
-  public static boolean combinator(char ch) {
+  public boolean combinator(char ch) {
     return isMember(ch, COMBINATOR);
   }
 
-  public static boolean digit(char ch) {
+  public boolean digit(char ch) {
     return isMember(ch, DIGIT);
   }
 
-  public static boolean dimensionStart(char ch) {
+  public boolean dimensionStart(char ch) {
     return isMember(ch, DIMENSION_START);
   }
 
-  public static boolean keywordStart(char ch) {
+  public boolean keywordStart(char ch) {
     return isMember(ch, KEYWORD_START);
   }
 
-  public static boolean nonprintable(char ch) {
+  public boolean nonprintable(char ch) {
     return isMember(ch, NONPRINTABLE);
   }
 
-  public static boolean propertyStart(char ch) {
+  public boolean propertyStart(char ch) {
     return isMember(ch, PROPERTY_START);
   }
 
-  public static boolean ruleStart(char ch) {
+  public boolean ruleStart(char ch) {
     return isMember(ch, PROPERTY_START | VARIABLE_START);
   }
 
-  public static boolean selectorEnd(char ch) {
+  public boolean selectorEnd(char ch) {
     return isMember(ch, SELECTOR_END);
   }
 
-  public static boolean skippable(char ch) {
+  public boolean skippable(char ch) {
     return ch == ';' || whitespace(ch);
   }
 
-  public static boolean uppercase(char ch) {
+  public boolean uppercase(char ch) {
     return isMember(ch, UPPERCASE);
   }
 
-  public static boolean whitespace(char ch) {
+  public boolean whitespace(char ch) {
     return (ch >= '\t' && ch <= '\r')
         || (ch == ' ')
         // v8 JavaScript engine's whitespace ranges follow
@@ -132,7 +135,8 @@ public class CharClass {
         || (ch == '\ufeff');
   }
 
-  public static boolean isMember(char ch, int cls) {
+  @Override
+  public boolean isMember(char ch, int cls) {
     return (ch >= LIMIT) ? false : (CHARACTER_CLASSES[ch] & cls) > 0;
   }
 

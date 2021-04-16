@@ -38,7 +38,7 @@ import com.squarespace.less.core.LessUtils;
  */
 public class LessSuiteTest extends LessSuiteBase {
 
-  private static final boolean VERBOSE = false;
+  private static final boolean VERBOSE = true;
 
   @Test
   public void testSuite() throws IOException {
@@ -98,9 +98,9 @@ public class LessSuiteTest extends LessSuiteBase {
 
         } catch (LessException e) {
           // Force generation of the error message, to cover that code
-          String msg = ErrorUtils.formatError(ctx, lessPath, e, 4);
           if (VERBOSE) {
-            System.err.println(msg);
+            String msg = ErrorUtils.formatError(ctx, lessPath, e, 4);
+            System.err.println("\nIgnore the following error as it is expected:\n" + msg);
           }
           if (!errorCase.errorType.equals(e.primaryError().type())) {
             logFailure("Error Suite", ++failures, "Expected ", errorCase.errorType, " found ", e.primaryError().type(),
@@ -114,6 +114,7 @@ public class LessSuiteTest extends LessSuiteBase {
       }
     }
     if (failures > 0) {
+
       Assert.fail(failures + " tests failed.");
     }
   }

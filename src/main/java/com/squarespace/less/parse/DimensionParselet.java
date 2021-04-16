@@ -16,7 +16,8 @@
 
 package com.squarespace.less.parse;
 
-import com.squarespace.less.core.CharClass;
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
+
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Unit;
@@ -29,7 +30,7 @@ public class DimensionParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) {
-    if (!CharClass.dimensionStart(stm.peek()) || !stm.matchDimensionValue()) {
+    if (!CLASSIFIER.dimensionStart(stm.peek()) || !stm.matchDimensionValue()) {
       return null;
     }
     String value = stm.token();

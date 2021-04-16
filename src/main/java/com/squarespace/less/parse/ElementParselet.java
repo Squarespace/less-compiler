@@ -129,13 +129,13 @@ public class ElementParselet implements Parselet {
     char prev = stm.peek(-1);
     int skipped = stm.skipWs();
     char ch = stm.peek();
-    if (CharClass.combinator(ch)) {
+    if (CharClass.CLASSIFIER.combinator(ch)) {
       stm.seek1();
       return Combinator.fromChar(ch);
 
     } else if (block
         || skipped > 0
-        || CharClass.whitespace(prev)
+        || CharClass.CLASSIFIER.whitespace(prev)
         || prev == Chars.EOF
         || prev == Chars.COMMA) {
       return Combinator.DESC;

@@ -16,6 +16,8 @@
 
 package com.squarespace.less.core;
 
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
+
 /**
  * General-purpose buffer. Wraps a {@link StringBuilder} with some
  * LESS-specific methods.
@@ -238,7 +240,7 @@ public class Buffer {
    * Opens a nested block (left curly bracket) with optional whitespace suppression.
    */
   public void blockOpen() {
-    if (!compress && !CharClass.whitespace(prev)) {
+    if (!compress && !CLASSIFIER.whitespace(prev)) {
       append(' ');
     }
     append('{');

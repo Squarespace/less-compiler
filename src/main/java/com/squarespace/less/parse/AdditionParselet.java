@@ -16,10 +16,10 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
 import static com.squarespace.less.parse.Parselets.MULTIPLICATION;
 
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.CharClass;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Operator;
 
@@ -59,7 +59,7 @@ public class AdditionParselet implements Parselet {
     if (op != Operator.ADD && op != Operator.SUBTRACT) {
       return null;
     }
-    if (CharClass.whitespace(stm.peek(1)) || !CharClass.whitespace(stm.peek(-1))) {
+    if (CLASSIFIER.whitespace(stm.peek(1)) || !CLASSIFIER.whitespace(stm.peek(-1))) {
       stm.seek1();
       return op;
     }

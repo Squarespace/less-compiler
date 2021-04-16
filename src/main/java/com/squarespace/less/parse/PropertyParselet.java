@@ -16,7 +16,8 @@
 
 package com.squarespace.less.parse;
 
-import com.squarespace.less.core.CharClass;
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
+
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Property;
 
@@ -25,7 +26,7 @@ public class PropertyParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) {
-    if (!CharClass.propertyStart(stm.peek()) || !stm.matchProperty()) {
+    if (!CLASSIFIER.propertyStart(stm.peek()) || !stm.matchProperty()) {
       return null;
     }
     return new Property(stm.token());

@@ -16,12 +16,12 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
 import static com.squarespace.less.parse.Parselets.EXPRESSION_LIST;
 import static com.squarespace.less.parse.Parselets.FONT;
 import static com.squarespace.less.parse.Parselets.RULE_KEY;
 
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Definition;
@@ -36,7 +36,7 @@ public class RuleParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) throws LessException {
-    if (!CharClass.ruleStart(stm.peek())) {
+    if (!CLASSIFIER.ruleStart(stm.peek())) {
       return null;
     }
 
@@ -95,7 +95,7 @@ public class RuleParselet implements Parselet {
         return def;
 
       } else {
-        Rule rule = stm.context().nodeBuilder().buildRule((Property)key, value, important);
+        Rule rule = stm.context().nodeBuilder().buildRule(key, value, important);
         rule.fileName(stm.fileName());
         stm.setOpenSpace();
         return rule;

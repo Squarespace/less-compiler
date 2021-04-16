@@ -16,12 +16,12 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
 import static com.squarespace.less.parse.Parselets.COMMENT;
 import static com.squarespace.less.parse.Parselets.ELEMENT;
 import static com.squarespace.less.parse.Parselets.ENTITY;
 
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Element;
@@ -58,7 +58,7 @@ public class SelectorParselet implements Parselet {
       }
       selector.add((Element)elem);
       stm.parse(COMMENT);
-      if (CharClass.selectorEnd(stm.peek())) {
+      if (CLASSIFIER.selectorEnd(stm.peek())) {
         break;
       }
     }

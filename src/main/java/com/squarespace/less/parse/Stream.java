@@ -16,9 +16,10 @@
 
 package com.squarespace.less.parse;
 
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.CharPattern;
 import com.squarespace.less.core.Chars;
 
@@ -189,7 +190,7 @@ public class Stream {
     int start = index;
     while (index < length) {
       char curr = raw.charAt(index);
-      if (!CharClass.whitespace(curr)) {
+      if (!CLASSIFIER.whitespace(curr)) {
         break;
       }
       consume(curr);
@@ -203,7 +204,7 @@ public class Stream {
     int start = index;
     while (index < length) {
       char curr = raw.charAt(index);
-      if (!CharClass.skippable(curr)) {
+      if (!CLASSIFIER.skippable(curr)) {
         break;
       }
       consume(curr);

@@ -16,13 +16,13 @@
 
 package com.squarespace.less.plugins;
 
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
 import static com.squarespace.less.core.ExecuteErrorMaker.formatFunctionArgs;
 
 import java.util.List;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.EncodeUtils;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
@@ -117,7 +117,7 @@ public class StringFunctions implements Registry<Function> {
         }
         boolean escape = (ch == 's' || ch == 'S');
         String value = asString(env, arg, escape);
-        if (CharClass.uppercase(ch)) {
+        if (CLASSIFIER.uppercase(ch)) {
           value = EncodeUtils.encodeURIComponent(value);
         }
         buf.append(value);

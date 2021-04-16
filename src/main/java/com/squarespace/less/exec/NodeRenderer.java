@@ -16,11 +16,12 @@
 
 package com.squarespace.less.exec;
 
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
+
 import java.util.List;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Alpha;
@@ -319,15 +320,15 @@ public class NodeRenderer {
         }
 
       } else {
-        if (!buf.compress() && !isDescendant && !CharClass.whitespace(buf.prevChar())) {
+        if (!buf.compress() && !isDescendant && !CLASSIFIER.whitespace(buf.prevChar())) {
           buf.append(' ');
         }
-        if (!isDescendant || !CharClass.whitespace(buf.prevChar())) {
+        if (!isDescendant || !CLASSIFIER.whitespace(buf.prevChar())) {
           buf.append(ch);
         }
       }
 
-      if (!buf.compress() && !CharClass.whitespace(buf.prevChar())) {
+      if (!buf.compress() && !CLASSIFIER.whitespace(buf.prevChar())) {
         buf.append(' ');
       }
     }

@@ -28,21 +28,21 @@ public class CharClassTest {
   public void testClasses() {
     for (int i = 0; i < 10; i++) {
       char ch = (char)('0' + i);
-      assertTrue(CharClass.digit(ch));
-      assertFalse(CharClass.combinator(ch));
-      assertFalse(CharClass.uppercase(ch));
+      assertTrue(CharClass.CLASSIFIER.digit(ch));
+      assertFalse(CharClass.CLASSIFIER.combinator(ch));
+      assertFalse(CharClass.CLASSIFIER.uppercase(ch));
     }
 
     for (int i = 0; i < 26; i++) {
       char upper = (char)('A' + i);
-      assertTrue(CharClass.uppercase(upper));
+      assertTrue(CharClass.CLASSIFIER.uppercase(upper));
 
       char lower = (char)('a' + i);
-      assertFalse(CharClass.uppercase(lower));
-      assertFalse(CharClass.digit(upper));
-      assertFalse(CharClass.digit(lower));
-      assertFalse(CharClass.combinator(lower));
-      assertFalse(CharClass.combinator(upper));
+      assertFalse(CharClass.CLASSIFIER.uppercase(lower));
+      assertFalse(CharClass.CLASSIFIER.digit(upper));
+      assertFalse(CharClass.CLASSIFIER.digit(lower));
+      assertFalse(CharClass.CLASSIFIER.combinator(lower));
+      assertFalse(CharClass.CLASSIFIER.combinator(upper));
     }
   }
 

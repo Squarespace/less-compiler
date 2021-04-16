@@ -16,6 +16,7 @@
 
 package com.squarespace.less.core;
 
+import static com.squarespace.less.core.CharClass.CLASSIFIER;
 import static com.squarespace.less.core.CharClass.DIGIT;
 import static com.squarespace.less.core.CharClass.ENCODE_URI;
 import static com.squarespace.less.core.CharClass.ENCODE_URI_COMPONENT;
@@ -62,7 +63,7 @@ public class EncodeUtils {
   private static final CharTest ENCODE_URI_TEST = new CharTest() {
     @Override
     public boolean member(char ch) {
-      return CharClass.isMember(ch, ENCODE_URI_CLASS);
+      return CLASSIFIER.isMember(ch, ENCODE_URI_CLASS);
     }
   };
 
@@ -72,7 +73,7 @@ public class EncodeUtils {
   private static final CharTest ENCODE_URI_COMPONENT_TEST = new CharTest() {
     @Override
     public boolean member(char ch) {
-      return CharClass.isMember(ch, ENCODE_URI_COMPONENT_CLASS);
+      return CLASSIFIER.isMember(ch, ENCODE_URI_COMPONENT_CLASS);
     }
   };
 
@@ -82,7 +83,7 @@ public class EncodeUtils {
   private static final CharTest ESCAPE_TEST = new CharTest() {
     @Override
     public boolean member(char ch) {
-      return CharClass.isMember(ch, ENCODE_URI_CLASS) && !CharClass.isMember(ch, CharClass.ESCAPE);
+      return CLASSIFIER.isMember(ch, ENCODE_URI_CLASS) && !CLASSIFIER.isMember(ch, CharClass.ESCAPE);
     }
   };
 
