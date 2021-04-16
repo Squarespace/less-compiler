@@ -100,7 +100,7 @@ public class LessSuiteTest extends LessSuiteBase {
           // Force generation of the error message, to cover that code
           if (VERBOSE) {
             String msg = ErrorUtils.formatError(ctx, lessPath, e, 4);
-            System.err.println("\nIgnore the following error as it is expected:\n" + msg);
+            System.err.println("\n==============================================\nIgnore the following error as it is expected:\n" + msg);
           }
           if (!errorCase.errorType.equals(e.primaryError().type())) {
             logFailure("Error Suite", ++failures, "Expected ", errorCase.errorType, " found ", e.primaryError().type(),

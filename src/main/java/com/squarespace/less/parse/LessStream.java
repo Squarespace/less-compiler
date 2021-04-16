@@ -24,6 +24,8 @@ import java.util.regex.Matcher;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
+import com.squarespace.less.match.Recognizer;
+import com.squarespace.less.match.Recognizers;
 import com.squarespace.less.model.Node;
 
 
@@ -32,13 +34,13 @@ import com.squarespace.less.model.Node;
  */
 public class LessStream extends Stream {
 
-  private final Matcher matcherAnd;
+//  private final Matcher matcherAnd;
   private final Matcher matcherAnonRuleValue;
   private final Matcher matcherAttributeKey;
   private final Matcher matcherAttributeOp;
   private final Matcher matcherBoolOperator;
   private final Matcher matcherCallName;
-  private final Matcher matcherDigits;
+//  private final Matcher matcherDigits;
   private final Matcher matcherDimensionUnit;
   private final Matcher matcherDimensionValue;
   private final Matcher matcherDirective;
@@ -46,19 +48,19 @@ public class LessStream extends Stream {
   private final Matcher matcherElement1;
   private final Matcher matcherElement2;
   private final Matcher matcherElement3;
-  private final Matcher matcherHexColor;
+//  private final Matcher matcherHexColor;
   private final Matcher matcherIdentifier;
-  private final Matcher matcherImportant;
+//  private final Matcher matcherImportant;
   private final Matcher matcherKeyword;
   private final Matcher matcherMixinName;
-  private final Matcher matcherNot;
+//  private final Matcher matcherNot;
   private final Matcher matcherOpacity;
   private final Matcher matcherProperty;
-  private final Matcher matcherRatio;
+//  private final Matcher matcherRatio;
   private final Matcher matcherShorthand;
   private final Matcher matcherUnicodeRange;
-  private final Matcher matcherUrlStart;
-  private final Matcher matcherWhen;
+//  private final Matcher matcherUrlStart;
+//  private final Matcher matcherWhen;
   private final Matcher matcherWord;
   private final LessContext context;
   private final Path rootPath;
@@ -78,13 +80,13 @@ public class LessStream extends Stream {
     this.context = ctx;
     this.rootPath = rootPath;
     this.fileName = fileName;
-    this.matcherAnd = Patterns.AND.matcher(raw);
+//    this.matcherAnd = Patterns.AND.matcher(raw);
     this.matcherAnonRuleValue = Patterns.ANON_RULE_VALUE.matcher(raw);
     this.matcherAttributeKey = Patterns.ATTRIBUTE_KEY.matcher(raw);
     this.matcherAttributeOp = Patterns.ATTRIBUTE_OP.matcher(raw);
     this.matcherBoolOperator = Patterns.BOOL_OPERATOR.matcher(raw);
     this.matcherCallName = Patterns.CALL_NAME.matcher(raw);
-    this.matcherDigits = Patterns.DIGITS.matcher(raw);
+//    this.matcherDigits = Patterns.DIGITS.matcher(raw);
     this.matcherDimensionUnit = Patterns.DIMENSION_UNIT.matcher(raw);
     this.matcherDimensionValue = Patterns.DIMENSION_VALUE.matcher(raw);
     this.matcherDirective = Patterns.DIRECTIVE.matcher(raw);
@@ -92,19 +94,19 @@ public class LessStream extends Stream {
     this.matcherElement1 = Patterns.ELEMENT1.matcher(raw);
     this.matcherElement2 = Patterns.ELEMENT2.matcher(raw);
     this.matcherElement3 = Patterns.ELEMENT3.matcher(raw);
-    this.matcherHexColor = Patterns.HEXCOLOR.matcher(raw);
+//    this.matcherHexColor = Patterns.HEXCOLOR.matcher(raw);
     this.matcherIdentifier = Patterns.IDENTIFIER.matcher(raw);
-    this.matcherImportant = Patterns.IMPORTANT.matcher(raw);
+//    this.matcherImportant = Patterns.IMPORTANT.matcher(raw);
     this.matcherKeyword = Patterns.KEYWORD.matcher(raw);
     this.matcherMixinName = Patterns.MIXIN_NAME.matcher(raw);
-    this.matcherNot = Patterns.NOT.matcher(raw);
+//    this.matcherNot = Patterns.NOT.matcher(raw);
     this.matcherOpacity = Patterns.OPACITY.matcher(raw);
     this.matcherProperty = Patterns.PROPERTY.matcher(raw);
-    this.matcherRatio = Patterns.RATIO.matcher(raw);
+//    this.matcherRatio = Patterns.RATIO.matcher(raw);
     this.matcherShorthand = Patterns.SHORTHAND.matcher(raw);
     this.matcherUnicodeRange = Patterns.UNICODE_DESCRIPTOR.matcher(raw);
-    this.matcherUrlStart = Patterns.URLSTART.matcher(raw);
-    this.matcherWhen = Patterns.WHEN.matcher(raw);
+//    this.matcherUrlStart = Patterns.URLSTART.matcher(raw);
+//    this.matcherWhen = Patterns.WHEN.matcher(raw);
     this.matcherWord = Patterns.WORD.matcher(raw);
   }
 
@@ -158,7 +160,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchAnd() {
-    return finish(match(matcherAnd));
+    return finish(match(Patterns.AND));
   }
 
   public boolean matchAnonRuleValue() {
@@ -194,7 +196,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchDigits() {
-    return finish(match(matcherDigits));
+    return finish(match(Patterns.DIGITS));
   }
 
   public boolean matchDimensionUnit() {
@@ -226,7 +228,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchHexColor() {
-    return finish(match(matcherHexColor));
+    return finish(match(Patterns.HEXCOLOR));
   }
 
   public boolean matchIdentifier() {
@@ -234,7 +236,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchImportant() {
-    return finish(match(matcherImportant));
+    return finish(match(Patterns.IMPORTANT));
   }
 
   public boolean matchKeyword() {
@@ -246,7 +248,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchNot() {
-    return finish(match(matcherNot));
+    return finish(match(Patterns.NOT));
   }
 
   public boolean matchOpacity() {
@@ -258,7 +260,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchRatio() {
-    return finish(match(matcherRatio));
+    return finish(match(Patterns.RATIO));
   }
 
   public boolean matchUnicodeRange() {
@@ -266,11 +268,11 @@ public class LessStream extends Stream {
   }
 
   public boolean matchUrlStart() {
-    return finish(match(matcherUrlStart));
+    return finish(match(Patterns.URLSTART));
   }
 
   public boolean matchWhen() {
-    return finish(match(matcherWhen));
+    return finish(match(Patterns.WHEN));
   }
 
   public boolean matchWord() {
@@ -284,6 +286,15 @@ public class LessStream extends Stream {
   private boolean peek(Matcher matcher) {
     matcher.region(index, length);
     return matcher.lookingAt();
+  }
+
+  private boolean match(Recognizer r) {
+    int i = r.match(this.raw, index, length);
+    boolean matched = i != Recognizers.FAIL;
+    if (matched) {
+      matchEnd = i;
+    }
+    return matched;
   }
 
   private boolean match(Matcher matcher) {

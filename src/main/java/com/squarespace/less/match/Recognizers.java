@@ -66,12 +66,20 @@ public class Recognizers {
     return oneOrMore(digit());
   }
 
-//  public static Recognizer hexdigit() {
-//    return charClass(CharClass.HEXDIGIT, CLASSIFIER);
-//  }
+  public static Recognizer hexdigit() {
+    return charClass(CharClass.HEXDIGIT, CLASSIFIER);
+  }
+
+  public static Recognizer hexcolor() {
+    return sequence(literal("#"), new LengthChoice(hexdigit(), 3, 6));
+  }
 
   public static Recognizer literal(String str) {
     return new Literal(str);
+  }
+
+  public static Recognizer literal(String str, boolean ignoreCase) {
+    return new Literal(str, ignoreCase);
   }
 
   public static Recognizer lookAhead(Recognizer pattern) {
@@ -98,9 +106,9 @@ public class Recognizers {
     return new CharacterRange(true, start, end);
   }
 
-//  public static Recognizer notHexdigit() {
-//    return notCharClass(HEXDIGIT, CLASSIFIER);
-//  }
+  public static Recognizer notHexdigit() {
+    return notCharClass(CharClass.HEXDIGIT, CLASSIFIER);
+  }
 
   public static Recognizer sequence(Recognizer... patterns) {
     return new Recognizers.Sequence(patterns);
@@ -344,25 +352,74 @@ public class Recognizers {
   }
 
   /**
+   * LengthChoice. Pattern can be one of several unique lengths.
+   * Lengths must be ordered from smallest to largest.
+   */
+  static class LengthChoice implements Recognizer {
+
+    private final int[] choices;
+    private final Recognizer cardinality;
+
+    LengthChoice(Recognizer pattern, int... choices) {
+      this.choices = choices;
+      int min = 0;
+      int max = 1;
+      if (choices.length > 0) {
+        min = choices[0];
+        max = choices[choices.length - 1];
+      }
+      this.cardinality = new Cardinality(pattern, min, max);
+    }
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      int i = this.cardinality.match(seq, pos, len);
+      if (i != FAIL) {
+        int sz = i - pos;
+        for (int j = 0; j < this.choices.length; j++) {
+          if (sz == this.choices[j]) {
+            return i;
+          }
+        }
+      }
+      return FAIL;
+    }
+  }
+
+  /**
    * Match an entire literal string.
    */
   static class Literal implements Recognizer {
 
     private final String literal;
-
     private final int literalLength;
+    private final boolean ignoreCase;
 
     Literal(String value) {
+      this(value, false);
+    }
+
+    Literal(String value, boolean ignoreCase) {
       this.literal = value;
       this.literalLength = literal.length();
+      this.ignoreCase = ignoreCase;
     }
 
     @Override
     public int match(CharSequence seq, int pos, int length) {
       if (literalLength <= (length - pos)) {
-        for (int i = 0; i < literalLength; i++, pos++) {
-          if (literal.charAt(i) != seq.charAt(pos)) {
-            return FAIL;
+        if (ignoreCase) {
+          for (int i = 0; i < literalLength; i++, pos++) {
+            if (Character.toUpperCase(literal.charAt(i)) != Character.toUpperCase(seq.charAt(pos))) {
+              return FAIL;
+            }
+          }
+
+        } else {
+          for (int i = 0; i < literalLength; i++, pos++) {
+            if (literal.charAt(i) != seq.charAt(pos)) {
+              return FAIL;
+            }
           }
         }
         return pos;

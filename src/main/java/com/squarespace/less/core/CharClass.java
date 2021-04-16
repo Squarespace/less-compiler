@@ -57,6 +57,8 @@ public class CharClass implements CharClassifier {
 
   public static final int ESCAPE = 0x4000;
 
+  public static final int HEXDIGIT = 0x8000;
+
   /**
    * The characters we care about all live below this limit.
    */
@@ -229,7 +231,7 @@ public class CharClass implements CharClassifier {
       case '7':
       case '8':
       case '9':
-        return DIGIT | DIMENSION_START | PROPERTY_START;
+        return DIGIT | HEXDIGIT | DIMENSION_START | PROPERTY_START;
 
       case ':':
         return ENCODE_URI | ESCAPE;
@@ -255,7 +257,7 @@ public class CharClass implements CharClassifier {
       case 'D':
       case 'E':
       case 'F':
-        return UPPERCASE | CALL_START | KEYWORD_START;
+        return HEXDIGIT | UPPERCASE | CALL_START | KEYWORD_START;
 
       case 'G':
       case 'H':
@@ -288,7 +290,7 @@ public class CharClass implements CharClassifier {
       case 'd':
       case 'e':
       case 'f':
-        return LOWERCASE | CALL_START | KEYWORD_START | PROPERTY_START;
+        return HEXDIGIT | LOWERCASE | CALL_START | KEYWORD_START | PROPERTY_START;
 
       case 'g':
       case 'h':

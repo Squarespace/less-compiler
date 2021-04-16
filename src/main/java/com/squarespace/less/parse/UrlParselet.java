@@ -16,8 +16,6 @@
 
 package com.squarespace.less.parse;
 
-import static com.squarespace.less.core.CharClass.CLASSIFIER;
-
 import com.squarespace.less.LessException;
 import com.squarespace.less.model.Node;
 
@@ -27,16 +25,12 @@ public class UrlParselet implements Parselet {
   @Override
   public Node parse(LessStream stm) throws LessException {
     Mark mark = stm.mark();
-    if (!CLASSIFIER.callStart(stm.peek()) || !stm.matchCallName()) {
+    if (!stm.matchUrlStart()) {
       return null;
     }
-    String name = stm.token();
-    String nameLC = name.toLowerCase();
-    if (nameLC.equals("url")) {
-      Node result = FunctionCallParselet.parseUrl(stm);
-      if (result != null) {
-        return result;
-      }
+    Node result = FunctionCallParselet.parseUrl(stm);
+    if (result != null) {
+      return result;
     }
 
     // Unreachable since parseUrl will throw if url(..) is invalid.
