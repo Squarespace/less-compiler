@@ -317,6 +317,19 @@ public class RecognizersTest {
   }
 
   @Test
+  public void testUnit() {
+    Recognizer pattern = new Recognizers.Unit();
+
+    assertEquals(match(pattern, "vmin"), 4);
+    assertEquals(match(pattern, "vmax"), 4);
+    assertEquals(match(pattern, "vw"), 2);
+    assertEquals(match(pattern, "vh"), 2);
+
+    assertEquals(match(pattern, "vq"), -1);
+    assertEquals(match(pattern, "v%"), -1);
+  }
+
+  @Test
   public void testWhitespace() {
     // REGEX  \\s*
     Recognizer pattern = zeroOrMore(whitespace());

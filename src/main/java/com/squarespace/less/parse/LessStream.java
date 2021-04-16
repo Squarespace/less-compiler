@@ -34,34 +34,21 @@ import com.squarespace.less.model.Node;
  */
 public class LessStream extends Stream {
 
-//  private final Matcher matcherAnd;
   private final Matcher matcherAnonRuleValue;
   private final Matcher matcherAttributeKey;
   private final Matcher matcherAttributeOp;
   private final Matcher matcherBoolOperator;
   private final Matcher matcherCallName;
-//  private final Matcher matcherDigits;
-  private final Matcher matcherDimensionUnit;
-  private final Matcher matcherDimensionValue;
   private final Matcher matcherDirective;
-  private final Matcher matcherElement0;
   private final Matcher matcherElement1;
   private final Matcher matcherElement2;
   private final Matcher matcherElement3;
-//  private final Matcher matcherHexColor;
   private final Matcher matcherIdentifier;
-//  private final Matcher matcherImportant;
   private final Matcher matcherKeyword;
   private final Matcher matcherMixinName;
-//  private final Matcher matcherNot;
-  private final Matcher matcherOpacity;
   private final Matcher matcherProperty;
-//  private final Matcher matcherRatio;
   private final Matcher matcherShorthand;
   private final Matcher matcherUnicodeRange;
-//  private final Matcher matcherUrlStart;
-//  private final Matcher matcherWhen;
-  private final Matcher matcherWord;
   private final LessContext context;
   private final Path rootPath;
   private final Path fileName;
@@ -80,34 +67,21 @@ public class LessStream extends Stream {
     this.context = ctx;
     this.rootPath = rootPath;
     this.fileName = fileName;
-//    this.matcherAnd = Patterns.AND.matcher(raw);
     this.matcherAnonRuleValue = Patterns.ANON_RULE_VALUE.matcher(raw);
     this.matcherAttributeKey = Patterns.ATTRIBUTE_KEY.matcher(raw);
     this.matcherAttributeOp = Patterns.ATTRIBUTE_OP.matcher(raw);
     this.matcherBoolOperator = Patterns.BOOL_OPERATOR.matcher(raw);
     this.matcherCallName = Patterns.CALL_NAME.matcher(raw);
-//    this.matcherDigits = Patterns.DIGITS.matcher(raw);
-    this.matcherDimensionUnit = Patterns.DIMENSION_UNIT.matcher(raw);
-    this.matcherDimensionValue = Patterns.DIMENSION_VALUE.matcher(raw);
     this.matcherDirective = Patterns.DIRECTIVE.matcher(raw);
-    this.matcherElement0 = Patterns.ELEMENT0.matcher(raw);
     this.matcherElement1 = Patterns.ELEMENT1.matcher(raw);
     this.matcherElement2 = Patterns.ELEMENT2.matcher(raw);
     this.matcherElement3 = Patterns.ELEMENT3.matcher(raw);
-//    this.matcherHexColor = Patterns.HEXCOLOR.matcher(raw);
     this.matcherIdentifier = Patterns.IDENTIFIER.matcher(raw);
-//    this.matcherImportant = Patterns.IMPORTANT.matcher(raw);
     this.matcherKeyword = Patterns.KEYWORD.matcher(raw);
     this.matcherMixinName = Patterns.MIXIN_NAME.matcher(raw);
-//    this.matcherNot = Patterns.NOT.matcher(raw);
-    this.matcherOpacity = Patterns.OPACITY.matcher(raw);
     this.matcherProperty = Patterns.PROPERTY.matcher(raw);
-//    this.matcherRatio = Patterns.RATIO.matcher(raw);
     this.matcherShorthand = Patterns.SHORTHAND.matcher(raw);
     this.matcherUnicodeRange = Patterns.UNICODE_DESCRIPTOR.matcher(raw);
-//    this.matcherUrlStart = Patterns.URLSTART.matcher(raw);
-//    this.matcherWhen = Patterns.WHEN.matcher(raw);
-    this.matcherWord = Patterns.WORD.matcher(raw);
   }
 
   public LessException parseError(LessException exc) {
@@ -200,11 +174,11 @@ public class LessStream extends Stream {
   }
 
   public boolean matchDimensionUnit() {
-    return finish(match(matcherDimensionUnit));
+    return finish(match(Patterns.DIMENSION_UNIT));
   }
 
   public boolean matchDimensionValue() {
-    return finish(match(matcherDimensionValue));
+    return finish(match(Patterns.DIMENSION_VALUE));
   }
 
   public boolean matchDirective() {
@@ -212,7 +186,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchElement0() {
-    return finish(match(matcherElement0));
+    return finish(match(Patterns.ELEMENT0));
   }
 
   public boolean matchElement1() {
@@ -252,7 +226,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchOpacity() {
-    return finish(match(matcherOpacity));
+    return finish(match(Patterns.OPACITY));
   }
 
   public boolean matchProperty() {
@@ -276,7 +250,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchWord() {
-    return finish(match(matcherWord));
+    return finish(match(Patterns.WORD));
   }
 
   public boolean peekShorthand() {

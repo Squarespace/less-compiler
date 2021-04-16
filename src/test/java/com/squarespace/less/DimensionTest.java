@@ -54,13 +54,25 @@ public class DimensionTest extends LessTestBase {
   public void testDimension() throws LessException {
     LessHarness h = new LessHarness(Parselets.DIMENSION);
 
+    h.parseEquals("2.3PX", dim(2.3, Unit.PX));
+
     h.parseEquals("0", dim(0));
+    h.parseEquals("20", dim(20));
     h.parseEquals("1.34", dim(1.34));
     h.parseEquals(".701", dim(0.701));
     h.parseEquals("0.7011", dim(0.7011));
     h.parseEquals("10px", dim(10, Unit.PX));
     h.parseEquals("30.1dpi", dim(30.1, Unit.DPI));
+    h.parseEquals("+30.1dpi", dim(30.1, Unit.DPI));
+    h.parseEquals("-30.1dpi", dim(-30.1, Unit.DPI));
+    h.parseEquals("2.3PX", dim(2.3, Unit.PX));
+    h.parseEquals("2.3CM", dim(2.3, Unit.CM));
+
     h.parseFails("apx", SyntaxErrorType.INCOMPLETE_PARSE);
+    h.parseFails(".x", SyntaxErrorType.INCOMPLETE_PARSE);
+    h.parseFails("1.", SyntaxErrorType.INCOMPLETE_PARSE);
+    h.parseFails("-1.", SyntaxErrorType.INCOMPLETE_PARSE);
+    h.parseFails("--1.3", SyntaxErrorType.INCOMPLETE_PARSE);
   }
 
 }

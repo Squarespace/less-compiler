@@ -37,6 +37,7 @@ import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Ruleset;
+import com.squarespace.less.model.Stylesheet;
 
 /**
  * Extremely simplistic model for CSS structure. Allows the LESS renderer
@@ -239,6 +240,7 @@ public class CssModel {
       return type;
     }
 
+    @Override
     public boolean populated() {
       return populated;
     }

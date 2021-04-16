@@ -24,11 +24,13 @@ import static com.squarespace.less.core.Chars.MINUS_SIGN;
 import static com.squarespace.less.core.Chars.PERIOD;
 import static com.squarespace.less.core.Chars.RIGHT_PARENTHESIS;
 import static com.squarespace.less.core.Chars.SLASH;
+import static com.squarespace.less.match.Recognizers.characters;
 import static com.squarespace.less.match.Recognizers.digits;
 import static com.squarespace.less.match.Recognizers.literal;
 import static com.squarespace.less.match.Recognizers.sequence;
 import static com.squarespace.less.match.Recognizers.whitespace;
 import static com.squarespace.less.match.Recognizers.zeroOrMore;
+import static com.squarespace.less.match.Recognizers.zeroOrOne;
 
 import java.util.regex.Pattern;
 
@@ -36,7 +38,6 @@ import com.squarespace.less.core.CharPattern;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.match.Recognizer;
 import com.squarespace.less.match.Recognizers;
-import com.squarespace.less.model.Unit;
 
 
 public class Patterns {
@@ -64,13 +65,19 @@ public class Patterns {
 
   public static final Recognizer DIGITS = Recognizers.digits();
 
-  public static final Pattern DIMENSION_UNIT = pattern(Unit.REGEX, true);
+//  public static final Pattern DIMENSION_UNIT = pattern(Unit.REGEX, true);
 
-  public static final Pattern DIMENSION_VALUE = pattern("[+-]?\\d*\\.?\\d+");
+  public static final Recognizer DIMENSION_UNIT = Recognizers.units();
+
+  public static final Recognizer DIMENSION_VALUE = Recognizers.dimension();
 
   public static final Pattern DIRECTIVE = pattern("@[a-z-]+");
 
-  public static final Pattern ELEMENT0 = pattern("(?:\\d+\\.\\d+|\\d+)%");
+  public static final Recognizer ELEMENT0 =
+      sequence(
+          digits(),
+          zeroOrOne(sequence(characters('.'), digits())),
+          characters('%'));
 
   public static final Pattern ELEMENT1 = pattern("(?:[.#]?|:*)(?:[\\w-]|[^\\u0000-\\u009f]|"
         + "\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+");
@@ -89,13 +96,11 @@ public class Patterns {
 
   public static final Pattern KEYWORD = pattern("[_A-Za-z-][\\w-]*");
 
-  public static final Recognizer MEDIA = literal("@media");
-
   public static final Pattern MIXIN_NAME = pattern("[#.](?:[\\w-]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+");
 
   public static final Recognizer NOT = literal("not");
 
-  public static final Pattern OPACITY = pattern("opacity=", true);
+  public static final Recognizer OPACITY = literal("opacity=", true);
 
   public static final Pattern OPERATOR = pattern("\\+|\\-|\\*|\\/");
 
@@ -114,7 +119,7 @@ public class Patterns {
 
   public static final Recognizer WHEN = literal("when");
 
-  public static final Pattern WORD = pattern("\\w+");
+  public static final Recognizer WORD = Recognizers.word();
 
   // Character-level patterns.
 

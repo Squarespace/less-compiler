@@ -27,6 +27,7 @@ public class Recognizers {
   private static final Recognizer WHITESPACE = new Whitespace(false);
   private static final Recognizer NOT_WHITESPACE = new Whitespace(true);
   private static final CharClass CLASSIFIER = new CharClass();
+  private static final Recognizer DIGITS = digits();
 
   private Recognizers() { }
 
@@ -64,6 +65,10 @@ public class Recognizers {
 
   public static Recognizer digits() {
     return oneOrMore(digit());
+  }
+
+  public static Recognizer dimension() {
+    return new Dimension();
   }
 
   public static Recognizer hexdigit() {
@@ -111,7 +116,15 @@ public class Recognizers {
   }
 
   public static Recognizer sequence(Recognizer... patterns) {
-    return new Recognizers.Sequence(patterns);
+    return new Sequence(patterns);
+  }
+
+  public static Recognizer units() {
+    return new Unit();
+  }
+
+  public static Recognizer word() {
+    return oneOrMore(choice(charClass(CharClass.LOWERCASE | CharClass.UPPERCASE | CharClass.DIGIT, CharClass.CLASSIFIER), characters('_')));
   }
 
   public static Recognizer whitespace() {
@@ -352,6 +365,53 @@ public class Recognizers {
   }
 
   /**
+   * Special pattern to recognize a decimal number that can start
+   * with a bare '.' character.
+   *
+   * Examples of valid sequences are:
+   *
+   *   1
+   *   3.4
+   *   -1.2
+   *   +.3
+   *
+   *  Invalid sequences:
+   *
+   *    .x
+   *    1.x
+   *    --2
+   *    -+2
+   */
+  static class Dimension implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      int save = pos;
+      int res = FAIL;
+      while (pos < len) {
+        char ch = seq.charAt(pos);
+        if (save == pos && (ch == '-' || ch == '+')) {
+          pos++;
+          continue;
+        }
+
+        // First '.' we see, match at least one following digit
+        if (ch == '.') {
+          pos++;
+          return DIGITS.match(seq, pos, len);
+        }
+
+        pos = DIGITS.match(seq, pos, len);
+        if (pos == FAIL) {
+          return res;
+        }
+        res = pos;
+      }
+      return res;
+    }
+  }
+
+  /**
    * LengthChoice. Pattern can be one of several unique lengths.
    * Lengths must be ordered from smallest to largest.
    */
@@ -410,7 +470,7 @@ public class Recognizers {
       if (literalLength <= (length - pos)) {
         if (ignoreCase) {
           for (int i = 0; i < literalLength; i++, pos++) {
-            if (Character.toUpperCase(literal.charAt(i)) != Character.toUpperCase(seq.charAt(pos))) {
+            if (literal.charAt(i) != Character.toLowerCase(seq.charAt(pos))) {
               return FAIL;
             }
           }
@@ -500,6 +560,169 @@ public class Recognizers {
     }
   }
 
+  /**
+   * Fast matcher for case-insensitive dimension units.
+   */
+  static class Unit implements Recognizer {
+
+    static final char[][] C_UNITS = new char[][] {
+      { 'h' },
+      { 'm' },
+    };
+    static final char[][] D_UNITS = new char[][] {
+      { 'p', 'p', 'x' },
+      { 'p', 'c', 'm' },
+      { 'p', 'i' },
+      { 'e', 'g' },
+    };
+    static final char[][] E_UNITS = new char[][] {
+      { 'x' },
+      { 'm' },
+    };
+    static final char[][] F_UNITS = new char[][] {
+      { 'r' },
+    };
+    static final char[][] G_UNITS = new char[][] {
+      { 'r', 'a', 'd' },
+    };
+    static final char[][] H_UNITS = new char[][] {
+      { 'z' },
+    };
+    static final char[][] I_UNITS = new char[][] {
+      { 'n' },
+    };
+    static final char[][] K_UNITS = new char[][] {
+      { 'h', 'z' },
+    };
+    static final char[][] M_UNITS = new char[][] {
+      { 's' },
+      { 'm' },
+    };
+    static final char[][] P_UNITS = new char[][] {
+      { 't' },
+      { 'c' },
+      { 'x' },
+    };
+    static final char[][] R_UNITS = new char[][] {
+      { 'e', 'm' },
+      { 'a', 'd' },
+    };
+    static final char[][] S_UNITS = new char[][] {
+      {  },
+    };
+    static final char[][] T_UNITS = new char[][] {
+      { 'u', 'r', 'n' },
+    };
+    static final char[][] V_UNITS = new char[][] {
+      { 'm', 'i', 'n' },
+      { 'm', 'a', 'x' },
+      { 'h' },
+      { 'w' },
+      { 'm' },
+    };
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      if (pos < len) {
+        char c0 = seq.charAt(pos);
+        pos++;
+        switch (c0) {
+          case '%':
+            return pos;
+          case 'c':
+          case 'C':
+            return _match(seq, pos, len, C_UNITS);
+          case 'd':
+          case 'D':
+            return _match(seq, pos, len, D_UNITS);
+          case 'e':
+          case 'E':
+            return _match(seq, pos, len, E_UNITS);
+          case 'f':
+          case 'F':
+            return _match(seq, pos, len, F_UNITS);
+          case 'g':
+          case 'G':
+            return _match(seq, pos, len, G_UNITS);
+          case 'h':
+          case 'H':
+            return _match(seq, pos, len, H_UNITS);
+          case 'i':
+          case 'I':
+            return _match(seq, pos, len, I_UNITS);
+          case 'k':
+          case 'K':
+            return _match(seq, pos, len, K_UNITS);
+          case 'm':
+          case 'M':
+            return _match(seq, pos, len, M_UNITS);
+          case 'p':
+          case 'P':
+            return _match(seq, pos, len, P_UNITS);
+          case 'r':
+          case 'R':
+            return _match(seq, pos, len, R_UNITS);
+          case 's':
+          case 'S':
+            return _match(seq, pos, len, S_UNITS);
+          case 't':
+          case 'T':
+            return _match(seq, pos, len, T_UNITS);
+          case 'v':
+          case 'V':
+            return _match(seq, pos, len, V_UNITS);
+
+        }
+      }
+      return FAIL;
+    }
+
+    private static int _match(CharSequence seq, int pos, int len, char[][] exts) {
+      int p = pos;
+      for (int i = 0; i < exts.length; i++) {
+        char[] ext = exts[i];
+        p = pos;
+        int j = 0;
+        while (j < ext.length && p < len) {
+          char ch = Character.toLowerCase(seq.charAt(p));
+          if (ch != ext[j]) {
+            break;
+          }
+          j++;
+          p++;
+        }
+        // Matched
+        if (j == ext.length) {
+          return p;
+        }
+      }
+      return FAIL;
+    }
+  }
+
+  /**
+   * CODE TO UPDATE THE UNITS TABLES ABOVE
+
+    UNITS = "px|%|em|pc|ex|in|deg|s|ms|pt|cm|mm|rad|grad|turn|fr|dpi|dpcm|dppx|rem|vw|vh|vmin|vmax|ch|hz|khz|vm"
+    from collections import defaultdict
+    r = sorted(set((u[0], u[1:]) for u in UNITS.split('|')))
+    p = None
+    d = defaultdict(set)
+    [d[c].add(ext) for c, ext in r if c != '%']
+    for c, exts in sorted(d.items()):
+        if c == '%':
+            continue
+        exts = sorted(exts, key=lambda e: -len(e))
+        print('static final char[][] %s_UNITS = new char[][] {' % c.upper())
+        for ext in exts:
+            print('  { ' + ', '.join("'%s'" % e for e in ext) + ' },')
+        print('};')
+
+    for c in sorted(d.keys()):
+        print("case '%s':\ncase '%s':" % (c, c.upper()))
+        print('  return _match(seq, pos, len, %s_UNITS);' % c.upper())
+
+   */
 
   /**
    * Use a method call to detect whitespace.

@@ -29,7 +29,7 @@ public class Buffer {
   /**
    * Internal buffer.
    */
-  private final StringBuilder buf = new StringBuilder();
+  private final StringBuilder buf;
 
   /**
    * Number of spaces of indent.
@@ -82,6 +82,7 @@ public class Buffer {
     this.indentSize = indentSize;
     this.compress = compress;
     this.numericScale = numericScale;
+    this.buf = new StringBuilder();
   }
 
   /**
