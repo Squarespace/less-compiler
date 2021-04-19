@@ -54,9 +54,11 @@ public class Patterns {
   // REGEX: "(?:[^;@+/'\"*`({}-]*);"
   public static final Recognizer ANON_RULE_VALUE = anon();
 
-  public static final Pattern ATTRIBUTE_KEY = pattern("([\\w-]|\\\\.)+");
+  // REGEX: "([\\w-]|\\\\.)+"
+  public static final Recognizer ATTRIBUTE_KEY = Recognizers.attributeKey();
 
-  public static final Pattern ATTRIBUTE_OP = pattern("[|~*$^]?=");
+  // REGEX: "[|~*$^]?="
+  public static final Recognizer ATTRIBUTE_OP = Recognizers.attributeOperator();
 
   // REGEX: "<>|=[<>]*|[<>]=*|!="
   public static final Recognizer BOOL_OPERATOR = Recognizers.boolOperator();
@@ -74,9 +76,7 @@ public class Patterns {
 
   public static final Recognizer ELEMENT0 = Recognizers.element0();
 
-//  public static final Pattern ELEMENT1 = pattern("(?:[.#]?|:*)(?:[\\w-]|[^\\u0000-\\u009f]|"
-//        + "\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+");
-
+  // REGEX: "(?:[.#]?|:*)(?:[\\w-]|[^\\u0000-\\u009f]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+"
   public static final Recognizer ELEMENT1 = Recognizers.element1();
 
   // REGEX: "\\([^)(@]+\\)"

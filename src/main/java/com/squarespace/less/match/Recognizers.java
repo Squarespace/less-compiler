@@ -41,6 +41,16 @@ public class Recognizers {
     return new Anon();
   }
 
+  public static Recognizer attributeKey() {
+    return oneOrMore(choice(
+        charClass(CharClass.IDENTIFIER, CLASSIFIER),
+        sequence(characters('\\'), ANY)));
+  }
+
+  public static Recognizer attributeOperator() {
+    return new AttrOperator();
+  }
+
   public static Recognizer boolOperator() {
     return new BoolOperator();
   }
@@ -261,6 +271,36 @@ public class Recognizers {
       }
       return FAIL;
     }
+  }
+
+  /**
+   * Matches an attribute operator: REGEX: "[|~*$^]?="
+   *
+   * Operators:
+   *
+   * |= ~= *= $= ^= =
+   */
+  static class AttrOperator implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      if (pos < len) {
+        char c0 = seq.charAt(pos);
+        pos++;
+        switch (c0) {
+          case '|':
+          case '~':
+          case '*':
+          case '$':
+          case '^':
+            return pos < len && seq.charAt(pos) == '=' ? pos + 1 : FAIL;
+          case '=':
+            return pos;
+        }
+      }
+      return FAIL;
+    }
+
   }
 
   /**

@@ -58,6 +58,52 @@ public class PatternBenchmark {
     blackhole.consume(state.matches(state.benchAlpha.recognizer, ALPHA_FAIL, 3));
   }
 
+  private static final String ATTR_KEY_OK = "___foo\\tbar";
+  private static final String ATTR_KEY_FAIL = "___foo\\tbar!";
+
+  @Benchmark
+  public void regexAttributeKeyOk(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchAttributeKey.regex, ATTR_KEY_OK, 3));
+  }
+
+  @Benchmark
+  public void regexAttributeKeyFail(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchAttributeKey.regex, ATTR_KEY_FAIL, 3));
+  }
+
+  @Benchmark
+  public void recognizerAttributeKeyOk(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchAttributeKey.recognizer, ATTR_KEY_OK, 3));
+  }
+
+  @Benchmark
+  public void recognizerAttributeKeyFail(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchAttributeKey.recognizer, ATTR_KEY_FAIL, 3));
+  }
+
+  private static final String ATTR_OP_OK = "___^=";
+  private static final String ATTR_OP_FAIL = "___^!";
+
+  @Benchmark
+  public void regexAttributeOpOk(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchAttributeOp.regex, ATTR_OP_OK, 3));
+  }
+
+  @Benchmark
+  public void regexAttributeOpFail(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchAttributeOp.regex, ATTR_OP_FAIL, 3));
+  }
+
+  @Benchmark
+  public void recognizerAttributeOpOk(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchAttributeOp.recognizer, ATTR_OP_OK, 3));
+  }
+
+  @Benchmark
+  public void recognizerAttributeOpFail(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchAttributeOp.recognizer, ATTR_OP_FAIL, 3));
+  }
+
   private static final String LITERAL_OK = "___foobarfoobarfoobarfoobarfoobar";
   private static final String LITERAL_FAIL = "___xyz";
 
@@ -273,6 +319,16 @@ public class PatternBenchmark {
         Patterns.ALPHA_START
     );
 
+    public final BenchCase benchAttributeKey = benchCase(
+        "([\\w-]|\\\\.)+",
+        Patterns.ATTRIBUTE_KEY
+    );
+
+    public final BenchCase benchAttributeOp = benchCase(
+        "[|~*$^]?=",
+        Patterns.ATTRIBUTE_OP
+    );
+
     public final BenchCase benchDimUnit = benchCase(
         "\\d+(\\.\\d+)?(" + Unit.REGEX + ")",
         sequence(decimal(), units())
@@ -317,7 +373,12 @@ public class PatternBenchmark {
         );
 
     public boolean matches(Matcher matcher, String str, int pos) {
-      return matcher.reset(str).region(pos, str.length()).lookingAt();
+      int len = str.length();
+      matcher.reset(str).region(pos, len);
+      if (matcher.lookingAt()) {
+        return matcher.end() == len;
+      }
+      return false;
     }
 
     public boolean matches(Recognizer recognizer, String str, int pos) {
@@ -343,6 +404,11 @@ public class PatternBenchmark {
     }
   }
 
+//  public static void main(String[] args) {
+//    BenchmarkState state = new BenchmarkState();
+//    boolean flag;
+//  }
+
   /* Sanity check each set of tests before adding to benchmark.
    *
   public static void main(String[] args) {
@@ -356,6 +422,24 @@ public class PatternBenchmark {
     flag = state.matches(state.benchAlpha.recognizer, ALPHA_OK, 3);
     istrue(flag);
     flag = state.matches(state.benchAlpha.recognizer, ALPHA_FAIL, 3);
+    isfalse(flag);
+
+    flag = state.matches(state.benchAttributeKey.regex, ATTR_KEY_OK, 3);
+    istrue(flag);
+    flag = state.matches(state.benchAttributeKey.regex, ATTR_KEY_FAIL, 3);
+    isfalse(flag);
+    flag = state.matches(state.benchAttributeKey.recognizer, ATTR_KEY_OK, 3);
+    istrue(flag);
+    flag = state.matches(state.benchAttributeKey.recognizer, ATTR_KEY_FAIL, 3);
+    isfalse(flag);
+
+    flag = state.matches(state.benchAttributeOp.regex, ATTR_OP_OK, 3);
+    istrue(flag);
+    flag = state.matches(state.benchAttributeOp.regex, ATTR_OP_FAIL, 3);
+    isfalse(flag);
+    flag = state.matches(state.benchAttributeOp.recognizer, ATTR_OP_OK, 3);
+    istrue(flag);
+    flag = state.matches(state.benchAttributeOp.recognizer, ATTR_OP_FAIL, 3);
     isfalse(flag);
 
     flag = state.matches(state.benchHexcolor.regex, HEXCOLOR_OK, 3);
@@ -430,17 +514,17 @@ public class PatternBenchmark {
     flag = state.matches(state.benchPercent.recognizer, PERCENT_FAIL, 3);
     isfalse(flag);
   }
-
-  private static void istrue(boolean flag) {
-    if (!flag) {
-      throw new RuntimeException("Expected true");
-    }
-  }
-
-  private static void isfalse(boolean flag) {
-    if (flag) {
-      throw new RuntimeException("Expected false");
-    }
-  }
   */
+
+//  private static void istrue(boolean flag) {
+//    if (!flag) {
+//      throw new RuntimeException("Expected true");
+//    }
+//  }
+//
+//  private static void isfalse(boolean flag) {
+//    if (flag) {
+//      throw new RuntimeException("Expected false");
+//    }
+//  }
 }

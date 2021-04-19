@@ -34,8 +34,6 @@ import com.squarespace.less.model.Node;
  */
 public class LessStream extends Stream {
 
-  private final Matcher matcherAttributeKey;
-  private final Matcher matcherAttributeOp;
   private final Matcher matcherCallName;
   private final Matcher matcherMixinName;
 
@@ -58,8 +56,6 @@ public class LessStream extends Stream {
     this.rootPath = rootPath;
     this.fileName = fileName;
 
-    this.matcherAttributeKey = Patterns.ATTRIBUTE_KEY.matcher(raw);
-    this.matcherAttributeOp = Patterns.ATTRIBUTE_OP.matcher(raw);
     this.matcherCallName = Patterns.CALL_NAME.matcher(raw);
     this.matcherMixinName = Patterns.MIXIN_NAME.matcher(raw);
   }
@@ -128,11 +124,11 @@ public class LessStream extends Stream {
   }
 
   public boolean matchAttributeKey() {
-    return finish(match(matcherAttributeKey));
+    return finish(match(Patterns.ATTRIBUTE_KEY));
   }
 
   public boolean matchAttributeOp() {
-    return finish(match(matcherAttributeOp));
+    return finish(match(Patterns.ATTRIBUTE_OP));
   }
 
   public boolean matchBoolOperator() {
