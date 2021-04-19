@@ -66,6 +66,8 @@ public class RuleTest extends LessTestBase {
     h.parseEquals("font:italic bold 12px/30px Georgia, serif", rule(prop("font"), expnlist(
         expn(kwd("italic"), kwd("bold"), shorthand(dim(12, PX), dim(30, PX)), kwd("Georgia")), kwd("serif"))));
 
+    h.parseFails("@foo: foo: foo: 123   ;", SyntaxErrorType.INCOMPLETE_PARSE);
+
     h = new LessHarness(Parselets.STYLESHEET);
 
     Stylesheet exp = stylesheet();

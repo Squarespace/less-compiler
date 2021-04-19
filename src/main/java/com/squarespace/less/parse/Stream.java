@@ -52,12 +52,12 @@ public class Stream {
     return charOffset;
   }
 
-  protected void dump() {
-    char ch = (index >= length) ? Chars.EOF : raw.charAt(index);
-    String esc = StringEscapeUtils.escapeJava(ch + "");
-    System.out.printf("Stream: index=%d len=%d line=%d char=%d ch=\"%s\"\n",
-          index, length, lineOffset, charOffset, esc);
-  }
+//  protected void dump() {
+//    char ch = (index >= length) ? Chars.EOF : raw.charAt(index);
+//    String esc = StringEscapeUtils.escapeJava(ch + "");
+//    System.out.printf("Stream: index=%d len=%d line=%d char=%d ch=\"%s\"\n",
+//          index, length, lineOffset, charOffset, esc);
+//  }
 
   public String raw() {
     return raw;
@@ -261,13 +261,13 @@ public class Stream {
   /**
    * Useful for debugging the parser.
    */
-  @SuppressWarnings("unused")
-  private void stack() {
-    StackTraceElement[] elems = Thread.currentThread().getStackTrace();
-    for (int i = 1; i < 5; i++) {
-      System.out.println(elems[i].getLineNumber() + " " + elems[i].getFileName() + " " + elems[i].getMethodName());
-    }
-    System.out.println();
-  }
+//  @SuppressWarnings("unused")
+//  private void stack() {
+//    StackTraceElement[] elems = Thread.currentThread().getStackTrace();
+//    for (int i = 1; i < 5; i++) {
+//      System.out.println(elems[i].getLineNumber() + " " + elems[i].getFileName() + " " + elems[i].getMethodName());
+//    }
+//    System.out.println();
+//  }
 
 }
