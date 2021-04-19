@@ -168,7 +168,7 @@ public class DirectiveParselet implements Parselet {
     StringBuilder buf = new StringBuilder();
     stm.skipWs();
     char ch = stm.peek();
-    while (ch != Chars.NULL && ch != Chars.LEFT_CURLY_BRACKET && ch != Chars.LEFT_SQUARE_BRACKET) {
+    while (ch != Chars.EOF && ch != Chars.LEFT_CURLY_BRACKET) {
       buf.append(ch);
       stm.seek1();
       ch = stm.peek();

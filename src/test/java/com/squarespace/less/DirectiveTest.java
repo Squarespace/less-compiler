@@ -41,5 +41,9 @@ public class DirectiveTest extends LessTestBase {
     h.parseEquals("@namespace foo;", dir("@namespace", kwd("foo")));
     h.parseEquals("@-a foo;", dir("@-a", kwd("foo")));
     h.parseEquals("@--a foo;", dir("@--a", kwd("foo")));
+    h.parseEquals("@-x-document foo {}", dir("@-x-document foo", block()));
+    h.parseEquals("@-x-document url-prefix(\"github.com\") {}", dir("@-x-document url-prefix(\"github.com\")", block()));
+
+    h.parseFails("@-x-document u", SyntaxErrorType.INCOMPLETE_PARSE);
   }
 }
