@@ -24,6 +24,7 @@ import static com.squarespace.less.core.Chars.MINUS_SIGN;
 import static com.squarespace.less.core.Chars.PERIOD;
 import static com.squarespace.less.core.Chars.RIGHT_PARENTHESIS;
 import static com.squarespace.less.core.Chars.SLASH;
+import static com.squarespace.less.match.Recognizers.anon;
 import static com.squarespace.less.match.Recognizers.characters;
 import static com.squarespace.less.match.Recognizers.digits;
 import static com.squarespace.less.match.Recognizers.literal;
@@ -44,7 +45,6 @@ public class Patterns {
 
   // Common
 
-  private static final String _HEXWILD = "[A-Fa-f0-9?]";
 
   // Regular expressions.
 
@@ -53,25 +53,26 @@ public class Patterns {
 
   public static final Recognizer AND = literal("and");
 
-  public static final Pattern ANON_RULE_VALUE = pattern("(?:[^;@+/'\"*`({}-]*);");
+  // REGEX: "(?:[^;@+/'\"*`({}-]*);"
+  public static final Recognizer ANON_RULE_VALUE = anon();
 
   public static final Pattern ATTRIBUTE_KEY = pattern("([\\w-]|\\\\.)+");
 
   public static final Pattern ATTRIBUTE_OP = pattern("[|~*$^]?=");
 
-  public static final Pattern BOOL_OPERATOR = pattern("<>|=[<>]*|[<>]=*|!=");
+  // REGEX: "<>|=[<>]*|[<>]=*|!="
+  public static final Recognizer BOOL_OPERATOR = Recognizers.boolOperator();
 
   public static final Pattern CALL_NAME = pattern("([\\w-_]+|%|progid:[\\w\\.]+)\\(");
 
   public static final Recognizer DIGITS = Recognizers.digits();
 
-//  public static final Pattern DIMENSION_UNIT = pattern(Unit.REGEX, true);
-
   public static final Recognizer DIMENSION_UNIT = Recognizers.units();
 
   public static final Recognizer DIMENSION_VALUE = Recognizers.dimension();
 
-  public static final Pattern DIRECTIVE = pattern("@[a-z-]+");
+  // REGEX: "@[a-z-]+"
+  public static final Recognizer DIRECTIVE = Recognizers.directive();
 
   public static final Recognizer ELEMENT0 =
       sequence(
@@ -89,12 +90,14 @@ public class Patterns {
   public static final Recognizer HEXCOLOR = Recognizers.hexcolor();
 
   // TODO: less allows identifiers starting with a digit, perhaps we should restrict it to [a-zA-Z][\\w-]+
-  public static final Pattern IDENTIFIER = pattern("[\\w][\\w-]*", true);
+  // REGEX: "[\\w][\\w-]*"  (ignore case)
+  public static final Recognizer IDENTIFIER = Recognizers.identifier();
 
   // REGEX: "! *important"
-  public static final Recognizer IMPORTANT = sequence(literal("!"), zeroOrMore(literal(" ")), literal("important"));
+  public static final Recognizer IMPORTANT = sequence(literal("!"), zeroOrMore(characters(' ')), literal("important"));
 
-  public static final Pattern KEYWORD = pattern("[_A-Za-z-][\\w-]*");
+  // REGEX: "[_A-Za-z-][\\w-]*"
+  public static final Recognizer KEYWORD = Recognizers.keyword();
 
   public static final Pattern MIXIN_NAME = pattern("[#.](?:[\\w-]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+");
 
@@ -104,13 +107,17 @@ public class Patterns {
 
   public static final Pattern OPERATOR = pattern("\\+|\\-|\\*|\\/");
 
-  public static final Pattern PROPERTY = pattern("\\*?-?[_a-z0-9-]+", false);
+  // REGEX: "\\*?-?[_a-z0-9-]+"
+  public static final Recognizer PROPERTY = Recognizers.property();
 
   public static final Recognizer RATIO = sequence(digits(), literal("/"), digits());
 
-  public static final Pattern SHORTHAND = pattern("[@\\w.%-]+" + "\\/" + "[@\\w.-]+");
+  // REGEX: "[@\\w.%-]+" + "\\/" + "[@\\w.-]+"
+  public static final Recognizer SHORTHAND = Recognizers.shorthand();
 
-  public static final Pattern UNICODE_DESCRIPTOR = pattern("U\\+" + _HEXWILD + "+(\\-" + _HEXWILD + "+)?");
+//  private static final String _HEXWILD = "[A-Fa-f0-9?]";
+//  public static final Pattern UNICODE_DESCRIPTOR = pattern("U\\+" + _HEXWILD + "+(\\-" + _HEXWILD + "+)?");
+  public static final Recognizer UNICODE_DESCRIPTOR = Recognizers.unicode();
 
   // REGEX: "url\\s*\\("
   public static final Recognizer URLSTART = sequence(literal("url", true), zeroOrMore(whitespace()), literal("("));

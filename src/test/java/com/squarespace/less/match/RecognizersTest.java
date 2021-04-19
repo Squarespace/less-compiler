@@ -1,6 +1,7 @@
 package com.squarespace.less.match;
 
 import static com.squarespace.less.match.Recognizers.FAIL;
+import static com.squarespace.less.match.Recognizers.anon;
 import static com.squarespace.less.match.Recognizers.any;
 import static com.squarespace.less.match.Recognizers.cardinality;
 import static com.squarespace.less.match.Recognizers.charRange;
@@ -46,6 +47,14 @@ public class RecognizersTest {
 
     assertEquals(match(pattern, "xy"), FAIL);
     assertEquals(match(pattern, "xy_"), FAIL);
+  }
+
+  @Test
+  public void testAnon() {
+    Recognizer pattern = anon();
+
+    assertEquals(match(pattern, "foo;"), 4);
+    assertEquals(match(pattern, "foo';"), -1);
   }
 
   @Test
@@ -210,6 +219,22 @@ public class RecognizersTest {
     assertEquals(match(pattern, "1234"), 4);
 
     assertEquals(match(pattern, "a1234"), FAIL);
+  }
+
+  @Test
+  public void testDirective() {
+
+    Recognizer pattern = Recognizers.directive();
+
+    assertEquals(match(pattern, "@font-face"), 10);
+    assertEquals(match(pattern, "@-webkit-keyframes"), 18);
+    assertEquals(match(pattern, "@-webkit-keyframes##"), 18);
+  }
+
+  @Test
+  public void testIdentifier() {
+    Recognizer pattern = Recognizers.identifier();
+
   }
 
   @Test

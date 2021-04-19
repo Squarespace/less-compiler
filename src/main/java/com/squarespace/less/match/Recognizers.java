@@ -35,6 +35,14 @@ public class Recognizers {
     return ANY;
   }
 
+  public static Recognizer anon() {
+    return new Anon();
+  }
+
+  public static Recognizer boolOperator() {
+    return new BoolOperator();
+  }
+
   public static Recognizer cardinality(Recognizer pattern, int minimum, int maximum) {
     return new Cardinality(pattern, minimum, maximum);
   }
@@ -71,12 +79,26 @@ public class Recognizers {
     return new Dimension();
   }
 
+  public static Recognizer directive() {
+    return sequence(characters('@'), oneOrMore(charClass(CharClass.DIRECTIVE, CLASSIFIER)));
+  }
+
   public static Recognizer hexdigit() {
     return charClass(CharClass.HEXDIGIT, CLASSIFIER);
   }
 
   public static Recognizer hexcolor() {
     return sequence(literal("#"), new LengthChoice(hexdigit(), 3, 6));
+  }
+
+  public static Recognizer identifier() {
+    return sequence(charClass(CharClass.IDENTIFIER_START, CLASSIFIER),
+        zeroOrMore(charClass(CharClass.IDENTIFIER, CLASSIFIER)));
+  }
+
+  public static Recognizer keyword() {
+    return sequence(charClass(CharClass.KEYWORD_START, CLASSIFIER),
+        zeroOrMore(charClass(CharClass.KEYWORD, CLASSIFIER)));
   }
 
   public static Recognizer literal(String str) {
@@ -115,8 +137,24 @@ public class Recognizers {
     return notCharClass(CharClass.HEXDIGIT, CLASSIFIER);
   }
 
+  public static Recognizer property() {
+    return sequence(
+        zeroOrOne(characters('*')),
+        zeroOrOne(characters('-')),
+        oneOrMore(charClass(CharClass.PROPERTY, CLASSIFIER))
+        );
+  }
+
   public static Recognizer sequence(Recognizer... patterns) {
     return new Sequence(patterns);
+  }
+
+  public static Recognizer shorthand() {
+    return sequence(
+      oneOrMore(charClass(CharClass.SHORTHAND, CLASSIFIER)),
+      characters('/'),
+      oneOrMore(charClass(CharClass.SHORTHAND, CLASSIFIER))
+    );
   }
 
   public static Recognizer units() {
@@ -133,6 +171,15 @@ public class Recognizers {
 
   public static Recognizer notWhitespace() {
     return NOT_WHITESPACE;
+  }
+
+  public static Recognizer unicode() {
+    Recognizer hexwild = oneOrMore(charClass(CharClass.HEXWILD, CLASSIFIER));
+    return sequence(
+        literal("U+"),
+        hexwild,
+        zeroOrOne(
+            sequence(characters('-'), hexwild)));
   }
 
 //  public static Recognizer word() {
@@ -160,6 +207,85 @@ public class Recognizers {
     @Override
     public int match(CharSequence seq, int pos, int len) {
       return (pos < len) ? pos + 1 : FAIL;
+    }
+
+  }
+
+  /**
+   * Matches an anonymous rule value. REGEX: "(?:[^;@+/'\"*`({}-]*);"
+   */
+  static class Anon implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      while (pos < len) {
+        char ch = seq.charAt(pos);
+        pos++;
+        switch (ch) {
+          case ';':
+            return pos;
+          case '@':
+          case '+':
+          case '/':
+          case '\'':
+          case '"':
+          case '*':
+          case '`':
+          case '(':
+          case '{':
+          case '}':
+          case '-':
+            return FAIL;
+        }
+      }
+      return FAIL;
+    }
+  }
+
+  /**
+   * Matches a boolean operator. REGEX: "<>|=[<>]*|[<>]=*|!="
+   *
+   * Operators:
+   *
+   *   <>
+   *   <=
+   *   <
+
+   *   >=
+   *   >
+   *
+   *   =<
+   *   =>
+   *   =
+   *
+   *   !=
+   */
+  static class BoolOperator implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      if (pos < len) {
+        char c0 = seq.charAt(pos);
+        char c1 = '\0';
+        pos++;
+        if (pos < len) {
+          c1 = seq.charAt(pos);
+        }
+        switch (c0) {
+          case '<':
+            return c1 == '>' || c1 == '=' ? pos + 1 : pos;
+
+          case '>':
+            return c1 == '=' ? pos + 1 : pos;
+
+          case '=':
+            return c1 == '<' || c1 == '>' ? pos + 1 : pos;
+
+          case '!':
+            return c1 == '=' ? pos + 1 : FAIL;
+        }
+      }
+      return FAIL;
     }
 
   }

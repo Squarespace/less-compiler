@@ -16,8 +16,6 @@
 
 package com.squarespace.less.parse;
 
-import static com.squarespace.less.core.CharClass.CLASSIFIER;
-
 import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.RGBColor;
@@ -27,10 +25,9 @@ public class KeywordParselet implements Parselet {
 
   @Override
   public Node parse(LessStream stm) {
-    if (!CLASSIFIER.keywordStart(stm.peek()) || !stm.matchKeyword()) {
+    if (!stm.matchKeyword()) {
       return null;
     }
-
     String token = stm.token();
     RGBColor color = RGBColor.fromName(token);
     if (color != null) {

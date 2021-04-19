@@ -34,21 +34,13 @@ import com.squarespace.less.model.Node;
  */
 public class LessStream extends Stream {
 
-  private final Matcher matcherAnonRuleValue;
   private final Matcher matcherAttributeKey;
   private final Matcher matcherAttributeOp;
-  private final Matcher matcherBoolOperator;
   private final Matcher matcherCallName;
-  private final Matcher matcherDirective;
   private final Matcher matcherElement1;
   private final Matcher matcherElement2;
   private final Matcher matcherElement3;
-  private final Matcher matcherIdentifier;
-  private final Matcher matcherKeyword;
   private final Matcher matcherMixinName;
-  private final Matcher matcherProperty;
-  private final Matcher matcherShorthand;
-  private final Matcher matcherUnicodeRange;
   private final LessContext context;
   private final Path rootPath;
   private final Path fileName;
@@ -67,21 +59,13 @@ public class LessStream extends Stream {
     this.context = ctx;
     this.rootPath = rootPath;
     this.fileName = fileName;
-    this.matcherAnonRuleValue = Patterns.ANON_RULE_VALUE.matcher(raw);
     this.matcherAttributeKey = Patterns.ATTRIBUTE_KEY.matcher(raw);
     this.matcherAttributeOp = Patterns.ATTRIBUTE_OP.matcher(raw);
-    this.matcherBoolOperator = Patterns.BOOL_OPERATOR.matcher(raw);
     this.matcherCallName = Patterns.CALL_NAME.matcher(raw);
-    this.matcherDirective = Patterns.DIRECTIVE.matcher(raw);
     this.matcherElement1 = Patterns.ELEMENT1.matcher(raw);
     this.matcherElement2 = Patterns.ELEMENT2.matcher(raw);
     this.matcherElement3 = Patterns.ELEMENT3.matcher(raw);
-    this.matcherIdentifier = Patterns.IDENTIFIER.matcher(raw);
-    this.matcherKeyword = Patterns.KEYWORD.matcher(raw);
     this.matcherMixinName = Patterns.MIXIN_NAME.matcher(raw);
-    this.matcherProperty = Patterns.PROPERTY.matcher(raw);
-    this.matcherShorthand = Patterns.SHORTHAND.matcher(raw);
-    this.matcherUnicodeRange = Patterns.UNICODE_DESCRIPTOR.matcher(raw);
   }
 
   public LessException parseError(LessException exc) {
@@ -138,7 +122,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchAnonRuleValue() {
-    if (!match(matcherAnonRuleValue)) {
+    if (!match(Patterns.ANON_RULE_VALUE)) {
       return false;
     }
     matchEnd--;
@@ -156,7 +140,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchBoolOperator() {
-    return finish(match(matcherBoolOperator));
+    return finish(match(Patterns.BOOL_OPERATOR));
   }
 
   public boolean matchCallName() {
@@ -182,7 +166,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchDirective() {
-    return finish(match(matcherDirective));
+    return finish(match(Patterns.DIRECTIVE));
   }
 
   public boolean matchElement0() {
@@ -206,7 +190,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchIdentifier() {
-    return finish(match(matcherIdentifier));
+    return finish(match(Patterns.IDENTIFIER));
   }
 
   public boolean matchImportant() {
@@ -214,7 +198,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchKeyword() {
-    return finish(match(matcherKeyword));
+    return finish(match(Patterns.KEYWORD));
   }
 
   public boolean matchMixinName() {
@@ -230,7 +214,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchProperty() {
-    return finish(match(matcherProperty));
+    return finish(match(Patterns.PROPERTY));
   }
 
   public boolean matchRatio() {
@@ -238,7 +222,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchUnicodeRange() {
-    return finish(match(matcherUnicodeRange));
+    return finish(match(Patterns.UNICODE_DESCRIPTOR));
   }
 
   public boolean matchUrlStart() {
@@ -254,12 +238,17 @@ public class LessStream extends Stream {
   }
 
   public boolean peekShorthand() {
-    return peek(matcherShorthand);
+    return peek(Patterns.SHORTHAND);
   }
 
-  private boolean peek(Matcher matcher) {
-    matcher.region(index, length);
-    return matcher.lookingAt();
+//  private boolean peek(Matcher matcher) {
+//    matcher.region(index, length);
+//    return matcher.lookingAt();
+//  }
+
+  private boolean peek(Recognizer r) {
+    int i = r.match(this.raw, index, length);
+    return i != Recognizers.FAIL;
   }
 
   private boolean match(Recognizer r) {

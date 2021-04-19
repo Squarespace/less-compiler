@@ -59,6 +59,21 @@ public class CharClass implements CharClassifier {
 
   public static final int HEXDIGIT = 0x8000;
 
+  public static final int DIRECTIVE = 0x10000;
+
+  public static final int IDENTIFIER_START = 0x20000;
+
+  public static final int IDENTIFIER = 0x40000;
+
+  public static final int PROPERTY = 0x80000;
+
+  public static final int SHORTHAND = 0x100000;
+
+  public static final int HEXWILD = 0x200000;
+
+  // Alias
+  public static final int KEYWORD = IDENTIFIER;
+
   /**
    * The characters we care about all live below this limit.
    */
@@ -180,43 +195,80 @@ public class CharClass implements CharClassifier {
         return NONPRINTABLE;
 
       case '!':
-        return ENCODE_URI | ENCODE_URI_COMPONENT;
+        return ENCODE_URI
+            | ENCODE_URI_COMPONENT
+            ;
 
       case '#':
-        return ENCODE_URI | ESCAPE;
+        return ENCODE_URI
+            | ESCAPE
+            ;
 
       case '$':
         return ENCODE_URI;
 
       case '%':
-        return CALL_START;
+        return CALL_START
+            | SHORTHAND
+            ;
 
       case '&':
         return ENCODE_URI;
 
       case '\'':
-        return ENCODE_URI | ENCODE_URI_COMPONENT;
+        return ENCODE_URI
+            | ENCODE_URI_COMPONENT
+            ;
 
       case '(':
-        return ENCODE_URI | ENCODE_URI_COMPONENT | ESCAPE;
+        return ENCODE_URI
+            | ENCODE_URI_COMPONENT
+            | ESCAPE
+            ;
 
       case ')':
-        return SELECTOR_END | ENCODE_URI | ENCODE_URI_COMPONENT | ESCAPE;
+        return SELECTOR_END
+            | ENCODE_URI
+            | ENCODE_URI_COMPONENT
+            | ESCAPE
+            ;
 
       case '*':
-        return PROPERTY_START | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return PROPERTY_START
+            | ENCODE_URI
+            | ENCODE_URI_COMPONENT
+            ;
 
       case '+':
-        return DIMENSION_START | COMBINATOR | ENCODE_URI;
+        return DIMENSION_START
+            | COMBINATOR
+            | ENCODE_URI
+            ;
 
       case ',':
-        return SELECTOR_END | ENCODE_URI;
+        return SELECTOR_END
+            | ENCODE_URI
+            ;
 
       case '-':
-        return CALL_START | DIMENSION_START | KEYWORD_START | PROPERTY_START | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return CALL_START
+            | DIMENSION_START
+            | DIRECTIVE
+            | IDENTIFIER
+            | KEYWORD_START
+            | PROPERTY
+            | PROPERTY_START
+            | ENCODE_URI
+            | ENCODE_URI_COMPONENT
+            | SHORTHAND
+            ;
 
       case '.':
-        return DIMENSION_START | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return DIMENSION_START
+            | ENCODE_URI
+            | ENCODE_URI_COMPONENT
+            | SHORTHAND
+            ;
 
       case '/':
         return ENCODE_URI;
@@ -231,25 +283,46 @@ public class CharClass implements CharClassifier {
       case '7':
       case '8':
       case '9':
-        return DIGIT | HEXDIGIT | DIMENSION_START | PROPERTY_START;
+        return DIGIT
+            | PROPERTY
+            | IDENTIFIER
+            | IDENTIFIER_START
+            | HEXDIGIT
+            | HEXWILD
+            | DIMENSION_START
+            | PROPERTY_START
+            | SHORTHAND
+            ;
 
       case ':':
-        return ENCODE_URI | ESCAPE;
+        return ENCODE_URI
+            | ESCAPE
+            ;
 
       case ';':
-        return SELECTOR_END | ENCODE_URI | ESCAPE;
+        return SELECTOR_END
+            | ENCODE_URI
+            | ESCAPE
+            ;
 
       case '=':
-        return ENCODE_URI | ESCAPE;
+        return ENCODE_URI
+            | ESCAPE
+            ;
 
       case '>':
         return COMBINATOR;
 
       case '?':
-        return ENCODE_URI;
+        return ENCODE_URI
+            | HEXWILD
+            ;
 
       case '@':
-        return VARIABLE_START | ENCODE_URI;
+        return SHORTHAND
+            | VARIABLE_START
+            | ENCODE_URI;
+
 
       case 'A':
       case 'B':
@@ -257,7 +330,15 @@ public class CharClass implements CharClassifier {
       case 'D':
       case 'E':
       case 'F':
-        return HEXDIGIT | UPPERCASE | CALL_START | KEYWORD_START;
+        return IDENTIFIER
+            | IDENTIFIER_START
+            | HEXDIGIT
+            | HEXWILD
+            | UPPERCASE
+            | CALL_START
+            | KEYWORD_START
+            | SHORTHAND
+            ;
 
       case 'G':
       case 'H':
@@ -279,10 +360,25 @@ public class CharClass implements CharClassifier {
       case 'X':
       case 'Y':
       case 'Z':
-        return UPPERCASE | CALL_START | KEYWORD_START;
+        return UPPERCASE
+            | IDENTIFIER
+            | IDENTIFIER_START
+            | CALL_START
+            | KEYWORD_START
+            | SHORTHAND
+            ;
 
       case '_':
-        return CALL_START | KEYWORD_START | PROPERTY_START | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return CALL_START
+            | DIRECTIVE
+            | IDENTIFIER
+            | IDENTIFIER_START
+            | KEYWORD_START
+            | PROPERTY
+            | PROPERTY_START
+            | ENCODE_URI
+            | ENCODE_URI_COMPONENT
+            ;
 
       case 'a':
       case 'b':
@@ -290,7 +386,18 @@ public class CharClass implements CharClassifier {
       case 'd':
       case 'e':
       case 'f':
-        return HEXDIGIT | LOWERCASE | CALL_START | KEYWORD_START | PROPERTY_START;
+        return DIRECTIVE
+            | IDENTIFIER
+            | IDENTIFIER_START
+            | HEXDIGIT
+            | HEXWILD
+            | LOWERCASE
+            | CALL_START
+            | KEYWORD_START
+            | PROPERTY
+            | PROPERTY_START
+            | SHORTHAND
+            ;
 
       case 'g':
       case 'h':
@@ -312,7 +419,16 @@ public class CharClass implements CharClassifier {
       case 'x':
       case 'y':
       case 'z':
-        return LOWERCASE | CALL_START | KEYWORD_START | PROPERTY_START;
+        return DIRECTIVE
+            | IDENTIFIER
+            | IDENTIFIER_START
+            | LOWERCASE
+            | CALL_START
+            | KEYWORD_START
+            | PROPERTY
+            | PROPERTY_START
+            | SHORTHAND
+            ;
 
       case '{':
         return SELECTOR_END;
@@ -324,7 +440,10 @@ public class CharClass implements CharClassifier {
         return SELECTOR_END;
 
       case '~':
-        return COMBINATOR | ENCODE_URI | ENCODE_URI_COMPONENT;
+        return COMBINATOR
+            | ENCODE_URI
+            | ENCODE_URI_COMPONENT
+            ;
 
       default:
         break;
