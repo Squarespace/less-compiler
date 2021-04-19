@@ -5,16 +5,13 @@ import com.squarespace.less.core.CharClass;
 /**
  * Simple pattern recognizer state machines.
  *
- * Recognizers constructed by this class return the ending position of the
- * match, or FAIL for no match.
+ * Recognizers constructed by this class return the ending position of the match, or FAIL for no match.
  *
  * Faster than equivalent java.util.regex regular expressions due to lower overhead:
  *
- *  - recognizers are optimized for the patterns we care about
- *  - recognizers have fewer variables to update
- *  - no need for a separate java.util.regex.Matcher object
- *  - no region() or reset() calls required when matching against a
- *    different string or position.
+ * - recognizers are optimized for the patterns we care about - recognizers have fewer variables to update - no need for
+ * a separate java.util.regex.Matcher object - no region() or reset() calls required when matching against a different
+ * string or position.
  */
 public class Recognizers {
 
@@ -24,12 +21,17 @@ public class Recognizers {
   public static final int FAIL = -1;
 
   private static final Recognizer ANY = new Any();
+
   private static final Recognizer WHITESPACE = new Whitespace(false);
+
   private static final Recognizer NOT_WHITESPACE = new Whitespace(true);
+
   private static final CharClass CLASSIFIER = new CharClass();
+
   private static final Recognizer DIGITS = digits();
 
-  private Recognizers() { }
+  private Recognizers() {
+  }
 
   public static Recognizer any() {
     return ANY;
@@ -83,6 +85,31 @@ public class Recognizers {
     return sequence(characters('@'), oneOrMore(charClass(CharClass.DIRECTIVE, CLASSIFIER)));
   }
 
+  public static Recognizer element0() {
+    return sequence(digits(), zeroOrOne(sequence(characters('.'), digits())), characters('%'));
+  }
+
+  /**
+   * REGEX: "(?:[.#]?|:*)(?:[\\w-]|[^\\u0000-\\u009f]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+"
+   */
+  public static Recognizer element1() {
+    return new Element1();
+  }
+
+  /**
+   * REGEX: "\\([^)(@]+\\)"
+   */
+  public static Recognizer element2() {
+    return sequence(characters('('), oneOrMore(notCharacters(')', '(', '@')), characters(')'));
+  }
+
+  /**
+   * REGEX: "[\\.#](?=@)"
+   */
+  public static Recognizer element3() {
+    return sequence(characters('.', '#'), lookAhead(characters('@')));
+  }
+
   public static Recognizer hexdigit() {
     return charClass(CharClass.HEXDIGIT, CLASSIFIER);
   }
@@ -94,6 +121,10 @@ public class Recognizers {
   public static Recognizer identifier() {
     return sequence(charClass(CharClass.IDENTIFIER_START, CLASSIFIER),
         zeroOrMore(charClass(CharClass.IDENTIFIER, CLASSIFIER)));
+  }
+
+  public static Recognizer important() {
+    return new Important();
   }
 
   public static Recognizer keyword() {
@@ -138,11 +169,8 @@ public class Recognizers {
   }
 
   public static Recognizer property() {
-    return sequence(
-        zeroOrOne(characters('*')),
-        zeroOrOne(characters('-')),
-        oneOrMore(charClass(CharClass.PROPERTY, CLASSIFIER))
-        );
+    return sequence(zeroOrOne(characters('*')), zeroOrOne(characters('-')),
+        oneOrMore(charClass(CharClass.PROPERTY, CLASSIFIER)));
   }
 
   public static Recognizer sequence(Recognizer... patterns) {
@@ -150,11 +178,8 @@ public class Recognizers {
   }
 
   public static Recognizer shorthand() {
-    return sequence(
-      oneOrMore(charClass(CharClass.SHORTHAND, CLASSIFIER)),
-      characters('/'),
-      oneOrMore(charClass(CharClass.SHORTHAND, CLASSIFIER))
-    );
+    return sequence(oneOrMore(charClass(CharClass.SHORTHAND, CLASSIFIER)), characters('/'),
+        oneOrMore(charClass(CharClass.SHORTHAND, CLASSIFIER)));
   }
 
   public static Recognizer units() {
@@ -162,7 +187,7 @@ public class Recognizers {
   }
 
   public static Recognizer word() {
-    return oneOrMore(choice(charClass(CharClass.LOWERCASE | CharClass.UPPERCASE | CharClass.DIGIT, CharClass.CLASSIFIER), characters('_')));
+    return oneOrMore(charClass(CharClass.WORD, CLASSIFIER));
   }
 
   public static Recognizer whitespace() {
@@ -175,20 +200,16 @@ public class Recognizers {
 
   public static Recognizer unicode() {
     Recognizer hexwild = oneOrMore(charClass(CharClass.HEXWILD, CLASSIFIER));
-    return sequence(
-        literal("U+"),
-        hexwild,
-        zeroOrOne(
-            sequence(characters('-'), hexwild)));
+    return sequence(literal("U+"), hexwild, zeroOrOne(sequence(characters('-'), hexwild)));
   }
 
-//  public static Recognizer word() {
-//    return charClass(CharClass.LOWERCASE | CharClass.UPPERCASE | CharClass.DIGIT | CharClass.UNDERSCORE, CLASSIFIER);
-//  }
-//
-//  public static Recognizer worddash() {
-//    return charClass(LOWERCASE | UPPERCASE | DIGIT | UNDERSCORE | DASH, CLASSIFIER);
-//  }
+  // public static Recognizer word() {
+  // return charClass(CharClass.LOWERCASE | CharClass.UPPERCASE | CharClass.DIGIT | CharClass.UNDERSCORE, CLASSIFIER);
+  // }
+  //
+  // public static Recognizer worddash() {
+  // return charClass(LOWERCASE | UPPERCASE | DIGIT | UNDERSCORE | DASH, CLASSIFIER);
+  // }
 
   public static Recognizer zeroOrOne(Recognizer pattern) {
     return new QuestionMark(pattern);
@@ -247,18 +268,7 @@ public class Recognizers {
    *
    * Operators:
    *
-   *   <>
-   *   <=
-   *   <
-
-   *   >=
-   *   >
-   *
-   *   =<
-   *   =>
-   *   =
-   *
-   *   !=
+   * <> <= < >= > =< => = !=
    */
   static class BoolOperator implements Recognizer {
 
@@ -398,11 +408,9 @@ public class Recognizers {
 
   }
 
-
   /**
-   * Returns next position if the character is within the given range.
-   * Setting the invert flag, the match will succeed if the character is not
-   * within the given range.
+   * Returns next position if the character is within the given range. Setting the invert flag, the match will succeed
+   * if the character is not within the given range.
    */
   static class CharacterRange implements Recognizer {
 
@@ -460,9 +468,8 @@ public class Recognizers {
   }
 
   /**
-   * Optimized to match decimal with zero or more leading digits and
-   * one optional decimal point. Must have at least 1 digit to pass,
-   * regardless if decimal is leading or trailing.
+   * Optimized to match decimal with zero or more leading digits and one optional decimal point. Must have at least 1
+   * digit to pass, regardless if decimal is leading or trailing.
    */
   static class Decimal implements Recognizer {
 
@@ -491,22 +498,15 @@ public class Recognizers {
   }
 
   /**
-   * Special pattern to recognize a decimal number that can start
-   * with a bare '.' character.
+   * Special pattern to recognize a decimal number that can start with a bare '.' character.
    *
    * Examples of valid sequences are:
    *
-   *   1
-   *   3.4
-   *   -1.2
-   *   +.3
+   * 1 3.4 -1.2 +.3
    *
-   *  Invalid sequences:
+   * Invalid sequences:
    *
-   *    .x
-   *    1.x
-   *    --2
-   *    -+2
+   * .x 1.x --2 -+2
    */
   static class Dimension implements Recognizer {
 
@@ -538,12 +538,89 @@ public class Recognizers {
   }
 
   /**
-   * LengthChoice. Pattern can be one of several unique lengths.
-   * Lengths must be ordered from smallest to largest.
+   * Recognizers the element1 pattern of LESS.
+   */
+  static class Element1 implements Recognizer {
+
+    private static final Recognizer PFX1 = characters('.', '#');
+    private static final Recognizer PFX2 = oneOrMore(characters(':'));
+    private static final Recognizer ESC = choice(
+        sequence(cardinality(charClass(CharClass.HEXDIGIT, CLASSIFIER), 1, 6), zeroOrOne(characters(' '))),
+        notCharClass(CharClass.HEXDIGIT, CLASSIFIER));
+
+    private static final Recognizer WORD = oneOrMore(charClass(CharClass.IDENTIFIER, CharClass.CLASSIFIER));
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      int r = PFX1.match(seq, pos, len);
+      if (r == FAIL) {
+        r = PFX2.match(seq, pos, len);
+      }
+      if (r != FAIL) {
+        pos = r;
+      }
+
+      int save = pos;
+      while (pos < len) {
+        char c = seq.charAt(pos);
+        if (c >= '\u00a0') {
+          pos++;
+          continue;
+
+        } else if (c == '\\') {
+          pos++;
+          r = ESC.match(seq, pos, len);
+          if (r != FAIL) {
+            pos = r;
+            continue;
+          }
+          break;
+
+        } else {
+          r = WORD.match(seq, pos, len);
+          if (r != FAIL) {
+            pos = r;
+            continue;
+          }
+          break;
+        }
+
+      }
+
+      return pos > save ? pos : FAIL;
+    }
+
+  }
+
+  static class Important implements Recognizer {
+
+    private static final Recognizer IMPORTANT = literal("important");
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      if (pos < len) {
+        char c = seq.charAt(pos);
+        if (c != '!') {
+          return FAIL;
+        }
+        pos++;
+        while (pos < len && seq.charAt(pos) == ' ') {
+          pos++;
+        }
+        return IMPORTANT.match(seq, pos, len);
+      }
+      return FAIL;
+    }
+
+  }
+
+  /**
+   * LengthChoice. Pattern can be one of several unique lengths. Lengths must be ordered from smallest to largest.
    */
   static class LengthChoice implements Recognizer {
 
     private final int[] choices;
+
     private final Recognizer cardinality;
 
     LengthChoice(Recognizer pattern, int... choices) {
@@ -578,7 +655,9 @@ public class Recognizers {
   static class Literal implements Recognizer {
 
     private final String literal;
+
     private final int literalLength;
+
     private final boolean ignoreCase;
 
     Literal(String value) {
@@ -615,8 +694,7 @@ public class Recognizers {
   }
 
   /**
-   * Returns current position if the child matcher matches, and zero if
-   * the matcher fails.
+   * Returns current position if the child matcher matches, and zero if the matcher fails.
    */
   static class LookAhead implements Recognizer {
 
@@ -637,6 +715,7 @@ public class Recognizers {
    * One or more.
    */
   static class Plus extends Cardinality {
+
     Plus(Recognizer pattern) {
       super(pattern, 1, 0);
     }
@@ -646,6 +725,7 @@ public class Recognizers {
    * Zero or one.
    */
   static class QuestionMark extends Cardinality {
+
     QuestionMark(Recognizer pattern) {
       super(pattern, 0, 1);
     }
@@ -681,6 +761,7 @@ public class Recognizers {
    * Zero or more.
    */
   static class Star extends Cardinality {
+
     Star(Recognizer pattern) {
       super(pattern, 0, 0);
     }
@@ -691,61 +772,33 @@ public class Recognizers {
    */
   static class Unit implements Recognizer {
 
-    static final char[][] C_UNITS = new char[][] {
-      { 'h' },
-      { 'm' },
-    };
-    static final char[][] D_UNITS = new char[][] {
-      { 'p', 'p', 'x' },
-      { 'p', 'c', 'm' },
-      { 'p', 'i' },
-      { 'e', 'g' },
-    };
-    static final char[][] E_UNITS = new char[][] {
-      { 'x' },
-      { 'm' },
-    };
-    static final char[][] F_UNITS = new char[][] {
-      { 'r' },
-    };
-    static final char[][] G_UNITS = new char[][] {
-      { 'r', 'a', 'd' },
-    };
-    static final char[][] H_UNITS = new char[][] {
-      { 'z' },
-    };
-    static final char[][] I_UNITS = new char[][] {
-      { 'n' },
-    };
-    static final char[][] K_UNITS = new char[][] {
-      { 'h', 'z' },
-    };
-    static final char[][] M_UNITS = new char[][] {
-      { 's' },
-      { 'm' },
-    };
-    static final char[][] P_UNITS = new char[][] {
-      { 't' },
-      { 'c' },
-      { 'x' },
-    };
-    static final char[][] R_UNITS = new char[][] {
-      { 'e', 'm' },
-      { 'a', 'd' },
-    };
-    static final char[][] S_UNITS = new char[][] {
-      {  },
-    };
-    static final char[][] T_UNITS = new char[][] {
-      { 'u', 'r', 'n' },
-    };
-    static final char[][] V_UNITS = new char[][] {
-      { 'm', 'i', 'n' },
-      { 'm', 'a', 'x' },
-      { 'h' },
-      { 'w' },
-      { 'm' },
-    };
+    static final char[][] C_UNITS = new char[][] { { 'h' }, { 'm' }, };
+
+    static final char[][] D_UNITS = new char[][] { { 'p', 'p', 'x' }, { 'p', 'c', 'm' }, { 'p', 'i' }, { 'e', 'g' }, };
+
+    static final char[][] E_UNITS = new char[][] { { 'x' }, { 'm' }, };
+
+    static final char[][] F_UNITS = new char[][] { { 'r' }, };
+
+    static final char[][] G_UNITS = new char[][] { { 'r', 'a', 'd' }, };
+
+    static final char[][] H_UNITS = new char[][] { { 'z' }, };
+
+    static final char[][] I_UNITS = new char[][] { { 'n' }, };
+
+    static final char[][] K_UNITS = new char[][] { { 'h', 'z' }, };
+
+    static final char[][] M_UNITS = new char[][] { { 's' }, { 'm' }, };
+
+    static final char[][] P_UNITS = new char[][] { { 't' }, { 'c' }, { 'x' }, };
+
+    static final char[][] R_UNITS = new char[][] { { 'e', 'm' }, { 'a', 'd' }, };
+
+    static final char[][] S_UNITS = new char[][] { {}, };
+
+    static final char[][] T_UNITS = new char[][] { { 'u', 'r', 'n' }, };
+
+    static final char[][] V_UNITS = new char[][] { { 'm', 'i', 'n' }, { 'm', 'a', 'x' }, { 'h' }, { 'w' }, { 'm' }, };
 
     @Override
     public int match(CharSequence seq, int pos, int len) {
@@ -828,26 +881,16 @@ public class Recognizers {
 
   /**
    * CODE TO UPDATE THE UNITS TABLES ABOVE
-
-    UNITS = "px|%|em|pc|ex|in|deg|s|ms|pt|cm|mm|rad|grad|turn|fr|dpi|dpcm|dppx|rem|vw|vh|vmin|vmax|ch|hz|khz|vm"
-    from collections import defaultdict
-    r = sorted(set((u[0], u[1:]) for u in UNITS.split('|')))
-    p = None
-    d = defaultdict(set)
-    [d[c].add(ext) for c, ext in r if c != '%']
-    for c, exts in sorted(d.items()):
-        if c == '%':
-            continue
-        exts = sorted(exts, key=lambda e: -len(e))
-        print('static final char[][] %s_UNITS = new char[][] {' % c.upper())
-        for ext in exts:
-            print('  { ' + ', '.join("'%s'" % e for e in ext) + ' },')
-        print('};')
-
-    for c in sorted(d.keys()):
-        print("case '%s':\ncase '%s':" % (c, c.upper()))
-        print('  return _match(seq, pos, len, %s_UNITS);' % c.upper())
-
+   *
+   * UNITS = "px|%|em|pc|ex|in|deg|s|ms|pt|cm|mm|rad|grad|turn|fr|dpi|dpcm|dppx|rem|vw|vh|vmin|vmax|ch|hz|khz|vm" from
+   * collections import defaultdict r = sorted(set((u[0], u[1:]) for u in UNITS.split('|'))) p = None d =
+   * defaultdict(set) [d[c].add(ext) for c, ext in r if c != '%'] for c, exts in sorted(d.items()): if c == '%':
+   * continue exts = sorted(exts, key=lambda e: -len(e)) print('static final char[][] %s_UNITS = new char[][] {' %
+   * c.upper()) for ext in exts: print(' { ' + ', '.join("'%s'" % e for e in ext) + ' },') print('};')
+   *
+   * for c in sorted(d.keys()): print("case '%s':\ncase '%s':" % (c, c.upper())) print(' return _match(seq, pos, len,
+   * %s_UNITS);' % c.upper())
+   *
    */
 
   /**

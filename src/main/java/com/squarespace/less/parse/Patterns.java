@@ -25,13 +25,11 @@ import static com.squarespace.less.core.Chars.PERIOD;
 import static com.squarespace.less.core.Chars.RIGHT_PARENTHESIS;
 import static com.squarespace.less.core.Chars.SLASH;
 import static com.squarespace.less.match.Recognizers.anon;
-import static com.squarespace.less.match.Recognizers.characters;
 import static com.squarespace.less.match.Recognizers.digits;
 import static com.squarespace.less.match.Recognizers.literal;
 import static com.squarespace.less.match.Recognizers.sequence;
 import static com.squarespace.less.match.Recognizers.whitespace;
 import static com.squarespace.less.match.Recognizers.zeroOrMore;
-import static com.squarespace.less.match.Recognizers.zeroOrOne;
 
 import java.util.regex.Pattern;
 
@@ -74,18 +72,18 @@ public class Patterns {
   // REGEX: "@[a-z-]+"
   public static final Recognizer DIRECTIVE = Recognizers.directive();
 
-  public static final Recognizer ELEMENT0 =
-      sequence(
-          digits(),
-          zeroOrOne(sequence(characters('.'), digits())),
-          characters('%'));
+  public static final Recognizer ELEMENT0 = Recognizers.element0();
 
-  public static final Pattern ELEMENT1 = pattern("(?:[.#]?|:*)(?:[\\w-]|[^\\u0000-\\u009f]|"
-        + "\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+");
+//  public static final Pattern ELEMENT1 = pattern("(?:[.#]?|:*)(?:[\\w-]|[^\\u0000-\\u009f]|"
+//        + "\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+");
 
-  public static final Pattern ELEMENT2 = pattern("\\([^)(@]+\\)");
+  public static final Recognizer ELEMENT1 = Recognizers.element1();
 
-  public static final Pattern ELEMENT3 = pattern("[\\.#](?=@)");
+  // REGEX: "\\([^)(@]+\\)"
+  public static final Recognizer ELEMENT2 = Recognizers.element2();
+
+  // REGEX: "[\\.#](?=@)"
+  public static final Recognizer ELEMENT3 = Recognizers.element3();
 
   public static final Recognizer HEXCOLOR = Recognizers.hexcolor();
 
@@ -94,7 +92,7 @@ public class Patterns {
   public static final Recognizer IDENTIFIER = Recognizers.identifier();
 
   // REGEX: "! *important"
-  public static final Recognizer IMPORTANT = sequence(literal("!"), zeroOrMore(characters(' ')), literal("important"));
+  public static final Recognizer IMPORTANT = Recognizers.important();
 
   // REGEX: "[_A-Za-z-][\\w-]*"
   public static final Recognizer KEYWORD = Recognizers.keyword();
@@ -115,14 +113,14 @@ public class Patterns {
   // REGEX: "[@\\w.%-]+" + "\\/" + "[@\\w.-]+"
   public static final Recognizer SHORTHAND = Recognizers.shorthand();
 
-//  private static final String _HEXWILD = "[A-Fa-f0-9?]";
-//  public static final Pattern UNICODE_DESCRIPTOR = pattern("U\\+" + _HEXWILD + "+(\\-" + _HEXWILD + "+)?");
+  // _HEXWILD = "[A-Fa-f0-9?]";
+  // REGEX: "U\\+" + _HEXWILD + "+(\\-" + _HEXWILD + "+)?"
   public static final Recognizer UNICODE_DESCRIPTOR = Recognizers.unicode();
 
   // REGEX: "url\\s*\\("
   public static final Recognizer URLSTART = sequence(literal("url", true), zeroOrMore(whitespace()), literal("("));
 
-  public static final Pattern _URLEND_BARE = pattern("[^\\s)]+");
+//  public static final Pattern _URLEND_BARE = pattern("[^\\s)]+");
 
   public static final Recognizer WHEN = literal("when");
 

@@ -51,4 +51,12 @@ public class ElementTest extends LessTestBase {
     h.parseEquals(">@{foo}", varelem(CHILD, var("@foo", true)));
   }
 
+  @Test
+  public void testElement1() throws LessException {
+    LessHarness h = new LessHarness(Parselets.ELEMENT);
+
+    h.parseEquals(".mixin\\!tUp", element(DESC, ".mixin\\!tUp"));
+    h.parseEquals("::-webkit-search-decoration", element(DESC, "::-webkit-search-decoration"));
+  }
+
 }

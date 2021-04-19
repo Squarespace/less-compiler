@@ -37,10 +37,8 @@ public class LessStream extends Stream {
   private final Matcher matcherAttributeKey;
   private final Matcher matcherAttributeOp;
   private final Matcher matcherCallName;
-  private final Matcher matcherElement1;
-  private final Matcher matcherElement2;
-  private final Matcher matcherElement3;
   private final Matcher matcherMixinName;
+
   private final LessContext context;
   private final Path rootPath;
   private final Path fileName;
@@ -59,12 +57,10 @@ public class LessStream extends Stream {
     this.context = ctx;
     this.rootPath = rootPath;
     this.fileName = fileName;
+
     this.matcherAttributeKey = Patterns.ATTRIBUTE_KEY.matcher(raw);
     this.matcherAttributeOp = Patterns.ATTRIBUTE_OP.matcher(raw);
     this.matcherCallName = Patterns.CALL_NAME.matcher(raw);
-    this.matcherElement1 = Patterns.ELEMENT1.matcher(raw);
-    this.matcherElement2 = Patterns.ELEMENT2.matcher(raw);
-    this.matcherElement3 = Patterns.ELEMENT3.matcher(raw);
     this.matcherMixinName = Patterns.MIXIN_NAME.matcher(raw);
   }
 
@@ -153,9 +149,9 @@ public class LessStream extends Stream {
     return true;
   }
 
-  public boolean matchDigits() {
-    return finish(match(Patterns.DIGITS));
-  }
+//  public boolean matchDigits() {
+//    return finish(match(Patterns.DIGITS));
+//  }
 
   public boolean matchDimensionUnit() {
     return finish(match(Patterns.DIMENSION_UNIT));
@@ -174,15 +170,15 @@ public class LessStream extends Stream {
   }
 
   public boolean matchElement1() {
-    return finish(match(matcherElement1));
+    return finish(match(Patterns.ELEMENT1));
   }
 
   public boolean matchElement2() {
-    return finish(match(matcherElement2));
+    return finish(match(Patterns.ELEMENT2));
   }
 
   public boolean matchElement3() {
-    return finish(match(matcherElement3));
+    return finish(match(Patterns.ELEMENT3));
   }
 
   public boolean matchHexColor() {

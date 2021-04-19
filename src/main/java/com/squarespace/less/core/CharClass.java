@@ -63,13 +63,15 @@ public class CharClass implements CharClassifier {
 
   public static final int IDENTIFIER_START = 0x20000;
 
-  public static final int IDENTIFIER = 0x40000;
+  public static final int IDENTIFIER = 0x40000;   //[\w-]
 
   public static final int PROPERTY = 0x80000;
 
   public static final int SHORTHAND = 0x100000;
 
   public static final int HEXWILD = 0x200000;
+
+  public static final int WORD = 0x400000;
 
   // Alias
   public static final int KEYWORD = IDENTIFIER;
@@ -261,6 +263,7 @@ public class CharClass implements CharClassifier {
             | ENCODE_URI
             | ENCODE_URI_COMPONENT
             | SHORTHAND
+            | WORD
             ;
 
       case '.':
@@ -292,6 +295,7 @@ public class CharClass implements CharClassifier {
             | DIMENSION_START
             | PROPERTY_START
             | SHORTHAND
+            | WORD
             ;
 
       case ':':
@@ -338,6 +342,7 @@ public class CharClass implements CharClassifier {
             | CALL_START
             | KEYWORD_START
             | SHORTHAND
+            | WORD
             ;
 
       case 'G':
@@ -366,6 +371,7 @@ public class CharClass implements CharClassifier {
             | CALL_START
             | KEYWORD_START
             | SHORTHAND
+            | WORD
             ;
 
       case '_':
@@ -378,6 +384,7 @@ public class CharClass implements CharClassifier {
             | PROPERTY_START
             | ENCODE_URI
             | ENCODE_URI_COMPONENT
+            | WORD
             ;
 
       case 'a':
@@ -397,6 +404,7 @@ public class CharClass implements CharClassifier {
             | PROPERTY
             | PROPERTY_START
             | SHORTHAND
+            | WORD
             ;
 
       case 'g':
@@ -428,6 +436,7 @@ public class CharClass implements CharClassifier {
             | PROPERTY
             | PROPERTY_START
             | SHORTHAND
+            | WORD
             ;
 
       case '{':
