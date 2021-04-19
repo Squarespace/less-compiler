@@ -30,6 +30,10 @@ public class Recognizers {
 
   private static final Recognizer DIGITS = digits();
 
+  private static final Recognizer ESC = choice(
+      sequence(cardinality(charClass(CharClass.HEXDIGIT, CLASSIFIER), 1, 6), zeroOrOne(characters(' '))),
+      notCharClass(CharClass.HEXDIGIT, CLASSIFIER));
+
   private Recognizers() {
   }
 
@@ -53,6 +57,16 @@ public class Recognizers {
 
   public static Recognizer boolOperator() {
     return new BoolOperator();
+  }
+
+  public static Recognizer callName() {
+    return sequence(
+        choice(
+            oneOrMore(charClass(CharClass.WORD, CLASSIFIER)),
+            characters('%'),
+            sequence(literal("progid:"), oneOrMore(charClass(CharClass.PROGID_WORD, CLASSIFIER)))),
+        characters('('));
+
   }
 
   public static Recognizer cardinality(Recognizer pattern, int minimum, int maximum) {
@@ -156,6 +170,15 @@ public class Recognizers {
 
   public static Recognizer oneOrMore(Recognizer pattern) {
     return new Plus(pattern);
+  }
+
+  public static Recognizer mixinName() {
+    return sequence(
+      characters('.', '#'),
+      oneOrMore(
+          choice(
+          charClass(CharClass.WORD, CLASSIFIER),
+          sequence(characters('\\'), ESC))));
   }
 
   public static Recognizer notAscii() {
@@ -584,9 +607,7 @@ public class Recognizers {
 
     private static final Recognizer PFX1 = characters('.', '#');
     private static final Recognizer PFX2 = oneOrMore(characters(':'));
-    private static final Recognizer ESC = choice(
-        sequence(cardinality(charClass(CharClass.HEXDIGIT, CLASSIFIER), 1, 6), zeroOrOne(characters(' '))),
-        notCharClass(CharClass.HEXDIGIT, CLASSIFIER));
+
 
     private static final Recognizer WORD = oneOrMore(charClass(CharClass.IDENTIFIER, CharClass.CLASSIFIER));
 

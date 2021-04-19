@@ -73,6 +73,8 @@ public class CharClass implements CharClassifier {
 
   public static final int WORD = 0x400000;
 
+  public static final int PROGID_WORD = 0x800000;
+
   // Alias
   public static final int KEYWORD = IDENTIFIER;
 
@@ -270,6 +272,7 @@ public class CharClass implements CharClassifier {
         return DIMENSION_START
             | ENCODE_URI
             | ENCODE_URI_COMPONENT
+            | PROGID_WORD
             | SHORTHAND
             ;
 
@@ -293,6 +296,7 @@ public class CharClass implements CharClassifier {
             | HEXDIGIT
             | HEXWILD
             | DIMENSION_START
+            | PROGID_WORD
             | PROPERTY_START
             | SHORTHAND
             | WORD
@@ -341,6 +345,7 @@ public class CharClass implements CharClassifier {
             | UPPERCASE
             | CALL_START
             | KEYWORD_START
+            | PROGID_WORD
             | SHORTHAND
             | WORD
             ;
@@ -370,6 +375,7 @@ public class CharClass implements CharClassifier {
             | IDENTIFIER_START
             | CALL_START
             | KEYWORD_START
+            | PROGID_WORD
             | SHORTHAND
             | WORD
             ;
@@ -380,6 +386,7 @@ public class CharClass implements CharClassifier {
             | IDENTIFIER
             | IDENTIFIER_START
             | KEYWORD_START
+            | PROGID_WORD
             | PROPERTY
             | PROPERTY_START
             | ENCODE_URI
@@ -401,6 +408,7 @@ public class CharClass implements CharClassifier {
             | LOWERCASE
             | CALL_START
             | KEYWORD_START
+            | PROGID_WORD
             | PROPERTY
             | PROPERTY_START
             | SHORTHAND
@@ -433,6 +441,7 @@ public class CharClass implements CharClassifier {
             | LOWERCASE
             | CALL_START
             | KEYWORD_START
+            | PROGID_WORD
             | PROPERTY
             | PROPERTY_START
             | SHORTHAND

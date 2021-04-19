@@ -34,9 +34,6 @@ import com.squarespace.less.model.Node;
  */
 public class LessStream extends Stream {
 
-  private final Matcher matcherCallName;
-  private final Matcher matcherMixinName;
-
   private final LessContext context;
   private final Path rootPath;
   private final Path fileName;
@@ -55,9 +52,6 @@ public class LessStream extends Stream {
     this.context = ctx;
     this.rootPath = rootPath;
     this.fileName = fileName;
-
-    this.matcherCallName = Patterns.CALL_NAME.matcher(raw);
-    this.matcherMixinName = Patterns.MIXIN_NAME.matcher(raw);
   }
 
   public LessException parseError(LessException exc) {
@@ -136,7 +130,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchCallName() {
-    if (!match(matcherCallName)) {
+    if (!match(Patterns.CALL_NAME)) {
       return false;
     }
     // Back up to before the parenthesis.
@@ -144,10 +138,6 @@ public class LessStream extends Stream {
     consume();
     return true;
   }
-
-//  public boolean matchDigits() {
-//    return finish(match(Patterns.DIGITS));
-//  }
 
   public boolean matchDimensionUnit() {
     return finish(match(Patterns.DIMENSION_UNIT));
@@ -194,7 +184,7 @@ public class LessStream extends Stream {
   }
 
   public boolean matchMixinName() {
-    return finish(match(matcherMixinName));
+    return finish(match(Patterns.MIXIN_NAME));
   }
 
   public boolean matchNot() {

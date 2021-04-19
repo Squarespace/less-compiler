@@ -104,6 +104,52 @@ public class PatternBenchmark {
     blackhole.consume(state.matches(state.benchAttributeOp.recognizer, ATTR_OP_FAIL, 3));
   }
 
+  private static final String CALL_NAME_OK = "___foo-Bar3_baz1-QUUX(";
+  private static final String CALL_NAME_FAIL = "___progid:foo.bar.baz-quux(";
+
+  @Benchmark
+  public void regexCallNameOk(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchCallName.regex, CALL_NAME_OK, 3));
+  }
+
+  @Benchmark
+  public void regexCallNameFail(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchCallName.regex, CALL_NAME_FAIL, 3));
+  }
+
+  @Benchmark
+  public void recognizerCallNameOk(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchCallName.recognizer, CALL_NAME_OK, 3));
+  }
+
+  @Benchmark
+  public void recognizerCallNameFail(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchCallName.recognizer, CALL_NAME_FAIL, 3));
+  }
+
+  private static final String MIXIN_NAME_OK = "___.foo-Bar3_baz1-QUUX";
+  private static final String MIXIN_NAME_FAIL = "___.foo-Bar3_baz1-QUUX!";
+
+  @Benchmark
+  public void regexMixinNameOk(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchMixinName.regex, MIXIN_NAME_OK, 3));
+  }
+
+  @Benchmark
+  public void regexMixinNameFail(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchMixinName.regex, MIXIN_NAME_FAIL, 3));
+  }
+
+  @Benchmark
+  public void recognizerMixinNameOk(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchMixinName.recognizer, MIXIN_NAME_OK, 3));
+  }
+
+  @Benchmark
+  public void recognizerMixinNameFail(BenchmarkState state, Blackhole blackhole) {
+    blackhole.consume(state.matches(state.benchMixinName.recognizer, MIXIN_NAME_FAIL, 3));
+  }
+
   private static final String LITERAL_OK = "___foobarfoobarfoobarfoobarfoobar";
   private static final String LITERAL_FAIL = "___xyz";
 
@@ -329,6 +375,16 @@ public class PatternBenchmark {
         Patterns.ATTRIBUTE_OP
     );
 
+    public final BenchCase benchCallName = benchCase(
+        "([\\w-_]+|%|progid:[\\w\\.]+)\\(",
+        Patterns.CALL_NAME
+    );
+
+    public final BenchCase benchMixinName = benchCase(
+        "[#.](?:[\\w-]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+",
+        Patterns.MIXIN_NAME
+    );
+
     public final BenchCase benchDimUnit = benchCase(
         "\\d+(\\.\\d+)?(" + Unit.REGEX + ")",
         sequence(decimal(), units())
@@ -440,6 +496,24 @@ public class PatternBenchmark {
     flag = state.matches(state.benchAttributeOp.recognizer, ATTR_OP_OK, 3);
     istrue(flag);
     flag = state.matches(state.benchAttributeOp.recognizer, ATTR_OP_FAIL, 3);
+    isfalse(flag);
+
+    flag = state.matches(state.benchCallName.regex, CALL_NAME_OK, 3);
+    istrue(flag);
+    flag = state.matches(state.benchCallName.regex, CALL_NAME_FAIL, 3);
+    isfalse(flag);
+    flag = state.matches(state.benchCallName.recognizer, CALL_NAME_OK, 3);
+    istrue(flag);
+    flag = state.matches(state.benchCallName.recognizer, CALL_NAME_FAIL, 3);
+    isfalse(flag);
+
+    flag = state.matches(state.benchMixinName.regex, MIXIN_NAME_OK, 3);
+    istrue(flag);
+    flag = state.matches(state.benchMixinName.regex, MIXIN_NAME_FAIL, 3);
+    isfalse(flag);
+    flag = state.matches(state.benchMixinName.recognizer, MIXIN_NAME_OK, 3);
+    istrue(flag);
+    flag = state.matches(state.benchMixinName.recognizer, MIXIN_NAME_FAIL, 3);
     isfalse(flag);
 
     flag = state.matches(state.benchHexcolor.regex, HEXCOLOR_OK, 3);

@@ -47,6 +47,7 @@ public class Patterns {
   // Regular expressions.
 
   // REGEX: "alpha\\s*\\("
+  // TODO: hand-code
   public static final Recognizer ALPHA_START = sequence(literal("alpha"), zeroOrMore(whitespace()), literal("("));
 
   public static final Recognizer AND = literal("and");
@@ -63,9 +64,8 @@ public class Patterns {
   // REGEX: "<>|=[<>]*|[<>]=*|!="
   public static final Recognizer BOOL_OPERATOR = Recognizers.boolOperator();
 
-  public static final Pattern CALL_NAME = pattern("([\\w-_]+|%|progid:[\\w\\.]+)\\(");
-
-  public static final Recognizer DIGITS = Recognizers.digits();
+  // REGEX: "([\\w-_]+|%|progid:[\\w\\.]+)\\("
+  public static final Recognizer CALL_NAME = Recognizers.callName();
 
   public static final Recognizer DIMENSION_UNIT = Recognizers.units();
 
@@ -97,13 +97,14 @@ public class Patterns {
   // REGEX: "[_A-Za-z-][\\w-]*"
   public static final Recognizer KEYWORD = Recognizers.keyword();
 
-  public static final Pattern MIXIN_NAME = pattern("[#.](?:[\\w-]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+");
+  // "[#.](?:[\\w-]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+"
+  public static final Recognizer MIXIN_NAME = Recognizers.mixinName();
 
   public static final Recognizer NOT = literal("not");
 
   public static final Recognizer OPACITY = literal("opacity=", true);
 
-  public static final Pattern OPERATOR = pattern("\\+|\\-|\\*|\\/");
+//  public static final Pattern OPERATOR = pattern("\\+|\\-|\\*|\\/");
 
   // REGEX: "\\*?-?[_a-z0-9-]+"
   public static final Recognizer PROPERTY = Recognizers.property();
