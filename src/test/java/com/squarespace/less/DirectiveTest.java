@@ -39,5 +39,7 @@ public class DirectiveTest extends LessTestBase {
     LessHarness h = new LessHarness(Parselets.DIRECTIVE);
 
     h.parseEquals("@namespace foo;", dir("@namespace", kwd("foo")));
+    h.parseEquals("@-a foo;", dir("@-a", kwd("foo")));
+    h.parseEquals("@--a foo;", dir("@--a", kwd("foo")));
   }
 }
