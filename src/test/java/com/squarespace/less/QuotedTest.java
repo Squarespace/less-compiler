@@ -61,6 +61,13 @@ public class QuotedTest extends LessTestBase {
 
     h.parseEquals("~'foo'", quoted('\'', true, anon("foo")));
     h.parseEquals("~\"@@{var}\"", quoted('"', true, var("@@var", true)));
+
+    h.parseEquals("'foo", quoted('\'', false, "foo"));
+    h.parseEquals("'foo", quoted('\'', false, "foo"));
+    h.parseEquals("'foo\\", quoted('\'', false, "foo\\"));
+
+    h.parseFails("'foo\n", SyntaxErrorType.QUOTED_BARE_LF);
+    h.parseFails("~", SyntaxErrorType.INCOMPLETE_PARSE);
   }
 
 }

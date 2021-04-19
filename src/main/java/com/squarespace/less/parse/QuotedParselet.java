@@ -75,7 +75,7 @@ public class QuotedParselet implements Parselet {
       stm.seek1();
 
       // We've located end of string.
-      if (ch == delim || ch == Chars.EOF) {
+      if (ch == delim) {
         break;
       }
 
