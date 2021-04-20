@@ -941,19 +941,26 @@ public class Recognizers {
     }
   }
 
-  /**
-   * CODE TO UPDATE THE UNITS TABLES ABOVE
-   *
-   * UNITS = "px|%|em|pc|ex|in|deg|s|ms|pt|cm|mm|rad|grad|turn|fr|dpi|dpcm|dppx|rem|vw|vh|vmin|vmax|ch|hz|khz|vm" from
-   * collections import defaultdict r = sorted(set((u[0], u[1:]) for u in UNITS.split('|'))) p = None d =
-   * defaultdict(set) [d[c].add(ext) for c, ext in r if c != '%'] for c, exts in sorted(d.items()): if c == '%':
-   * continue exts = sorted(exts, key=lambda e: -len(e)) print('static final char[][] %s_UNITS = new char[][] {' %
-   * c.upper()) for ext in exts: print(' { ' + ', '.join("'%s'" % e for e in ext) + ' },') print('};')
-   *
-   * for c in sorted(d.keys()): print("case '%s':\ncase '%s':" % (c, c.upper())) print(' return _match(seq, pos, len,
-   * %s_UNITS);' % c.upper())
-   *
-   */
+  // Code to generate the Unit recognizer above
+  //
+  //  UNITS = "px|%|em|pc|ex|in|deg|s|ms|pt|cm|mm|rad|grad|turn|fr|dpi|dpcm|dppx|rem|vw|vh|vmin|vmax|ch|hz|khz|vm"
+  //      from collections import defaultdict
+  //      r = sorted(set((u[0], u[1:]) for u in UNITS.split('|')))
+  //      p = None
+  //      d = defaultdict(set)
+  //      [d[c].add(ext) for c, ext in r if c != '%']
+  //      for c, exts in sorted(d.items()):
+  //          if c == '%':
+  //              continue
+  //          exts = sorted(exts, key=lambda e: -len(e))
+  //          print('static final char[][] %s_UNITS = new char[][] {' % c.upper())
+  //          for ext in exts:
+  //              print('  { ' + ', '.join("'%s'" % e for e in ext) + ' },')
+  //          print('};')
+  //
+  //      for c in sorted(d.keys()):
+  //          print("case '%s':\ncase '%s':" % (c, c.upper()))
+  //          print('  return _match(seq, pos, len, %s_UNITS);' % c.upper())
 
   /**
    * Use a method call to detect whitespace.
