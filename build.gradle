@@ -73,6 +73,7 @@ jmh {
   forceGC = true
   includeTests = false
   zip64 = true
+  include = ['.*CssSet.*']
 }
 
 plugins.withType(EclipsePlugin) {

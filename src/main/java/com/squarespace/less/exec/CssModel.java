@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.core.Buffer;
@@ -89,11 +87,16 @@ public class CssModel {
   private CssBlock current;
 
   /**
+   * Sequential block identifier.
+   */
+  private int blockId;
+
+  /**
    * Constructs a CSS model with the given context.
    */
   public CssModel(LessContext ctx) {
     buffer = ctx.newBuffer();
-    current = new CssBlock(STYLESHEET);
+    current = new CssBlock(this.blockId++, STYLESHEET);
   }
 
   /**
@@ -139,7 +142,7 @@ public class CssModel {
    */
   public CssModel push(NodeType type) {
     stack.push(current);
-    CssBlock child = new CssBlock(type);
+    CssBlock child = new CssBlock(this.blockId++, type);
     defer(child);
     current = child;
     return this;
@@ -180,7 +183,9 @@ public class CssModel {
 
     private final List<String> headers = new ArrayList<>();
 
-    private final Set<CssNode> nodes = new LinkedHashSet<>();
+    private final CssSet<CssNode> nodes;
+
+    private final int id;
 
     private final NodeType type;
 
@@ -190,8 +195,11 @@ public class CssModel {
 
     private boolean populated = false;
 
-    CssBlock(NodeType type) {
+    CssBlock(int id, NodeType type) {
+      this.id = id;
       this.type = type;
+      int capacity = type == STYLESHEET ? 512 : 32;
+      this.nodes = new CssSet<>(capacity);
       switch (type) {
 
         case BLOCK_DIRECTIVE:
@@ -250,12 +258,18 @@ public class CssModel {
     }
 
     public void add(CssNode node) {
-      // Ensure that the last unique rule (key + value) wins.
-      if (nodes.contains(node)) {
-        nodes.remove(node);
-      }
       nodes.add(node);
       populated |= node.populated();
+    }
+
+    @Override
+    public int hashCode() {
+      return this.id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      return false;
     }
 
     @Override

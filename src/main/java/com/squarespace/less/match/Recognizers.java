@@ -201,6 +201,7 @@ public class Recognizers {
     return notCharClass(CharClass.HEXDIGIT, CLASSIFIER);
   }
 
+  // TODO: move to custom
   public static Recognizer property() {
     return sequence(zeroOrOne(characters('*')), zeroOrOne(characters('-')),
         oneOrMore(charClass(CharClass.PROPERTY, CLASSIFIER)));
