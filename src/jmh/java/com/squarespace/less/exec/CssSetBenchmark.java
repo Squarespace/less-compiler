@@ -75,4 +75,10 @@ public class CssSetBenchmark {
       }
     }
   }
+
+//  public static void main(String[] args) {
+//    BenchmarkState state = new BenchmarkState();
+//    state.setup();
+//    System.out.println(state.cssset.toString());
+//  }
 }

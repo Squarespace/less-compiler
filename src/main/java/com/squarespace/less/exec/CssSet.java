@@ -17,16 +17,41 @@ public class CssSet<E> implements Iterable<E> {
    */
   private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
-  protected Node<E> head;
-  protected Node<E> tail;
-  protected Node<E>[] table;
-  protected int mask;
-  protected int size;
+  /**
+   * Head of the ordered linked list of nodes.
+   */
+  private Node<E> head;
 
+  /**
+   * Tail of the ordered linked list of nodes.
+   */
+  private Node<E> tail;
+
+  /**
+   * Hash table of nodes.
+   */
+  private Node<E>[] table;
+
+  /**
+   * Bit mask for mapping an element's hash code to its position in the table.
+   */
+  private int mask;
+
+  /**
+   * Number of elements in the table.
+   */
+  private int size;
+
+  /**
+   * Construct a CssSet with the default initial capacity.
+   */
   public CssSet() {
     this(DEFAULT_CAPACITY);
   }
 
+  /**
+   * Construct a CssSet with the given initial capacity.
+   */
   @SuppressWarnings("unchecked")
   public CssSet(int capacity) {
     Node<E> root = new Node<>(null);
@@ -103,6 +128,9 @@ public class CssSet<E> implements Iterable<E> {
     return ix;
   }
 
+  /**
+   * Insert 'e' node before the 'at' node in the list.
+   */
   private Node<E> insertBefore(Node<E> e, Node<E> at) {
     Node<E> n = at.prev;
     at.prev = e;
@@ -112,6 +140,9 @@ public class CssSet<E> implements Iterable<E> {
     return e;
   }
 
+  /**
+   * Remove 'n' node from the list.
+   */
   private Node<E> remove(Node<E> n) {
     n.prev.next = n.next;
     n.next.prev = n.prev;
@@ -119,7 +150,8 @@ public class CssSet<E> implements Iterable<E> {
   }
 
   /**
-   * Grow the table to ensure size is below load factor threshold.
+   * Grow the table capacity by a factor of 2 to ensure its
+   * size is always below load factor threshold.
    */
   @SuppressWarnings("unchecked")
   private void grow() {
@@ -159,6 +191,9 @@ public class CssSet<E> implements Iterable<E> {
     return key;
   }
 
+  /**
+   * Iterate over the linked list of nodes until we hit the root/tail.
+   */
   public static class CssSetIterator<E> implements Iterator<E> {
 
     private Node<E> curr;
