@@ -1,0 +1,20 @@
+.rule {
+  parent-1: true;
+  sibling-1: true;
+  sibling-2: true;
+  child-1: true;
+}
+@import "foo.css";
+.rule {
+  output-once: true;
+}
+@import "bar.css";
+.ruleset-1 {
+  .child {
+    @import "foo.css";
+  }
+  .sibling {
+    @import "bar.css";
+  }
+}
+

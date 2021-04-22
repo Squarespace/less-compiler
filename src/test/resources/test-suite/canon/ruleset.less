@@ -1,0 +1,45 @@
+// Selector inheritance
+.parent {
+  .child-1 {
+    a: 1;
+  }
+  .child-2,
+  .child-3 {
+    b: 2;
+  }
+}
+// Cartesian product
+.child,
+.sibling {
+  & +& {
+    c: 3;
+  }
+}
+// Wildcard concatenation
+.parent {
+  &.class-1,
+  &.class-2 {
+    d: 4;
+  }
+  &.class-3 {
+    e: 5;
+  }
+}
+// Ruleset mixin
+.ruleset-mixin {
+  .child {
+    f: 6;
+  }
+}
+.mixin-parent {
+  .ruleset-mixin;
+}
+.complex-combinators {
+  > h1 + p:other {
+    &:hover,
+    >& {
+      g: 7;
+    }
+  }
+}
+

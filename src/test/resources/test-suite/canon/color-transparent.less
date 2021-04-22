@@ -1,0 +1,38 @@
+.mixin-1(@color) when (lightness(@color) <= 60%) {
+  content1: A;
+}
+.mixin-1(@color) when (lightness(@color) > 60%) {
+  content1: B;
+}
+.mixin-2(@color) when (@color = #000) {
+  content2: A;
+}
+.mixin-2(@color) when (@color <> #000) {
+  content2: B;
+}
+.mixin-3(@color) when (#000 = @color) {
+  content3: A;
+}
+.mixin-3(@color) when (#000 <> @color) {
+  content3: B;
+}
+.mixin-4(@color) when (transparent = @color) {
+  content4: A;
+}
+.mixin-4(@color) when (transparent <> @color) {
+  content4: B;
+}
+div {
+  // transparent acts like black in comparisons and functions
+  .mixin-1(transparent);
+  .mixin-2(transparent);
+  .mixin-3(transparent);
+  .mixin-4(transparent);
+}
+div {
+  .mixin-1(#fff);
+  .mixin-2(#fff);
+  .mixin-3(#fff);
+  .mixin-4(#fff);
+}
+

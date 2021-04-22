@@ -1,0 +1,18 @@
+@a: "foo";
+@b: "bar";
+(~'.@{a}-@{b}') {
+  &:hover {
+    color: blue;
+  }
+}
+.a[href~='squarespace'] {
+  &:visited {
+    color: red;
+  }
+}
+.parent {
+  > * +& >& foo {
+    font-size: 1px;
+  }
+}
+

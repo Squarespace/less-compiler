@@ -1,0 +1,21 @@
+.ruleset-keyframes {
+  @-webkit-keyframes frames {
+    0% {
+      border: 1px;
+    }
+  }
+}
+.ruleset-font-face {
+  @font-face {
+    font-family: Helvetica;
+  }
+}
+.ruleset-namespace {
+  @namespace sqs url('http://squarespace.com');
+}
+@name: foo;
+@value: url('http://squarespace.com');
+.ruleset-namespace-dynamic {
+  @namespace @name @value;
+}
+
