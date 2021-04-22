@@ -50,6 +50,7 @@ public class PropertyTest extends LessTestBase {
     h.parseEquals("a", prop("a"));
     h.parseEquals("-moz-foo-bar", prop("-moz-foo-bar"));
     h.parseEquals("*-foo", prop("*-foo"));
+    h.parseEquals("-", prop("-"));
 
     h.parseFails("A", INCOMPLETE_PARSE);
   }

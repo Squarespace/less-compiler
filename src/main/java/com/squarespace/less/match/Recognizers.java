@@ -7,11 +7,18 @@ import com.squarespace.less.core.CharClass;
  *
  * Recognizers constructed by this class return the ending position of the match, or FAIL for no match.
  *
- * Faster than equivalent java.util.regex regular expressions due to lower overhead:
+ * In most cases these will be faster than the equivalent java.util.regex regular expressions
+ * due to lower overhead:
  *
- * - recognizers are optimized for the patterns we care about - recognizers have fewer variables to update - no need for
- * a separate java.util.regex.Matcher object - no region() or reset() calls required when matching against a different
- * string or position.
+ * - Recognizers can be hand-optimized for the patterns we care about
+ *
+ * - Recognizers have fewer variables to update
+ *
+ * - No need for a separate java.util.regex.Matcher instance for each parser
+ *
+ * - No region() or reset() calls required when matching against a different string or position.
+ *
+ * The interface is admittedly not ideal -- in the future a code generator would improve maintenance.
  */
 public class Recognizers {
 
@@ -139,7 +146,7 @@ public class Recognizers {
   }
 
   public static Recognizer hexcolor() {
-    return sequence(literal("#"), new LengthChoice(hexdigit(), 3, 6));
+    return sequence(literal("#"), new LengthChoice(hexdigit(), 6, 3));
   }
 
   public static Recognizer identifier() {
@@ -203,8 +210,7 @@ public class Recognizers {
 
   // TODO: move to custom
   public static Recognizer property() {
-    return sequence(zeroOrOne(characters('*')), zeroOrOne(characters('-')),
-        oneOrMore(charClass(CharClass.PROPERTY, CLASSIFIER)));
+    return new Property();
   }
 
   public static Recognizer sequence(Recognizer... patterns) {
@@ -677,7 +683,8 @@ public class Recognizers {
   }
 
   /**
-   * LengthChoice. Pattern can be one of several unique lengths. Lengths must be ordered from smallest to largest.
+   * LengthChoice. Pattern can be one of several unique lengths. Lengths must be
+   * ordered from longest to shortest.
    */
   static class LengthChoice implements Recognizer {
 
@@ -690,8 +697,8 @@ public class Recognizers {
       int min = 0;
       int max = 1;
       if (choices.length > 0) {
-        min = choices[0];
-        max = choices[choices.length - 1];
+        min = choices[choices.length - 1];
+        max = choices[0];
       }
       this.cardinality = new Cardinality(pattern, min, max);
     }
@@ -702,8 +709,9 @@ public class Recognizers {
       if (i != FAIL) {
         int sz = i - pos;
         for (int j = 0; j < this.choices.length; j++) {
-          if (sz == this.choices[j]) {
-            return i;
+          int exp = this.choices[j];
+          if (sz >= exp) {
+            return pos + exp;
           }
         }
       }
@@ -780,6 +788,30 @@ public class Recognizers {
 
     Plus(Recognizer pattern) {
       super(pattern, 1, 0);
+    }
+  }
+
+  /**
+   * Property
+   *
+   * This pattern has 2 prefix zero-width matches one of which
+   * overlaps with the suffix pattern, so we manually verify that
+   * the resulting match moved the position forward by at least 1
+   * character.
+   */
+  static class Property implements Recognizer {
+
+    private final Recognizer suffix = oneOrMore(charClass(CharClass.PROPERTY, CLASSIFIER));
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      if (pos < len) {
+        if (seq.charAt(pos) == '*') {
+          pos++;
+        }
+        return suffix.match(seq, pos, len);
+      }
+      return FAIL;
     }
   }
 

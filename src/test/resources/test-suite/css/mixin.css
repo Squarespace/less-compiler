@@ -42,3 +42,6 @@
 .ruleset-mututal-recurse .red {
   arg: 1;
 }
+.parent {
+  -: ;-webkit-box-decoration-break: clone; -moz-box-decoration-break: clone; -ms-box-decoration-break: clone; -o-box-decoration-break: clone; box-decoration-break: clone;
+}

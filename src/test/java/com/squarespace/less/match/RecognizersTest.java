@@ -262,9 +262,9 @@ public class RecognizersTest {
     Recognizer pattern = Recognizers.hexcolor();
 
     assertEquals(match(pattern, "#aaa"), 4);
-    assertEquals(match(pattern, "#aaaa"), FAIL);
+    assertEquals(match(pattern, "#aaaa"), 4); // matches "#aaa"
     assertEquals(match(pattern, "#112233"), 7);
-    assertEquals(match(pattern, "#11223344"), 7); // parse valid up to the '4'
+    assertEquals(match(pattern, "#11223344"), 7); // matches "#112233"
   }
 
   @Test
@@ -307,6 +307,25 @@ public class RecognizersTest {
 
     assertEquals(match(pattern, "1"), FAIL);
     assertEquals(match(pattern, "1.."), FAIL);
+  }
+
+  @Test
+  public void testProperty() {
+    Recognizer pattern = Recognizers.property();
+
+    assertEquals(match(pattern, "a"), 1);
+    assertEquals(match(pattern, "-"), 1);
+    assertEquals(match(pattern, "*a"), 2);
+    assertEquals(match(pattern, "*-"), 2);
+    assertEquals(match(pattern, "--"), 2);
+    assertEquals(match(pattern, "--a"), 3);
+    assertEquals(match(pattern, "--a-"), 4);
+
+    assertEquals(match(pattern, "-*"), 1); // match "-" only
+
+    assertEquals(match(pattern, ""), FAIL);
+    assertEquals(match(pattern, "*"), FAIL);
+    assertEquals(match(pattern, "**"), FAIL);
   }
 
   @Test

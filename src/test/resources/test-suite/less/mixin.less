@@ -89,3 +89,11 @@
     .mixin-recurse-1(4);
 }
 
+// Generation of browser prefixes
+.prefix(@property, @value) {
+    -:~";-webkit-@{property}: @{value}; -moz-@{property}: @{value}; -ms-@{property}: @{value}; -o-@{property}: @{value}; @{property}: @{value}";
+}
+.parent {
+ .prefix("box-decoration-break", "clone");
+}
+
