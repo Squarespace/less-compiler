@@ -31,8 +31,6 @@ import static com.squarespace.less.match.Recognizers.sequence;
 import static com.squarespace.less.match.Recognizers.whitespace;
 import static com.squarespace.less.match.Recognizers.zeroOrMore;
 
-import java.util.regex.Pattern;
-
 import com.squarespace.less.core.CharPattern;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.match.Recognizer;
@@ -143,13 +141,5 @@ public class Patterns {
 
   public static final CharPattern VARIADIC = new CharPattern(PERIOD, PERIOD, PERIOD);
 
-  private static Pattern pattern(String regex) {
-    return pattern(regex, false);
-  }
-
-  private static Pattern pattern(String regex, boolean caseInsensitive) {
-    int flags = caseInsensitive ? Pattern.CASE_INSENSITIVE : 0;
-    return Pattern.compile(regex, flags);
-  }
 
 }

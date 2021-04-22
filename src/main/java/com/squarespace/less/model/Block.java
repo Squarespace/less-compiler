@@ -258,28 +258,28 @@ public class Block extends BaseNode {
   /**
    * Debug method - collects the definitions inside this block.
    */
-  public String dumpDefs() {
-    Buffer buf = new Buffer(4);
-    dumpDefs(buf);
-    return buf.toString();
-  }
+//  public String dumpDefs() {
+//    Buffer buf = new Buffer(4);
+//    dumpDefs(buf);
+//    return buf.toString();
+//  }
 
   /**
    * Debug method - collects the definitions inside this block.
    */
-  public boolean dumpDefs(Buffer buf) {
-    boolean output = false;
-    int size = rules.size();
-    for (int i = 0; i < size; i++) {
-      Node node = rules.get(i);
-      if (node.type().equals(NodeType.DEFINITION)) {
-        String repr = node.toString().replaceAll("\\s+", " ");
-        buf.indent().append(repr).append('\n');
-        output = true;
-      }
-    }
-    return output;
-  }
+//  public boolean dumpDefs(Buffer buf) {
+//    boolean output = false;
+//    int size = rules.size();
+//    for (int i = 0; i < size; i++) {
+//      Node node = rules.get(i);
+//      if (node.type().equals(NodeType.DEFINITION)) {
+//        String repr = node.toString().replaceAll("\\s+", " ");
+//        buf.indent().append(repr).append('\n');
+//        output = true;
+//      }
+//    }
+//    return output;
+//  }
 
   /**
    * See {@link Node#type()}

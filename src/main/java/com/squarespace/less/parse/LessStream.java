@@ -19,7 +19,6 @@ package com.squarespace.less.parse;
 import static com.squarespace.less.core.SyntaxErrorMaker.incompleteParse;
 
 import java.nio.file.Path;
-import java.util.regex.Matcher;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
@@ -223,11 +222,6 @@ public class LessStream extends Stream {
     return peek(Patterns.SHORTHAND);
   }
 
-//  private boolean peek(Matcher matcher) {
-//    matcher.region(index, length);
-//    return matcher.lookingAt();
-//  }
-
   private boolean peek(Recognizer r) {
     int i = r.match(this.raw, index, length);
     return i != Recognizers.FAIL;
@@ -238,15 +232,6 @@ public class LessStream extends Stream {
     boolean matched = i != Recognizers.FAIL;
     if (matched) {
       matchEnd = i;
-    }
-    return matched;
-  }
-
-  private boolean match(Matcher matcher) {
-    matcher.region(index, length);
-    boolean matched = matcher.lookingAt();
-    if (matched) {
-      matchEnd = matcher.end();
     }
     return matched;
   }

@@ -1,0 +1,14 @@
+@m: 2;
+@n: 4;
+.mixin(@a: @m + @n) {
+    .child {
+        font-size: ~"@{a}px";
+    }
+}
+
+.parent-1 {
+    .mixin(12);
+}
+.parent-2 {
+    .mixin();
+}

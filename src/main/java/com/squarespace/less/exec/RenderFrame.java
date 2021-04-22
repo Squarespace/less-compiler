@@ -16,7 +16,6 @@
 
 package com.squarespace.less.exec;
 
-import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Feature;
@@ -127,22 +126,22 @@ public class RenderFrame {
    * Debug method - returns a string containing info on this frame and its parents,
    * indented based on depth.
    */
-  public String repr() {
-    Buffer buf = new Buffer(4);
-    repr(buf);
-    return buf.toString();
-  }
+//  public String repr() {
+//    Buffer buf = new Buffer(4);
+//    repr(buf);
+//    return buf.toString();
+//  }
 
-  private void repr(Buffer buf) {
-    buf.indent().append("Frame depth=").append(depth).append('\n');
-    if (blockNode != null) {
-      blockNode.block().dumpDefs(buf);
-    }
-    if (parent != null) {
-      buf.incrIndent();
-      parent.repr(buf);
-      buf.decrIndent();
-    }
-  }
+//  private void repr(Buffer buf) {
+//    buf.indent().append("Frame depth=").append(depth).append('\n');
+//    if (blockNode != null) {
+//      blockNode.block().dumpDefs(buf);
+//    }
+//    if (parent != null) {
+//      buf.incrIndent();
+//      parent.repr(buf);
+//      buf.decrIndent();
+//    }
+//  }
 
 }

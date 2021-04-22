@@ -27,11 +27,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-import com.squarespace.less.core.CharClass;
-
 public class RecognizersTest {
-
-  private static final CharClass CLASSIFIER = new CharClass();
 
   @Test
   public void testAny() {
@@ -229,12 +225,6 @@ public class RecognizersTest {
     assertEquals(match(pattern, "@font-face"), 10);
     assertEquals(match(pattern, "@-webkit-keyframes"), 18);
     assertEquals(match(pattern, "@-webkit-keyframes##"), 18);
-  }
-
-  @Test
-  public void testIdentifier() {
-    Recognizer pattern = Recognizers.identifier();
-
   }
 
   @Test

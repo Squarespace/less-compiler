@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
-import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.FlexList;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockNode;
@@ -225,13 +224,13 @@ public class ExecEnv {
    * Dump all variable definitions in each block of the stack. Used for
    * debugging in a pinch.
    */
-  public String dumpDefinitions() {
-    Buffer buf = new Buffer(4);
-    int size = frames.size();
-    for (int i = size - 1; i >= 0; i--) {
-      frames.get(i).dumpDefs(buf);
-      buf.incrIndent();
-    }
-    return buf.toString();
-  }
+//  public String dumpDefinitions() {
+//    Buffer buf = new Buffer(4);
+//    int size = frames.size();
+//    for (int i = size - 1; i >= 0; i--) {
+//      frames.get(i).dumpDefs(buf);
+//      buf.incrIndent();
+//    }
+//    return buf.toString();
+//  }
 }

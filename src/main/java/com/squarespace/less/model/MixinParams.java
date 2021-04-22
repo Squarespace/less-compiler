@@ -52,11 +52,6 @@ public class MixinParams extends BaseNode {
   protected boolean evaluate;
 
   /**
-   * Indicates at least one of the parameters is named.
-   */
-  protected boolean hasNamed;
-
-  /**
    * Appends a parameter to the list, and sets our internal state based on its
    * properties.
    */
@@ -71,7 +66,6 @@ public class MixinParams extends BaseNode {
     if (paramValue != null) {
       evaluate |= paramValue.needsEval();
     }
-    hasNamed |= param.name() != null;
   }
 
   /**
@@ -79,13 +73,6 @@ public class MixinParams extends BaseNode {
    */
   public List<Parameter> params() {
     return LessUtils.safeList(params);
-  }
-
-  /**
-   * Number of parameters.
-   */
-  public int arity() {
-    return params().size();
   }
 
   /**
@@ -100,29 +87,6 @@ public class MixinParams extends BaseNode {
    */
   public boolean variadic() {
     return variadic;
-  }
-
-  /**
-   * Indicates whether at least one parameter is named.
-   */
-  public boolean hasNamed() {
-    return hasNamed;
-  }
-
-  /**
-   * Convert the named parameters into a block for variable resolution.
-   */
-  public GenericBlock toBlock(ExecEnv env) {
-    if (params == null || !hasNamed) {
-      return null;
-    }
-    Block block = new Block();
-    for (Parameter param : params) {
-      if (param.name() != null && param.value() != null) {
-        block.appendNode(env.context().nodeBuilder().buildDefinition(param.name(), param.value()));
-      }
-    }
-    return new GenericBlock(block);
   }
 
   /**
