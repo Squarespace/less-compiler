@@ -1,0 +1,18 @@
+
+//:ExecuteErrorType.VAR_CIRCULAR_REFERENCE   circular variable ref
+
+@circular: @foo;
+@foo: @bar;
+@bar: @circular;
+
+.parent {
+  color: @circular;
+}
+
+//:ExecuteErrorType.VAR_CIRCULAR_REFERENCE  definition self-reference
+
+.parent {
+  @me: @me;
+  color: @me;
+}
+
