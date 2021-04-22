@@ -1,0 +1,22 @@
+.parent {
+  /* TRACE[1]: next rule defined at 'rules.less:8' */
+  /* TRACE[2]: next rule defined at 'rules.less:9' */
+  /* TRACE[3]:     start   .mixin()    rules.less:10  */
+  /* TRACE[4]: next rule defined at 'rules.less:2' */
+  /* TRACE[5]: next rule defined at 'rules.less:3' */
+  /* TRACE[6]:       end   .mixin()    rules.less:10  */
+  /* TRACE[7]: next rule defined at 'rules.less:12' */
+  color: blue;
+  /* TRACE[8]: next rule defined at 'rules.less:13' */
+  font-size: 10px;
+  /* TRACE[9]:     start   .mixin()    rules.less:15  */
+  /* TRACE[10]: next rule defined at 'rules.less:2' */
+  /* TRACE[11]: next rule defined at 'rules.less:3' */
+  /* TRACE[12]:       end   .mixin()    rules.less:15  */
+  /* TRACE[13]:     start   .mixin()    rules.less:16  */
+  /* TRACE[14]: next rule defined at 'rules.less:2' */
+  color: red;
+  /* TRACE[15]: next rule defined at 'rules.less:3' */
+  font-size: 12px;
+  /* TRACE[16]:       end   .mixin()    rules.less:16  */
+}

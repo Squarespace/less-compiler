@@ -1,0 +1,302 @@
+.result-1 {
+  /* TRACE[1]:     start   .m(1)    mixin-guard-1.less:58  */
+  /* (@a < 10px) */
+  /* TRACE[2]: next rule defined at 'mixin-guard-1.less:16' */
+  -3: 1;
+  /* TRACE[3]:       end   .m(1)    mixin-guard-1.less:58  */
+  /* TRACE[4]:     start   .m(1)    mixin-guard-1.less:58  */
+  /* (10px > @a) */
+  /* TRACE[5]: next rule defined at 'mixin-guard-1.less:31' */
+  -6: 1;
+  /* TRACE[6]:       end   .m(1)    mixin-guard-1.less:58  */
+  /* TRACE[7]:     start   .m(1)    mixin-guard-1.less:58  */
+  /* (@a <= 10px), (@a >= 20px) */
+  /* TRACE[8]: next rule defined at 'mixin-guard-1.less:41' */
+  -8: 1;
+  /* TRACE[9]:       end   .m(1)    mixin-guard-1.less:58  */
+  /* TRACE[10]:     start   .m(1)    mixin-guard-1.less:58  */
+  /* (@a =< 10px), (@a => 20px) */
+  /* TRACE[11]: next rule defined at 'mixin-guard-1.less:46' */
+  -9: 1;
+  /* TRACE[12]:       end   .m(1)    mixin-guard-1.less:58  */
+  /* TRACE[13]:     start   .m(1)    mixin-guard-1.less:58  */
+  /* (@a != 20px) and (@a != 5px) */
+  /* TRACE[14]: next rule defined at 'mixin-guard-1.less:51' */
+  -10: 1;
+  /* TRACE[15]:       end   .m(1)    mixin-guard-1.less:58  */
+}
+.result-true {
+  /* TRACE[16]:     start   .m(true)    mixin-guard-1.less:62  */
+  /* (@a) */
+  /* TRACE[17]: next rule defined at 'mixin-guard-1.less:6' */
+  -1: true;
+  /* TRACE[18]:       end   .m(true)    mixin-guard-1.less:62  */
+  /* TRACE[19]:     start   .m(true)    mixin-guard-1.less:62  */
+  /* (@a = true) */
+  /* TRACE[20]: next rule defined at 'mixin-guard-1.less:11' */
+  -2: true;
+  /* TRACE[21]:       end   .m(true)    mixin-guard-1.less:62  */
+  /* TRACE[22]:     start   .m(true)    mixin-guard-1.less:62  */
+  /* (@a < 10px) */
+  /* TRACE[23]: next rule defined at 'mixin-guard-1.less:16' */
+  -3: true;
+  /* TRACE[24]:       end   .m(true)    mixin-guard-1.less:62  */
+  /* TRACE[25]:     start   .m(true)    mixin-guard-1.less:62  */
+  /* (10px < @a) */
+  /* TRACE[26]: next rule defined at 'mixin-guard-1.less:26' */
+  -5: true;
+  /* TRACE[27]:       end   .m(true)    mixin-guard-1.less:62  */
+  /* TRACE[28]:     start   .m(true)    mixin-guard-1.less:62  */
+  /* (@a <= 10px), (@a >= 20px) */
+  /* TRACE[29]: next rule defined at 'mixin-guard-1.less:41' */
+  -8: true;
+  /* TRACE[30]:       end   .m(true)    mixin-guard-1.less:62  */
+  /* TRACE[31]:     start   .m(true)    mixin-guard-1.less:62  */
+  /* (@a =< 10px), (@a => 20px) */
+  /* TRACE[32]: next rule defined at 'mixin-guard-1.less:46' */
+  -9: true;
+  /* TRACE[33]:       end   .m(true)    mixin-guard-1.less:62  */
+  /* TRACE[34]:     start   .m(true)    mixin-guard-1.less:62  */
+  /* (@a != 20px) and (@a != 5px) */
+  /* TRACE[35]: next rule defined at 'mixin-guard-1.less:51' */
+  -10: true;
+  /* TRACE[36]:       end   .m(true)    mixin-guard-1.less:62  */
+}
+.result-escaped-true {
+  /* TRACE[37]:     start   .m(~'true')    mixin-guard-1.less:66  */
+  /* (@a) */
+  /* TRACE[38]: next rule defined at 'mixin-guard-1.less:6' */
+  -1: true;
+  /* TRACE[39]:       end   .m(~'true')    mixin-guard-1.less:66  */
+  /* TRACE[40]:     start   .m(~'true')    mixin-guard-1.less:66  */
+  /* (@a = true) */
+  /* TRACE[41]: next rule defined at 'mixin-guard-1.less:11' */
+  -2: true;
+  /* TRACE[42]:       end   .m(~'true')    mixin-guard-1.less:66  */
+  /* TRACE[43]:     start   .m(~'true')    mixin-guard-1.less:66  */
+  /* (@a > 10px) */
+  /* TRACE[44]: next rule defined at 'mixin-guard-1.less:21' */
+  -4: true;
+  /* TRACE[45]:       end   .m(~'true')    mixin-guard-1.less:66  */
+  /* TRACE[46]:     start   .m(~'true')    mixin-guard-1.less:66  */
+  /* (10px < @a) */
+  /* TRACE[47]: next rule defined at 'mixin-guard-1.less:26' */
+  -5: true;
+  /* TRACE[48]:       end   .m(~'true')    mixin-guard-1.less:66  */
+  /* TRACE[49]:     start   .m(~'true')    mixin-guard-1.less:66  */
+  /* (@a <= 10px), (@a >= 20px) */
+  /* TRACE[50]: next rule defined at 'mixin-guard-1.less:41' */
+  -8: true;
+  /* TRACE[51]:       end   .m(~'true')    mixin-guard-1.less:66  */
+  /* TRACE[52]:     start   .m(~'true')    mixin-guard-1.less:66  */
+  /* (@a =< 10px), (@a => 20px) */
+  /* TRACE[53]: next rule defined at 'mixin-guard-1.less:46' */
+  -9: true;
+  /* TRACE[54]:       end   .m(~'true')    mixin-guard-1.less:66  */
+  /* TRACE[55]:     start   .m(~'true')    mixin-guard-1.less:66  */
+  /* (@a != 20px) and (@a != 5px) */
+  /* TRACE[56]: next rule defined at 'mixin-guard-1.less:51' */
+  -10: true;
+  /* TRACE[57]:       end   .m(~'true')    mixin-guard-1.less:66  */
+}
+.result-quoted-true {
+  /* TRACE[58]:     start   .m('true')    mixin-guard-1.less:70  */
+  /* (@a < 10px) */
+  /* TRACE[59]: next rule defined at 'mixin-guard-1.less:16' */
+  -3: 'true';
+  /* TRACE[60]:       end   .m('true')    mixin-guard-1.less:70  */
+  /* TRACE[61]:     start   .m('true')    mixin-guard-1.less:70  */
+  /* (10px < @a) */
+  /* TRACE[62]: next rule defined at 'mixin-guard-1.less:26' */
+  -5: 'true';
+  /* TRACE[63]:       end   .m('true')    mixin-guard-1.less:70  */
+  /* TRACE[64]:     start   .m('true')    mixin-guard-1.less:70  */
+  /* (@a <= 10px), (@a >= 20px) */
+  /* TRACE[65]: next rule defined at 'mixin-guard-1.less:41' */
+  -8: 'true';
+  /* TRACE[66]:       end   .m('true')    mixin-guard-1.less:70  */
+  /* TRACE[67]:     start   .m('true')    mixin-guard-1.less:70  */
+  /* (@a =< 10px), (@a => 20px) */
+  /* TRACE[68]: next rule defined at 'mixin-guard-1.less:46' */
+  -9: 'true';
+  /* TRACE[69]:       end   .m('true')    mixin-guard-1.less:70  */
+  /* TRACE[70]:     start   .m('true')    mixin-guard-1.less:70  */
+  /* (@a != 20px) and (@a != 5px) */
+  /* TRACE[71]: next rule defined at 'mixin-guard-1.less:51' */
+  -10: 'true';
+  /* TRACE[72]:       end   .m('true')    mixin-guard-1.less:70  */
+}
+.result-quoted-11px {
+  /* TRACE[73]:     start   .m(~'11px')    mixin-guard-1.less:74  */
+  /* (@a > 10px) */
+  /* TRACE[74]: next rule defined at 'mixin-guard-1.less:21' */
+  -4: 11px;
+  /* TRACE[75]:       end   .m(~'11px')    mixin-guard-1.less:74  */
+  /* TRACE[76]:     start   .m(~'11px')    mixin-guard-1.less:74  */
+  /* (10px < @a) */
+  /* TRACE[77]: next rule defined at 'mixin-guard-1.less:26' */
+  -5: 11px;
+  /* TRACE[78]:       end   .m(~'11px')    mixin-guard-1.less:74  */
+  /* TRACE[79]:     start   .m(~'11px')    mixin-guard-1.less:74  */
+  /* (@a != 20px) and (@a != 5px) */
+  /* TRACE[80]: next rule defined at 'mixin-guard-1.less:51' */
+  -10: 11px;
+  /* TRACE[81]:       end   .m(~'11px')    mixin-guard-1.less:74  */
+}
+.result-red {
+  /* TRACE[82]:     start   .m(red)    mixin-guard-1.less:78  */
+  /* (@a < 10px) */
+  /* TRACE[83]: next rule defined at 'mixin-guard-1.less:16' */
+  -3: red;
+  /* TRACE[84]:       end   .m(red)    mixin-guard-1.less:78  */
+  /* TRACE[85]:     start   .m(red)    mixin-guard-1.less:78  */
+  /* (10px < @a) */
+  /* TRACE[86]: next rule defined at 'mixin-guard-1.less:26' */
+  -5: red;
+  /* TRACE[87]:       end   .m(red)    mixin-guard-1.less:78  */
+  /* TRACE[88]:     start   .m(red)    mixin-guard-1.less:78  */
+  /* (@a <= 10px), (@a >= 20px) */
+  /* TRACE[89]: next rule defined at 'mixin-guard-1.less:41' */
+  -8: red;
+  /* TRACE[90]:       end   .m(red)    mixin-guard-1.less:78  */
+  /* TRACE[91]:     start   .m(red)    mixin-guard-1.less:78  */
+  /* (@a =< 10px), (@a => 20px) */
+  /* TRACE[92]: next rule defined at 'mixin-guard-1.less:46' */
+  -9: red;
+  /* TRACE[93]:       end   .m(red)    mixin-guard-1.less:78  */
+  /* TRACE[94]:     start   .m(red)    mixin-guard-1.less:78  */
+  /* (@a != 20px) and (@a != 5px) */
+  /* TRACE[95]: next rule defined at 'mixin-guard-1.less:51' */
+  -10: red;
+  /* TRACE[96]:       end   .m(red)    mixin-guard-1.less:78  */
+}
+.result-red-hex {
+  /* TRACE[97]:     start   .m(red)    mixin-guard-1.less:82  */
+  /* (@a < 10px) */
+  /* TRACE[98]: next rule defined at 'mixin-guard-1.less:16' */
+  -3: red;
+  /* TRACE[99]:       end   .m(red)    mixin-guard-1.less:82  */
+  /* TRACE[100]:     start   .m(red)    mixin-guard-1.less:82  */
+  /* (10px < @a) */
+  /* TRACE[101]: next rule defined at 'mixin-guard-1.less:26' */
+  -5: red;
+  /* TRACE[102]:       end   .m(red)    mixin-guard-1.less:82  */
+  /* TRACE[103]:     start   .m(red)    mixin-guard-1.less:82  */
+  /* (@a <= 10px), (@a >= 20px) */
+  /* TRACE[104]: next rule defined at 'mixin-guard-1.less:41' */
+  -8: red;
+  /* TRACE[105]:       end   .m(red)    mixin-guard-1.less:82  */
+  /* TRACE[106]:     start   .m(red)    mixin-guard-1.less:82  */
+  /* (@a =< 10px), (@a => 20px) */
+  /* TRACE[107]: next rule defined at 'mixin-guard-1.less:46' */
+  -9: red;
+  /* TRACE[108]:       end   .m(red)    mixin-guard-1.less:82  */
+  /* TRACE[109]:     start   .m(red)    mixin-guard-1.less:82  */
+  /* (@a != 20px) and (@a != 5px) */
+  /* TRACE[110]: next rule defined at 'mixin-guard-1.less:51' */
+  -10: red;
+  /* TRACE[111]:       end   .m(red)    mixin-guard-1.less:82  */
+}
+.result-blue-hex {
+  /* TRACE[112]:     start   .m(blue)    mixin-guard-1.less:86  */
+  /* (@a < 10px) */
+  /* TRACE[113]: next rule defined at 'mixin-guard-1.less:16' */
+  -3: blue;
+  /* TRACE[114]:       end   .m(blue)    mixin-guard-1.less:86  */
+  /* TRACE[115]:     start   .m(blue)    mixin-guard-1.less:86  */
+  /* (10px < @a) */
+  /* TRACE[116]: next rule defined at 'mixin-guard-1.less:26' */
+  -5: blue;
+  /* TRACE[117]:       end   .m(blue)    mixin-guard-1.less:86  */
+  /* TRACE[118]:     start   .m(blue)    mixin-guard-1.less:86  */
+  /* (#00f = @a) */
+  /* TRACE[119]: next rule defined at 'mixin-guard-1.less:36' */
+  -7: blue;
+  /* TRACE[120]:       end   .m(blue)    mixin-guard-1.less:86  */
+  /* TRACE[121]:     start   .m(blue)    mixin-guard-1.less:86  */
+  /* (@a <= 10px), (@a >= 20px) */
+  /* TRACE[122]: next rule defined at 'mixin-guard-1.less:41' */
+  -8: blue;
+  /* TRACE[123]:       end   .m(blue)    mixin-guard-1.less:86  */
+  /* TRACE[124]:     start   .m(blue)    mixin-guard-1.less:86  */
+  /* (@a =< 10px), (@a => 20px) */
+  /* TRACE[125]: next rule defined at 'mixin-guard-1.less:46' */
+  -9: blue;
+  /* TRACE[126]:       end   .m(blue)    mixin-guard-1.less:86  */
+  /* TRACE[127]:     start   .m(blue)    mixin-guard-1.less:86  */
+  /* (@a != 20px) and (@a != 5px) */
+  /* TRACE[128]: next rule defined at 'mixin-guard-1.less:51' */
+  -10: blue;
+  /* TRACE[129]:       end   .m(blue)    mixin-guard-1.less:86  */
+}
+.result-5px {
+  /* TRACE[130]:     start   .m(5px)    mixin-guard-1.less:90  */
+  /* (@a < 10px) */
+  /* TRACE[131]: next rule defined at 'mixin-guard-1.less:16' */
+  -3: 5px;
+  /* TRACE[132]:       end   .m(5px)    mixin-guard-1.less:90  */
+  /* TRACE[133]:     start   .m(5px)    mixin-guard-1.less:90  */
+  /* (10px > @a) */
+  /* TRACE[134]: next rule defined at 'mixin-guard-1.less:31' */
+  -6: 5px;
+  /* TRACE[135]:       end   .m(5px)    mixin-guard-1.less:90  */
+  /* TRACE[136]:     start   .m(5px)    mixin-guard-1.less:90  */
+  /* (@a <= 10px), (@a >= 20px) */
+  /* TRACE[137]: next rule defined at 'mixin-guard-1.less:41' */
+  -8: 5px;
+  /* TRACE[138]:       end   .m(5px)    mixin-guard-1.less:90  */
+  /* TRACE[139]:     start   .m(5px)    mixin-guard-1.less:90  */
+  /* (@a =< 10px), (@a => 20px) */
+  /* TRACE[140]: next rule defined at 'mixin-guard-1.less:46' */
+  -9: 5px;
+  /* TRACE[141]:       end   .m(5px)    mixin-guard-1.less:90  */
+}
+.result-20px {
+  /* TRACE[142]:     start   .m(20px)    mixin-guard-1.less:94  */
+  /* (@a > 10px) */
+  /* TRACE[143]: next rule defined at 'mixin-guard-1.less:21' */
+  -4: 20px;
+  /* TRACE[144]:       end   .m(20px)    mixin-guard-1.less:94  */
+  /* TRACE[145]:     start   .m(20px)    mixin-guard-1.less:94  */
+  /* (10px < @a) */
+  /* TRACE[146]: next rule defined at 'mixin-guard-1.less:26' */
+  -5: 20px;
+  /* TRACE[147]:       end   .m(20px)    mixin-guard-1.less:94  */
+  /* TRACE[148]:     start   .m(20px)    mixin-guard-1.less:94  */
+  /* (@a <= 10px), (@a >= 20px) */
+  /* TRACE[149]: next rule defined at 'mixin-guard-1.less:41' */
+  -8: 20px;
+  /* TRACE[150]:       end   .m(20px)    mixin-guard-1.less:94  */
+  /* TRACE[151]:     start   .m(20px)    mixin-guard-1.less:94  */
+  /* (@a =< 10px), (@a => 20px) */
+  /* TRACE[152]: next rule defined at 'mixin-guard-1.less:46' */
+  -9: 20px;
+  /* TRACE[153]:       end   .m(20px)    mixin-guard-1.less:94  */
+}
+.result-30px {
+  /* TRACE[154]:     start   .m(30px)    mixin-guard-1.less:98  */
+  /* (@a > 10px) */
+  /* TRACE[155]: next rule defined at 'mixin-guard-1.less:21' */
+  -4: 30px;
+  /* TRACE[156]:       end   .m(30px)    mixin-guard-1.less:98  */
+  /* TRACE[157]:     start   .m(30px)    mixin-guard-1.less:98  */
+  /* (10px < @a) */
+  /* TRACE[158]: next rule defined at 'mixin-guard-1.less:26' */
+  -5: 30px;
+  /* TRACE[159]:       end   .m(30px)    mixin-guard-1.less:98  */
+  /* TRACE[160]:     start   .m(30px)    mixin-guard-1.less:98  */
+  /* (@a <= 10px), (@a >= 20px) */
+  /* TRACE[161]: next rule defined at 'mixin-guard-1.less:41' */
+  -8: 30px;
+  /* TRACE[162]:       end   .m(30px)    mixin-guard-1.less:98  */
+  /* TRACE[163]:     start   .m(30px)    mixin-guard-1.less:98  */
+  /* (@a =< 10px), (@a => 20px) */
+  /* TRACE[164]: next rule defined at 'mixin-guard-1.less:46' */
+  -9: 30px;
+  /* TRACE[165]:       end   .m(30px)    mixin-guard-1.less:98  */
+  /* TRACE[166]:     start   .m(30px)    mixin-guard-1.less:98  */
+  /* (@a != 20px) and (@a != 5px) */
+  /* TRACE[167]: next rule defined at 'mixin-guard-1.less:51' */
+  -10: 30px;
+  /* TRACE[168]:       end   .m(30px)    mixin-guard-1.less:98  */
+}

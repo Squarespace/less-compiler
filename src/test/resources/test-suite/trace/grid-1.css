@@ -1,0 +1,12 @@
+.wrapper {
+  /* TRACE[1]: next rule defined at 'grid-1.less:3' */
+  display: grid;
+  /* TRACE[2]: next rule defined at 'grid-1.less:4' */
+  grid-gap: 10px;
+  /* TRACE[3]: next rule defined at 'grid-1.less:5' */
+  grid-template: auto 1fr auto 1fr auto;
+  /* TRACE[4]: next rule defined at 'grid-1.less:6' */
+  background-color: #fff;
+  /* TRACE[5]: next rule defined at 'grid-1.less:7' */
+  color: #444;
+}

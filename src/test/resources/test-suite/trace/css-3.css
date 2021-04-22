@@ -1,0 +1,152 @@
+.comma-delimited {
+  /* TRACE[1]: next rule defined at 'css-3.less:2' */
+  text-shadow: -1px -1px 1px red, 6px 5px 5px #ff0;
+  /* TRACE[2]: next rule defined at 'css-3.less:3' */
+  -moz-box-shadow: 0pt 0pt 2px rgba(255, 255, 255, .4) inset, 0pt 4px 6px rgba(255, 255, 255, .4) inset;
+}
+@font-face {
+  /* TRACE[3]: next rule defined at 'css-3.less:7' */
+  font-family: Headline;
+  /* TRACE[4]: next rule defined at 'css-3.less:8' */
+  unicode-range: U+??????, U+0???, U+0-7F, U+A5;
+}
+.other {
+  /* TRACE[5]: next rule defined at 'css-3.less:11' */
+  -moz-transform: translate(0, 11em) rotate(-90deg);
+  /* TRACE[6]: next rule defined at 'css-3.less:12' */
+  transform: rotatex(45deg);
+}
+.item[data-cra_zy-attr1b-ut3=bold] {
+  /* TRACE[7]: next rule defined at 'css-3.less:15' */
+  font-weight: bold;
+}
+p:not([class*="lead"]) {
+  /* TRACE[8]: next rule defined at 'css-3.less:18' */
+  color: #000;
+}
+input[type="text"].class#id[attr=32]:not(1) {
+  /* TRACE[9]: next rule defined at 'css-3.less:22' */
+  color: #fff;
+}
+div#id.class[a=1][b=2].class:not(1) {
+  /* TRACE[10]: next rule defined at 'css-3.less:26' */
+  color: #fff;
+}
+ul.comma > li:not(:only-child)::after {
+  /* TRACE[11]: next rule defined at 'css-3.less:30' */
+  color: #fff;
+}
+ol.comma > li:nth-last-child(2)::after {
+  /* TRACE[12]: next rule defined at 'css-3.less:34' */
+  color: #fff;
+}
+li:nth-child(4n+1),
+li:nth-child(-5n),
+li:nth-child(-n+2) {
+  /* TRACE[13]: next rule defined at 'css-3.less:40' */
+  color: #fff;
+}
+a[href^="http://"] {
+  /* TRACE[14]: next rule defined at 'css-3.less:44' */
+  color: #000;
+}
+a[href$="http://"] {
+  /* TRACE[15]: next rule defined at 'css-3.less:48' */
+  color: #000;
+}
+form[data-disabled] {
+  /* TRACE[16]: next rule defined at 'css-3.less:52' */
+  color: #000;
+}
+p::before {
+  /* TRACE[17]: next rule defined at 'css-3.less:56' */
+  color: #000;
+}
+#issue322 {
+  /* TRACE[18]: next rule defined at 'css-3.less:60' */
+  -webkit-animation: anim2 7s infinite ease-in-out;
+}
+@-webkit-keyframes frames {
+  0% {
+    /* TRACE[19]: next rule defined at 'css-3.less:64' */
+    border: 1px;
+  }
+  5.5% {
+    /* TRACE[20]: next rule defined at 'css-3.less:65' */
+    border: 2px;
+  }
+  100% {
+    /* TRACE[21]: next rule defined at 'css-3.less:66' */
+    border: 3px;
+  }
+}
+@keyframes fontbulger1 {
+  to {
+    /* TRACE[22]: next rule defined at 'css-3.less:71' */
+    font-size: 15px;
+  }
+  from,
+  to {
+    /* TRACE[23]: next rule defined at 'css-3.less:74' */
+    font-size: 12px;
+  }
+  0%,
+  100% {
+    /* TRACE[24]: next rule defined at 'css-3.less:77' */
+    font-size: 12px;
+  }
+}
+.units {
+  /* TRACE[25]: next rule defined at 'css-3.less:82' */
+  font: 1.2rem/2rem;
+  /* TRACE[26]: next rule defined at 'css-3.less:83' */
+  font: 8vw/9vw;
+  /* TRACE[27]: next rule defined at 'css-3.less:84' */
+  font: 10vh/12vh;
+  /* TRACE[28]: next rule defined at 'css-3.less:85' */
+  font: 12vm/15vm;
+  /* TRACE[29]: next rule defined at 'css-3.less:86' */
+  font: 12vmin/15vmin;
+  /* TRACE[30]: next rule defined at 'css-3.less:87' */
+  font: 1.2ch/1.5ch;
+}
+@supports ( box-shadow: 2px 2px 2px black ) or
+          ( -moz-box-shadow: 2px 2px 2px black ) {
+  .outline {
+    /* TRACE[31]: next rule defined at 'css-3.less:93' */
+    box-shadow: 2px 2px 2px #000;
+    /* TRACE[32]: next rule defined at 'css-3.less:94' */
+    -moz-box-shadow: 2px 2px 2px #000;
+  }
+}
+@-x-document url-prefix(""github.com"") {
+  h1 {
+    /* TRACE[33]: next rule defined at 'css-3.less:100' */
+    color: red;
+  }
+}
+@viewport {
+  /* TRACE[34]: next rule defined at 'css-3.less:105' */
+  font-size: 10px;
+}
+@namespace foo url(http://www.example.com);
+foo | h1 {
+  /* TRACE[35]: next rule defined at 'css-3.less:109' */
+  color: blue;
+}
+foo | * {
+  /* TRACE[36]: next rule defined at 'css-3.less:110' */
+  color: #ff0;
+}
+| h1 {
+  /* TRACE[37]: next rule defined at 'css-3.less:111' */
+  color: red;
+}
+* | h1 {
+  /* TRACE[38]: next rule defined at 'css-3.less:112' */
+  color: green;
+}
+h1 {
+  /* TRACE[39]: next rule defined at 'css-3.less:113' */
+  color: green;
+}

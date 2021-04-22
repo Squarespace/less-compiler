@@ -1,0 +1,170 @@
+h1 a:hover,
+h2 a:hover,
+h3 a:hover,
+h1 p:hover,
+h2 p:hover,
+h3 p:hover {
+  /* TRACE[1]: next rule defined at 'selectors.less:4' */
+  color: red;
+}
+#all {
+  /* TRACE[2]: next rule defined at 'selectors.less:9' */
+  color: blue;
+}
+#the {
+  /* TRACE[3]: next rule defined at 'selectors.less:10' */
+  color: blue;
+}
+#same {
+  /* TRACE[4]: next rule defined at 'selectors.less:11' */
+  color: blue;
+}
+ul,
+li,
+div,
+q,
+blockquote,
+textarea {
+  /* TRACE[5]: next rule defined at 'selectors.less:14' */
+  margin: 0;
+}
+td {
+  /* TRACE[6]: next rule defined at 'selectors.less:18' */
+  margin: 0;
+  /* TRACE[7]: next rule defined at 'selectors.less:19' */
+  padding: 0;
+}
+td,
+input {
+  /* TRACE[8]: next rule defined at 'selectors.less:23' */
+  line-height: 1em;
+}
+a {
+  /* TRACE[9]: next rule defined at 'selectors.less:27' */
+  color: red;
+}
+a:hover {
+  /* TRACE[10]: next rule defined at 'selectors.less:29' */
+  color: blue;
+}
+div a {
+  /* TRACE[11]: next rule defined at 'selectors.less:31' */
+  color: green;
+}
+p a span {
+  /* TRACE[12]: next rule defined at 'selectors.less:33' */
+  color: #ff0;
+}
+.foo .bar .qux,
+.foo .baz .qux {
+  /* TRACE[13]: next rule defined at 'selectors.less:39' */
+  display: block;
+}
+.qux .foo .bar,
+.qux .foo .baz {
+  /* TRACE[14]: next rule defined at 'selectors.less:42' */
+  display: inline;
+}
+.qux.foo .bar,
+.qux.foo .baz {
+  /* TRACE[15]: next rule defined at 'selectors.less:45' */
+  display: inline-block;
+}
+.qux .foo .bar .biz,
+.qux .foo .baz .biz {
+  /* TRACE[16]: next rule defined at 'selectors.less:48' */
+  display: none;
+}
+.a.b.c {
+  /* TRACE[17]: next rule defined at 'selectors.less:56' */
+  color: red;
+}
+.c .b.a {
+  /* TRACE[18]: next rule defined at 'selectors.less:64' */
+  color: red;
+}
+.foo .p.bar {
+  /* TRACE[19]: next rule defined at 'selectors.less:71' */
+  color: red;
+}
+.foo.p.bar {
+  /* TRACE[20]: next rule defined at 'selectors.less:77' */
+  color: red;
+}
+.foo + .foo {
+  /* TRACE[21]: next rule defined at 'selectors.less:83' */
+  background: amber;
+}
+.foo + .foo {
+  /* TRACE[22]: next rule defined at 'selectors.less:86' */
+  background: amber;
+}
+.foo + .foo,
+.foo + .bar,
+.bar + .foo,
+.bar + .bar {
+  /* TRACE[23]: next rule defined at 'selectors.less:92' */
+  background: amber;
+}
+.foo a > .foo a,
+.foo a > .bar a,
+.foo a > .foo b,
+.foo a > .bar b,
+.bar a > .foo a,
+.bar a > .bar a,
+.bar a > .foo b,
+.bar a > .bar b,
+.foo b > .foo a,
+.foo b > .bar a,
+.foo b > .foo b,
+.foo b > .bar b,
+.bar b > .foo a,
+.bar b > .bar a,
+.bar b > .foo b,
+.bar b > .bar b {
+  /* TRACE[24]: next rule defined at 'selectors.less:99' */
+  background: amber;
+}
+.other ::fnord {
+  /* TRACE[25]: next rule defined at 'selectors.less:104' */
+  color: red;
+}
+.other::fnord {
+  /* TRACE[26]: next rule defined at 'selectors.less:105' */
+  color: red;
+}
+.other ::bnord {
+  /* TRACE[27]: next rule defined at 'selectors.less:107' */
+  color: red;
+}
+.other::bnord {
+  /* TRACE[28]: next rule defined at 'selectors.less:108' */
+  color: red;
+}
+/* TRACE[29]:   define   @theme: blood    selectors.less:111  */
+.blood {
+  /* TRACE[30]: next rule defined at 'selectors.less:113' */
+  color: red;
+}
+/* TRACE[31]:   define   @selector: ~".blood"    selectors.less:116  */
+.blood {
+  /* TRACE[32]: next rule defined at 'selectors.less:118' */
+  color: red;
+}
+.bloodred {
+  /* TRACE[33]: next rule defined at 'selectors.less:121' */
+  color: green;
+}
+#blood.blood.red.black {
+  /* TRACE[34]: next rule defined at 'selectors.less:125' */
+  color: #000;
+}
+/* TRACE[35]:   define   @num: 3    selectors.less:128  */
+:nth-child(3):nth-child(3) {
+  /* TRACE[36]: next rule defined at 'selectors.less:130' */
+  second-use: deprecated;
+}
+.test:nth-child(odd):not(:nth-child(3)) {
+  /* TRACE[37]: next rule defined at 'selectors.less:134' */
+  color: red;
+}

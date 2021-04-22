@@ -1,0 +1,36 @@
+div {
+  /* TRACE[1]:     start   .mixin-1(transparent)    color-transparent.less:35  */
+  /* TRACE[2]: next rule defined at 'color-transparent.less:2' */
+  content1: A;
+  /* TRACE[3]:       end   .mixin-1(transparent)    color-transparent.less:35  */
+  /* TRACE[4]:     start   .mixin-2(transparent)    color-transparent.less:36  */
+  /* TRACE[5]: next rule defined at 'color-transparent.less:10' */
+  content2: A;
+  /* TRACE[6]:       end   .mixin-2(transparent)    color-transparent.less:36  */
+  /* TRACE[7]:     start   .mixin-3(transparent)    color-transparent.less:37  */
+  /* TRACE[8]: next rule defined at 'color-transparent.less:18' */
+  content3: A;
+  /* TRACE[9]:       end   .mixin-3(transparent)    color-transparent.less:37  */
+  /* TRACE[10]:     start   .mixin-4(transparent)    color-transparent.less:38  */
+  /* TRACE[11]: next rule defined at 'color-transparent.less:26' */
+  content4: A;
+  /* TRACE[12]:       end   .mixin-4(transparent)    color-transparent.less:38  */
+}
+div {
+  /* TRACE[13]:     start   .mixin-1(#fff)    color-transparent.less:42  */
+  /* TRACE[14]: next rule defined at 'color-transparent.less:6' */
+  content1: B;
+  /* TRACE[15]:       end   .mixin-1(#fff)    color-transparent.less:42  */
+  /* TRACE[16]:     start   .mixin-2(#fff)    color-transparent.less:43  */
+  /* TRACE[17]: next rule defined at 'color-transparent.less:14' */
+  content2: B;
+  /* TRACE[18]:       end   .mixin-2(#fff)    color-transparent.less:43  */
+  /* TRACE[19]:     start   .mixin-3(#fff)    color-transparent.less:44  */
+  /* TRACE[20]: next rule defined at 'color-transparent.less:22' */
+  content3: B;
+  /* TRACE[21]:       end   .mixin-3(#fff)    color-transparent.less:44  */
+  /* TRACE[22]:     start   .mixin-4(#fff)    color-transparent.less:45  */
+  /* TRACE[23]: next rule defined at 'color-transparent.less:30' */
+  content4: B;
+  /* TRACE[24]:       end   .mixin-4(#fff)    color-transparent.less:45  */
+}

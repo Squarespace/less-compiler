@@ -66,9 +66,16 @@ public class LessSuiteBase {
     return compiler.parse(source, ctx);
   }
 
-  protected String compile(String source, Path importRoot) throws LessException {
+  protected String compile(String source, Path importRoot, boolean tracing) throws LessException {
+    return compile(source, importRoot, tracing, null, null);
+  }
+
+  protected String compile(String source, Path importRoot, boolean tracing, Path parent, Path fileName)
+      throws LessException {
+
     // Setup the compiler
     LessOptions opts = new LessOptions();
+    opts.tracing(tracing);
     opts.addImportPath(importRoot.toString());
 
     LessContext ctx = new LessContext(opts);
@@ -78,7 +85,7 @@ public class LessSuiteBase {
     // First, parse the stylesheet and generate the parse tree and canonical representations,
     // in order to exercise more parts of the code.
     Buffer buf = new Buffer(2);
-    Stylesheet sheet = compiler.parse(source, ctx);
+    Stylesheet sheet = compiler.parse(source, ctx, parent, fileName);
     sheet.modelRepr(buf);
     sheet.repr(buf);
 
@@ -100,7 +107,7 @@ public class LessSuiteBase {
     // Finally, compile and execute the stylesheet.
     ctx = new LessContext(opts);
     ctx.setCompiler(compiler);
-    String result = compiler.compile(source, ctx);
+    String result = compiler.compile(source, ctx, parent, fileName);
     ctx.sanityCheck();
     return result;
   }

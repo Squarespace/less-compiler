@@ -1,0 +1,27 @@
+@media foo and (width: 12px) {
+  .media-features {
+    /* TRACE[1]: next rule defined at 'whitespace.less:3' */
+    dummy: rule;
+  }
+}
+@media (a: 1), (b: 2) and (c: 3) {
+  .media-features {
+    /* TRACE[2]: next rule defined at 'whitespace.less:6' */
+    dummy: rule;
+  }
+}
+.mixin-guard {
+  /* TRACE[3]:     start   .mixin-0()    whitespace.less:13  */
+  /* TRACE[4]: next rule defined at 'whitespace.less:11' */
+  dummy: rule;
+  /* TRACE[5]:       end   .mixin-0()    whitespace.less:13  */
+}
+.ruleset {
+  /* TRACE[6]: next rule defined at 'whitespace.less:17' */
+  ignore: me;
+}
+.ruleset-1,
+.ruleset-2 {
+  /* TRACE[7]: next rule defined at 'whitespace.less:21' */
+  ignore: me;
+}

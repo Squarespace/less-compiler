@@ -42,9 +42,18 @@ public class LessSuiteTest extends LessSuiteBase {
 
   @Test
   public void testSuite() throws IOException {
+    _testSuite("css", ".css", false);
+  }
+
+  @Test
+  public void testTracing() throws IOException {
+    _testSuite("trace", ".css", true);
+  }
+
+  private void _testSuite(String subdir, String ext, boolean tracing) throws IOException {
     Path rootPath = testSuiteRoot();
     Path lessRoot = rootPath.resolve("less");
-    Path cssRoot = rootPath.resolve("css");
+    Path cssRoot = rootPath.resolve(subdir);
     int failures = 0;
     for (Path lessPath : LessUtils.getMatchingFiles(lessRoot, GLOB_LESS)) {
       String fileName = "less/" + lessPath.getFileName();
@@ -58,7 +67,7 @@ public class LessSuiteTest extends LessSuiteBase {
       String source = LessUtils.readFile(lessPath);
       String lessCompiled = null;
       try {
-        lessCompiled = compile(source, lessRoot);
+        lessCompiled = compile(source, lessRoot, tracing, lessRoot, lessPath.getFileName());
       } catch (LessException | RuntimeException e) {
         logFailure("Test Suite", ++failures, "Error compiling", fileName);
         e.printStackTrace();
@@ -67,7 +76,7 @@ public class LessSuiteTest extends LessSuiteBase {
 
       // Compare with expected CSS result.
       String[] parts = lessPath.getFileName().toString().split("\\.(?=[^\\.]+$)");
-      Path cssPath = cssRoot.resolve(parts[0] + ".css").normalize();
+      Path cssPath = cssRoot.resolve(parts[0] + ext).normalize();
       String cssData = LessUtils.readFile(cssPath);
 
       String result = diff(cssData, lessCompiled);
@@ -122,6 +131,7 @@ public class LessSuiteTest extends LessSuiteBase {
 
   }
 
+
   @Test
   public void testErrorSuite() throws IOException {
     Path rootPath = testSuiteRoot();
@@ -133,7 +143,7 @@ public class LessSuiteTest extends LessSuiteBase {
       List<ErrorCase> errorCases = parseErrorCases(source);
       for (ErrorCase errorCase : errorCases) {
         try {
-          compile(errorCase.source, errorRoot);
+          compile(errorCase.source, errorRoot, false);
           logFailure("Error Suite", ++failures, "Expected a LessException for error test case '"
               + errorCase.failMessage + "' processing:\n", errorCase.source);
 

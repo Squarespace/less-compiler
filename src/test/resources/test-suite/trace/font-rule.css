@@ -1,0 +1,28 @@
+.ruleset-font-1 {
+  /* TRACE[1]: next rule defined at 'font-rule.less:2' */
+  font: 14px Helvetica, sans-serif;
+}
+.ruleset-font-2 {
+  /* TRACE[2]: next rule defined at 'font-rule.less:5' */
+  font: bold 14px/1.5 Helvetica, sans-serif;
+}
+.ruleset-font-3 {
+  /* TRACE[3]: next rule defined at 'font-rule.less:8' */
+  font: italic small-caps bold 1em/140% Helvetica, sans-serif;
+}
+.ruleset-font-4 {
+  /* TRACE[4]: next rule defined at 'font-rule.less:11' */
+  font: italic small-caps;
+}
+.ruleset-font-5 {
+  /* TRACE[5]: next rule defined at 'font-rule.less:14' */
+  font: italic, sans-serif, small-caps, bold;
+}
+.ruleset-font-6 {
+  /* TRACE[6]: next rule defined at 'font-rule.less:17' */
+  font: italic;
+}
+.ruleset-font-7 {
+  /* TRACE[7]: next rule defined at 'font-rule.less:20' */
+  font: 400 12px / 14px 'proxima-nova';
+}

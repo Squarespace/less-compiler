@@ -1,0 +1,42 @@
+.parent .child-1 {
+  /* TRACE[1]: next rule defined at 'ruleset.less:4' */
+  a: 1;
+}
+.parent .child-2,
+.parent .child-3 {
+  /* TRACE[2]: next rule defined at 'ruleset.less:7' */
+  b: 2;
+}
+.child + .child,
+.child + .sibling,
+.sibling + .child,
+.sibling + .sibling {
+  /* TRACE[3]: next rule defined at 'ruleset.less:14' */
+  c: 3;
+}
+.parent.class-1,
+.parent.class-2 {
+  /* TRACE[4]: next rule defined at 'ruleset.less:21' */
+  d: 4;
+}
+.parent.class-3 {
+  /* TRACE[5]: next rule defined at 'ruleset.less:24' */
+  e: 5;
+}
+.ruleset-mixin .child {
+  /* TRACE[6]: next rule defined at 'ruleset.less:31' */
+  f: 6;
+}
+.mixin-parent {
+  /* TRACE[7]:     start   .ruleset-mixin    ruleset.less:35  */
+  /* TRACE[9]:       end   .ruleset-mixin    ruleset.less:35  */
+}
+.mixin-parent .child {
+  /* TRACE[8]: next rule defined at 'ruleset.less:31' */
+  f: 6;
+}
+.complex-combinators > h1 + p:other:hover,
+> .complex-combinators > h1 + p:other {
+  /* TRACE[10]: next rule defined at 'ruleset.less:40' */
+  g: 7;
+}

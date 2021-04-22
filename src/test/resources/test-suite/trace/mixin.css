@@ -1,0 +1,99 @@
+.ruleset-1 {
+  /* TRACE[1]: next rule defined at 'mixin.less:6' */
+  a: #123;
+  /* TRACE[2]:     start   .mixin-import-a()    mixin.less:7  */
+  /* TRACE[3]:   define   @a: #123    mixin.less:3  */
+  /* TRACE[4]:       end   .mixin-import-a()    mixin.less:7  */
+}
+.ruleset-defaults .seventeen {
+  /* TRACE[5]:     start   .mixin-defaults(17)    mixin.less:19  */
+  /* TRACE[6]: next rule defined at 'mixin.less:13' */
+  num: 17;
+  /* TRACE[7]: next rule defined at 'mixin.less:14' */
+  color: blue;
+  /* TRACE[8]:       end   .mixin-defaults(17)    mixin.less:19  */
+}
+.ruleset-defaults .red {
+  /* TRACE[9]:     start   .mixin-defaults(@color: red)    mixin.less:22  */
+  /* TRACE[10]: next rule defined at 'mixin.less:13' */
+  num: 1;
+  /* TRACE[11]: next rule defined at 'mixin.less:14' */
+  color: red;
+  /* TRACE[12]:       end   .mixin-defaults(@color: red)    mixin.less:22  */
+}
+.ruleset-guard .parent-1 {
+  /* TRACE[13]:     start   .mixin-guard(4)    mixin.less:34  */
+  /* TRACE[14]: next rule defined at 'mixin.less:29' */
+  values: 4 0;
+  /* TRACE[15]:       end   .mixin-guard(4)    mixin.less:34  */
+}
+.ruleset-guard .parent-3 {
+  /* TRACE[16]:     start   .mixin-guard(1, 4)    mixin.less:40  */
+  /* TRACE[17]: next rule defined at 'mixin.less:29' */
+  values: 1 4;
+  /* TRACE[18]:       end   .mixin-guard(1, 4)    mixin.less:40  */
+}
+.ruleset-color .parent-1 {
+  /* TRACE[19]:     start   .mixin-color(#fff, 'parent-1')    mixin.less:54  */
+  /* TRACE[20]: next rule defined at 'mixin.less:47' */
+  color-white: 'parent-1';
+  /* TRACE[21]:       end   .mixin-color(#fff, 'parent-1')    mixin.less:54  */
+}
+.ruleset-color .parent-2 {
+  /* TRACE[22]:     start   .mixin-color(#000, 'parent-2')    mixin.less:57  */
+  /* TRACE[23]: next rule defined at 'mixin.less:50' */
+  color-black: 'parent-2';
+  /* TRACE[24]:       end   .mixin-color(#000, 'parent-2')    mixin.less:57  */
+}
+.ruleset-recurse {
+  /* TRACE[25]:     start   .mixin-recurse(3)    mixin.less:70  */
+  /* TRACE[27]:     start   .mixin-recurse(2)    mixin.less:67  */
+  /* TRACE[29]:     start   .mixin-recurse(1)    mixin.less:67  */
+  /* TRACE[31]:       end   .mixin-recurse(1)    mixin.less:67  */
+  /* TRACE[32]:       end   .mixin-recurse(2)    mixin.less:67  */
+  /* TRACE[33]:       end   .mixin-recurse(3)    mixin.less:70  */
+}
+.ruleset-recurse .child {
+  /* TRACE[26]: next rule defined at 'mixin.less:65' */
+  arg: 3;
+}
+.ruleset-recurse .child {
+  /* TRACE[28]: next rule defined at 'mixin.less:65' */
+  arg: 2;
+}
+.ruleset-recurse .child {
+  /* TRACE[30]: next rule defined at 'mixin.less:65' */
+  arg: 1;
+}
+.ruleset-mututal-recurse {
+  /* TRACE[34]:     start   .mixin-recurse-1(4)    mixin.less:89  */
+  /* TRACE[36]:     start   .mixin-recurse-2(3)    mixin.less:79  */
+  /* TRACE[38]:     start   .mixin-recurse-1(2)    mixin.less:85  */
+  /* TRACE[40]:     start   .mixin-recurse-2(1)    mixin.less:79  */
+  /* TRACE[42]:       end   .mixin-recurse-2(1)    mixin.less:79  */
+  /* TRACE[43]:       end   .mixin-recurse-1(2)    mixin.less:85  */
+  /* TRACE[44]:       end   .mixin-recurse-2(3)    mixin.less:79  */
+  /* TRACE[45]:       end   .mixin-recurse-1(4)    mixin.less:89  */
+}
+.ruleset-mututal-recurse .black {
+  /* TRACE[35]: next rule defined at 'mixin.less:77' */
+  arg: 4;
+}
+.ruleset-mututal-recurse .red {
+  /* TRACE[37]: next rule defined at 'mixin.less:83' */
+  arg: 3;
+}
+.ruleset-mututal-recurse .black {
+  /* TRACE[39]: next rule defined at 'mixin.less:77' */
+  arg: 2;
+}
+.ruleset-mututal-recurse .red {
+  /* TRACE[41]: next rule defined at 'mixin.less:83' */
+  arg: 1;
+}
+.parent {
+  /* TRACE[46]:     start   .prefix("box-decoration-break", "clone")    mixin.less:97  */
+  /* TRACE[47]: next rule defined at 'mixin.less:94' */
+  -: ;-webkit-box-decoration-break: clone; -moz-box-decoration-break: clone; -ms-box-decoration-break: clone; -o-box-decoration-break: clone; box-decoration-break: clone;
+  /* TRACE[48]:       end   .prefix("box-decoration-break", "clone")    mixin.less:97  */
+}

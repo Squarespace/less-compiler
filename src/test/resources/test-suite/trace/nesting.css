@@ -1,0 +1,6 @@
+@media (min-width: 48em) {
+  .a .b .c .d .e .f .g .h {
+    /* TRACE[1]: next rule defined at 'nesting.less:10' */
+    color: blue;
+  }
+}

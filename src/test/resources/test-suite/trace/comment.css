@@ -1,0 +1,25 @@
+/* Block comment 1 */
+.ruleset-1 {
+  /* Block comment 1.1 */
+  /* TRACE[1]: next rule defined at 'comment.less:6' */
+  child-1: foo;
+  /* Block comment 1.2 */
+}
+/*
+ * Block comment 2
+ */
+.ruleset-2 {
+  /*
+     * Block comment 2.1
+     */
+  /* TRACE[2]: next rule defined at 'comment.less:17' */
+  child-2: bar;
+  /* 
+     * Block comment 2.2 
+     */
+}
+/* Block comment 3 */
+h1 span:hover {
+  /* TRACE[3]: next rule defined at 'comment.less:25' */
+  color: /* c */ red;
+}

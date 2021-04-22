@@ -1,0 +1,8 @@
+.color-warnings {
+  /* WARNING[1] raised evaluating next rule: ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from PX (pixels) to COLOR.. stripping unit. */
+  /* TRACE[1]: next rule defined at 'color-warning.less:4' */
+  a1: #000;
+  /* WARNING[2] raised evaluating next rule: ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from PX (pixels) to COLOR.. stripping unit. */
+  /* TRACE[2]: next rule defined at 'color-warning.less:5' */
+  a2: #010101;
+}

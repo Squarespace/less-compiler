@@ -1,0 +1,108 @@
+.dimension-unitless {
+  /* TRACE[1]: next rule defined at 'dimension.less:2' */
+  a1: 0;
+  /* TRACE[2]: next rule defined at 'dimension.less:3' */
+  a2: .1;
+  /* TRACE[3]: next rule defined at 'dimension.less:4' */
+  a3: 0;
+  /* TRACE[4]: next rule defined at 'dimension.less:5' */
+  a4: -.1;
+  /* TRACE[5]: next rule defined at 'dimension.less:6' */
+  a5: -1;
+  /* TRACE[6]: next rule defined at 'dimension.less:7' */
+  a6: 3.14159;
+  /* TRACE[7]: next rule defined at 'dimension.less:8' */
+  a7: -3.14159;
+  /* TRACE[8]: next rule defined at 'dimension.less:9' */
+  a8: -.001;
+  /* TRACE[9]: next rule defined at 'dimension.less:10' */
+  a9: -.000001;
+  /* TRACE[10]: next rule defined at 'dimension.less:11' */
+  a10: 100000000000.5;
+  /* TRACE[11]: next rule defined at 'dimension.less:12' */
+  a11: -1.00000001;
+  /* TRACE[12]: next rule defined at 'dimension.less:13' */
+  a12: -.99999999;
+  /* TRACE[13]: next rule defined at 'dimension.less:14' */
+  a13: 123.45645646;
+}
+.dimension-limits {
+  /* TRACE[14]: next rule defined at 'dimension.less:17' */
+  b1: 9223372036854775807;
+  /* TRACE[15]: next rule defined at 'dimension.less:18' */
+  b2: -9223372036854775808;
+  /* TRACE[16]: next rule defined at 'dimension.less:19' */
+  b3: -92233720368547760000;
+}
+.dimension-case {
+  /* TRACE[17]: next rule defined at 'dimension.less:22' */
+  c1: 3.5px;
+  /* TRACE[18]: next rule defined at 'dimension.less:23' */
+  c2: 3.5cm;
+}
+.dimension-absolute-lengths {
+  /* TRACE[19]: next rule defined at 'dimension.less:26' */
+  d1: -3.5cm;
+  /* TRACE[20]: next rule defined at 'dimension.less:27' */
+  d2: -3.5mm;
+  /* TRACE[21]: next rule defined at 'dimension.less:28' */
+  d3: -3.5in;
+  /* TRACE[22]: next rule defined at 'dimension.less:29' */
+  d4: -3.5px;
+  /* TRACE[23]: next rule defined at 'dimension.less:30' */
+  d5: -3.5pt;
+  /* TRACE[24]: next rule defined at 'dimension.less:31' */
+  d6: -3.5pc;
+}
+.dimension-font-relative-lengths {
+  /* TRACE[25]: next rule defined at 'dimension.less:34' */
+  e1: -3.5ch;
+  /* TRACE[26]: next rule defined at 'dimension.less:35' */
+  e2: -3.5em;
+  /* TRACE[27]: next rule defined at 'dimension.less:36' */
+  e3: -3.5ex;
+  /* TRACE[28]: next rule defined at 'dimension.less:37' */
+  e4: -3.5rem;
+}
+.dimension-viewport-relative-lengths {
+  /* TRACE[29]: next rule defined at 'dimension.less:40' */
+  f1: -3.5vh;
+  /* TRACE[30]: next rule defined at 'dimension.less:41' */
+  f2: -3.5vw;
+  /* TRACE[31]: next rule defined at 'dimension.less:42' */
+  f3: -3.5vmin;
+  /* TRACE[32]: next rule defined at 'dimension.less:43' */
+  f4: -3.5vmax;
+  /* TRACE[33]: next rule defined at 'dimension.less:44' */
+  f5: -3.5vm;
+}
+.dimension-times {
+  /* TRACE[34]: next rule defined at 'dimension.less:47' */
+  g1: -3.5s;
+  /* TRACE[35]: next rule defined at 'dimension.less:48' */
+  g2: -3.5ms;
+}
+.dimension-resolutions {
+  /* TRACE[36]: next rule defined at 'dimension.less:51' */
+  h1: -3.5dpi;
+  /* TRACE[37]: next rule defined at 'dimension.less:52' */
+  h2: -3.5dpcm;
+  /* TRACE[38]: next rule defined at 'dimension.less:53' */
+  h3: -3.5dppx;
+}
+.dimension-frequencies {
+  /* TRACE[39]: next rule defined at 'dimension.less:56' */
+  i1: -3.5hz;
+  /* TRACE[40]: next rule defined at 'dimension.less:57' */
+  i2: -3.5khz;
+}
+.dimension-angles {
+  /* TRACE[41]: next rule defined at 'dimension.less:60' */
+  j1: -3.5deg;
+  /* TRACE[42]: next rule defined at 'dimension.less:61' */
+  j2: -3.5grad;
+  /* TRACE[43]: next rule defined at 'dimension.less:62' */
+  j3: -3.5rad;
+  /* TRACE[44]: next rule defined at 'dimension.less:63' */
+  j4: -3.5turn;
+}

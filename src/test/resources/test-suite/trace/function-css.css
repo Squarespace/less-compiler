@@ -1,0 +1,4 @@
+.ruleset {
+  /* TRACE[1]: next rule defined at 'function-css.less:2' */
+  a1: foo-bar(arg=#123);
+}

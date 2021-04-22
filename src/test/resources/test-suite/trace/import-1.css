@@ -1,0 +1,32 @@
+@import "foo.css";
+@import "bar.css";
+.rule {
+  /* TRACE[1]:     start   @import "./dir1/dir2/_child-1"    import-1.less:1  */
+  /* TRACE[2]:     start   @import "../_parent-1.less"    _child-1.less:1  */
+  /* TRACE[3]: next rule defined at '_parent-1.less:2' */
+  parent-1: true;
+  /* TRACE[4]:       end   @import "../_parent-1.less"    _child-1.less:1  */
+  /* TRACE[5]:     start   @import "./_sibling-1.less"    _child-1.less:1  */
+  /* TRACE[6]: next rule defined at '_sibling-1.less:2' */
+  sibling-1: true;
+  /* TRACE[7]:     start   @import "../dir3/_sibling-2"    _sibling-1.less:1  */
+  /* TRACE[8]: next rule defined at '_sibling-2.less:2' */
+  sibling-2: true;
+  /* TRACE[9]:       end   @import "../dir3/_sibling-2"    _sibling-1.less:1  */
+  /* TRACE[10]:       end   @import "./_sibling-1.less"    _child-1.less:1  */
+  /* TRACE[11]: next rule defined at '_child-1.less:5' */
+  child-1: true;
+  /* TRACE[12]:       end   @import "./dir1/dir2/_child-1"    import-1.less:1  */
+}
+/* TRACE[13]:     start   @import-once "dir1/dir2/_child-2"    import-1.less:1  */
+.rule {
+  /* TRACE[14]: next rule defined at '_child-2.less:3' */
+  output-once: true;
+}
+/* TRACE[15]:       end   @import-once "dir1/dir2/_child-2"    import-1.less:1  */
+.ruleset-1 .child {
+  @import "foo.css";
+}
+.ruleset-1 .sibling {
+  @import "bar.css";
+}

@@ -1,0 +1,13 @@
+@charset "utf-8";
+.ruleset-1 {
+  /* TRACE[1]: next rule defined at 'charset.less:5' */
+  color: blue;
+}
+.ruleset-2 {
+  /* TRACE[2]: next rule defined at 'charset.less:11' */
+  color: green;
+}
+.ruleset-3 {
+  /* TRACE[3]: next rule defined at 'charset.less:17' */
+  color: red;
+}

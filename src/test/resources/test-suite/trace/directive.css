@@ -1,0 +1,18 @@
+@-webkit-keyframes frames {
+  0% {
+    /* TRACE[1]: next rule defined at 'directive.less:3' */
+    border: 1px;
+  }
+}
+@font-face {
+  /* TRACE[2]: next rule defined at 'directive.less:8' */
+  font-family: Helvetica;
+}
+.ruleset-namespace {
+  @namespace sqs url('http://squarespace.com');
+}
+/* TRACE[3]:   define   @name: foo    directive.less:14  */
+/* TRACE[4]:   define   @value: url('http://squarespace.com')    directive.less:15  */
+.ruleset-namespace-dynamic {
+  @namespace foo url('http://squarespace.com');
+}

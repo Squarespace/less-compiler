@@ -1,0 +1,5 @@
+.calc-function {
+  /* TRACE[1]:   define   @adjust: 12px    function-calc.less:2  */
+  /* TRACE[2]: next rule defined at 'function-calc.less:3' */
+  width: calc(100% + 12px);
+}

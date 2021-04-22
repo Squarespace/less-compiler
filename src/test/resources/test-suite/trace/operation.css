@@ -1,0 +1,70 @@
+.operations-basic-math {
+  /* TRACE[1]: next rule defined at 'operation.less:2' */
+  a1: 0;
+  /* TRACE[2]: next rule defined at 'operation.less:3' */
+  a2: 0;
+  /* TRACE[3]: next rule defined at 'operation.less:4' */
+  a3: 0;
+  /* TRACE[4]: next rule defined at 'operation.less:5' */
+  a4: 0;
+  /* TRACE[5]: next rule defined at 'operation.less:6' */
+  a5: -3;
+  /* TRACE[6]: next rule defined at 'operation.less:7' */
+  a6: 5;
+  /* TRACE[7]: next rule defined at 'operation.less:8' */
+  a7: 1;
+}
+.operations-operators {
+  /* TRACE[8]: next rule defined at 'operation.less:11' */
+  b1: 0;
+  /* TRACE[9]: next rule defined at 'operation.less:12' */
+  b2: 6;
+  /* TRACE[10]: next rule defined at 'operation.less:13' */
+  b3: -500;
+  /* TRACE[11]: next rule defined at 'operation.less:14' */
+  b4: .5;
+  /* TRACE[12]: next rule defined at 'operation.less:15' */
+  b5: 8;
+  /* TRACE[13]: next rule defined at 'operation.less:16' */
+  b6: 1;
+  /* TRACE[14]: next rule defined at 'operation.less:17' */
+  b7: .01;
+}
+.operations-precedence {
+  /* TRACE[15]: next rule defined at 'operation.less:20' */
+  c1: 13;
+  /* TRACE[16]: next rule defined at 'operation.less:21' */
+  c2: -7;
+  /* TRACE[17]: next rule defined at 'operation.less:22' */
+  c3: 1;
+  /* TRACE[18]: next rule defined at 'operation.less:23' */
+  c4: 39;
+}
+.operations-parens {
+  /* TRACE[19]: next rule defined at 'operation.less:26' */
+  d1: 16;
+  /* TRACE[20]: next rule defined at 'operation.less:27' */
+  d2: -4;
+  /* TRACE[21]: next rule defined at 'operation.less:28' */
+  d3: -.5;
+  /* TRACE[22]: next rule defined at 'operation.less:29' */
+  d4: 50;
+}
+.operations-convert-units {
+  /* TRACE[23]: next rule defined at 'operation.less:33' */
+  e1: 144px;
+  /* TRACE[24]: next rule defined at 'operation.less:34' */
+  e2: 1.5in;
+  /* TRACE[25]: next rule defined at 'operation.less:37' */
+  e3: 2000ms;
+  /* TRACE[26]: next rule defined at 'operation.less:38' */
+  e4: 1.5s;
+  /* TRACE[27]: next rule defined at 'operation.less:41' */
+  e5: .5khz;
+  /* TRACE[28]: next rule defined at 'operation.less:42' */
+  e6: 1100hz;
+  /* TRACE[29]: next rule defined at 'operation.less:45' */
+  e7: 720deg;
+  /* TRACE[30]: next rule defined at 'operation.less:46' */
+  e8: 1.5turn;
+}

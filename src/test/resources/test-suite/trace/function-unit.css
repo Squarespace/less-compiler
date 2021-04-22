@@ -1,0 +1,10 @@
+.function-unit {
+  /* TRACE[1]: next rule defined at 'function-unit.less:2' */
+  a1: 10px;
+  /* TRACE[2]: next rule defined at 'function-unit.less:3' */
+  a2: 10px;
+  /* TRACE[3]: next rule defined at 'function-unit.less:4' */
+  a3: 10px;
+  /* TRACE[4]: next rule defined at 'function-unit.less:5' */
+  a4: 10%;
+}

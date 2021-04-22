@@ -1,0 +1,144 @@
+.ruleset-1 {
+  /* TRACE[1]: next rule defined at 'mixin-args.less:57' */
+  match: 1, 2, 3;
+  /* TRACE[2]:     start   .mixin()    mixin-args.less:58  */
+  /* TRACE[3]: next rule defined at 'mixin-args.less:6' */
+  -1: ;
+  /* TRACE[4]: next rule defined at 'mixin-args.less:7' */
+  -1-args: ;
+  /* TRACE[5]:       end   .mixin()    mixin-args.less:58  */
+  /* TRACE[6]:     start   .mixin()    mixin-args.less:58  */
+  /* TRACE[7]: next rule defined at 'mixin-args.less:12' */
+  -2: x;
+  /* TRACE[8]: next rule defined at 'mixin-args.less:13' */
+  -2-args: x;
+  /* TRACE[9]:       end   .mixin()    mixin-args.less:58  */
+  /* TRACE[10]:     start   .mixin()    mixin-args.less:58  */
+  /* TRACE[11]: next rule defined at 'mixin-args.less:18' */
+  -3-args: ;
+  /* TRACE[12]:       end   .mixin()    mixin-args.less:58  */
+}
+.ruleset-2 {
+  /* TRACE[13]: next rule defined at 'mixin-args.less:62' */
+  match: 2, 3, 4, 5, 6, 7;
+  /* TRACE[14]:     start   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[15]: next rule defined at 'mixin-args.less:12' */
+  -2: 1;
+  /* TRACE[16]: next rule defined at 'mixin-args.less:13' */
+  -2-args: 1;
+  /* TRACE[17]:       end   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[18]:     start   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[19]: next rule defined at 'mixin-args.less:18' */
+  -3-args: 1;
+  /* TRACE[20]:       end   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[21]:     start   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[22]: next rule defined at 'mixin-args.less:23' */
+  -4: 1;
+  /* TRACE[23]: next rule defined at 'mixin-args.less:24' */
+  -4-args: 1;
+  /* TRACE[24]:       end   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[25]:     start   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[26]: next rule defined at 'mixin-args.less:29' */
+  -5: 1;
+  /* TRACE[27]: next rule defined at 'mixin-args.less:30' */
+  -5-args: 1;
+  /* TRACE[28]:       end   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[29]:     start   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[30]: next rule defined at 'mixin-args.less:35' */
+  -6: 1, ;
+  /* TRACE[31]: next rule defined at 'mixin-args.less:36' */
+  -6-args: 1;
+  /* TRACE[32]:       end   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[33]:     start   .mixin(1)    mixin-args.less:63  */
+  /* TRACE[34]: next rule defined at 'mixin-args.less:41' */
+  -7-args: ;
+  /* TRACE[35]:       end   .mixin(1)    mixin-args.less:63  */
+}
+.ruleset-3 {
+  /* TRACE[36]: next rule defined at 'mixin-args.less:67' */
+  match: 3, 5, 6, 7, 8, 9;
+  /* TRACE[37]:     start   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[38]: next rule defined at 'mixin-args.less:18' */
+  -3-args: 1 2;
+  /* TRACE[39]:       end   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[40]:     start   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[41]: next rule defined at 'mixin-args.less:29' */
+  -5: 1;
+  /* TRACE[42]: next rule defined at 'mixin-args.less:30' */
+  -5-args: 1 2;
+  /* TRACE[43]:       end   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[44]:     start   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[45]: next rule defined at 'mixin-args.less:35' */
+  -6: 1, 2;
+  /* TRACE[46]: next rule defined at 'mixin-args.less:36' */
+  -6-args: 1 2;
+  /* TRACE[47]:       end   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[48]:     start   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[49]: next rule defined at 'mixin-args.less:41' */
+  -7-args: 2;
+  /* TRACE[50]:       end   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[51]:     start   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[52]: next rule defined at 'mixin-args.less:46' */
+  -8-args: ;
+  /* TRACE[53]:       end   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[54]:     start   .mixin(1, 2)    mixin-args.less:68  */
+  /* TRACE[55]: next rule defined at 'mixin-args.less:52' */
+  -9-args: 1 2;
+  /* TRACE[56]:       end   .mixin(1, 2)    mixin-args.less:68  */
+}
+.ruleset-4 {
+  /* TRACE[57]: next rule defined at 'mixin-args.less:72' */
+  match: 3, 5, 6, 7, 8, 9;
+  /* TRACE[58]:     start   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[59]: next rule defined at 'mixin-args.less:18' */
+  -3-args: 1 2 3 4;
+  /* TRACE[60]:       end   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[61]:     start   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[62]: next rule defined at 'mixin-args.less:29' */
+  -5: 1;
+  /* TRACE[63]: next rule defined at 'mixin-args.less:30' */
+  -5-args: 1 2 3 4;
+  /* TRACE[64]:       end   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[65]:     start   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[66]: next rule defined at 'mixin-args.less:35' */
+  -6: 1, 2 3 4;
+  /* TRACE[67]: next rule defined at 'mixin-args.less:36' */
+  -6-args: 1 2 3 4;
+  /* TRACE[68]:       end   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[69]:     start   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[70]: next rule defined at 'mixin-args.less:41' */
+  -7-args: 2 3 4;
+  /* TRACE[71]:       end   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[72]:     start   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[73]: next rule defined at 'mixin-args.less:46' */
+  -8-args: 3 4;
+  /* TRACE[74]:       end   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[75]:     start   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+  /* TRACE[76]: next rule defined at 'mixin-args.less:52' */
+  -9-args: 1 2 3 4;
+  /* TRACE[77]:       end   .mixin(1, 2, 3, 4)    mixin-args.less:73  */
+}
+.ruleset-5 {
+  /* TRACE[78]: next rule defined at 'mixin-args.less:77' */
+  match: 3, 5, 6, 9;
+  /* TRACE[79]:     start   .mixin(2, 2, 3, 4)    mixin-args.less:78  */
+  /* TRACE[80]: next rule defined at 'mixin-args.less:18' */
+  -3-args: 2 2 3 4;
+  /* TRACE[81]:       end   .mixin(2, 2, 3, 4)    mixin-args.less:78  */
+  /* TRACE[82]:     start   .mixin(2, 2, 3, 4)    mixin-args.less:78  */
+  /* TRACE[83]: next rule defined at 'mixin-args.less:29' */
+  -5: 2;
+  /* TRACE[84]: next rule defined at 'mixin-args.less:30' */
+  -5-args: 2 2 3 4;
+  /* TRACE[85]:       end   .mixin(2, 2, 3, 4)    mixin-args.less:78  */
+  /* TRACE[86]:     start   .mixin(2, 2, 3, 4)    mixin-args.less:78  */
+  /* TRACE[87]: next rule defined at 'mixin-args.less:35' */
+  -6: 2, 2 3 4;
+  /* TRACE[88]: next rule defined at 'mixin-args.less:36' */
+  -6-args: 2 2 3 4;
+  /* TRACE[89]:       end   .mixin(2, 2, 3, 4)    mixin-args.less:78  */
+  /* TRACE[90]:     start   .mixin(2, 2, 3, 4)    mixin-args.less:78  */
+  /* TRACE[91]: next rule defined at 'mixin-args.less:52' */
+  -9-args: 2 2 3 4;
+  /* TRACE[92]:       end   .mixin(2, 2, 3, 4)    mixin-args.less:78  */
+}

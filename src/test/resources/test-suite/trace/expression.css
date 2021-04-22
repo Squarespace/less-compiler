@@ -1,0 +1,8 @@
+.one {
+  /* TRACE[1]: next rule defined at 'expression.less:2' */
+  background: url(some-image.jpg) no-repeat right .75rem center / .8rem 1rem;
+}
+.two {
+  /* TRACE[2]: next rule defined at 'expression.less:5' */
+  background: url(some-image.jpg) no-repeat right .75rem center / 5px 1rem;
+}

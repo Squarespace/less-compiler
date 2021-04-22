@@ -1,0 +1,33 @@
+/* TRACE[1]:   define   @a: "foo"    selector.less:1  */
+/* TRACE[2]:   define   @b: "bar"    selector.less:2  */
+.foo-bar:hover {
+  /* TRACE[3]: next rule defined at 'selector.less:5' */
+  color: blue;
+}
+.a[href~='squarespace']:visited {
+  /* TRACE[4]: next rule defined at 'selector.less:11' */
+  color: red;
+}
+> * + .parent > .parent foo {
+  /* TRACE[5]: next rule defined at 'selector.less:17' */
+  font-size: 1px;
+}
+/* TRACE[6]:   define   @theme: foo    selector.less:21  */
+/* TRACE[7]:   define   @selector: ~".foo"    selector.less:22  */
+.foored #foo.foo {
+  /* TRACE[8]: next rule defined at 'selector.less:25' */
+  color: red;
+}
+/* TRACE[9]:   define   @num: 3    selector.less:29  */
+:nth-child(3):nth-child(3) {
+  /* TRACE[10]: next rule defined at 'selector.less:31' */
+  second-use: deprecated;
+}
+.foo["bar"="baz"] {
+  /* TRACE[11]: next rule defined at 'selector.less:35' */
+  color: red;
+}
+.foo["bar"~=baz] {
+  /* TRACE[12]: next rule defined at 'selector.less:39' */
+  color: red;
+}

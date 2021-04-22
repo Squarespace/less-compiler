@@ -1,0 +1,140 @@
+.function-color-rgb {
+  /* TRACE[1]: next rule defined at 'function-color.less:2' */
+  a1: #010203;
+  /* TRACE[2]: next rule defined at 'function-color.less:3' */
+  a2: rgba(1, 2, 3, .5);
+  /* TRACE[3]: next rule defined at 'function-color.less:5' */
+  a3: 2;
+  /* TRACE[4]: next rule defined at 'function-color.less:6' */
+  a4: 6;
+  /* TRACE[5]: next rule defined at 'function-color.less:7' */
+  a5: 4;
+  /* TRACE[6]: next rule defined at 'function-color.less:9' */
+  a6: .5;
+  /* TRACE[7]: next rule defined at 'function-color.less:10' */
+  a7: #123;
+  /* TRACE[8]: next rule defined at 'function-color.less:11' */
+  a8: #40050607;
+}
+.function-color-hsl {
+  /* TRACE[9]: next rule defined at 'function-color.less:14' */
+  b1: #bf0100;
+  /* TRACE[10]: next rule defined at 'function-color.less:16' */
+  b2: #6abf40;
+  /* TRACE[11]: next rule defined at 'function-color.less:17' */
+  b3: #606020;
+  /* TRACE[12]: next rule defined at 'function-color.less:18' */
+  b4: #356020;
+  /* TRACE[13]: next rule defined at 'function-color.less:19' */
+  b5: rgba(191, 66, 64, .5);
+  /* TRACE[14]: next rule defined at 'function-color.less:20' */
+  b6: 50;
+  /* TRACE[15]: next rule defined at 'function-color.less:21' */
+  b7: 20%;
+  /* TRACE[16]: next rule defined at 'function-color.less:22' */
+  b8: 10%;
+  /* TRACE[17]: next rule defined at 'function-color.less:23' */
+  b9: 5.27704669%;
+  /* TRACE[18]: next rule defined at 'function-color.less:24' */
+  b10: 23%;
+}
+.function-color-hsv {
+  /* TRACE[19]: next rule defined at 'function-color.less:27' */
+  c1: #402020;
+  /* TRACE[20]: next rule defined at 'function-color.less:28' */
+  c2: #402020;
+  /* TRACE[21]: next rule defined at 'function-color.less:29' */
+  c3: rgba(64, 32, 32, .5);
+  /* TRACE[22]: next rule defined at 'function-color.less:30' */
+  c4: rgba(64, 32, 32, .5);
+}
+.function-color-contrast {
+  /* TRACE[23]: next rule defined at 'function-color.less:33' */
+  d1: contrast(123);
+  /* TRACE[24]: next rule defined at 'function-color.less:34' */
+  d2: #000;
+  /* TRACE[25]: next rule defined at 'function-color.less:35' */
+  d3: #111;
+  /* TRACE[26]: next rule defined at 'function-color.less:36' */
+  d4: #111;
+  /* TRACE[27]: next rule defined at 'function-color.less:37' */
+  d5: #111;
+  /* TRACE[28]: next rule defined at 'function-color.less:38' */
+  d6: #222;
+  /* TRACE[29]: next rule defined at 'function-color.less:39' */
+  d7: #222;
+}
+.function-color-adjustment {
+  /* TRACE[30]: next rule defined at 'function-color.less:42' */
+  d1: 48.44632879%;
+  /* TRACE[31]: next rule defined at 'function-color.less:44' */
+  d2: #6f6f6f;
+  /* TRACE[32]: next rule defined at 'function-color.less:45' */
+  d3: #a2a2a2;
+  /* TRACE[33]: next rule defined at 'function-color.less:46' */
+  d4: grey;
+  /* TRACE[34]: next rule defined at 'function-color.less:48' */
+  d5: rgba(50, 50, 50, .25);
+  /* TRACE[35]: next rule defined at 'function-color.less:49' */
+  d6: rgba(50, 50, 50, .75);
+  /* TRACE[36]: next rule defined at 'function-color.less:50' */
+  d7: rgba(50, 50, 50, .25);
+  /* TRACE[37]: next rule defined at 'function-color.less:52' */
+  d8: rgba(64, 170, 191, .5);
+  /* TRACE[38]: next rule defined at 'function-color.less:53' */
+  d9: rgba(64, 115, 191, .5);
+  /* TRACE[39]: next rule defined at 'function-color.less:55' */
+  d10: #222;
+  /* TRACE[40]: next rule defined at 'function-color.less:56' */
+  d11: #555;
+  /* TRACE[41]: next rule defined at 'function-color.less:57' */
+  d12: #5e4c4c;
+  /* TRACE[42]: next rule defined at 'function-color.less:58' */
+  d13: 72%;
+}
+.function-color-combination {
+  /* TRACE[43]: next rule defined at 'function-color.less:61' */
+  e1: #333;
+  /* TRACE[44]: next rule defined at 'function-color.less:62' */
+  e2: #666;
+  /* TRACE[45]: next rule defined at 'function-color.less:63' */
+  e3: #666;
+  /* TRACE[46]: next rule defined at 'function-color.less:65' */
+  e4: #78868f;
+  /* TRACE[47]: next rule defined at 'function-color.less:66' */
+  e5: #10315c;
+  /* TRACE[48]: next rule defined at 'function-color.less:68' */
+  e6: #456;
+  /* TRACE[49]: next rule defined at 'function-color.less:69' */
+  e7: #456;
+  /* TRACE[50]: next rule defined at 'function-color.less:70' */
+  e8: #5e6f80;
+  /* TRACE[51]: next rule defined at 'function-color.less:71' */
+  e9: #2b3c4d;
+  /* TRACE[52]: next rule defined at 'function-color.less:73' */
+  e10: #08121f;
+  /* TRACE[53]: next rule defined at 'function-color.less:74' */
+  e11: #090909;
+  /* TRACE[54]: next rule defined at 'function-color.less:75' */
+  e12: #999;
+  /* TRACE[55]: next rule defined at 'function-color.less:76' */
+  e13: #8ac;
+  /* TRACE[56]: next rule defined at 'function-color.less:78' */
+  e14: #050505;
+  /* TRACE[57]: next rule defined at 'function-color.less:79' */
+  e15: #10243d;
+  /* TRACE[58]: next rule defined at 'function-color.less:80' */
+  e16: #bbb09f;
+  /* TRACE[59]: next rule defined at 'function-color.less:82' */
+  e17: #313131;
+  /* TRACE[60]: next rule defined at 'function-color.less:83' */
+  e18: #8098ad;
+  /* TRACE[61]: next rule defined at 'function-color.less:85' */
+  e19: #444;
+  /* TRACE[62]: next rule defined at 'function-color.less:86' */
+  e20: #10243b;
+  /* TRACE[63]: next rule defined at 'function-color.less:87' */
+  e21: #132435;
+  /* TRACE[64]: next rule defined at 'function-color.less:88' */
+  e22: #131313;
+}
