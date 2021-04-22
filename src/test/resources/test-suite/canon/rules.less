@@ -1,0 +1,15 @@
+.mixin() {
+  color: red;
+  font-size: 12px;
+}
+// duplicate rule elimination
+.parent {
+  color: red;
+  font-size: 12px;
+  .mixin();
+  color: blue;
+  font-size: 10px;
+  .mixin();
+  .mixin();
+}
+

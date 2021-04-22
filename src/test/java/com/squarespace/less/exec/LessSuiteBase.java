@@ -106,6 +106,22 @@ public class LessSuiteBase {
   }
 
   /**
+   * Parse source and return canonical representation of stylesheet.
+   */
+  protected String canonicalize(String source, Path importRoot, int indent) throws LessException {
+    LessOptions opts = new LessOptions();
+    opts.addImportPath(importRoot.toString());
+    LessContext ctx = new LessContext(opts);
+    LessCompiler compiler = new LessCompiler();
+    ctx.setCompiler(compiler);
+
+    Stylesheet sheet = compiler.parse(source, ctx);
+    Buffer buf = new Buffer(2);
+    sheet.repr(buf);
+    return buf.toString();
+  }
+
+  /**
    * Create a diff between the expected and actual strings. If any
    * differences are found, format an error message.
    */

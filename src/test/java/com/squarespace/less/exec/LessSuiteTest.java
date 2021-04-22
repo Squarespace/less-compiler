@@ -82,6 +82,47 @@ public class LessSuiteTest extends LessSuiteBase {
   }
 
   @Test
+  public void testCanonical() throws IOException {
+    Path rootPath = testSuiteRoot();
+    Path lessRoot = rootPath.resolve("less");
+    Path cssRoot = rootPath.resolve("canon");
+    int failures = 0;
+    for (Path lessPath : LessUtils.getMatchingFiles(lessRoot, GLOB_LESS)) {
+      String fileName = "less/" + lessPath.getFileName();
+
+
+      if (VERBOSE) {
+        System.err.println("Processing: " + fileName);
+      }
+
+      // Read and compile the .less source
+      String source = LessUtils.readFile(lessPath);
+      String lessCanonical = null;
+      try {
+        lessCanonical = canonicalize(source, lessRoot, 2);
+      } catch (LessException | RuntimeException e) {
+        logFailure("Test Suite", ++failures, "Error compiling", fileName);
+        e.printStackTrace();
+        continue;
+      }
+
+      // Compare with expected CSS result.
+      Path expectedPath = cssRoot.resolve(lessPath.getFileName()).normalize();
+      String expected = LessUtils.readFile(expectedPath);
+
+      String result = diff(expected, lessCanonical);
+      if (result != null) {
+        logFailure("Test Suite", ++failures, "Differences detected in compiled output for ", fileName, "\n", result);
+      }
+    }
+
+    if (failures > 0) {
+      Assert.fail(failures + " tests failed.");
+    }
+
+  }
+
+  @Test
   public void testErrorSuite() throws IOException {
     Path rootPath = testSuiteRoot();
     Path errorRoot = rootPath.resolve("error");
