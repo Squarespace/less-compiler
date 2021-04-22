@@ -1,0 +1,12 @@
+@fst: 'dir1';
+@snd: 'dir2';
+@thd: '_child-1';
+@path: ~"./@{fst}/@{snd}/@{thd}";
+.parent {
+    // @import ~"'./@{fst}/@{snd}/@{thd}.less'";
+// @import "./dir1/dir2/_child-1";
+    @import ~"'@{path}'";   
+}
+.debug {
+    foo: ~"./@{fst}/@{snd}/@{thd}.less"
+}

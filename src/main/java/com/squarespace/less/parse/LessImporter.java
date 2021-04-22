@@ -217,6 +217,11 @@ public class LessImporter {
     String path = null;
     if (node instanceof Quoted) {
       Quoted quoted = ((Quoted)node).copy();
+      // If quoted path contains a variable reference, we can't currently resolve
+      // it at parse time. Just emit it as-is.
+      if (quoted.needsEval()) {
+        return null;
+      }
       quoted.setEscape(true);
       node = quoted;
     }

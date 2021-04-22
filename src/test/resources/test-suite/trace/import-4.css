@@ -1,0 +1,11 @@
+/* TRACE[1]:   define   @fst: 'dir1'    import-4.less:1  */
+/* TRACE[2]:   define   @snd: 'dir2'    import-4.less:2  */
+/* TRACE[3]:   define   @thd: '_child-1'    import-4.less:3  */
+/* TRACE[4]:   define   @path: ~"./'dir1'/'dir2'/'_child-1'"    import-4.less:4  */
+.parent {
+  @import './dir1/dir2/_child-1';
+}
+.debug {
+  /* TRACE[5]: next rule defined at 'import-4.less:11' */
+  foo: ./dir1/dir2/_child-1.less;
+}

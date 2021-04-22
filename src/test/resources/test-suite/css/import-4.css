@@ -1,0 +1,6 @@
+.parent {
+  @import './dir1/dir2/_child-1';
+}
+.debug {
+  foo: ./dir1/dir2/_child-1.less;
+}
