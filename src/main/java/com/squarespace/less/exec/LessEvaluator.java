@@ -229,14 +229,14 @@ public class LessEvaluator {
       }
 
       if (env.hasError()) {
-        // If an error occurred, capture the current stack and return.
+        // If an error occurred, capture the current stack and re-throw
         LessException error = env.error();
         error.push(node);
         if (currentImport != null) {
           // Track when import boundaries are crossed
           error.push(currentImport);
         }
-        return;
+        throw error;
       }
 
       rules.set(i, node);

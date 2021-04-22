@@ -28,6 +28,7 @@ import com.squarespace.less.ExecuteErrorType;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessErrorType;
 import com.squarespace.less.LessException;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.SyntaxErrorType;
 import com.squarespace.less.core.ErrorUtils;
 import com.squarespace.less.core.LessUtils;
@@ -136,6 +137,9 @@ public class LessSuiteTest extends LessSuiteBase {
   public void testErrorSuite() throws IOException {
     Path rootPath = testSuiteRoot();
     Path errorRoot = rootPath.resolve("error");
+    LessOptions opts = new LessOptions();
+    opts.mixinRecursionLimit(16);
+    opts.importRecursionLimit(16);
     LessContext ctx = new LessContext();
     int failures = 0;
     for (Path lessPath : LessUtils.getMatchingFiles(errorRoot, GLOB_LESS)) {

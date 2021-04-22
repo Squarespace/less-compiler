@@ -1,0 +1,62 @@
+//:ExecuteErrorType.MIXIN_UNDEFINED   mixin missing
+
+.parent {
+  .mixin-missing();
+}
+
+//:ExecuteErrorType.MIXIN_UNDEFINED   mixin not called
+
+.mixin-foo(bar) {
+  .child {
+    color: red;
+  }
+}
+
+.parent {
+  .mixin-foo(foo);
+}
+
+//:ExecuteErrorType.MIXIN_UNDEFINED   mixin not called
+
+.mixin-foo(bar) {
+  .child {
+    color: red;
+  }
+}
+
+@arg: foo;
+.parent {
+  .mixin-foo(@arg);
+}
+
+//:ExecuteErrorType.ARG_NAMED_NOTFOUND  named arg mismatch
+
+.mixin(@a: 1, @b: 2) {
+  color: red;
+  dummy: @a @b;
+}
+
+.parent {
+  .mixin(@c: 1, @d: 2);
+}
+
+//:ExecuteErrorType.MIXIN_RECURSE    hit recursion limit
+
+.mixin-1() {
+  .foo {
+    color: red;
+    .mixin-2();
+  }
+}
+
+.mixin-2() {
+  .bar {
+    color: blue;
+    .mixin-1();
+  }
+}
+
+.parent {
+  .mixin-1();
+}
+

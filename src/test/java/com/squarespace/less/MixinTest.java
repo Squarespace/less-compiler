@@ -20,6 +20,7 @@ import static com.squarespace.less.core.Constants.TRUE;
 import static com.squarespace.less.model.Operator.EQUAL;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
@@ -68,4 +69,36 @@ public class MixinTest extends LessTestBase {
     h.parseEquals(".x(@a) when not (@b) { }", exp);
   }
 
+
+  @Test
+  public void testEval() {
+    String source = ".mixin-1() {\n"
+        + "  .foo {\n"
+        + "    color: red;\n"
+        + "    .mixin-2();\n"
+        + "  }\n"
+        + "}\n"
+        + "\n"
+        + ".mixin-2() {\n"
+        + "  .bar {\n"
+        + "    color: blue;\n"
+        + "    .mixin-1();\n"
+        + "  }\n"
+        + "}\n"
+        + "\n"
+        + ".parent {\n"
+        + "  .mixin-1();\n"
+        + "}";
+    LessOptions opts = new LessOptions();
+    opts.mixinRecursionLimit(2);
+    LessCompiler compiler = new LessCompiler();
+    LessContext ctx = new LessContext(opts);
+    ctx.setCompiler(compiler);
+    try {
+      compiler.compile(source, ctx);
+      fail("compile should fail with a mixin recursion error");
+    } catch (LessException e) {
+      // expected
+    }
+  }
 }
