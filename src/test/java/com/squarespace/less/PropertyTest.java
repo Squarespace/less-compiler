@@ -55,5 +55,4 @@ public class PropertyTest extends LessTestBase {
     h.parseFails("A", INCOMPLETE_PARSE);
   }
 
-
 }

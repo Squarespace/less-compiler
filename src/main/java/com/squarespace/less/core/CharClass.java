@@ -382,7 +382,6 @@ public class CharClass implements CharClassifier {
 
       case '_':
         return CALL_START
-            | DIRECTIVE
             | IDENTIFIER
             | IDENTIFIER_START
             | KEYWORD_START

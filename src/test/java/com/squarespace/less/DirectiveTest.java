@@ -44,6 +44,7 @@ public class DirectiveTest extends LessTestBase {
     h.parseEquals("@-x-document foo {}", dir("@-x-document foo", block()));
     h.parseEquals("@-x-document url-prefix(\"github.com\") {}", dir("@-x-document url-prefix(\"github.com\")", block()));
 
+    h.parseEquals("@base_color;", dir("@base", kwd("_color")));
     h.parseFails("@-x-document u", SyntaxErrorType.INCOMPLETE_PARSE);
   }
 }
