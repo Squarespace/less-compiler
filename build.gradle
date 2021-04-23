@@ -161,6 +161,7 @@ publishing {
         artifactId = project.getName()
         from components.java
         artifact testJar
+        artifact execJar
         versionMapping {
             usage('java-api') {
                 fromResolutionOf('runtimeClasspath')
