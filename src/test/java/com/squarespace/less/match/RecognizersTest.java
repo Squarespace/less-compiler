@@ -228,6 +228,18 @@ public class RecognizersTest {
   }
 
   @Test
+  public void testElement0() {
+    Recognizer pattern = Recognizers.element0();
+
+    assertEquals(match(pattern, "1%"), 2);
+    assertEquals(match(pattern, "5.5%"), 4);
+
+    assertEquals(match(pattern, ".5%"), -1);
+    assertEquals(match(pattern, "1.%"), -1);
+    assertEquals(match(pattern, "5.5x"), -1);
+  }
+
+  @Test
   public void testHexdigit() {
 
     // REGEX  [A-Fa-f0-9]+

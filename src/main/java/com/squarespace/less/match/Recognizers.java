@@ -1,6 +1,7 @@
 package com.squarespace.less.match;
 
 import com.squarespace.less.core.CharClass;
+import com.squarespace.less.core.Chars;
 
 /**
  * Simple pattern recognizer state machines.
@@ -113,7 +114,7 @@ public class Recognizers {
   }
 
   public static Recognizer directive() {
-    return sequence(characters('@'), oneOrMore(charClass(CharClass.DIRECTIVE, CLASSIFIER)));
+    return new Directive();
   }
 
   public static Recognizer element0() {
@@ -603,6 +604,31 @@ public class Recognizers {
         res = pos;
       }
       return res;
+    }
+  }
+
+  static class Directive implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      int valid = pos + 2;
+      if (pos < len) {
+        char ch = seq.charAt(pos);
+        if (ch != Chars.AT_SIGN) {
+          return FAIL;
+        }
+        pos++;
+        while (pos < len) {
+          ch = seq.charAt(pos);
+          if (!CLASSIFIER.isMember(ch, CharClass.DIRECTIVE)) {
+            break;
+          }
+          pos++;
+        }
+        return pos >= valid ? pos : FAIL;
+      }
+      return FAIL;
+
     }
   }
 

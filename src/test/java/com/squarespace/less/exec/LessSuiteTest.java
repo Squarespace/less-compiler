@@ -28,6 +28,7 @@ import com.squarespace.less.ExecuteErrorType;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessErrorType;
 import com.squarespace.less.LessException;
+import com.squarespace.less.LessMessages;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.SyntaxErrorType;
 import com.squarespace.less.core.ErrorUtils;
@@ -40,6 +41,7 @@ import com.squarespace.less.core.LessUtils;
 public class LessSuiteTest extends LessSuiteBase {
 
   private static final boolean VERBOSE = true;
+  private static final LessMessages MESSAGES = new LessMessages();
 
   @Test
   public void testSuite() throws IOException {
@@ -71,6 +73,9 @@ public class LessSuiteTest extends LessSuiteBase {
         lessCompiled = compile(source, lessRoot, tracing, lessRoot, lessPath.getFileName());
       } catch (LessException | RuntimeException e) {
         logFailure("Test Suite", ++failures, "Error compiling", fileName);
+        if (e instanceof LessException) {
+          System.err.println(MESSAGES.formatError((LessException) e));
+        }
         e.printStackTrace();
         continue;
       }
@@ -112,6 +117,9 @@ public class LessSuiteTest extends LessSuiteBase {
         lessCanonical = canonicalize(source, lessRoot, 2);
       } catch (LessException | RuntimeException e) {
         logFailure("Test Suite", ++failures, "Error compiling", fileName);
+        if (e instanceof LessException) {
+          System.err.println(MESSAGES.formatError((LessException) e));
+        }
         e.printStackTrace();
         continue;
       }
