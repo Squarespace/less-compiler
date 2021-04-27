@@ -225,9 +225,16 @@ public class Stream {
       if (!CLASSIFIER.whitespace(curr)) {
         break;
       }
-      consume(curr);
+      if (curr == Chars.LINE_FEED) {
+        lineOffset++;
+        charOffset = 0;
+      } else {
+        charOffset++;
+      }
       index++;
     }
+    flags &= ~FLAG_OPENSPACE;
+
     // Important not to update 'furthest' pointer when skipping whitespace
     return index - start;
   }
