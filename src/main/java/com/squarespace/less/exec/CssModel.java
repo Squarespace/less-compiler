@@ -123,7 +123,9 @@ public class CssModel {
    * Appends a comment to the current block.
    */
   public CssModel comment(String value) {
-    current.add(new CssComment(value));
+    if (!value.isEmpty()) {
+      current.add(new CssComment(value));
+    }
     return this;
   }
 
