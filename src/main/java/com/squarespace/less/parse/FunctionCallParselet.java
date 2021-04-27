@@ -21,6 +21,8 @@ import static com.squarespace.less.core.SyntaxErrorMaker.expected;
 import static com.squarespace.less.parse.Parselets.FUNCTION_CALL_ARGS;
 import static com.squarespace.less.parse.Parselets.FUNCTION_CALL_SUB;
 
+import java.util.List;
+
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.model.Anonymous;
@@ -61,7 +63,10 @@ public class FunctionCallParselet implements Parselet {
     // within the ASCII range.
     FunctionCall call = new FunctionCall(nameLC);
     ExpressionList args = parseArgs(stm);
-    for (Node arg : args.expressions()) {
+    List<Node> expressions = args.expressions();
+    int size = expressions.size();
+    for (int i = 0; i < size; i++) {
+      Node arg = expressions.get(i);
       call.add(arg);
     }
 

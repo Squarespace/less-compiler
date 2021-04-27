@@ -107,7 +107,9 @@ public class MapFormat {
    */
   public String apply(Map<String, Object> params) {
     List<Object> values = new ArrayList<>(params.size());
-    for (String key : keys) {
+    int size = keys.size();
+    for (int i = 0; i < size; i++) {
+      String key = keys.get(i);
       Object obj = params.get(key);
       if (obj == null) {
         obj = nullPlaceholder;

@@ -121,7 +121,9 @@ public class LessImporter {
 
     // If not found relative to the sibling dir, search the import path.
     if (record == null && importPaths != null && !importPaths.isEmpty()) {
-      for (Path importPath : importPaths) {
+      int size = importPaths.size();
+      for (int i = 0; i < size; i++) {
+        Path importPath = importPaths.get(i);
         path = importPath.resolve(rawPath).toAbsolutePath().normalize();
         record = importCache.get(path);
         if (record != null) {
@@ -154,7 +156,9 @@ public class LessImporter {
         result = preCache.get(path);
       }
       if (result == null && importPaths != null && !importPaths.isEmpty()) {
-        for (Path importPath : importPaths) {
+        int size = importPaths.size();
+        for (int i = 0; i < size; i++) {
+          Path importPath = importPaths.get(i);
           path = importPath.resolve(rawPath).toAbsolutePath().normalize();
           result = preCache.get(path);
           if (result != null) {
@@ -196,7 +200,9 @@ public class LessImporter {
     if (importPaths == null || importPaths.isEmpty()) {
       return null;
     }
-    for (Path importPath : importPaths) {
+    int size = importPaths.size();
+    for (int i = 0; i < size; i++) {
+      Path importPath = importPaths.get(i);
       path = importPath.resolve(rawPath).toAbsolutePath().normalize();
       if (loader.exists(path)) {
         return path;

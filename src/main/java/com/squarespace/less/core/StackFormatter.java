@@ -144,7 +144,9 @@ public class StackFormatter {
     }
     buf.append('\n');
 
-    for (Entry entry : entries) {
+    size = entries.size();
+    for (int i = 0; i < size; i++) {
+      Entry entry = entries.get(i);
       if (entry.indent) {
         indent(entry.fileName == null ? col1 : col1 - entry.fileName.length());
         if (entry.fileName != null) {

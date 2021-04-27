@@ -139,7 +139,9 @@ public class LessOptions {
 
   public void importPaths(List<String> paths) {
     if (paths != null) {
-      for (String path : paths) {
+      int size = paths.size();
+      for (int i = 0; i < size; i++) {
+        String path = paths.get(i);
         this.importPaths.add(Paths.get(path));
       }
     }

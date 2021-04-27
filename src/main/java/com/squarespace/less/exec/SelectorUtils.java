@@ -50,7 +50,10 @@ public class SelectorUtils {
    */
   public static Selectors combine(Selectors ancestors, Selectors current) {
     Selectors result = new Selectors();
-    for (Selector selector : current.selectors()) {
+    List<Selector> selectors = current.selectors();
+    int ilen = selectors.size();
+    for (int i = 0; i < ilen; i++) {
+      Selector selector = selectors.get(i);
 
       // When no wildcard is present, the selector is prepended to the ancestors.
       if (!selector.hasWildcard()) {
@@ -64,7 +67,11 @@ public class SelectorUtils {
       // Otherwise, substitute the ancestors after each wildcard element found.
       List<List<Selector>> inputs = new ArrayList<>();
       Selector temp = new Selector();
-      for (Element elem : selector.elements()) {
+
+      List<Element> elements = selector.elements();
+      int jlen = elements.size();
+      for (int j = 0; j < jlen; j++) {
+        Element elem = elements.get(j);
 
         if (elem.isWildcard()) {
           // Only expand wildcards when there is at least 1 ancestor selector
@@ -97,9 +104,14 @@ public class SelectorUtils {
     CartesianProduct<Selector> product = new CartesianProduct<>(selectors);
     while (product.hasNext()) {
       Selector flat = new Selector();
-      for (Selector tmp : product.next()) {
-        for (Element elem : tmp.elements()) {
-          flat.add(elem);
+      List<Selector> _selectors = product.next();
+      int isize = _selectors.size();
+      for (int i = 0; i < isize; i++) {
+        Selector tmp = _selectors.get(i);
+        List<Element> elements = tmp.elements();
+        int jsize = elements.size();
+        for (int j = 0; j < jsize; j++) {
+          flat.add(elements.get(j));
         }
       }
       result.add(flat);

@@ -357,7 +357,10 @@ public class Block extends BaseNode {
       Ruleset ruleset = (Ruleset)node;
       Selectors selectors = ruleset.selectors();
       if (selectors.hasMixinPath()) {
-        for (Selector selector : selectors.selectors()) {
+        List<Selector> _selectors = selectors.selectors();
+        int size = _selectors.size();
+        for (int i = 0; i < size; i++) {
+          Selector selector = _selectors.get(i);
           List<String> path = selector.mixinPath();
           if (path != null) {
             this.indexMixin(path.get(0), node);

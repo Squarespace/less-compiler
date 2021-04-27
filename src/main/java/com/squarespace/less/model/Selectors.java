@@ -106,7 +106,10 @@ public class Selectors extends BaseNode {
       return this;
     }
     Selectors result = new Selectors();
-    for (Selector selector : selectors) {
+    List<Selector> _selectors = selectors();
+    int size = _selectors.size();
+    for (int i = 0; i < size; i++) {
+      Selector selector = _selectors.get(i);
       result.add((Selector)selector.eval(env));
     }
     return result;

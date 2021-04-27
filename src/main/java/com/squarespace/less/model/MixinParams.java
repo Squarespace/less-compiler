@@ -115,7 +115,10 @@ public class MixinParams extends BaseNode {
     }
 
     MixinParams result = new MixinParams();
-    for (Parameter param : params()) {
+    List<Parameter> _params = params();
+    int size = _params.size();
+    for (int i = 0; i < size; i++) {
+      Parameter param = _params.get(i);
       result.add((Parameter)param.eval(env));
     }
     return result;

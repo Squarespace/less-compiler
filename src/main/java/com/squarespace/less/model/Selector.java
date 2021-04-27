@@ -133,7 +133,9 @@ public class Selector extends BaseNode {
       return this;
     }
     Selector result = new Selector();
-    for (Element elem : elements) {
+    int size = elements.size();
+    for (int i = 0; i < size; i++) {
+      Element elem = elements.get(i);
       result.add((Element)elem.eval(env));
     }
 

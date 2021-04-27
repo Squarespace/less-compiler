@@ -434,7 +434,8 @@ public class Recognizers {
         if (actual == first) {
           return invert ? FAIL : pos + 1;
         }
-        for (char expected : chars) {
+        for (int i = 0; i < chars.length; i++) {
+          char expected = chars[i];
           if (actual == expected) {
             return invert ? FAIL : pos + 1;
           }
@@ -526,9 +527,9 @@ public class Recognizers {
     @Override
     public int match(CharSequence seq, int pos, int length) {
       int save = FAIL;
-      for (Recognizer pattern : patterns) {
+      for (int i = 0; i < patterns.length; i++) {
         // Try choices until we see one that advances past current position.
-        int res = pattern.match(seq, pos, length);
+        int res = patterns[i].match(seq, pos, length);
         if (res > save) {
           save = Math.max(save, res);
         }
@@ -839,8 +840,8 @@ public class Recognizers {
     @Override
     public int match(CharSequence seq, int pos, int length) {
       int result = 0;
-      for (Recognizer pattern : patterns) {
-        pos = pattern.match(seq, pos, length);
+      for (int i = 0; i < patterns.length; i++) {
+        pos = patterns[i].match(seq, pos, length);
         if (pos == FAIL) {
           return FAIL;
         }

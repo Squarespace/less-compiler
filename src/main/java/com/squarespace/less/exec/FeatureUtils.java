@@ -46,18 +46,21 @@ public class FeatureUtils {
    */
   public static Features combine(Features ancestors, Features current) {
     Features result = new Features();
-    for (Node node : current.features()) {
+    List<Node> features = current.features();
+    int size = features.size();
+    for (int i = 0; i < size; i++) {
+      Node node = features.get(i);
       List<List<Node>> inputs = Arrays.asList(ancestors.features(), Arrays.asList(node));
       CartesianProduct<Node> product = new CartesianProduct<>(inputs);
       while (product.hasNext()) {
         Expression expn = new Expression();
         List<Node> nodes = product.next();
-        int size = nodes.size();
-        for (int i = 0; i < size; i++) {
-          if (i > 0) {
+        int jsize = nodes.size();
+        for (int j = 0; j < jsize; j++) {
+          if (j > 0) {
             expn.add(new Keyword("and"));
           }
-          expn.add(nodes.get(i));
+          expn.add(nodes.get(j));
         }
 
         result.add(expn);

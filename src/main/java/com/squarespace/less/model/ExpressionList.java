@@ -63,8 +63,9 @@ public class ExpressionList extends BaseNode {
    */
   public ExpressionList(List<Node> expressions) {
     this.values = expressions;
-    for (Node node : expressions) {
-      evaluate |= node.needsEval();
+    int size = expressions.size();
+    for (int i = 0; i < size; i++) {
+      evaluate |= expressions.get(i).needsEval();
     }
   }
 
@@ -115,7 +116,10 @@ public class ExpressionList extends BaseNode {
       return this;
     }
     ExpressionList result = new ExpressionList();
-    for (Node node : expressions()) {
+    List<Node> _expressions = expressions();
+    int size = _expressions.size();
+    for (int i = 0; i < size; i++) {
+      Node node = _expressions.get(i);
       result.add(node.eval(env));
     }
     return result;

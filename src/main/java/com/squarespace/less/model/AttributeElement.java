@@ -76,7 +76,9 @@ public class AttributeElement extends Element {
   @Override
   public void repr(Buffer buf) {
     buf.append('[');
-    for (Node part : parts) {
+    int size = parts.size();
+    for (int i = 0; i < size; i++) {
+      Node part = parts.get(i);
       part.repr(buf);
     }
     buf.append(']');

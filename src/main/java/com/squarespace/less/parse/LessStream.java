@@ -86,8 +86,8 @@ public class LessStream extends Stream {
     skipWs();
     Node result = null;
     Mark pos = mark();
-    for (Parselet parselet : parselets) {
-      result = parselet.parse(this);
+    for (int i = 0; i < parselets.length; i++) {
+      result = parselets[i].parse(this);
       if (result != null) {
         result.setLineOffset(pos.lineOffset);
         result.setCharOffset(pos.charOffset);

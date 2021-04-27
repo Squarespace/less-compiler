@@ -80,7 +80,10 @@ public class Guard extends BaseNode {
   @Override
   public Node eval(ExecEnv env) throws LessException {
     Node result = FALSE;
-    for (Condition condition : conditions()) {
+    List<Condition> _conditions = this.conditions();
+    int size = _conditions.size();
+    for (int i = 0; i < size; i++) {
+      Condition condition = _conditions.get(i);
       result = condition.eval(env);
       if (result instanceof True) {
         break;

@@ -64,7 +64,8 @@ public class UnitConversions {
     Unit[] values = Unit.values();
     int sz = values.length;
     CONVERSIONS = new double[sz][sz];
-    for (Unit unit : values) {
+    for (int i = 0; i < sz; i++) {
+      Unit unit = values[i];
       create(unit, unit, 1.0);
     }
 

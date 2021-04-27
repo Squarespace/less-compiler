@@ -116,7 +116,10 @@ public class MixinResolver {
     }
 
     Selectors selectors = ruleset.selectors();
-    for (Selector selector : selectors.selectors()) {
+    List<Selector> _selectors = selectors.selectors();
+    int size = _selectors.size();
+    for (int i = 0; i < size; i++) {
+      Selector selector = _selectors.get(i);
       List<String> path = selector.mixinPath();
       int remaining = matchPath(index, path);
       if (remaining < 0) {

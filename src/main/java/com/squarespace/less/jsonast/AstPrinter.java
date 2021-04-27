@@ -179,7 +179,9 @@ public class AstPrinter {
 
   private static List<String> copyStrings(JsonArray arr) {
     List<String> result = new ArrayList<>();
-    for (JsonValue value : arr) {
+    int size = arr.size();
+    for (int i = 0; i < size; i++) {
+      JsonValue value = arr.get(i);
       result.add(value.isNull() ? null : value.asString());
     }
     return result;

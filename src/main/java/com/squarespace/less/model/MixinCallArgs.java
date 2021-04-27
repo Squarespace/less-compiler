@@ -112,7 +112,9 @@ public class MixinCallArgs extends BaseNode {
       return this;
     }
     MixinCallArgs res = new MixinCallArgs(delimiter);
-    for (Argument arg : args) {
+    int size = args.size();
+    for (int i = 0; i < size; i++) {
+      Argument arg = args.get(i);
       res.add((Argument)arg.eval(env));
     }
     return res;

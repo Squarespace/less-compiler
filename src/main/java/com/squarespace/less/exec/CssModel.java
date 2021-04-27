@@ -133,8 +133,8 @@ public class CssModel {
    * Add raw strings to the header of the current block.
    */
   public CssModel header(String ... strings) {
-    for (String raw : strings) {
-      current.add(raw);
+    for (int i = 0; i < strings.length; i++) {
+      current.add(strings[i]);
     }
     return this;
   }

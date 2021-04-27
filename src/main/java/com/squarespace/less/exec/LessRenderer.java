@@ -17,6 +17,7 @@
 package com.squarespace.less.exec;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
@@ -125,7 +126,10 @@ public class LessRenderer {
     if (!selectors.isEmpty()) {
       // Selectors are indented and delimited by the model.
       Buffer buf = ctx.acquireBuffer();
-      for (Selector selector : selectors.selectors()) {
+      List<Selector> _selectors = selectors.selectors();
+      int size = _selectors.size();
+      for (int i = 0; i < size; i++) {
+        Selector selector = _selectors.get(i);
         ctx.render(buf, selector);
         model.header(buf.toString());
         buf.reset();

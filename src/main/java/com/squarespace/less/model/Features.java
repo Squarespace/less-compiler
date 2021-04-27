@@ -54,8 +54,10 @@ public class Features extends BaseNode {
    * Adds a list of features.
    */
   public void add(List<Node> nodes) {
-    features = LessUtils.initList(features, nodes.size());
-    for (Node node : nodes) {
+    int size = nodes.size();
+    features = LessUtils.initList(features, size);
+    for (int i = 0; i < size; i++) {
+      Node node = nodes.get(i);
       features.add(node);
       evaluate |= node.needsEval();
     }
@@ -92,7 +94,10 @@ public class Features extends BaseNode {
       return this;
     }
     Features result = new Features();
-    for (Node node : features) {
+    List<Node> _features = this.features();
+    int size = _features.size();
+    for (int i = 0; i < size; i++) {
+      Node node = _features.get(i);
       result.add(node.eval(env));
     }
     return result;

@@ -27,8 +27,8 @@ public class ParseletBuilder {
   private List<Parselet> chain = new ArrayList<>();
 
   public ParseletBuilder add(Parselet ... parselets) {
-    for (Parselet parselet : parselets) {
-      chain.add(parselet);
+    for (int i = 0; i < parselets.length; i++) {
+      chain.add(parselets[i]);
     }
     return this;
   }
