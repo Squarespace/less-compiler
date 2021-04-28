@@ -54,7 +54,17 @@ public class CommentTest extends LessTestBase {
   @Test
   public void testBangComment() throws LessException {
     LessHarness h = new LessHarness(Parselets.STYLESHEET);
-    String actual = h.execute("/* foo *//*! bar *//* foo */", new LessOptions(true));
+    LessOptions opts = new LessOptions(true);
+
+    String actual;
+    String source = "/* foo *//*! bar *//* foo */";
+
+    actual = h.execute(source, opts);
+    assertEquals(actual, "/*! bar */\n");
+
+    // When comments are being ignored, ensure hang comments are still captured
+    opts.ignoreComments(true);
+    actual = h.execute(source, opts);
     assertEquals(actual, "/*! bar */\n");
   }
 }

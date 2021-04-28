@@ -54,6 +54,9 @@ public class CommentParselet implements Parselet {
     stm.seek(2);
     int start = stm.index;
 
+    // Even when comments are ignored, if comment body starts with a '!' we retain it
+    boolean retain = stm.peek() == Chars.EXCLAMATION_MARK;
+
     // A comment without an ending sequence ends with EOF.
     int end = stm.length;
 
@@ -64,7 +67,7 @@ public class CommentParselet implements Parselet {
     }
 
     stm.setOpenSpace();
-    return stm.context().options().ignoreComments() ?
+    return stm.context().options().ignoreComments() && !retain ?
         DUMMY_COMMENT : stm.context().nodeBuilder().buildComment(stm.raw.substring(start, end), block, ruleLevel);
   }
 
