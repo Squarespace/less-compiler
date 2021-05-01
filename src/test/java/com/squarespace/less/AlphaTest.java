@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class AlphaTest extends LessTestBase {
@@ -43,7 +43,7 @@ public class AlphaTest extends LessTestBase {
 
   @Test
   public void testAlpha() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.parseEquals("alpha(opacity=12)", alpha(dim(12)));
     h.parseEquals("alpha(opacity=@foo)", alpha(var("@foo")));
@@ -52,7 +52,7 @@ public class AlphaTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.parseEquals("alpha(opacity=)", alpha(anon()));
     h.parseEquals("alpha(opacity=1)", alpha(dim(1)));

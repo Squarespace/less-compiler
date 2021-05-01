@@ -34,6 +34,8 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.parse.LessStream;
 import com.squarespace.less.parse.Parselet;
 import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessParser;
+import com.squarespace.less.parse2.LessSyntax;
 import com.squarespace.less.plugins.DummyFunctions;
 import com.squarespace.less.plugins.ext.ExtStringFunctions;
 
@@ -55,9 +57,11 @@ public class LessHarness {
   private final List<GenericBlock> definitions = new ArrayList<>();
 
   private final Parselet[] parselet;
+  private final LessSyntax syntax;
 
   public LessHarness() {
     this.parselet = Parselets.STYLESHEET;
+    this.syntax = LessSyntax.STYLESHEET;
   }
 
   public LessHarness(GenericBlock defs) {
@@ -66,10 +70,25 @@ public class LessHarness {
 
   public LessHarness(Parselet[] parselet) {
     this.parselet = parselet;
+    this.syntax = null;
   }
 
   public LessHarness(Parselet[] parselet, GenericBlock ... defs) {
     this.parselet = parselet;
+    this.syntax = null;
+    for (GenericBlock def : defs) {
+      this.definitions.add(def);
+    }
+  }
+
+  public LessHarness(LessSyntax syntax) {
+    this.parselet = null;
+    this.syntax = syntax;
+  }
+
+  public LessHarness(LessSyntax syntax, GenericBlock ...defs) {
+    this.parselet = null;
+    this.syntax = syntax;
     for (GenericBlock def : defs) {
       this.definitions.add(def);
     }
@@ -103,11 +122,11 @@ public class LessHarness {
   }
 
   public Node parse(String raw) throws LessException {
-    return parse(raw, parselet);
+    return syntax != null ? parse(raw, syntax) : parse(raw, parselet);
   }
 
   public void parseEquals(String raw, Node expected) throws LessException {
-    Node res = parse(raw, parselet);
+    Node res = syntax != null ? parse(raw, syntax) : parse(raw, parselet);
     assertEquals(res, expected, raw);
   }
 
@@ -155,6 +174,9 @@ public class LessHarness {
   }
 
   public Node evaluate(String raw) throws LessException {
+    if (syntax != null) {
+      return evaluate(parse(raw, syntax), define(definitions));
+    }
     return evaluate(parse(raw, parselet), define(definitions));
   }
 
@@ -170,8 +192,23 @@ public class LessHarness {
     return evaluate(parse(raw, parselet), define(definitions));
   }
 
+  public Node evaluate(String raw, LessSyntax syntax) throws LessException {
+    return evaluate(parse(raw, syntax), define(definitions));
+  }
+
   public Node evaluate(String raw, Parselet[] parselet, ExecEnv env) throws LessException {
     return evaluate(parse(raw, parselet), env);
+  }
+
+  public Node evaluate(String raw, LessSyntax syntax, ExecEnv env) throws LessException {
+    return evaluate(parse(raw, syntax), env);
+  }
+
+  private Node parse(String raw, LessSyntax syntax) throws LessException {
+    LessParser parser = new LessParser(context(), raw);
+    Node res = parser.parse(syntax);
+    parser.complete();
+    return res;
   }
 
   private Node parse(String raw, Parselet[] parselet) throws LessException {

@@ -25,6 +25,8 @@ import com.squarespace.less.exec.LessEvaluator;
 import com.squarespace.less.exec.LessRenderer;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.parse.LessStream;
+import com.squarespace.less.parse2.LessParser;
+import com.squarespace.less.parse2.LessSyntax;
 import com.squarespace.less.plugins.ColorBlendingFunctions;
 import com.squarespace.less.plugins.ColorChannelFunctions;
 import com.squarespace.less.plugins.ColorDefinitionFunctions;
@@ -77,8 +79,8 @@ public class LessCompiler {
   public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
     LessStats stats = ctx.stats();
     long started = stats.now();
-    LessStream stm = new LessStream(ctx, raw, rootPath, fileName);
-    Stylesheet sheet = (Stylesheet) stm.parse(STYLESHEET);
+    LessParser parser = new LessParser(ctx, raw, rootPath, fileName);
+    Stylesheet sheet = (Stylesheet) parser.parse(LessSyntax.STYLESHEET);
     stats.parseDone(raw.length(), started);
     return sheet;
   }

@@ -108,7 +108,7 @@ public class Feature extends BaseNode {
     posRepr(buf);
     buf.append('\n').incrIndent().indent();
     property.modelRepr(buf);
-    buf.append('\n');
+    buf.append('\n').indent();
     value.modelRepr(buf);
     buf.decrIndent();
   }

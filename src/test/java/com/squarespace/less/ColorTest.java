@@ -27,6 +27,7 @@ import com.squarespace.less.model.BaseColor;
 import com.squarespace.less.model.HSLColor;
 import com.squarespace.less.model.RGBColor;
 import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class ColorTest extends LessTestBase {
@@ -34,7 +35,7 @@ public class ColorTest extends LessTestBase {
   @Test
   public void testColor() throws LessException {
     // Conversion of of certain keywords into colors during parse.
-    LessHarness h = new LessHarness(Parselets.COLOR_KEYWORD);
+    LessHarness h = new LessHarness(LessSyntax.COLOR_KEYWORD);
     h.parseEquals("blue", rgb(0, 0, 255, 1.0, true));
     h.parseEquals("red", rgb(255, 0, 0, 1.0, true));
     h.parseEquals("black", rgb(0, 0, 0, 1.0, true));

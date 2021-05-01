@@ -28,6 +28,8 @@ import com.squarespace.less.cli.LessC.Args;
 import com.squarespace.less.core.ErrorUtils;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Stylesheet;
+import com.squarespace.less.parse2.LessParser;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 /**
@@ -89,7 +91,9 @@ class CompileSingle extends BaseCompile {
 
       } else {
         // Execute one of the debug modes
-        Stylesheet stylesheet = compiler.parse(source, ctx, input.getParent(), input.getFileName());
+        LessParser parser = new LessParser(ctx, source);
+        Stylesheet stylesheet = (Stylesheet) parser.parse(LessSyntax.STYLESHEET);
+//        Stylesheet stylesheet = compiler.parse(source, ctx, input.getParent(), input.getFileName());
         switch (args.debugMode()) {
 
           case CANONICALIZE:
