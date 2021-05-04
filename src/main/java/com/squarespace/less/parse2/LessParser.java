@@ -1,6 +1,14 @@
 package com.squarespace.less.parse2;
 
 import static com.squarespace.less.core.CharClass.CLASSIFIER;
+import static com.squarespace.less.core.SyntaxErrorMaker.alphaUnitsInvalid;
+import static com.squarespace.less.core.SyntaxErrorMaker.bug;
+import static com.squarespace.less.core.SyntaxErrorMaker.expected;
+import static com.squarespace.less.core.SyntaxErrorMaker.general;
+import static com.squarespace.less.core.SyntaxErrorMaker.incompleteParse;
+import static com.squarespace.less.core.SyntaxErrorMaker.javascriptDisabled;
+import static com.squarespace.less.core.SyntaxErrorMaker.mixedDelimiters;
+import static com.squarespace.less.core.SyntaxErrorMaker.quotedBareLF;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -67,6 +75,7 @@ import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.Url;
 import com.squarespace.less.model.ValueElement;
 import com.squarespace.less.model.Variable;
+import com.squarespace.less.parse.ParseUtils;
 import com.squarespace.less.parse.Patterns;
 
 /**
@@ -199,6 +208,11 @@ public class LessParser {
   private int pos;
 
   /**
+   * Index of furthest position we've parsed successfully.
+   */
+  private int furthest;
+
+  /**
    * Current line number.
    */
   private int line = 0;
@@ -248,14 +262,19 @@ public class LessParser {
    */
   public void complete() throws LessException {
     ws();
+
+    // Throw an error if the parse didn't complete.
     if (peek() != Chars.EOF) {
-      throw new LessException(SyntaxErrorMaker.incompleteParse());
+      throw parseError(new LessException(incompleteParse()));
     }
+    // If we have an unclosed block in the stream, we'll hit EOF with something
+    // on the stack.
     if (b_ptr != 0) {
-      throw new LessException(SyntaxErrorMaker.general("block pointer"));
+      throw parseError(new LessException(incompleteParse()));
     }
+    // Mark pointer != 0 is a parser bug.
     if (m_ptr != 0) {
-      throw new LessException(SyntaxErrorMaker.general("mark pointer != 0"));
+      throw parseError(new LessException(bug("mark pointer != 0")));
     }
   }
 
@@ -336,9 +355,16 @@ public class LessParser {
   }
 
   /**
-   * Parse a specific fragment of syntax.
+   * Constructs a parse error and adds line number information.
    */
-  public Node parse(LessSyntax syntax) {
+  public LessException parseError(LessException e) {
+    return ParseUtils.parseError(e, fileName, raw, furthest);
+  }
+
+  /**
+   * Parse the given fragment of LESS syntax.
+   */
+  public Node parse(LessSyntax syntax) throws LessException {
     if (syntax != LessSyntax.STYLESHEET) {
       push(DUMMY_STYLESHEET);
     }
@@ -388,10 +414,15 @@ public class LessParser {
 
       case DIRECTIVE:
         Node directive = directive();
-        NodeType type = directive.type();
-        if (type == NodeType.MEDIA || type == NodeType.BLOCK_DIRECTIVE) {
-          r = _parse((BlockNode) directive) ? directive : null;
+        r = directive;
+        if (directive != null) {
+          NodeType type = directive.type();
+          if (type == NodeType.MEDIA || type == NodeType.BLOCK_DIRECTIVE) {
+            r = _parse((BlockNode) directive) ? directive : null;
+          }
         }
+
+        // Note that we don't handle '@import' here, just parse and return it
         break;
 
       case ELEMENT:
@@ -410,6 +441,10 @@ public class LessParser {
         r = expression_list(true);
         break;
 
+      case FEATURES:
+        r = features();
+        break;
+
       case FONT:
         r = font();
         break;
@@ -420,6 +455,10 @@ public class LessParser {
 
       case GUARD:
         r = guard();
+        break;
+
+      case JAVASCRIPT:
+        javascript();
         break;
 
       case KEYWORD:
@@ -510,20 +549,23 @@ public class LessParser {
         break;
 
       default:
-        // TODO: error
-        throw new RuntimeException("unsupported syntax fragment");
+        throw parseError(new LessException(bug("unsupported syntax fragment")));
     }
 
     if (syntax != LessSyntax.STYLESHEET) {
       pop();
     }
+
+    // Confirm the parse is complete.
+    complete();
+
     return r;
   }
 
   /**
    * Parse a block.
    */
-  private boolean _parse(BlockNode top) {
+  private boolean _parse(BlockNode top) throws LessException {
     if (top == null) {
       return false;
     }
@@ -535,11 +577,7 @@ public class LessParser {
     push(top);
 
     // Skip whitespace and add comments to the current block.
-    // If we hit EOF here, return true when parsing a STYLESHEET
-    // block, and false otherwise.
-    if (!ws_comments(true, true)) {
-      return !delimited;
-    }
+    ws_comments(true, true);
 
     // Loop until there are no more characters to inspect
     while (pos < len) {
@@ -556,10 +594,7 @@ public class LessParser {
         case Chars.EOF: {
           // Check if we're in a delimited block.
           if (block.type() != NodeType.STYLESHEET) {
-
-            // TODO: generalize error reporting
-
-            throw new RuntimeException("parse error unexpected '}' at " + line + ":" + column);
+            throw parseError(new LessException(incompleteParse()));
           }
           return true;
         }
@@ -567,10 +602,7 @@ public class LessParser {
         case '}': {
           // Ensure we're inside a delimited block. The global scope is not closeable.
           if (block.type() == NodeType.STYLESHEET) {
-
-            // TODO: generalize error reporting
-
-            throw new RuntimeException("parse error unexpected '}' at " + line + ":" + column);
+            throw parseError(new LessException(general("unexpected '}' closing brace")));
           }
 
           // Pop the block off the stack
@@ -596,19 +628,36 @@ public class LessParser {
             continue;
           }
 
+          Ruleset ruleset = ruleset();
+          if (ruleset != null) {
+            block.add(ruleset);
+            push(ruleset);
+            continue;
+          }
+
           Node directive = directive();
           if (directive != null) {
             NodeType type = directive.type();
 
-            if (type == NodeType.BLOCK) {
+            if (type == NodeType.IMPORT) {
+
+              // TODO: imports still add ~5 Java stack frames, see if we can shrink this.
+
               // TODO: make the parser re-entrant so it can simply append the imported nodes
               // directly to the current block.
 
-              // The "@import" directive returns a block. We append its elements to the current block.
-              this.block.append((Block) directive);
+              Node _import = ctx.importer().importStylesheet((Import) directive);
 
-              // Do not append the block itself.
-              continue;
+              // Check if the import node was resolved and produced a nested stylesheet.
+              if (_import.type() == NodeType.BLOCK) {
+                // The "@import" directive returns a block. We append its elements to the current block.
+                this.block.append((Block) _import);
+
+                // Do not append the import node itself.
+                continue;
+              }
+
+              // Fall through ..
             }
 
             // Add the directive
@@ -621,17 +670,8 @@ public class LessParser {
             continue;
           }
 
-          Ruleset ruleset = ruleset();
-          if (ruleset != null) {
-            block.add(ruleset);
-            push(ruleset);
-            continue;
-          }
-
-          // TODO: generalize error reporting
-
           // If we're here, this is invalid LESS syntax.
-          throw new RuntimeException("incomplete parse at " + line + ":" + column);
+          throw parseError(new LessException(incompleteParse()));
         }
 
         case '.':
@@ -648,12 +688,6 @@ public class LessParser {
             continue;
           }
 
-          MixinCall call = mixin_call();
-          if (call != null) {
-            block.add(call);
-            continue;
-          }
-
           Ruleset ruleset = ruleset();
           if (ruleset != null) {
             block.add(ruleset);
@@ -661,6 +695,11 @@ public class LessParser {
             continue;
           }
 
+          MixinCall call = mixin_call();
+          if (call != null) {
+            block.add(call);
+            continue;
+          }
           break;
         }
 
@@ -689,7 +728,7 @@ public class LessParser {
       // ';' or '}' to enter a known state.
 
       // If we're here, the stylesheet contains invalid LESS syntax.
-      throw new RuntimeException("incomplete parse at " + line + ":" + column);
+      throw parseError(new LessException(incompleteParse()));
     }
 
     if (!delimited) {
@@ -701,8 +740,10 @@ public class LessParser {
 
   /**
    * ADDITION
+   *
+   * Math operations plus and minus, with nested multiplication operations.
    */
-  private Node addition() {
+  private Node addition() throws LessException {
     Node operation = multiplication();
     if (operation == null) {
       return null;
@@ -715,7 +756,7 @@ public class LessParser {
       }
 
       // Parse operator
-      Operator operator = additionop();
+      Operator operator = addition_op();
       if (operator == null) {
         break;
       }
@@ -737,7 +778,10 @@ public class LessParser {
     return operation;
   }
 
-  private Operator additionop() {
+  /**
+   * Parses an operator '+' or '-' for addition().
+   */
+  private Operator addition_op() {
     char c = peek();
     if (c != '+' && c != '-') {
       return null;
@@ -751,8 +795,10 @@ public class LessParser {
 
   /**
    * ALPHA
+   *
+   * Matches the 'opacity=?' inside an 'alpha()' function call.
    */
-  private Alpha alpha() {
+  private Alpha alpha() throws LessException {
     if (!match("opacity=")) {
       return null;
     }
@@ -765,23 +811,27 @@ public class LessParser {
     } else {
       Dimension d = dimension();
       if (d != null && d.unit() != null) {
-        throw new RuntimeException("dimension cannot have a unit");
+        throw parseError(new LessException(alphaUnitsInvalid(d)));
       }
       n = d;
     }
-    if (!ws()) {
-      return null;
-    }
+
+    ws();
     if (next() != ')') {
-      throw new RuntimeException("right paren expected");
+      if (n == null) {
+        throw parseError(new LessException(expected("expected a unit-less number or variable for alpha")));
+      }
+      throw parseError(new LessException(expected("right parenthesis ')' to end alpha")));
     }
     return new Alpha(n == null ? ANON : n);
   }
 
   /**
    * ASSIGNMENT
+   *
+   * Assignments of the form 'key=val'.
    */
-  private Assignment assignment() {
+  private Assignment assignment() throws LessException {
     if (!match(Patterns.WORD)) {
       return null;
     }
@@ -819,7 +869,14 @@ public class LessParser {
     return new Assignment(name, value);
   }
 
-  private boolean blockopen() {
+  /**
+   * Skips whitespace and matches a right curly brace to open a block.
+   *
+   * Also sets the 'openspace' flag to indicate that an invisible space
+   * exists just after the '{', so the sequence '{.foo' will be equivalent
+   * to '{ .foo'.
+   */
+  private boolean block_open() {
     ws();
     if (peek() != '{') {
       return false;
@@ -832,6 +889,7 @@ public class LessParser {
   /**
    * COLOR
    *
+   * Hexadecimal colors of the form '#123' or '#123456'.
    */
   private RGBColor color() {
     if (peek() != '#' || !match(Patterns.HEXCOLOR)) {
@@ -846,6 +904,7 @@ public class LessParser {
   /**
    * COLOR_KEYWORD
    *
+   * Named color values like 'red' or 'goldenrod'.
    */
   private RGBColor color_keyword() {
     if (!match(Patterns.KEYWORD)) {
@@ -863,10 +922,13 @@ public class LessParser {
   /**
    * COMMENT
    *
-   * Parse and optionally ignore single line and block comments.
+   * Parse and optionally ignore single line and Java-style block comments.
    *
    * If the 'keep' flag is true we construct and return the comment; otherwise
    * we just skip over the comment characters.
+   *
+   * The 'rulelevel' flag indicates the comment is at the same level as a RULE,
+   * which changes its newline handling.
    */
   private Node comment(boolean keep, boolean rulelevel) {
     char c;
@@ -913,9 +975,11 @@ public class LessParser {
     if (isblock) {
       // Block comments are ended by '*/'
       end = seek('*', '/');
-      if (end < len) {
-        end -= 2;
-      }
+      end -= 2;
+
+//      if (end < len) {
+//        end -= 2;
+//      }
 
     } else {
       // Line comments end with '\n'
@@ -933,6 +997,10 @@ public class LessParser {
         }
         pos++;
       }
+    }
+
+    if (pos > furthest) {
+      furthest = pos;
     }
 
     // TODO: look into whether some comments can be lifted. A rule-level comment
@@ -954,8 +1022,10 @@ public class LessParser {
 
   /**
    * CONDITIONS
+   *
+   * List of guard conditions joined by an "and".
    */
-  private Condition conditions() {
+  private Condition conditions() throws LessException {
     Condition cond = condition();
     ws();
     while (match("and")) {
@@ -969,8 +1039,10 @@ public class LessParser {
 
   /**
    * CONDITION
+   *
+   * Condition in a guard clause.
    */
-  private Condition condition() {
+  private Condition condition() throws LessException {
     ws();
     boolean negate = match("not");
     if (negate) {
@@ -980,14 +1052,14 @@ public class LessParser {
     Condition res = null;
     ws();
     if (peek() != '(') {
-      throw new RuntimeException("expected left paren to start guard condition");
+      throw parseError(new LessException(expected("left parenthesis '(' to start guard condition")));
     }
     next();
 
     ws();
     Node left = condition_sub();
     if (left == null) {
-      throw new RuntimeException("condition value");
+      throw parseError(new LessException(expected("condition value")));
     }
 
     ws();
@@ -995,17 +1067,12 @@ public class LessParser {
       Operator op = Operator.fromString(raw.substring(m_start, m_end));
       consume(m_end);
 
-      // Quick sanity check for '==' operator
-      if (op == Operator.EQUAL && peek() == '=') {
-        throw new RuntimeException("use '=' not '==' for equality");
-      }
       ws();
-
       Node right = condition_sub();
       if (right != null) {
         res = new Condition(op, left, right, negate);
       } else {
-        throw new RuntimeException("expected expression");
+        throw parseError(new LessException(expected("expression")));
       }
     } else {
       res = new Condition(Operator.EQUAL, left, Constants.TRUE, negate);
@@ -1013,13 +1080,16 @@ public class LessParser {
 
     ws();
     if (peek() != ')') {
-      throw new RuntimeException("expected right paren to end guard condition");
+      throw parseError(new LessException(expected("right parenthesis ')' to end guard condition")));
     }
     next();
     return res;
   }
 
-  private Node condition_sub() {
+  /**
+   * Parses the left- or right-hand side value in a guard condition.
+   */
+  private Node condition_sub() throws LessException {
     Node n = addition();
     if (n != null) {
       return n;
@@ -1033,8 +1103,10 @@ public class LessParser {
 
   /**
    * DEFINITION
+   *
+   * Variable definition at RULE level, like '@myColor: red;'.
    */
-  private Definition definition() {
+  private Definition definition() throws LessException {
     int ms = pos;
     if (peek() != '@') {
       return null;
@@ -1043,54 +1115,85 @@ public class LessParser {
       return null;
     }
 
+    // Mark start of rule.
     begin();
+
     consume(m_end);
     int me = m_end;
 
     // Skip whitespace and look for ':' definition delimiter
-    if (!ws()) {
-      rollback();
-      return null;
-    }
+    ws();
     if (peek() != ':') {
       rollback();
       return null;
     }
     next();
 
-    // Skip all extraneous whitespace
-    if (!ws()) {
-      rollback();
-      return null;
-    }
+    ws();
 
-    // Parse the value
+    // Mark start of value.
+    begin();
+
+    // TODO: this is quite similar to the parsing of the value of a rule()
+    // but is tricky to unify at the moment. reorganize to share some code.
+
     Node value = expression_list(true);
 
-    // Look for a valid end delimiter
+    // Look for "!important" suffix. We have to strip it off, but don't
+    // use it for definitions.
     ws();
-    char c = peek();
-    if (c == ';') {
-      next();
-    } else if (c != '}' && c != Chars.EOF) {
-      rollback();
-      return null;
+    if (peek() == '!' && match(Patterns.IMPORTANT)) {
+      consume(m_end);
     }
 
-    // High confidence we have a valid definition, so copy the name
-    String name = raw.substring(ms, me);
+    boolean fallback = false;
 
-    commit();
-    flags |= FLAG_OPENSPACE;
+    ws();
+    if (!rule_end_peek()) {
+      fallback = true;
 
-    Definition result = new Definition(name, value == null ? ANON : value);
-    result.fileName(fileName);
-    return result;
+      // Roll back to value checkpoint
+      rollback();
+      if (match(Patterns.ANON_RULE_VALUE)) {
+        // Don't skip over the trailing char
+        consume(m_end - 1);
+        value = new Anonymous(raw.substring(m_start, m_end - 1).trim());
+      }
+
+    } else if (value == null) {
+      value = ANON;
+    }
+
+    ws();
+    if (value != null && rule_end()) {
+      if (!fallback) {
+        commit();
+      }
+      commit();
+
+      // High confidence we have a valid definition, so copy the name
+      String name = raw.substring(ms, me);
+
+      flags |= FLAG_OPENSPACE;
+
+      // TODO: use builder
+
+      Definition result = new Definition(name, value == null ? ANON : value);
+      result.fileName(fileName);
+      return result;
+    }
+
+    if (!fallback) {
+      rollback();
+    }
+    rollback();
+    return null;
   }
 
   /**
    * DIMENSION
    *
+   * Numeric values with optional unit suffix, like '1.3' or '-12px'.
    */
   private Dimension dimension() {
     if (!match(Patterns.DIMENSION_VALUE)) {
@@ -1102,7 +1205,9 @@ public class LessParser {
 
     Unit unit = null;
     if (match(Patterns.DIMENSION_UNIT)) {
+
       // TODO: faster lookup for these without copying the substring
+
       unit = Unit.get(raw.substring(m_start, m_end));
       consume(m_end);
     }
@@ -1113,8 +1218,10 @@ public class LessParser {
 
   /**
    * DIRECTIVE, BLOCK_DIRECTIVE, or MEDIA
+   *
+   * Handles single-line and block directives, and imports.
    */
-  private Node directive() {
+  private Node directive() throws LessException {
     if (!match(Patterns.DIRECTIVE)) {
       return null;
     }
@@ -1124,6 +1231,8 @@ public class LessParser {
 
     String name = raw.substring(m_start, m_end);
     String nvname = name;
+
+    // Look for '-' prefixes and remove them for matching
     if (name.charAt(1) == '-') {
       int i = name.indexOf('-', 2);
       if (i > 0) {
@@ -1131,21 +1240,21 @@ public class LessParser {
       }
     }
 
-    boolean hasblock = false;
+    boolean has_block = false;
     boolean hasexpr = false;
-    boolean hasident = false;
+    boolean has_ident = false;
 
     switch (nvname) {
       case "@import":
       case "@import-once":
         ws();
         commit();
-        return _import(nvname);
+        return directive_import(nvname);
 
       case "@media":
         ws();
         commit();
-        return media();
+        return directive_media();
 
       case "@font-face":
       case "@viewport":
@@ -1165,15 +1274,15 @@ public class LessParser {
       case "@right-top":
       case "@right-middle":
       case "@right-bottom":
-        hasblock = true;
+        has_block = true;
         break;
 
       case "@page":
       case "@document":
       case "@supports":
       case "@keyframes":
-        hasblock = true;
-        hasident = true;
+        has_block = true;
+        has_ident = true;
         break;
 
       case "@namespace":
@@ -1184,7 +1293,7 @@ public class LessParser {
         break;
     }
 
-    if (hasident) {
+    if (has_ident) {
       ws();
       int start = pos;
       int end = pos;
@@ -1200,10 +1309,10 @@ public class LessParser {
       name += " " + StringUtils.strip(raw.substring(start, end));
     }
 
-    if (hasblock) {
+    if (has_block) {
       ws();
       if (peek() == '{') {
-        blockopen();
+        block_open();
         commit();
         return new BlockDirective(name, new Block());
       }
@@ -1225,7 +1334,10 @@ public class LessParser {
     return null;
   }
 
-  private Node _import(String name) {
+  /**
+   * Completes parsing an '@import' directive with optional features.
+   */
+  private Node directive_import(String name) throws LessException {
     boolean once = name.endsWith("-once");
     Node path = quoted();
     if (path == null) {
@@ -1237,39 +1349,59 @@ public class LessParser {
 
     ws();
     Features features = features();
+
     ws();
     if (peek() == ';') {
       next();
       Import imp = new Import(path, features, once);
       imp.rootPath(rootPath);
       imp.fileName(fileName);
-      try {
-        return ctx.importer().importStylesheet(imp);
-      } catch (LessException e) {
-        throw new RuntimeException("fix me", e);
-      }
+      return imp;
     }
     return null;
   }
 
+  /**
+   * Completes parsing a media directive with optional features.
+   */
+  private Media directive_media() throws LessException {
+    Features features = features();
+
+    ws();
+    // Make sure a block follows, otherwise this is invalid.
+    if (!block_open()) {
+      return null;
+    }
+
+    Media media = new Media(features, new Block());
+    media.fileName(fileName);
+    return media;
+  }
 
   /**
    * ELEMENT
+   *
+   * Single element in a selector.
    */
-  private Element element() {
-    Combinator comb = combinator();
+  private Element element() throws LessException {
+    Combinator comb = element_combinator();
     ws();
-    char ch = peek();
+
     if (match(Patterns.ELEMENT0) || match(Patterns.ELEMENT1)) {
       consume(m_end);
       return new TextElement(comb, raw.substring(m_start, m_end));
 
-    } else if (ch == '*' || ch == '&') {
-      next();
-      return new TextElement(comb, ch == '*' ? ASTERISK : AMPERSAND);
+    } else {
+      // Look for bare '*' or '&'
+      char ch = peek();
+      if (ch == '*' || ch == '&') {
+        next();
+        return new TextElement(comb, ch == '*' ? ASTERISK : AMPERSAND);
+      }
     }
 
-    Element elem = elementattr(comb);
+    // See if we have an attribute
+    Element elem = element_attr(comb);
     if (elem != null) {
       return elem;
     }
@@ -1292,7 +1424,10 @@ public class LessParser {
     return null;
   }
 
-  private Element elementattr(Combinator comb) {
+  /**
+   * Element of an attribute selector.
+   */
+  private Element element_attr(Combinator comb) throws LessException {
     if (peek() != '[') {
       return null;
     }
@@ -1338,16 +1473,18 @@ public class LessParser {
 
   /**
    * ELEMENT_SUB
+   *
+   * Element nested in parenthesis.
    */
-  private Node element_sub() {
+  private Node element_sub() throws LessException {
     ws();
     if (peek() != '(') {
       return null;
     }
     next();
-    ws();
 
     Node n = null;
+    ws();
     if (peek() == '@') {
       n = variable(true);
       if (n == null) {
@@ -1356,6 +1493,7 @@ public class LessParser {
     } else {
       n = selector();
     }
+
     ws();
     if (n != null && peek() == ')') {
       next();
@@ -1364,7 +1502,10 @@ public class LessParser {
     return null;
   }
 
-  private Combinator combinator() {
+  /**
+   * Matches an element combinator, handling cases of defaulting for DESC combinators.
+   */
+  private Combinator element_combinator() {
     boolean block = (flags & FLAG_OPENSPACE) != 0;
 
     char prev = peekprev();
@@ -1378,6 +1519,7 @@ public class LessParser {
     if (CharClass.CLASSIFIER.combinator(ch)) {
       next();
       return Combinator.fromChar(ch);
+
     } else if (block || skipped > 0 || CharClass.CLASSIFIER.whitespace(prev) || prev == Chars.EOF || prev == ',') {
       return Combinator.DESC;
     }
@@ -1386,8 +1528,10 @@ public class LessParser {
 
   /**
    * ENTITY
+   *
+   * Literal, variable, function call, keyword, or comment.
    */
-  private Node entity() {
+  private Node entity() throws LessException {
     Node n = null;
 
     n = literal();
@@ -1402,19 +1546,33 @@ public class LessParser {
     if (n != null) {
       return n;
     }
+
     n = keyword();
     if (n != null) {
       return n;
     }
+
+    // JavaScript is unsupported so this should throw an exception, but never return a value.
+    javascript();
+
     return comment(true, false);
   }
+
+// TODO: possibly in the future
+//  private Node escape() {
+//    if (peek() == '\\' && match(Patterns.ESCAPE, pos + 1)) {
+//      consume(m_end);
+//      return new Anonymous(raw.substring(m_start, m_end));
+//    }
+//    return null;
+//  }
 
   /**
    * EXPRESSION
    *
-   * Avoids allocating a list for expressions that contain only a single node.
+   * List of elements separated by whitespace.
    */
-  private Node expression() {
+  private Node expression() throws LessException {
     Node first = expression_sub();
     if (first == null) {
       return null;
@@ -1438,6 +1596,7 @@ public class LessParser {
         ws();
       }
 
+      ws();
       elem = expression_sub();
       if (elem == null) {
         break;
@@ -1452,7 +1611,10 @@ public class LessParser {
     return elements == null ? first : new Expression(elements);
   }
 
-  private Node expression_sub() {
+  /**
+   * One element in an expression.
+   */
+  private Node expression_sub() throws LessException {
     // TODO: peek to speed this up
 
     Node n = null;
@@ -1469,11 +1631,6 @@ public class LessParser {
     if (n != null) {
       return n;
     }
-    // Covered by addition() above
-    // n = dimension();
-    // if (n != null) {
-    // return n;
-    // }
     n = color();
     if (n != null) {
       return n;
@@ -1486,27 +1643,31 @@ public class LessParser {
     if (n != null) {
       return n;
     }
-    // Covered by addition() above
-    // n = variable(false);
-    // if (n != null) {
-    // return n;
-    // }
     n = function_call();
     if (n != null) {
       return n;
     }
 
-    // TODO: sniff for javascript, throw "unsupported exception"
+//    n = escape();
+//    if (n != null) {
+//      return n;
+//    }
 
-    return keyword();
+    n = keyword();
+    if (n != null) {
+      return n;
+    }
+
+    javascript();
+    return null;
   }
 
   /**
    * EXPRESSION_LIST
    *
-   * Avoids allocating a list
+   * List of expressions separated by commas.
    */
-  private Node expression_list(boolean flatten) {
+  private Node expression_list(boolean flatten) throws LessException {
     Node first = expression();
     if (first == null) {
       return null;
@@ -1540,11 +1701,13 @@ public class LessParser {
 
   /**
    * FEATURE
+   *
+   * One feature in an '@import' or '@media' directive.
    */
-  private Expression feature() {
+  private Expression feature() throws LessException {
     begin();
 
-    Node n = _feature();
+    Node n = feature_sub();
     if (n == null) {
       rollback();
       return null;
@@ -1554,54 +1717,73 @@ public class LessParser {
     while (n != null) {
       expr.add(n);
       ws();
-      n = _feature();
+      n = feature_sub();
     }
     commit();
     return expr;
   }
 
-  private Node _feature() {
+  /**
+   * Mixed keyword and parenthesized features.
+   */
+  private Node feature_sub() throws LessException {
+    begin();
     Node node = keyword();
     if (node != null) {
+      commit();
       return node;
     }
 
     if (peek() == '(') {
       next();
+
       ws();
-      Node prop = _property();
+      Node prop = feature_property();
+
       ws();
       node = entity();
+
       ws();
-      if (next() == ')') {
+      if (peek() == ')') {
+        next();
         if (prop != null && node != null) {
+          commit();
           return new Paren(new Feature(prop, node));
         } else if (node != null) {
+          commit();
           return new Paren(node);
         }
       }
     }
+    rollback();
     return null;
   }
 
-  private Node _property() {
+  /**
+   * Property inside a feature.
+   */
+  private Node feature_property() {
+    begin();
     if (match(Patterns.PROPERTY)) {
       consume(m_end);
-      int ms = m_start;
-      int me = m_end;
       ws();
-      if (next() == ':') {
-        String token = raw.substring(ms, me);
+      if (peek() == ':') {
+        commit();
+        next();
+        String token = raw.substring(m_start, m_end);
         return new Property(token);
       }
     }
+    rollback();
     return null;
   }
 
   /**
    * FEATURES
+   *
+   * List of features in an '@import' or '@media' directive.
    */
-  private Features features() {
+  private Features features() throws LessException {
     Node n = feature();
     if (n == null) {
       n = variable(false);
@@ -1631,8 +1813,10 @@ public class LessParser {
 
   /**
    * FONT
+   *
+   * Special syntax for 'font' rules.
    */
-  private Node font() {
+  private Node font() throws LessException {
     List<Node> expr = new ArrayList<>(2);
     Node n = font_sub();
     while (n != null) {
@@ -1669,7 +1853,10 @@ public class LessParser {
     return value;
   }
 
-  private Node font_sub() {
+  /**
+   * Shorthand or entity inside a font rule.
+   */
+  private Node font_sub() throws LessException {
     ws();
     Node n = shorthand();
     if (n != null) {
@@ -1680,8 +1867,10 @@ public class LessParser {
 
   /**
    * FUNCTION_CALL
+   *
+   * LESS or CSS function call syntax, e.g. alpha(opacity=1), url(http://example.com), etc.
    */
-  private Node function_call() {
+  private Node function_call() throws LessException {
     // TODO: drop the recognizer and match identifier, ws, then paren
 
     if (!match(Patterns.CALL_NAME)) {
@@ -1702,6 +1891,7 @@ public class LessParser {
         commit();
         return value;
       }
+
       // Fall through
     }
 
@@ -1733,8 +1923,10 @@ public class LessParser {
 
   /**
    * GUARD
+   *
+   * Guard clause on a mixin definition.
    */
-  private Guard guard() {
+  private Guard guard() throws LessException {
     if (!match("when")) {
       return null;
     }
@@ -1742,12 +1934,14 @@ public class LessParser {
 
     Guard guard = new Guard();
     Condition condition = null;
-    while (ws()) {
+    while (true) {
+      ws();
       condition = conditions();
       if (condition == null) {
         break;
       }
       guard.add(condition);
+
       ws();
       if (peek() != ',') {
         break;
@@ -1755,15 +1949,30 @@ public class LessParser {
       next();
     }
 
-    if (guard.conditions().isEmpty()) {
-      throw new RuntimeException("expected at least one condition in guard expression");
-    }
+    // TODO: should we ignore empty guards? old parser did.
+
     return guard;
+  }
+
+  /**
+   * JAVASCRIPT
+   *
+   * Inline JavaScript is unsupported, so this just throws an error.
+   */
+  private void javascript() throws LessException {
+    int i = pos;
+    if (peek() == '~') {
+      i++;
+    }
+    if (peek(i) == '`') {
+      throw parseError(new LessException(javascriptDisabled()));
+    }
   }
 
   /**
    * KEYWORD
    *
+   * Plain or color keywords.
    */
   private Node keyword() {
     if (!match(Patterns.KEYWORD)) {
@@ -1780,8 +1989,10 @@ public class LessParser {
 
   /**
    * LITERAL
+   *
+   * Quoted string, unicode range, ratio, dimension, or color.
    */
-  public Node literal() {
+  public Node literal() throws LessException {
     Node node;
 
     // peek quoted
@@ -1810,29 +2021,22 @@ public class LessParser {
     return color();
   }
 
-  private Media media() {
-    Features features = features();
-    ws();
-    blockopen();
-    Media media = new Media(features, new Block());
-    media.fileName(fileName);
-    return media;
-  }
-
   /**
    * MIXIN
+   *
+   * Subroutine definition with optional parameters.
    */
-  private Mixin mixin() {
+  private Mixin mixin() throws LessException {
     if (!match(Patterns.MIXIN_NAME)) {
       return null;
     }
+
     begin();
 
     String name = raw.substring(m_start, m_end);
-    this.pos = m_end;
+    consume(m_end);
 
-    // TODO: can we do this without marking the stream?
-
+    // Required parameters
     ws();
     MixinParams params = mixin_params();
     if (params == null) {
@@ -1840,22 +2044,27 @@ public class LessParser {
       return null;
     }
 
-    // parse optional guard clause
+    // Optional guard clause
     ws();
     Guard guard = guard();
 
-    if (!blockopen()) {
+    // Must have a block open to be a valid mixin definition
+    if (!block_open()) {
       rollback();
       return null;
     }
+
+    // Definition is valid
     commit();
     return new Mixin(name, params, guard);
   }
 
   /**
    * MIXIN_CALL
+   *
+   * A call to a mixin with optional arguments.
    */
-  private MixinCall mixin_call() {
+  private MixinCall mixin_call() throws LessException {
     begin();
 
     Combinator comb = null;
@@ -1924,8 +2133,10 @@ public class LessParser {
 
   /**
    * MIXIN_CALL_ARGS
+   *
+   * Arguments to a mixin call.
    */
-  private MixinCallArgs mixin_call_args() {
+  private MixinCallArgs mixin_call_args() throws LessException {
     ws();
     if (peek() != '(') {
       return null;
@@ -1940,6 +2151,7 @@ public class LessParser {
     boolean delimsemi = false;
     boolean hasnamed = false;
 
+    ws();
     Node n = expression();
     while (n != null) {
       String nameloop = null;
@@ -1947,11 +2159,11 @@ public class LessParser {
 
       if (n.type() == NodeType.VARIABLE) {
         Variable var = (Variable) n;
-        Node temp = _mixincallvararg();
+        Node temp = mixin_call_vararg();
         if (temp != null) {
           if (expr.size() > 0) {
             if (delimsemi) {
-              throw new RuntimeException("mixed delimiters");
+              throw parseError(new LessException(mixedDelimiters()));
             }
             hasnamed = true;
           }
@@ -1985,7 +2197,7 @@ public class LessParser {
 
       // Handle semicolon-delimited arguments.
       if (hasnamed) {
-        throw new RuntimeException("mixed delimiters");
+        throw parseError(new LessException(mixedDelimiters()));
       }
       if (expr.size() > 1) {
         value = expr;
@@ -2002,14 +2214,17 @@ public class LessParser {
 
     ws();
     if (peek() != ')') {
-      throw new RuntimeException("expected right paren to end mixin call args");
+      throw parseError(new LessException(expected("right parenthesis ')' to end mixin call arguments")));
     }
     next();
 
     return delimsemi ? argssemi : argscomma;
   }
 
-  private Node _mixincallvararg() {
+  /**
+   * Completes parsing a named variable argument in a mixin call.
+   */
+  private Node mixin_call_vararg() throws LessException {
     if (peek() != ':') {
       return null;
     }
@@ -2017,23 +2232,23 @@ public class LessParser {
     ws();
     Node value = expression();
     if (value == null) {
-      throw new RuntimeException("expression for named argument");
+      throw parseError(new LessException(expected("expression for named argument")));
     }
     return value;
   }
 
   /**
    * MIXIN_PARAMS
+   *
+   * Parameters for a mixin definition.
    */
-  private MixinParams mixin_params() {
+  private MixinParams mixin_params() throws LessException {
     if (peek() != '(') {
       return null;
     }
 
     begin();
     next();
-
-    // parse all params
 
     MixinParams params = new MixinParams();
     while (true) {
@@ -2071,8 +2286,10 @@ public class LessParser {
 
   /**
    * MULTIPLICATION
+   *
+   * Math operations multiply and divide applied to operands.
    */
-  private Node multiplication() {
+  private Node multiplication() throws LessException {
     Node operation = operand();
     if (operation == null) {
       return null;
@@ -2109,8 +2326,10 @@ public class LessParser {
 
   /**
    * OPERAND
+   *
+   * An operand in a math operation.
    */
-  private Node operand() {
+  private Node operand() throws LessException {
     boolean negate = false;
     char c = peek();
     if (c == '-') {
@@ -2175,8 +2394,10 @@ public class LessParser {
 
   /**
    * OPERAND_SUB
+   *
+   * Parenthesized operand in a math operation.
    */
-  private Node operand_sub() {
+  private Node operand_sub() throws LessException {
     begin();
 
     // skip '('
@@ -2206,12 +2427,14 @@ public class LessParser {
   }
 
   /**
-   * PARAMETER. Optimistic parse.
+   * PARAMETER
+   *
+   * Parameter in a mixin definition.
    *
    * We assume if we're here we have high confidence that we're inside a parameter list, so we don't bother marking the
    * stream, we just press forward.
    */
-  private Parameter parameter() {
+  private Parameter parameter() throws LessException {
     // Sniff to detect which type of parameter we have.
     char c = peek();
 
@@ -2246,7 +2469,7 @@ public class LessParser {
       Node value = expression();
       if (value == null) {
         // TODO: errors
-        throw new RuntimeException("expected an expression");
+        throw parseError(new LessException(expected("an expression")));
       }
       return new Parameter(var.name(), value);
 
@@ -2262,8 +2485,10 @@ public class LessParser {
 
   /**
    * QUOTED
+   *
+   * Quoted string, optionally escaped, with variable interpolation.
    */
-  private Quoted quoted() {
+  private Quoted quoted() throws LessException {
     boolean escaped = false;
     int p = pos;
 
@@ -2325,7 +2550,7 @@ public class LessParser {
       // Bare linefeeds are illegal
       if (c == '\n') {
         // TODO: errors
-        throw new RuntimeException("bare linefeed in quoted string");
+        throw parseError(new LessException(quotedBareLF()));
       }
 
       buf.append(c);
@@ -2346,6 +2571,8 @@ public class LessParser {
 
   /**
    * RATIO
+   *
+   * Ratio syntax, e.g. '1/3'.
    */
   private Ratio ratio() {
     if (!match(Patterns.RATIO)) {
@@ -2358,8 +2585,10 @@ public class LessParser {
 
   /**
    * RULE
+   *
+   * Property / value pair, e.g. 'color: red;'.
    */
-  private Rule rule() {
+  private Rule rule() throws LessException {
     if (!match(Patterns.PROPERTY)) {
       return null;
     }
@@ -2367,11 +2596,7 @@ public class LessParser {
     begin();
     consume(m_end);
 
-    if (!ws()) {
-      rollback();
-      return null;
-    }
-
+    ws();
     if (peek() != ':') {
       rollback();
       return null;
@@ -2379,7 +2604,9 @@ public class LessParser {
     next();
 
     ws();
-    int vstart = pos;
+
+    // Mark start of value
+    begin();
 
     String property = raw.substring(m_start, m_end);
     Node value = null;
@@ -2391,32 +2618,31 @@ public class LessParser {
       value = expression_list(true);
     }
 
-    if (value == null) {
-      if (match(Patterns.ANON_RULE_VALUE, vstart)) {
-        // Don't skip over the trailing char
-        consume(m_end - 1);
-        value = new Anonymous(raw.substring(m_start, m_end - 1).trim());
-      } else {
-        value = ANON;
-      }
-    }
-    ws();
-
     // Look for "!important" suffix.
     boolean important = false;
+    ws();
     if (peek() == '!' && match(Patterns.IMPORTANT)) {
       important = true;
       consume(m_end);
     }
 
-    // Look for a valid end delimiter
+    boolean fallback = false;
+
     ws();
-    char c = peek();
-    if (c == ';') {
-      next();
-    } else if (c != '}' && c != Chars.EOF) {
+    if (!rule_end_peek()) {
+      fallback = true;
+      important = false;
+
+      // Roll back to value checkpoint
       rollback();
-      return null;
+      if (match(Patterns.ANON_RULE_VALUE)) {
+        // Don't skip over the trailing char
+        consume(m_end - 1);
+        value = new Anonymous(raw.substring(m_start, m_end - 1).trim());
+      }
+
+    } else if (value == null) {
+      value = ANON;
     }
 
     // TODO: use builder
@@ -2425,19 +2651,54 @@ public class LessParser {
     // we had it structured differently to support parsing of the property
     // separately in the old parser
 
+    ws();
+    if (value != null && rule_end()) {
+      if (!fallback) {
+        commit();
+      }
+      commit();
 
-    commit();
-    flags |= FLAG_OPENSPACE;
+      flags |= FLAG_OPENSPACE;
 
-    Rule rule = new Rule(new Property(property), value, important);
-    rule.fileName(fileName);
-    return rule;
+      Rule rule = new Rule(new Property(property), value, important);
+      rule.fileName(fileName);
+      return rule;
+    }
+
+    if (!fallback) {
+      rollback();
+    }
+    rollback();
+    return null;
+  }
+
+  /**
+   * Peek at the end of the rule.
+   */
+  private boolean rule_end_peek() {
+    char c = peek();
+    return c == ';' || c == '}' || c == Chars.EOF;
+  }
+
+  /**
+   * Find the end of the rule, consuming the ';' if exists.
+   */
+  private boolean rule_end() {
+    char c = peek();
+    if (c == ';') {
+      next();
+    } else if (c != '}' && c != Chars.EOF) {
+      return false;
+    }
+    return true;
   }
 
   /**
    * RULESET
+   *
+   * Selectors and a nested set of rules.
    */
-  private Ruleset ruleset() {
+  private Ruleset ruleset() throws LessException {
     begin();
     Selectors group = selectors();
     if (group == null) {
@@ -2445,7 +2706,7 @@ public class LessParser {
       return null;
     }
 
-    if (!blockopen()) {
+    if (!block_open()) {
       rollback();
       return null;
     }
@@ -2457,8 +2718,10 @@ public class LessParser {
 
   /**
    * SELECTORS
+   *
+   * List of selectors.
    */
-  private Selectors selectors() {
+  private Selectors selectors() throws LessException {
     Selector selector = selector();
     if (selector == null) {
       return null;
@@ -2480,8 +2743,10 @@ public class LessParser {
 
   /**
    * SELECTOR
+   *
+   * List of elements and combinators.
    */
-  private Selector selector() {
+  private Selector selector() throws LessException {
     ws();
     if (peek() == '(') {
       next();
@@ -2516,8 +2781,10 @@ public class LessParser {
 
   /**
    * SHORTHAND
+   *
+   * Special font shorthand syntax.
    */
-  private Shorthand shorthand() {
+  private Shorthand shorthand() throws LessException {
     if (!match(Patterns.SHORTHAND)) {
       return null;
     }
@@ -2535,7 +2802,7 @@ public class LessParser {
     Node right = entity();
     if (left == null || right == null) {
       rollback();
-      throw new RuntimeException("parse error");
+      throw parseError(new LessException(general("Shorthand pattern matched but failed to complete parse")));
     }
 
     commit();
@@ -2544,6 +2811,8 @@ public class LessParser {
 
   /**
    * UNICODE_RANGE
+   *
+   * Range of fonts defined by a '@font-face'.
    */
   private UnicodeRange unicode_range() {
     if (peek() == 'U' && match(Patterns.UNICODE_DESCRIPTOR)) {
@@ -2556,8 +2825,10 @@ public class LessParser {
 
   /**
    * URL
+   *
+   * A function-like syntax for a url, e.g. url(http://example.com).
    */
-  private Url url(boolean matchfunc) {
+  private Url url(boolean matchfunc) throws LessException {
     if (matchfunc) {
       if (!match(Patterns.URLSTART)) {
         return null;
@@ -2583,13 +2854,15 @@ public class LessParser {
     }
 
     if (next() != ')') {
-      throw new RuntimeException("expected ')' to end url");
+      throw parseError(new LessException(expected("right parenthesis ')' to end url")));
     }
     return new Url(n);
   }
 
   /**
    * VARIABLE
+   *
+   * Either '@foo', '@@foo' indirect syntax, or both in curly form '@{foo}'.
    */
   private Variable variable(boolean curly) {
     int start = pos;
@@ -2700,6 +2973,9 @@ loop:
       }
     }
     flags &= ~FLAG_OPENSPACE;
+    if (pos > furthest) {
+      furthest = pos;
+    }
     return pos < len;
   }
 
@@ -2747,7 +3023,15 @@ loop:
         case '\u205f':
         case '\u3000':
         case '\ufeff':
+          this.pos++;
+          this.column++;
+          break;
 
+        case ';':
+          if (!rulelevel) {
+            break loop;
+          }
+          // Skip extraneous semicolons at rule level
           this.pos++;
           this.column++;
           break;
@@ -2791,6 +3075,10 @@ loop:
           break loop;
       }
     }
+    flags &= ~FLAG_OPENSPACE;
+    if (pos > furthest) {
+      furthest = pos;
+    }
     return pos < len;
   }
 
@@ -2803,8 +3091,8 @@ loop:
     while (pos < len) {
       char c = next();
       if (c == c0) {
-        c = next();
-        if (c == c1) {
+        if (peek(pos) == c1) {
+          next();
           return pos;
         }
       }
@@ -2825,6 +3113,9 @@ loop:
         column++;
       }
       pos++;
+      if (pos > furthest) {
+        furthest = pos;
+      }
       return c;
     }
     return Chars.EOF;
@@ -2896,6 +3187,9 @@ loop:
       pos++;
     }
     flags &= ~FLAG_OPENSPACE;
+    if (pos > furthest) {
+      furthest = pos;
+    }
   }
 
   /**

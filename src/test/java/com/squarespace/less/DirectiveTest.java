@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class DirectiveTest extends LessTestBase {
@@ -36,7 +36,7 @@ public class DirectiveTest extends LessTestBase {
 
   @Test
   public void testDirective() throws LessException {
-    LessHarness h = new LessHarness(Parselets.DIRECTIVE);
+    LessHarness h = new LessHarness(LessSyntax.DIRECTIVE);
 
     h.parseEquals("@namespace foo;", dir("@namespace", kwd("foo")));
     h.parseEquals("@-a foo;", dir("@-a", kwd("foo")));

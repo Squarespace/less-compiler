@@ -142,6 +142,10 @@ public class Recognizers {
     return sequence(characters('.', '#'), lookAhead(characters('@')));
   }
 
+  public static Recognizer escape() {
+    return ESC;
+  }
+
   public static Recognizer hexdigit() {
     return charClass(CharClass.HEXDIGIT, CLASSIFIER);
   }

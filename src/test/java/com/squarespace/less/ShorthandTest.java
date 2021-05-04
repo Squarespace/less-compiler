@@ -16,7 +16,6 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.parse.Parselets.SHORTHAND;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -25,6 +24,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class ShorthandTest extends LessTestBase {
@@ -45,7 +45,7 @@ public class ShorthandTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(SHORTHAND);
+    LessHarness h = new LessHarness(LessSyntax.SHORTHAND);
 
     h.parseEquals("small/12px", shorthand(kwd("small"), dim(12, Unit.PX)));
     h.parseEquals("15vm/23vm", shorthand(dim(15, Unit.VM), dim(23, Unit.VM)));

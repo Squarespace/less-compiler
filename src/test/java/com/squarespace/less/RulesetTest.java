@@ -17,7 +17,6 @@
 package com.squarespace.less;
 
 import static com.squarespace.less.model.Combinator.CHILD;
-import static com.squarespace.less.parse.Parselets.RULESET;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -28,6 +27,7 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class RulesetTest extends LessTestBase {
@@ -53,7 +53,7 @@ public class RulesetTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(RULESET);
+    LessHarness h = new LessHarness(LessSyntax.RULESET);
 
     Ruleset exp = ruleset(selector(element(Combinator.CHILD, ".x")));
     exp.add(rule(prop("a"), color("#fff")));

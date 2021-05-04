@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class CommentTest extends LessTestBase {
@@ -43,7 +44,7 @@ public class CommentTest extends LessTestBase {
 
   @Test
   public void testComment() throws LessException {
-    LessHarness h = new LessHarness(Parselets.COMMENT);
+    LessHarness h = new LessHarness(LessSyntax.COMMENT);
     h.parseEquals("/*** a*b/c ***/", comment("** a*b/c **", true));
     h.parseEquals("/* foo */", comment(" foo ", true));
     h.parseEquals("// foo", comment(" foo", false));
@@ -53,7 +54,7 @@ public class CommentTest extends LessTestBase {
 
   @Test
   public void testBangComment() throws LessException {
-    LessHarness h = new LessHarness(Parselets.STYLESHEET);
+    LessHarness h = new LessHarness(LessSyntax.STYLESHEET);
     LessOptions opts = new LessOptions(true);
 
     String actual;

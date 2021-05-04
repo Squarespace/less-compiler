@@ -22,14 +22,14 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class FontTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FONT);
+    LessHarness h = new LessHarness(LessSyntax.FONT);
     h.parseEquals("0/0 a", expnlist(expn(ratio("0/0"), kwd("a"))));
     h.parseEquals("small/0 a", expnlist(expn(shorthand(kwd("small"), dim(0)), kwd("a"))));
 

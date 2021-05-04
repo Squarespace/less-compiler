@@ -163,10 +163,10 @@ public class ArgumentBinderTest extends LessTestBase {
     return h.parse(raw);
   }
 
-  private Node parse(String raw, Parselet[] parselets) throws LessException {
-    LessHarness h = new LessHarness(parselets);
-    return h.parse(raw);
-  }
+//  private Node parse(String raw, Parselet[] parselets) throws LessException {
+//    LessHarness h = new LessHarness(parselets);
+//    return h.parse(raw);
+//  }
 
   private void assertBinds(String rawParams, String rawArgs, GenericBlock defs) throws LessException {
     MixinParams params = (MixinParams) parse(rawParams, LessSyntax.MIXIN_PARAMS);
@@ -190,8 +190,8 @@ public class ArgumentBinderTest extends LessTestBase {
   }
 
   private void assertBindFails(String rawParams, String rawArgs, LessErrorType errorType) throws LessException {
-    MixinParams params = (MixinParams) parse(rawParams, Parselets.MIXIN_PARAMS);
-    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, Parselets.MIXIN_CALL_ARGS);
+    MixinParams params = (MixinParams) parse(rawParams, LessSyntax.MIXIN_PARAMS);
+    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, LessSyntax.MIXIN_CALL_ARGS);
     try {
       bind(params, args);
       fail("Expected LessException of type " + errorType);
@@ -209,14 +209,14 @@ public class ArgumentBinderTest extends LessTestBase {
   }
 
   private void assertMatches(String rawParams, String rawArgs) throws LessException {
-    MixinParams params = (MixinParams) parse(rawParams, Parselets.MIXIN_PARAMS);
-    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, Parselets.MIXIN_CALL_ARGS);
+    MixinParams params = (MixinParams) parse(rawParams, LessSyntax.MIXIN_PARAMS);
+    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, LessSyntax.MIXIN_CALL_ARGS);
     assertTrue(patternMatch(params, args));
   }
 
   private void assertMatchFails(String rawParams, String rawArgs) throws LessException {
-    MixinParams params = (MixinParams) parse(rawParams, Parselets.MIXIN_PARAMS);
-    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, Parselets.MIXIN_CALL_ARGS);
+    MixinParams params = (MixinParams) parse(rawParams, LessSyntax.MIXIN_PARAMS);
+    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, LessSyntax.MIXIN_CALL_ARGS);
     assertFalse(patternMatch(params, args));
   }
 

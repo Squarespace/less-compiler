@@ -16,7 +16,6 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.parse.Parselets.FUNCTION_CALL;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -24,6 +23,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class UrlTest extends LessTestBase {
@@ -44,7 +44,7 @@ public class UrlTest extends LessTestBase {
 
   @Test
   public void testUrl() throws LessException {
-    LessHarness h = new LessHarness(FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.parseEquals("url('http://foo.com/@{bar}')",
         url(quoted('\'', false, anon("http://foo.com/"), var("@bar", true))));

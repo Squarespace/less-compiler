@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.testng.annotations.Test;
 
 import com.squarespace.less.LessContext;
@@ -13,6 +12,8 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Stylesheet;
+import com.squarespace.less.parse.LessStream;
+import com.squarespace.less.parse.Parselets;
 
 public class LessParserTest {
 
@@ -24,7 +25,12 @@ public class LessParserTest {
     fileName = "def.less";
     fileName = "expression.less";
     fileName = "col2.less";
-    fileName = "src/test/resources/test-suite/less/mixin-selectors.less";
+    fileName = "src/test/resources/test-suite/less/color.less";
+//    fileName = "bug6.less";
+//    fileName = "bug7.less";
+//    fileName = "bug8.less";
+//    fileName = "bug12.less";
+//    fileName = "e5.less";
     source = LessUtils.readFile(Paths.get(fileName));
 
 //    source = "h1 /* a */ span:hover /* b */ {\n"
@@ -38,18 +44,40 @@ public class LessParserTest {
 //        + "    .mixin-0(   );\n"
 //        + "}";
 
-    source = ".ruleset-1 {\n"
-        + "    #ns.m1 .m2;\n"
-        + "}\n"
-        + "\n"
-        + ".ruleset-2 {\n"
-        + "    #ns > .m1.m2;\n"
-        + "}";
+//    source = ".ruleset-1 {\n"
+//        + "    #ns.m1 .m2;\n"
+//        + "}\n"
+//        + "\n"
+//        + ".ruleset-2 {\n"
+//        + "    #ns > .m1.m2;\n"
+//        + "}";
 
     System.out.println(source);
     LessContext ctx = new LessContext();
     LessParser parser = new LessParser(ctx, source);
     Stylesheet stylesheet = (Stylesheet) parser.parse(LessSyntax.STYLESHEET);
+
+    Buffer buf = ctx.newBuffer();
+    stylesheet.modelRepr(buf);
+    System.out.println(buf.toString());
+    System.out.println();
+    System.out.println(stylesheet.repr());
+  }
+
+  @Test
+  public void testOld() throws Exception {
+    String fileName;
+    String source;
+
+    fileName = "bug9.less";
+    fileName = "bug10.less";
+    fileName = "e5.less";
+    fileName = "src/test/resources/test-suite/less/color.less";
+
+    source = LessUtils.readFile(Paths.get(fileName));
+    LessContext ctx = new LessContext();
+    LessStream stm = new LessStream(ctx, source);
+    Stylesheet stylesheet = (Stylesheet) stm.parse(Parselets.STYLESHEET);
 
     Buffer buf = ctx.newBuffer();
     stylesheet.modelRepr(buf);
@@ -82,14 +110,15 @@ public class LessParserTest {
 //    focus = LessSyntax.ELEMENT;
 //    focus = LessSyntax.SELECTOR;
 //    focus = LessSyntax.RULESET;
-//    focus = LessSyntax.RULE;
+    focus = LessSyntax.RULE;
 //    focus = LessSyntax.MIXIN;
 //    focus = LessSyntax.DIRECTIVE;
 //    focus = LessSyntax.FONT;
 //    focus = LessSyntax.SHORTHAND;
 //    focus = LessSyntax.MIXIN_CALL;
 //    focus = LessSyntax.MIXIN_PARAMS;
-    focus = LessSyntax.URL;
+//    focus = LessSyntax.URL;
+//    focus = LessSyntax.JAVASCRIPT;
 
     List<Case> cases = Arrays.asList(
         make("1 + 2", LessSyntax.ADDITION),
@@ -221,6 +250,8 @@ public class LessParserTest {
         make("when x", LessSyntax.GUARD), // FAIL
         make("when !", LessSyntax.GUARD), // FAIL
 
+        make("`window`", LessSyntax.JAVASCRIPT),
+
         make("red", LessSyntax.KEYWORD),
         make("-foo", LessSyntax.KEYWORD),
         make("!123", LessSyntax.KEYWORD), // FAIL
@@ -288,23 +319,25 @@ public class LessParserTest {
         make("1/5", LessSyntax.RATIO),
         make("1/x", LessSyntax.RATIO), // FAIL
 
-        make("foo: bar;", LessSyntax.RULE),
-        make("font-size: 14rem;", LessSyntax.RULE),
-        make("color: #111;", LessSyntax.RULE),
-        make("color  :  #111  ;", LessSyntax.RULE),
-        make("color: ;", LessSyntax.RULE),
-        make("font-size: 12px !important ;", LessSyntax.RULE),
-        make("foo: bar baz /* foo */ baz;", LessSyntax.RULE),
-        make("foo: #0000;", LessSyntax.RULE),
-        make("foo: #00000;", LessSyntax.RULE),
-        make("foo: #00000000;", LessSyntax.RULE),
-        make("a1: url(http://squarespace.com);", LessSyntax.RULE),
-        make("b5: (4 / .5);", LessSyntax.RULE),
-        make("background: url(some-image.jpg) no-repeat right .75rem center / .8rem 1rem;", LessSyntax.RULE),
-        make("!foo: bar", LessSyntax.RULE), // FAIL
-        make("foo", LessSyntax.RULE), // FAIL
-        make("foo:", LessSyntax.RULE), // FAIL
-        make("foo !", LessSyntax.RULE), // FAIL
+//        make("foo: bar;", LessSyntax.RULE),
+//        make("font-size: 14rem;", LessSyntax.RULE),
+//        make("color: #111;", LessSyntax.RULE),
+//        make("color  :  #111  ;", LessSyntax.RULE),
+//        make("color: ;", LessSyntax.RULE),
+//        make("font-size: 12px !important ;", LessSyntax.RULE),
+//        make("foo: bar baz /* foo */ baz;", LessSyntax.RULE),
+//        make("foo: #0000;", LessSyntax.RULE),
+//        make("foo: #00000;", LessSyntax.RULE),
+//        make("foo: #00000000;", LessSyntax.RULE),
+//        make("display: none;\n", LessSyntax.RULE),
+//        make("a1: url(http://squarespace.com);", LessSyntax.RULE),
+//        make("b5: (4 / .5);", LessSyntax.RULE),
+//        make("background: url(some-image.jpg) no-repeat right .75rem center / .8rem 1rem;", LessSyntax.RULE),
+//        make("!foo: bar", LessSyntax.RULE), // FAIL
+//        make("foo", LessSyntax.RULE), // FAIL
+//        make("foo:", LessSyntax.RULE), // FAIL
+//        make("foo !", LessSyntax.RULE), // FAIL
+        make("foo: `window`;", LessSyntax.RULE),
 
         make("foo, bar { color: red; }", LessSyntax.RULESET),
         make("foo, bar { color: red }", LessSyntax.RULESET),

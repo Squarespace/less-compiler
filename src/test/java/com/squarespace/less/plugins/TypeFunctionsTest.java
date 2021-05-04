@@ -26,7 +26,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class TypeFunctionsTest extends LessTestBase {
@@ -149,7 +149,7 @@ public class TypeFunctionsTest extends LessTestBase {
         def("@number", dim(12)),
         def("@string", quoted('"', false, "foo"))
     );
-    return new LessHarness(Parselets.FUNCTION_CALL, defs);
+    return new LessHarness(LessSyntax.FUNCTION_CALL, defs);
   }
 
 }

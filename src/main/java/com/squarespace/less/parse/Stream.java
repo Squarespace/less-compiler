@@ -68,6 +68,15 @@ public class Stream {
 //          index, length, lineOffset, charOffset, esc);
 //  }
 
+  // DEBUGGING
+//  public String dump() {
+//    int end = Math.min(length, index + 64);
+//    String rest = raw.substring(index, end);
+//    String esc = StringEscapeUtils.escapeJava(rest + "");
+//    return String.format("Stream: index=%d len=%d line=%d char=%d rest=\"%s\"\n",
+//          index, length, lineOffset, charOffset, esc);
+//  }
+
   /**
    * Mark current position in the stream so that we can restore it later.
    */

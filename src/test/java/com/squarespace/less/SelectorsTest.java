@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class SelectorsTest extends LessTestBase {
@@ -45,7 +45,7 @@ public class SelectorsTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.SELECTORS);
+    LessHarness h = new LessHarness(LessSyntax.SELECTORS);
 
     h.parseEquals("a, b",
         selectors(selector(element(DESC, "a")), selector(element(DESC, "b"))));

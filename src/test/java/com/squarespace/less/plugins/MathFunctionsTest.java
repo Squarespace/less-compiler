@@ -28,14 +28,14 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testAbs() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("abs()", ARG_COUNT);
     h.evalFails("abs(1, 1)", ARG_COUNT);
@@ -47,7 +47,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testArcSin() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("asin()", ARG_COUNT);
     h.evalFails("asin(1, 1)", ARG_COUNT);
@@ -59,7 +59,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testArcCos() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("acos()", ARG_COUNT);
     h.evalFails("acos(1, 1)", ARG_COUNT);
@@ -71,7 +71,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testArcTan() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("atan()", ARG_COUNT);
     h.evalFails("atan(1, 1)", ARG_COUNT);
@@ -83,7 +83,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testCeil() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("ceil()", ARG_COUNT);
     h.evalFails("ceil(1, 1)", ARG_COUNT);
@@ -96,7 +96,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testCos() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("cos()", ARG_COUNT);
     h.evalFails("cos(1, 1)", ARG_COUNT);
@@ -108,7 +108,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testFloor() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("floor()", ARG_COUNT);
     h.evalFails("floor(1, 1)", ARG_COUNT);
@@ -123,7 +123,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testMax() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("max()", ARG_COUNT);
 
@@ -142,7 +142,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testMin() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("min()", ARG_COUNT);
 
@@ -161,7 +161,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testMod() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("mod()", ARG_COUNT);
 
@@ -172,7 +172,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testPercentage() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("percentage()", ARG_COUNT);
     h.evalFails("percentage(1, 1)", ARG_COUNT);
@@ -185,7 +185,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testPI() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("pi(0)", ARG_COUNT);
 
@@ -194,7 +194,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testPow() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("pow()", ARG_COUNT);
     h.evalFails("pow(1)", ARG_COUNT);
@@ -209,7 +209,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testRound() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("round()", ARG_COUNT);
 
@@ -229,7 +229,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testSin() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("sin()", ARG_COUNT);
     h.evalFails("sin(1, 1)", ARG_COUNT);
@@ -241,7 +241,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testSqrt() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalFails("sqrt()", ARG_COUNT);
     h.evalFails("sqrt(1, 1)", ARG_COUNT);
@@ -253,7 +253,7 @@ public class MathFunctionsTest extends LessTestBase {
 
   @Test
   public void testTan() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalEquals("tan(1)", dim(1.5574077246549023));
     h.evalEquals("tan(1deg)", dim(0.017455064928217585));

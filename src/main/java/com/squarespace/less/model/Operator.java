@@ -88,7 +88,7 @@ public enum Operator {
     }
 
     switch (str) {
-      case "==":
+      case "==": // NOTE: this isn't actually parseable
         return EQUAL;
 
       case ">=":

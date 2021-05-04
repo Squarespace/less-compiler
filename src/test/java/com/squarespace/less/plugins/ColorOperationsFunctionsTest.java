@@ -21,14 +21,14 @@ import org.testng.annotations.Test;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class ColorOperationsFunctionsTest extends LessTestBase {
 
   @Test
   public void testContrast() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalEquals("contrast(#fff, #111, #999, .5)", color("#111"));
     h.evalEquals("contrast(#222, #111, #999, .5)", color("#999"));
@@ -36,7 +36,7 @@ public class ColorOperationsFunctionsTest extends LessTestBase {
 
   @Test
   public void testDarken() throws LessException {
-    LessHarness h = new LessHarness(Parselets.ADDITION);
+    LessHarness h = new LessHarness(LessSyntax.ADDITION);
 
     h.evalEquals("darken(#888, 50%) + #000", color("#080808"));
     h.evalEquals("darken(#f00, 40%) + #000", color("#330000"));

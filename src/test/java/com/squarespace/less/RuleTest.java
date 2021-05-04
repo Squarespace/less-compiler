@@ -29,7 +29,7 @@ import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Unit;
 import com.squarespace.less.parse.LessStream;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class RuleTest extends LessTestBase {
@@ -53,7 +53,7 @@ public class RuleTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.RULE);
+    LessHarness h = new LessHarness(LessSyntax.RULE);
 
     h.parseEquals("foo  :   #123;", rule(prop("foo"), color("#123")));
     h.parseEquals("foo: 12px", rule(prop("foo"), dim(12, Unit.PX)));
@@ -68,7 +68,7 @@ public class RuleTest extends LessTestBase {
 
     h.parseFails("@foo: foo: foo: 123   ;", SyntaxErrorType.INCOMPLETE_PARSE);
 
-    h = new LessHarness(Parselets.STYLESHEET);
+    h = new LessHarness(LessSyntax.STYLESHEET);
 
     Stylesheet exp = stylesheet();
     exp.add(rule(prop("foo"), anon()));

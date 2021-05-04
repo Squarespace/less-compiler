@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.RGBColor;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class ExpressionTest extends LessTestBase {
@@ -33,7 +33,7 @@ public class ExpressionTest extends LessTestBase {
   public void testParse() throws LessException {
     RGBColor white = rgb(255, 255, 255, 1.0, true);
     RGBColor black = rgb(0, 0, 0, 1.0, true);
-    LessHarness h = new LessHarness(Parselets.EXPRESSION);
+    LessHarness h = new LessHarness(LessSyntax.EXPRESSION);
 
     h.parseEquals("white black", expn(white, black));
     h.parseEquals("12px -5px", expn(dim(12, PX), dim(-5, PX)));
@@ -43,7 +43,7 @@ public class ExpressionTest extends LessTestBase {
 
   @Test
   public void testParseKeywordDimension() throws LessException {
-    LessHarness h = new LessHarness(Parselets.EXPRESSION);
+    LessHarness h = new LessHarness(LessSyntax.EXPRESSION);
     h.parseEquals("center/5px", expn(kwd("center"), anon("/"), dim(5, PX)));
   }
 

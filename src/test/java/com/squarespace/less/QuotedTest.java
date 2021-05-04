@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class QuotedTest extends LessTestBase {
@@ -46,7 +46,7 @@ public class QuotedTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.QUOTED);
+    LessHarness h = new LessHarness(LessSyntax.QUOTED);
 
     h.parseEquals("'single'", quoted('\'', false, "single"));
     h.parseEquals("\"double\"", quoted('"', false, "double"));

@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class AttributeElementTest extends LessTestBase {
@@ -48,7 +48,7 @@ public class AttributeElementTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.ELEMENT);
+    LessHarness h = new LessHarness(LessSyntax.ELEMENT);
 
     h.parseEquals(" [class]", attr(DESC, anon("class")));
     h.parseEquals(">[foo=\"bar\"]", attr(CHILD, anon("foo"), anon("="), quoted('"', false, "bar")));

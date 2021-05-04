@@ -26,7 +26,7 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Stylesheet;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class BlockDirectiveTest extends LessTestBase {
@@ -51,7 +51,7 @@ public class BlockDirectiveTest extends LessTestBase {
 
   @Test
   public void testBlockDirective() throws LessException {
-    LessHarness h = new LessHarness(Parselets.STYLESHEET);
+    LessHarness h = new LessHarness(LessSyntax.STYLESHEET);
 
     Stylesheet sheet = stylesheet();
     sheet.add(dir("@page foo", block(rule(prop("a"), dim(1)))));

@@ -26,13 +26,14 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class ElementTest extends LessTestBase {
 
   @Test
   public void testElement() throws LessException {
-    LessHarness h = new LessHarness(Parselets.ELEMENT);
+    LessHarness h = new LessHarness(LessSyntax.ELEMENT);
 
     h.parseEquals("h1", element(DESC, "h1"));
     h.parseEquals(" h1", element(DESC, "h1"));
@@ -53,7 +54,7 @@ public class ElementTest extends LessTestBase {
 
   @Test
   public void testElement1() throws LessException {
-    LessHarness h = new LessHarness(Parselets.ELEMENT);
+    LessHarness h = new LessHarness(LessSyntax.ELEMENT);
 
     h.parseEquals(".mixin\\!tUp", element(DESC, ".mixin\\!tUp"));
     h.parseEquals("::-webkit-search-decoration", element(DESC, "::-webkit-search-decoration"));

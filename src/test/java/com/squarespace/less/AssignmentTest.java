@@ -16,7 +16,6 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.parse.Parselets.ASSIGNMENT;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -25,6 +24,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class AssignmentTest extends LessTestBase {
@@ -45,7 +45,7 @@ public class AssignmentTest extends LessTestBase {
 
   @Test
   public void testAssignment() throws LessException {
-    LessHarness h = new LessHarness(ASSIGNMENT);
+    LessHarness h = new LessHarness(LessSyntax.ASSIGNMENT);
     h.parseEquals("foo=1px", assign("foo", dim(1, Unit.PX)));
     h.parseEquals("foo=@bar", assign("foo", var("@bar")));
   }

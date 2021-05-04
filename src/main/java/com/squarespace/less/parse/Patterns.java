@@ -83,6 +83,8 @@ public class Patterns {
   // REGEX: "[\\.#](?=@)"
   public static final Recognizer ELEMENT3 = Recognizers.element3();
 
+  public static final Recognizer ESCAPE = Recognizers.escape();
+
   public static final Recognizer HEXCOLOR = Recognizers.hexcolor();
 
   // TODO: less allows identifiers starting with a digit, perhaps we should restrict it to [a-zA-Z][\\w-]+

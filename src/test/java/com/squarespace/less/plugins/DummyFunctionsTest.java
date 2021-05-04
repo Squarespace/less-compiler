@@ -25,7 +25,7 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class DummyFunctionsTest extends LessTestBase {
@@ -37,7 +37,7 @@ public class DummyFunctionsTest extends LessTestBase {
         def("@three", dim(3))
     );
 
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL, defs);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL, defs);
 
     // Non-built-in functions.
     Node expected = call("foo", dim(1));

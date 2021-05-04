@@ -26,7 +26,7 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Argument;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class ArgumentsTest extends LessTestBase {
@@ -54,7 +54,7 @@ public class ArgumentsTest extends LessTestBase {
 
   @Test
   public void testArguments() throws LessException {
-    LessHarness h = new LessHarness(Parselets.MIXIN_CALL_ARGS);
+    LessHarness h = new LessHarness(LessSyntax.MIXIN_CALL_ARGS);
 
     h.parseEquals("()",
         args(','));

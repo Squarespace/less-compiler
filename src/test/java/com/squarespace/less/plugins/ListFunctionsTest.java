@@ -25,7 +25,7 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.ExpressionList;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class ListFunctionsTest extends LessTestBase {
@@ -81,7 +81,7 @@ public class ListFunctionsTest extends LessTestBase {
         def("@nums3", expnlist(dim(1), dim(2), dim(3))),
         def("@fruit", fruit)
     );
-    return new LessHarness(Parselets.FUNCTION_CALL, defs);
+    return new LessHarness(LessSyntax.FUNCTION_CALL, defs);
   }
 
 }

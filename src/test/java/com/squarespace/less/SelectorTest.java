@@ -29,7 +29,7 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Selector;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse2.LessSyntax;
 
 
 public class SelectorTest extends LessTestBase {
@@ -68,7 +68,7 @@ public class SelectorTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.SELECTOR);
+    LessHarness h = new LessHarness(LessSyntax.SELECTOR);
 
     h.parseEquals("p", selector(element(DESC, "p")));
     h.parseEquals("> p", selector(element(Combinator.CHILD, "p")));
@@ -80,7 +80,7 @@ public class SelectorTest extends LessTestBase {
 
   @Test
   public void testWildcardNoAncestors() throws LessException {
-    LessHarness h = new LessHarness(Parselets.STYLESHEET);
+    LessHarness h = new LessHarness(LessSyntax.STYLESHEET);
     LessOptions opts = new LessOptions(true);
     assertEquals(h.execute(".ruleset & & & { color: red; }"), ".ruleset {\n  color: red;\n}\n");
     assertEquals(h.execute(".ruleset & & & { color: red; }", opts), ".ruleset{color:red}");
