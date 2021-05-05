@@ -52,7 +52,6 @@ import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
-import com.squarespace.less.model.Operation;
 import com.squarespace.less.model.Operator;
 import com.squarespace.less.model.Parameter;
 import com.squarespace.less.model.Paren;
@@ -540,7 +539,7 @@ public class LessParser {
         break;
 
       case STYLESHEET:
-        Stylesheet sheet = new Stylesheet(new Block());
+        Stylesheet sheet = builder.buildStylesheet(new Block());
         r = _parse(sheet) ? sheet : null;
         break;
 
@@ -784,8 +783,7 @@ public class LessParser {
         break;
       }
 
-      // TODO: use builder
-      operation = new Operation(operator, operation, operand1);
+      operation = builder.buildOperation(operator, operation, operand1);
     }
     return operation;
   }
@@ -1029,7 +1027,7 @@ public class LessParser {
     }
 
     String body = raw.substring(i, end);
-    return new Comment(body, isblock, rulelevel);
+    return builder.buildComment(body, isblock, rulelevel);
   }
 
   /**
@@ -1186,8 +1184,6 @@ public class LessParser {
       String name = raw.substring(ms, me);
 
       flags |= FLAG_OPENSPACE;
-
-      // TODO: use builder
 
       Definition result = setpos(mark, builder.buildDefinition(name, value == null ? ANON : value));
       result.fileName(fileName);
@@ -2271,7 +2267,7 @@ public class LessParser {
       ws_comments(false, false);
       if (peek() == '.' && peek(pos + 1) == '.' && peek(pos + 2) == '.') {
         consume(pos + 3);
-        params.add(new Parameter(null, true));
+        params.add(builder.buildParameter(null, true));
         break;
       }
 
@@ -2335,7 +2331,7 @@ public class LessParser {
       }
 
       Operator operator = Operator.fromChar(c);
-      operation = new Operation(operator, operation, operand1);
+      operation = builder.buildOperation(operator, operation, operand1);
     }
     return operation;
   }
@@ -2405,7 +2401,7 @@ public class LessParser {
 
     // TODO: possible for node to be null here?
 
-    return negate ? new Operation(Operator.MULTIPLY, node, new Dimension(-1, null)) : node;
+    return negate ? builder.buildOperation(Operator.MULTIPLY, node, new Dimension(-1, null)) : node;
   }
 
   /**
@@ -2461,7 +2457,7 @@ public class LessParser {
       if (n == null) {
         n = keyword();
       }
-      return n == null ? null : new Parameter(null, n);
+      return n == null ? null : builder.buildParameter(null, n);
     }
 
     // We have a named parameter
@@ -2487,16 +2483,16 @@ public class LessParser {
         // TODO: errors
         throw parseError(new LessException(expected("an expression")));
       }
-      return new Parameter(var.name(), value);
+      return builder.buildParameter(var.name(), value);
 
     } else if (peek() == '.' && peek(pos + 1) == '.' && peek(pos + 2) == '.') {
       // Variadic parameter
       consume(pos + 3);
-      return new Parameter(var.name(), true);
+      return builder.buildParameter(var.name(), true);
     }
 
     // Just a plain named parameter
-    return new Parameter(var.name());
+    return builder.buildParameter(var.name());
   }
 
   /**
@@ -2661,8 +2657,6 @@ public class LessParser {
       value = ANON;
     }
 
-    // TODO: use builder
-
     // TODO: flatten rule to use the 'property' as a string directly
     // we had it structured differently to support parsing of the property
     // separately in the old parser
@@ -2771,7 +2765,7 @@ public class LessParser {
       ws();
       if (peek() == ')') {
         next();
-        Selector selector = new Selector();
+        Selector selector = builder.buildSelector();
         selector.add(new ValueElement(Combinator.DESC, value));
         return selector;
       }
@@ -2925,9 +2919,7 @@ public class LessParser {
     // Finally, consume the characters from the stream
     consume(end);
 
-    // TODO: use builder
-
-    return new Variable(name, curly);
+    return builder.buildVariable(name, curly);
   }
 
   /**
