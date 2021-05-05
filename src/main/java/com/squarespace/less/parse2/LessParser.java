@@ -1662,14 +1662,18 @@ public class LessParser {
       }
 
       char c = peek();
-      if (c == '/' && peek(pos + 1) != '*') {
-        next();
-        if (elements == null) {
-          elements = new ArrayList<>();
-          elements.add(first);
+      if (c == '/') {
+        // Parse the slash but avoid parsing a comment
+        c = peek(pos + 1);
+        if (c != '/' && c != '*') {
+          next();
+          if (elements == null) {
+            elements = new ArrayList<>();
+            elements.add(first);
+          }
+          elements.add(new Anonymous("/"));
+          ws();
         }
-        elements.add(new Anonymous("/"));
-        ws();
       }
 
       ws();

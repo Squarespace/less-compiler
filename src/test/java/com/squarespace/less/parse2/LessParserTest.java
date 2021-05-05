@@ -31,6 +31,7 @@ public class LessParserTest {
 //    fileName = "bug8.less";
 //    fileName = "bug12.less";
 //    fileName = "e5.less";
+    fileName = "tmp.less";
     source = LessUtils.readFile(Paths.get(fileName));
 
 //    source = "h1 /* a */ span:hover /* b */ {\n"
