@@ -29,7 +29,9 @@ public class LessParserTest extends LessMaker {
     Tester t = tester(LessSyntax.ADDITION);
     t.ok("1 + 2", oper(Operator.ADD, dim(1), dim(2)));
     t.ok("1 - 2", oper(Operator.SUBTRACT, dim(1), dim(2)));
-    t.ok("3 - ( /* foo */ 2 * 7 )", oper(Operator.SUBTRACT, dim(3), oper(Operator.MULTIPLY, dim(2), dim(7))));
+    t.ok("3 - ( /* foo */ 2 * 7 )",
+        oper(Operator.SUBTRACT, dim(3),
+        expn(comment(" foo ", true), oper(Operator.MULTIPLY, dim(2), dim(7)))));
 
     t.fail("1 -2", SyntaxErrorType.INCOMPLETE_PARSE);
 
@@ -99,7 +101,7 @@ public class LessParserTest extends LessMaker {
 
   // =============================================================
 
-  @Test
+//  @Test
   public void testFile() throws Exception {
     String fileName;
     String source;
@@ -147,7 +149,7 @@ public class LessParserTest extends LessMaker {
     System.out.println(stylesheet.repr());
   }
 
-  @Test
+//  @Test
   public void testOld() throws Exception {
     String fileName;
     String source;
@@ -182,7 +184,7 @@ public class LessParserTest extends LessMaker {
     return new Case(source, syntax);
   }
 
-  @Test
+//  @Test
   public void testBasic() {
     LessSyntax focus = null;
 
