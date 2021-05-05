@@ -1160,15 +1160,19 @@ public class LessParser {
 
     ws();
     if (!rule_end_peek()) {
+      rollback();
       fallback = true;
 
-      // Roll back to value checkpoint
-      rollback();
-      if (match(Patterns.ANON_RULE_VALUE)) {
-        // Don't skip over the trailing char
-        consume(m_end - 1);
-        value = new Anonymous(raw.substring(m_start, m_end - 1).trim());
-      }
+// TODO: disabled for compatibility, but we may want this match here.
+//      fallback = true;
+//
+//      // Roll back to value checkpoint
+//      rollback();
+//      if (match(Patterns.ANON_RULE_VALUE)) {
+//        // Don't skip over the trailing char
+//        consume(m_end - 1);
+//        value = new Anonymous(raw.substring(m_start, m_end - 1).trim());
+//      }
 
     } else if (value == null) {
       value = ANON;
@@ -2860,6 +2864,7 @@ public class LessParser {
       n = new Anonymous(raw.substring(start, pos).trim());
     }
 
+    ws();
     if (next() != ')') {
       throw parseError(new LessException(expected("right parenthesis ')' to end url")));
     }
