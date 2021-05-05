@@ -5,17 +5,99 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.squarespace.less.LessContext;
+import com.squarespace.less.LessErrorType;
+import com.squarespace.less.LessException;
+import com.squarespace.less.LessMessages;
+import com.squarespace.less.SyntaxErrorType;
 import com.squarespace.less.core.Buffer;
+import com.squarespace.less.core.LessMaker;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Node;
+import com.squarespace.less.model.Operator;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.parse.LessStream;
 import com.squarespace.less.parse.Parselets;
 
-public class LessParserTest {
+public class LessParserTest extends LessMaker {
+
+  @Test
+  public void testAddition() throws LessException {
+    Tester t = tester(LessSyntax.ADDITION);
+    t.ok("1 + 2", oper(Operator.ADD, dim(1), dim(2)));
+    t.ok("1 - 2", oper(Operator.SUBTRACT, dim(1), dim(2)));
+    t.ok("3 - ( /* foo */ 2 * 7 )", oper(Operator.SUBTRACT, dim(3), oper(Operator.MULTIPLY, dim(2), dim(7))));
+
+    t.fail("1 -2", SyntaxErrorType.INCOMPLETE_PARSE);
+
+    // make("3 - ( /* foo */ 2 * 7 )", LessSyntax.ADDITION),
+    // make("1 ! ", LessSyntax.ADDITION), // FAIL
+    // make("1 + ", LessSyntax.ADDITION), // FAIL
+    // make("x + y ", LessSyntax.ADDITION), // FAIL
+    // make("1 + y ", LessSyntax.ADDITION), // FAIL
+
+  }
+
+  private static class Tester {
+
+    LessSyntax syntax;
+    LessMessages messages = new LessMessages(4, 10);
+
+    public Tester(LessSyntax syntax) {
+      this.syntax = syntax;
+    }
+
+    public void ok(String source, Node expected) throws LessException {
+      LessContext ctx = new LessContext();
+      LessParser parser = new LessParser(ctx, source);
+      Node actual = null;
+      try {
+        actual = parser.parse(syntax);
+      } catch (LessException e) {
+        String error = messages.formatError(e);
+        Assert.fail(error);
+      }
+      if (!actual.equals(expected)) {
+        String msg = "EXPECTED:\n\n" + repr(ctx, expected) + "\n\nGOT:\n\n" + repr(ctx, actual) + "\n";
+        Assert.fail(msg);
+      }
+    }
+
+    public void fail(String source, SyntaxErrorType expected) {
+      LessContext ctx = new LessContext();
+      LessParser parser = new LessParser(ctx, source);
+      try {
+        Node node = parser.parse(syntax);
+        Assert.fail("expected case to fail, but got:\n\n" + repr(ctx, node) + "\n");
+      } catch (LessException e) {
+        LessErrorType actual = e.primaryError().type();
+        if (actual != expected) {
+          Assert.fail("Expected " + expected + " got " + actual + "\n" + messages.formatError(e));
+        }
+        // Expected
+      }
+    }
+
+    private String repr(LessContext ctx, Node node) {
+      String repr = "<null result>";
+      if (node != null) {
+        Buffer buf = ctx.newBuffer();
+        buf.incrIndent().indent();
+        node.modelRepr(buf);
+        repr = buf.toString();
+      }
+      return repr;
+    }
+  }
+
+  private static Tester tester(LessSyntax syntax) {
+    return new Tester(syntax);
+  }
+
+  // =============================================================
 
   @Test
   public void testFile() throws Exception {
