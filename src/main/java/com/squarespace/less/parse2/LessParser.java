@@ -858,7 +858,7 @@ public class LessParser {
    * Matches the 'opacity=?' inside an 'alpha()' function call.
    */
   private Alpha alpha() throws LessException {
-    if (!match("opacity=")) {
+    if (!match("opacity=", true)) {
       return null;
     }
     consume(m_end);
@@ -1091,7 +1091,7 @@ public class LessParser {
   private Condition conditions() throws LessException {
     Condition cond = condition();
     ws();
-    while (match("and")) {
+    while (match("and", false)) {
       consume(m_end);
       Condition sub = condition();
       cond = new Condition(Operator.AND, cond, sub, false);
@@ -1107,7 +1107,7 @@ public class LessParser {
    */
   private Condition condition() throws LessException {
     ws();
-    boolean negate = match("not");
+    boolean negate = match("not", false);
     if (negate) {
       consume(m_end);
     }
@@ -2003,7 +2003,7 @@ public class LessParser {
    * Guard clause on a mixin definition.
    */
   private Guard guard() throws LessException {
-    if (!match("when")) {
+    if (!match("when", false)) {
       return null;
     }
     consume(m_end);
@@ -3203,7 +3203,7 @@ loop:
   /**
    * Match a string literal.
    */
-  private boolean match(String literal) {
+  private boolean match(String literal, boolean ignore_case) {
     int ilen = literal.length();
     int i = 0;
     while (i < ilen) {
@@ -3213,7 +3213,7 @@ loop:
       }
       char a = literal.charAt(i);
       char b = raw.charAt(j);
-      if (a != b) {
+      if (a != (ignore_case ? Character.toLowerCase(b) : b)) {
         return false;
       }
       i++;
