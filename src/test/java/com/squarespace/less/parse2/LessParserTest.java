@@ -25,7 +25,7 @@ public class LessParserTest {
     fileName = "def.less";
     fileName = "expression.less";
     fileName = "col2.less";
-    fileName = "src/test/resources/test-suite/less/color.less";
+    fileName = "src/test/resources/test-suite/less/media.less";
 //    fileName = "bug6.less";
 //    fileName = "bug7.less";
 //    fileName = "bug8.less";
@@ -110,7 +110,7 @@ public class LessParserTest {
 //    focus = LessSyntax.ELEMENT;
 //    focus = LessSyntax.SELECTOR;
 //    focus = LessSyntax.RULESET;
-    focus = LessSyntax.RULE;
+//    focus = LessSyntax.RULE;
 //    focus = LessSyntax.MIXIN;
 //    focus = LessSyntax.DIRECTIVE;
 //    focus = LessSyntax.FONT;

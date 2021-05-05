@@ -22,7 +22,6 @@ import com.squarespace.less.NodeBuilder;
 import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.core.Constants;
-import com.squarespace.less.core.SyntaxErrorMaker;
 import com.squarespace.less.match.Recognizer;
 import com.squarespace.less.model.Alpha;
 import com.squarespace.less.model.Anonymous;
@@ -30,7 +29,6 @@ import com.squarespace.less.model.Argument;
 import com.squarespace.less.model.Assignment;
 import com.squarespace.less.model.AttributeElement;
 import com.squarespace.less.model.Block;
-import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.BlockLike;
 import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Combinator;
@@ -38,7 +36,6 @@ import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Condition;
 import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.Dimension;
-import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.Element;
 import com.squarespace.less.model.Expression;
 import com.squarespace.less.model.ExpressionList;
@@ -310,6 +307,17 @@ public class LessParser {
   }
 
   /**
+   * Set line and column offsets for the given node.
+   */
+  private <T extends Node> T setpos(int[] mark, T node) {
+    if (node != null) {
+      node.setLineOffset(mark[1]);
+      node.setCharOffset(mark[2]);
+    }
+    return node;
+  }
+
+  /**
    * Create a mark in the stream that we can roll back to if necessary. We use a stack so we can mark the stream more
    * than once in nested code.
    *
@@ -330,7 +338,7 @@ public class LessParser {
     m[0] = pos;
     m[1] = line;
     m[2] = column;
-    m[3] = flags; // TODO: try to remove the flags
+    m[3] = flags; // TODO: try to remove the flags, we currently only have one
     m_ptr++;
     return m;
   }
@@ -351,7 +359,7 @@ public class LessParser {
     pos = m[0];
     line = m[1];
     column = m[2];
-    flags = m[3]; // TODO: try to remove this
+    flags = m[3]; // TODO: try to remove the flags, we currently only have one
   }
 
   /**
@@ -1116,7 +1124,7 @@ public class LessParser {
     }
 
     // Mark start of rule.
-    begin();
+    int[] mark = begin();
 
     consume(m_end);
     int me = m_end;
@@ -1169,7 +1177,6 @@ public class LessParser {
       if (!fallback) {
         commit();
       }
-      commit();
 
       // High confidence we have a valid definition, so copy the name
       String name = raw.substring(ms, me);
@@ -1178,8 +1185,9 @@ public class LessParser {
 
       // TODO: use builder
 
-      Definition result = new Definition(name, value == null ? ANON : value);
+      Definition result = setpos(mark, builder.buildDefinition(name, value == null ? ANON : value));
       result.fileName(fileName);
+      commit();
       return result;
     }
 
@@ -1226,7 +1234,7 @@ public class LessParser {
       return null;
     }
 
-    begin();
+    int[] mark = begin();
     consume(m_end);
 
     String name = raw.substring(m_start, m_end);
@@ -1248,13 +1256,15 @@ public class LessParser {
       case "@import":
       case "@import-once":
         ws();
+        Node node = setpos(mark, directive_import(nvname));
         commit();
-        return directive_import(nvname);
+        return node;
 
       case "@media":
         ws();
+        Media media = setpos(mark, directive_media());
         commit();
-        return directive_media();
+        return media;
 
       case "@font-face":
       case "@viewport":
@@ -1313,8 +1323,9 @@ public class LessParser {
       ws();
       if (peek() == '{') {
         block_open();
+        Node node = setpos(mark, builder.buildBlockDirective(name, new Block()));
         commit();
-        return new BlockDirective(name, new Block());
+        return node;
       }
 
     } else {
@@ -1324,8 +1335,9 @@ public class LessParser {
       if (peek() == ';') {
         next();
         if (value != null) {
+          Node node = setpos(mark, builder.buildDirective(name,  value));
           commit();
-          return new Directive(name, value);
+          return node;
         }
       }
     }
@@ -2065,7 +2077,7 @@ public class LessParser {
    * A call to a mixin with optional arguments.
    */
   private MixinCall mixin_call() throws LessException {
-    begin();
+    int[] mark = begin();
 
     Combinator comb = null;
     Selector selector = new Selector();
@@ -2120,9 +2132,9 @@ public class LessParser {
         next();
       }
 
-      commit();
-      MixinCall call = new MixinCall(selector, args, important);
+      MixinCall call = setpos(mark, builder.buildMixinCall(selector, args, important));
       call.fileName(fileName);
+      commit();
       return call;
     }
 
@@ -2593,7 +2605,7 @@ public class LessParser {
       return null;
     }
 
-    begin();
+    int[] mark = begin();
     consume(m_end);
 
     ws();
@@ -2656,12 +2668,12 @@ public class LessParser {
       if (!fallback) {
         commit();
       }
-      commit();
 
       flags |= FLAG_OPENSPACE;
 
-      Rule rule = new Rule(new Property(property), value, important);
+      Rule rule = setpos(mark, builder.buildRule(new Property(property), value, important));
       rule.fileName(fileName);
+      commit();
       return rule;
     }
 
@@ -2699,7 +2711,7 @@ public class LessParser {
    * Selectors and a nested set of rules.
    */
   private Ruleset ruleset() throws LessException {
-    begin();
+    int[] mark = begin();
     Selectors group = selectors();
     if (group == null) {
       rollback();
@@ -2710,9 +2722,10 @@ public class LessParser {
       rollback();
       return null;
     }
-    commit();
-    Ruleset ruleset = new Ruleset(group, new Block());
+
+    Ruleset ruleset = setpos(mark, builder.buildRuleset(group, new Block()));
     ruleset.fileName(fileName);
+    commit();
     return ruleset;
   }
 
