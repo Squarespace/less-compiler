@@ -90,6 +90,13 @@ import com.squarespace.less.parse.Patterns;
  * This new parser uses an explicit stack to track nested blocks, avoiding Java recursion. Fragments of syntax are
  * parsed by methods which themselves may call other methods, but the call stack should be shallow, non-recursive, and
  * much easier to trace and debug.
+ *
+ *
+ * TODO: BUGS from the old parser which we need to keep working until the issues are resolved in the source stylesheets:
+ *
+ * - BUG1: a '+' character before end of block scope
+ * - BUG2: an unclosed '@media' directive at end of file
+ *
  */
 public class LessParser {
 
@@ -116,6 +123,11 @@ public class LessParser {
    * Comment node that indicates a comment was parsed or skipped over, and should be suppressed from the output.
    */
   private static final Comment DUMMY_COMMENT = new Comment("<ignore me>", false);
+
+  /**
+   * TODO: See BUG2
+   */
+  private static final Media DUMMY_MEDIA = new Media(new Features(), new Block());
 
   /**
    * Dummy representing the default global scope, used when parsing block node fragments.
@@ -426,7 +438,7 @@ public class LessParser {
       case DIRECTIVE:
         Node directive = directive();
         r = directive;
-        if (directive != null) {
+        if (directive != null && directive != DUMMY_MEDIA) {
           NodeType type = directive.type();
           if (type == NodeType.MEDIA || type == NodeType.BLOCK_DIRECTIVE) {
             r = _parse((BlockNode) directive) ? directive : null;
@@ -648,6 +660,12 @@ public class LessParser {
 
           Node directive = directive();
           if (directive != null) {
+
+            // TODO: see BUG2
+            if (directive == DUMMY_MEDIA) {
+              continue;
+            }
+
             NodeType type = directive.type();
 
             if (type == NodeType.IMPORT) {
@@ -730,6 +748,11 @@ public class LessParser {
             continue;
           }
 
+          // TODO: SEE BUG1
+          if (bug1_plus_ending_block()) {
+            continue;
+          }
+
           // FALL THROUGH TO ERROR
         }
       }
@@ -747,6 +770,20 @@ public class LessParser {
     }
 
     return true;
+  }
+
+  /**
+   * See BUG1
+   */
+  private boolean bug1_plus_ending_block() {
+    if (peek() == '+') {
+      next();
+      ws();
+      if (peek() == '}') {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -1386,6 +1423,12 @@ public class LessParser {
     ws();
     // Make sure a block follows, otherwise this is invalid.
     if (!block_open()) {
+
+      // TODO: see BUG2
+      if (peek() == Chars.EOF) {
+        return DUMMY_MEDIA;
+      }
+
       return null;
     }
 

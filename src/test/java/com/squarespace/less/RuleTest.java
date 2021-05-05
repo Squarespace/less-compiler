@@ -21,18 +21,34 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
+import com.squarespace.less.core.LessUtils;
+import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Unit;
 import com.squarespace.less.parse.LessStream;
+import com.squarespace.less.parse2.LessParser;
 import com.squarespace.less.parse2.LessSyntax;
 
 
 public class RuleTest extends LessTestBase {
+
+  @Test
+  public void testRuns() throws Exception {
+    Path path = Paths.get("bug2.less");
+    String source = LessUtils.readFile(path);
+    LessContext ctx = new LessContext();
+    LessParser parser = new LessParser(ctx, source);
+    Node node = parser.parse(LessSyntax.STYLESHEET);
+    System.out.println(node.repr());
+  }
 
   @Test
   public void testEquals() {

@@ -40,7 +40,7 @@ import com.squarespace.less.core.LessUtils;
  */
 public class LessSuiteTest extends LessSuiteBase {
 
-  private static final boolean VERBOSE = false;
+  private static final boolean VERBOSE = true;
   private static final LessMessages MESSAGES = new LessMessages();
 
   @Test
@@ -51,6 +51,44 @@ public class LessSuiteTest extends LessSuiteBase {
   @Test
   public void testTracing() throws IOException {
     _testSuite("trace", ".css", true);
+  }
+
+  /**
+   * Test bugs from the legacy parser that we need to keep working for now.
+   */
+  @Test
+  public void testBugs() throws IOException {
+    Path rootPath = testSuiteRoot();
+    Path lessRoot = rootPath.resolve("bugs");
+    int failures = 0;
+    for (Path lessPath : LessUtils.getMatchingFiles(lessRoot, GLOB_LESS)) {
+      String fileName = "bugs/" + lessPath.getFileName();
+
+
+      if (VERBOSE) {
+        System.err.println("Processing: " + fileName);
+      }
+
+      // Read and compile the .less source
+      String source = LessUtils.readFile(lessPath);
+      try {
+
+        // We just care that the file parses successfully.
+        parse(source, lessRoot);
+
+      } catch (LessException | RuntimeException e) {
+        logFailure("Test Suite", ++failures, "Error compiling", fileName);
+        if (e instanceof LessException) {
+          System.err.println(MESSAGES.formatError((LessException) e));
+        }
+        e.printStackTrace();
+        continue;
+      }
+    }
+
+    if (failures > 0) {
+      Assert.fail(failures + " tests failed.");
+    }
   }
 
   private void _testSuite(String subdir, String ext, boolean tracing) throws IOException {
