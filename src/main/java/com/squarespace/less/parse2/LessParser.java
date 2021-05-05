@@ -1004,7 +1004,11 @@ public class LessParser {
 
     i++;
     if (i == len) {
-      return null;
+      // We've hit a comment start, but there are no additional chars to parse.
+      // Example is a file ending in '//<eof>'.
+      this.pos = i;
+      this.column += 2;
+      return DUMMY_COMMENT;
     }
 
     // We've found an unambiguous comment start, so start real parse
