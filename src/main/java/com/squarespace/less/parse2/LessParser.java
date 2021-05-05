@@ -2063,7 +2063,7 @@ public class LessParser {
     }
 
     // Definition is valid
-    Mixin mixin = setpos(mark, builder.buildMixin(name, params, guard));
+    Mixin mixin = setpos(mark, builder.buildMixin(name, params, guard, new Block()));
     commit();
     return mixin;
   }
@@ -2077,7 +2077,7 @@ public class LessParser {
     int[] mark = begin();
 
     Combinator comb = null;
-    Selector selector = new Selector();
+    Selector selector = builder.buildSelector();
     while (match(Patterns.MIXIN_NAME)) {
       consume(m_end);
 
@@ -2772,7 +2772,7 @@ public class LessParser {
     Selector selector = null;
     while (elem != null) {
       if (selector == null) {
-        selector = new Selector();
+        selector = builder.buildSelector();
       }
       selector.add(elem);
       ws_comments(false, false);
