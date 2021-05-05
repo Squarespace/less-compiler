@@ -113,7 +113,7 @@ public class LessParser {
   private static final String AMPERSAND = "&";
 
   /**
-   * Comment node that indicates a comment was parsed but should be suppressed from the output.
+   * Comment node that indicates a comment was parsed or skipped over, and should be suppressed from the output.
    */
   private static final Comment DUMMY_COMMENT = new Comment("<ignore me>", false);
 
@@ -2039,7 +2039,7 @@ public class LessParser {
       return null;
     }
 
-    begin();
+    int[] mark = begin();
 
     String name = raw.substring(m_start, m_end);
     consume(m_end);
@@ -2063,8 +2063,9 @@ public class LessParser {
     }
 
     // Definition is valid
+    Mixin mixin = setpos(mark, builder.buildMixin(name, params, guard));
     commit();
-    return new Mixin(name, params, guard);
+    return mixin;
   }
 
   /**
