@@ -1036,13 +1036,10 @@ public class LessParser {
     boolean retain = c == '!';
 
     if (isblock) {
-      // Block comments are ended by '*/'
       end = seek('*', '/');
-      end -= 2;
-
-//      if (end < len) {
-//        end -= 2;
-//      }
+      if (end == -1) {
+        end = len;
+      }
 
     } else {
       // Line comments end with '\n'
@@ -3163,8 +3160,8 @@ loop:
 
   /**
    * Seek ahead to locate a 2-char sequence. A successful match will
-   * position the stream pointer just past the 2nd char. A failure
-   * will return 'len'.
+   * position the stream pointer over the first character. A failure
+   * will return -1.
    */
   private int seek(char c0, char c1) {
     while (pos < len) {
@@ -3172,11 +3169,11 @@ loop:
       if (c == c0) {
         if (peek(pos) == c1) {
           next();
-          return pos;
+          return pos - 2;
         }
       }
     }
-    return len;
+    return -1;
   }
 
   /**

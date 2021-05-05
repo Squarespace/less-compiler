@@ -47,6 +47,7 @@ public class CommentTest extends LessTestBase {
     LessHarness h = new LessHarness(LessSyntax.COMMENT);
     h.parseEquals("/*** a*b/c ***/", comment("** a*b/c **", true));
     h.parseEquals("/* foo */", comment(" foo ", true));
+    h.parseEquals("/* \n fooo \n*/", comment(" \n fooo \n", true));
     h.parseEquals("// foo", comment(" foo", false));
     h.parseEquals("// a //", comment(" a //", false));
     h.parseFails("/x", SyntaxErrorType.INCOMPLETE_PARSE);
