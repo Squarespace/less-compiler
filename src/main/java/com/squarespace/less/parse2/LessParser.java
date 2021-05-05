@@ -1385,7 +1385,7 @@ public class LessParser {
       return null;
     }
 
-    Media media = new Media(features, new Block());
+    Media media = builder.buildMedia(features, new Block());
     media.fileName(fileName);
     return media;
   }
