@@ -26,4 +26,6 @@
   c1: alpha(opacity=.35);
   /* TRACE[12]: next rule defined at 'function-general.less:21' */
   c2: alpha(opacity=.7);
+  /* TRACE[13]: next rule defined at 'function-general.less:22' */
+  c3: alpha(opacity=.7);
 }

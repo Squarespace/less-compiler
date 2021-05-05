@@ -14,4 +14,5 @@
 .function-general-alpha {
   c1: alpha(opacity=.35);
   c2: alpha(opacity=.7);
+  c3: alpha(opacity=.7);
 }
