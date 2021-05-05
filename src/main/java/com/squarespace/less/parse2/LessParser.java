@@ -1518,8 +1518,12 @@ public class LessParser {
 
     AttributeElement elem = new AttributeElement(comb);
     elem.add(key);
+
+    ws();
     if (match(Patterns.ATTRIBUTE_OP)) {
       consume(m_end);
+      ws();
+
       Node oper = new Anonymous(raw.substring(m_start, m_end));
       Node val = quoted();
       if (val == null && match(Patterns.IDENTIFIER)) {
@@ -1532,6 +1536,7 @@ public class LessParser {
       }
     }
 
+    ws();
     if (peek() != ']') {
 
       // TODO: should we throw error here? after all we have left bracket
