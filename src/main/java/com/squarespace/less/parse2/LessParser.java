@@ -95,8 +95,8 @@ import com.squarespace.less.parse.Patterns;
  * TODO: BUGS from the old parser which we need to keep working until the issues are resolved in the source stylesheets:
  *
  * - BUG1: a '+' character before end of block scope
- * - BUG2: an unclosed '@media' directive at end of file
- *
+ * - BUG2: an unclosed '@media' directive at end of file, either EOF or '}' char
+ * - BUG3: variable references followed immediately by parenthesis '@foo()' at the end of a rule
  */
 public class LessParser {
 
@@ -246,6 +246,11 @@ public class LessParser {
   private int m_end = 0;
 
   /**
+   * Safe mode, which allows a small class of bugs from the legacy parser.
+   */
+  private boolean safe_mode = false;
+
+  /**
    * Construct a parser for the given context and source string.
    */
   public LessParser(LessContext ctx, String source) {
@@ -284,6 +289,13 @@ public class LessParser {
     if (m_ptr != 0) {
       throw parseError(new LessException(bug("mark pointer != 0")));
     }
+  }
+
+  /**
+   * Enable or disable safe mode. Safe mode allows a small set of bugs to occur in stylesheets.
+   */
+  public void safeMode(boolean flag) {
+    this.safe_mode = flag;
   }
 
   /**
@@ -749,7 +761,7 @@ public class LessParser {
           }
 
           // TODO: SEE BUG1
-          if (bug1_plus_ending_block()) {
+          if (safe_mode && bug1_plus_ending_block()) {
             continue;
           }
 
@@ -1425,15 +1437,11 @@ public class LessParser {
     Features features = features();
 
     ws();
+
     // Make sure a block follows, otherwise this is invalid.
     if (!block_open()) {
-
       // TODO: see BUG2
-      if (peek() == Chars.EOF) {
-        return DUMMY_MEDIA;
-      }
-
-      return null;
+      return safe_mode ? DUMMY_MEDIA : null;
     }
 
     Media media = builder.buildMedia(features, new Block());
@@ -2954,6 +2962,11 @@ public class LessParser {
         return null;
       }
       end++;
+    }
+
+    // TODO: see BUG3
+    if (safe_mode && !curly && peek(end) == '(' && peek(end + 1) == ')' && peek(end + 2) == ';') {
+      end += 2;
     }
 
     // TODO: avoid prepending variable '@', restructure code accordingly.

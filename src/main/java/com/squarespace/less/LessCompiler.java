@@ -16,15 +16,12 @@
 
 package com.squarespace.less;
 
-import static com.squarespace.less.parse.Parselets.STYLESHEET;
-
 import java.nio.file.Path;
 
 import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.exec.LessEvaluator;
 import com.squarespace.less.exec.LessRenderer;
 import com.squarespace.less.model.Stylesheet;
-import com.squarespace.less.parse.LessStream;
 import com.squarespace.less.parse2.LessParser;
 import com.squarespace.less.parse2.LessSyntax;
 import com.squarespace.less.plugins.ColorBlendingFunctions;
@@ -73,13 +70,22 @@ public class LessCompiler {
   }
 
   public Stylesheet parse(String raw, LessContext ctx) throws LessException {
-    return parse(raw, ctx, null, null);
+    return parse(raw, ctx, null, null, false);
+  }
+
+  public Stylesheet parse(String raw, LessContext ctx, boolean safeMode) throws LessException {
+    return parse(raw, ctx, null, null, safeMode);
   }
 
   public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
+    return parse(raw, ctx, rootPath, fileName, false);
+  }
+
+  public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName, boolean safeMode) throws LessException {
     LessStats stats = ctx.stats();
     long started = stats.now();
     LessParser parser = new LessParser(ctx, raw, rootPath, fileName);
+    parser.safeMode(safeMode);
     Stylesheet sheet = (Stylesheet) parser.parse(LessSyntax.STYLESHEET);
     stats.parseDone(raw.length(), started);
     return sheet;

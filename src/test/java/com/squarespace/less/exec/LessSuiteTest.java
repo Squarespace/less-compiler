@@ -55,6 +55,7 @@ public class LessSuiteTest extends LessSuiteBase {
 
   /**
    * Test bugs from the legacy parser that we need to keep working for now.
+   * In safe mode they work, but otherwise they raise a parsing error.
    */
   @Test
   public void testBugs() throws IOException {
@@ -74,7 +75,7 @@ public class LessSuiteTest extends LessSuiteBase {
       try {
 
         // We just care that the file parses successfully.
-        parse(source, lessRoot);
+        parse(source, lessRoot, true);
 
       } catch (LessException | RuntimeException e) {
         logFailure("Test Suite", ++failures, "Error compiling", fileName);
