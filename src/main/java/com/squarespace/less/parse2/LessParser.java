@@ -1020,7 +1020,7 @@ public class LessParser {
       // Example is a file ending in '//<eof>'.
       this.pos = i;
       this.column += 2;
-      return DUMMY_COMMENT;
+      return builder.buildComment("", isblock, rulelevel);
     }
 
     // We've found an unambiguous comment start, so start real parse

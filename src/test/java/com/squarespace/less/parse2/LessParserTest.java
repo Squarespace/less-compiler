@@ -25,13 +25,13 @@ public class LessParserTest {
     fileName = "def.less";
     fileName = "expression.less";
     fileName = "col2.less";
-    fileName = "src/test/resources/test-suite/less/media.less";
+    fileName = "src/test/resources/test-suite/less/comment-eof.less";
 //    fileName = "bug6.less";
 //    fileName = "bug7.less";
 //    fileName = "bug8.less";
 //    fileName = "bug12.less";
 //    fileName = "e5.less";
-    fileName = "tmp.less";
+//    fileName = "tmp.less";
     source = LessUtils.readFile(Paths.get(fileName));
 
 //    source = "h1 /* a */ span:hover /* b */ {\n"
