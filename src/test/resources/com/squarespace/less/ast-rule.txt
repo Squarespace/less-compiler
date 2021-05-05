@@ -9,20 +9,6 @@ font-size: 10;
 
 
 :LESS
-@color: #abc;
-
-:REPR
-[DEFINITION, '@color', [COLOR, 170, 187, 204, 1.0, null]]
- 
- 
-:LESS
-@backgroundColor: #abcdef;
-
-:REPR
-[DEFINITION, '@backgroundColor', [COLOR, 171, 205, 239, 1.0, null]]
-
-
-:LESS
 font-size: 10 !important;
 
 :REPR

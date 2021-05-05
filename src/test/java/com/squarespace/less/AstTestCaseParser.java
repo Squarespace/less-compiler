@@ -230,8 +230,8 @@ public class AstTestCaseParser {
     put("COLOR", LessSyntax.COLOR);
     put("COLOR_KEYWORD", LessSyntax.COLOR_KEYWORD);
     put("COMMENT", LessSyntax.COMMENT);
-    put("CONDITION", LessSyntax.CONDITION);
-//    put("FUNCTION_CALL_ARGS", LessSyntax.FUNCTION_CALL_ARGS);
+    put("CONDITIONS", LessSyntax.CONDITIONS);
+    put("DEFINITION", LessSyntax.DEFINITION);
     put("DIMENSION", LessSyntax.DIMENSION);
     put("DIRECTIVE", LessSyntax.DIRECTIVE);
     put("FUNCTION_CALL", LessSyntax.FUNCTION_CALL);
@@ -240,7 +240,7 @@ public class AstTestCaseParser {
     put("MIXIN", LessSyntax.MIXIN);
     put("MIXIN_CALL", LessSyntax.MIXIN_CALL);
     put("MIXIN_CALL_ARGS", LessSyntax.MIXIN_CALL_ARGS);
-//    put("PRIMARY_SUB", Parselets.PRIMARY_SUB);
+    put("COMMENT_RULE", LessSyntax.COMMENT_RULE);
     put("RATIO", LessSyntax.RATIO);
     put("RULE", LessSyntax.RULE);
     put("RULESET", LessSyntax.RULESET);

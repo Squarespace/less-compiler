@@ -9,6 +9,7 @@ public enum LessSyntax {
   COLOR,
   COLOR_KEYWORD,
   COMMENT,
+  COMMENT_RULE,
   CONDITIONS,
   CONDITION,
   DEFINITION,

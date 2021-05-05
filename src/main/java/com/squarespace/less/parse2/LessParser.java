@@ -404,6 +404,10 @@ public class LessParser {
         r = comment(true, false);
         break;
 
+      case COMMENT_RULE:
+        r = comment(true, true);
+        break;
+
       case CONDITION:
         r = condition();
         break;
