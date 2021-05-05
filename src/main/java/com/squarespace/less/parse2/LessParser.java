@@ -449,7 +449,7 @@ public class LessParser {
         break;
 
       case EXPRESSION_LIST:
-        r = expression_list(true);
+        r = expression_list();
         break;
 
       case FEATURES:
@@ -1147,7 +1147,7 @@ public class LessParser {
     // TODO: this is quite similar to the parsing of the value of a rule()
     // but is tricky to unify at the moment. reorganize to share some code.
 
-    Node value = expression_list(true);
+    Node value = expression_list();
 
     // Look for "!important" suffix. We have to strip it off, but don't
     // use it for definitions.
@@ -1679,7 +1679,7 @@ public class LessParser {
    *
    * List of expressions separated by commas.
    */
-  private Node expression_list(boolean flatten) throws LessException {
+  private Node expression_list() throws LessException {
     Node first = expression();
     if (first == null) {
       return null;
@@ -1703,10 +1703,6 @@ public class LessParser {
         elements.add(first);
       }
       elements.add(elem);
-    }
-    if (elements == null && !flatten) {
-      elements = new ArrayList<>();
-      elements.add(first);
     }
     return elements == null ? first : new ExpressionList(elements);
   }
@@ -2614,7 +2610,6 @@ public class LessParser {
       return null;
     }
     next();
-
     ws();
 
     // Mark start of value
@@ -2627,7 +2622,7 @@ public class LessParser {
       value = font();
     } else {
       // parse expression list
-      value = expression_list(true);
+      value = expression_list();
     }
 
     // Look for "!important" suffix.
