@@ -2,6 +2,7 @@ package com.squarespace.less.parse2;
 
 import static com.squarespace.less.SyntaxErrorType.ALPHA_UNITS_INVALID;
 import static com.squarespace.less.SyntaxErrorType.EXPECTED;
+import static com.squarespace.less.SyntaxErrorType.GENERAL;
 import static com.squarespace.less.SyntaxErrorType.INCOMPLETE_PARSE;
 import static com.squarespace.less.SyntaxErrorType.JAVASCRIPT_DISABLED;
 import static com.squarespace.less.SyntaxErrorType.MIXED_DELIMITERS;
@@ -748,6 +749,8 @@ public class LessParserTest extends LessMaker {
         stylesheet(
             rule(prop("color"), color("red")),
             rule(prop("font-size"), dim(12, Unit.PX))));
+
+    t.fail("}}}\n", GENERAL);
   }
 
   @Test
@@ -758,6 +761,18 @@ public class LessParserTest extends LessMaker {
     t.ok("", null);
 
     t.fail("Ux", INCOMPLETE_PARSE);
+  }
+
+  @Test
+  public void testUrl() throws LessException {
+    Tester t = tester(LessSyntax.URL);
+
+    t.ok("url(http://example.com)", url(anon("http://example.com")));
+    t.ok("url('http://example.com')", url(quoted('\'', false, "http://example.com")));
+
+    t.ok("", null);
+
+    t.fail("url(", EXPECTED);
   }
 
   @Test

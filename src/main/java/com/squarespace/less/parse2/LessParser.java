@@ -629,14 +629,6 @@ public class LessParser {
       char c = raw.charAt(pos);
       switch (c) {
 
-        case Chars.EOF: {
-          // Check if we're in a delimited block.
-          if (block.type() != NodeType.STYLESHEET) {
-            throw parseError(new LessException(incompleteParse()));
-          }
-          return true;
-        }
-
         case '}': {
           // Ensure we're inside a delimited block. The global scope is not closeable.
           if (block.type() == NodeType.STYLESHEET) {
