@@ -1408,9 +1408,9 @@ public class LessParser {
     Node path = quoted();
     if (path == null) {
       path = url(true);
-    }
-    if (path == null) {
-      return null;
+      if (path == null) {
+        return null;
+      }
     }
 
     ws();
