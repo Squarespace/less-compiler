@@ -29,7 +29,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * A named CSS directive.
  */
-public class Directive extends BaseNode {
+public class Directive extends StructuralNode {
 
   /**
    * Name of the directive.

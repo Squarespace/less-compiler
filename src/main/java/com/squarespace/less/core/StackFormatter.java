@@ -37,6 +37,7 @@ import com.squarespace.less.model.ParseError;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selectors;
+import com.squarespace.less.model.StructuralNode;
 
 
 /**
@@ -275,7 +276,7 @@ public class StackFormatter {
 
       default:
         node.repr(buf);
-        return new Entry(null, node.lineOffset() + 1, buf.toString());
+        return new Entry(null, node.isStructural() ? ((StructuralNode)node).lineOffset() + 1 : 0, buf.toString());
     }
   }
 

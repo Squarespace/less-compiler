@@ -32,34 +32,39 @@ public interface Node {
   NodeType type();
 
   /**
-   * Line offset from start of the file for this node's definition.
+   * Indicates if this is a structural node.
    */
-  int lineOffset();
+  boolean isStructural();
 
-  /**
-   * Character offset for the current line for this node's definition.
-   */
-  int charOffset();
-
-  /**
-   * Sets the line offset. Typically this will only used by the parser.
-   */
-  void setLineOffset(int offset);
-
-  /**
-   * Sets the character offset. Typically this will only be used by the parser.
-   */
-  void setCharOffset(int offset);
-
-  /**
-   * Returns the opaque object associated with this node.
-   */
-  Object userData();
-
-  /**
-   * Associates an opaque object with this node.
-   */
-  void userData(Object obj);
+//  /**
+//   * Line offset from start of the file for this node's definition.
+//   */
+//  int lineOffset();
+//
+//  /**
+//   * Character offset for the current line for this node's definition.
+//   */
+//  int charOffset();
+//
+//  /**
+//   * Sets the line offset. Typically this will only used by the parser.
+//   */
+//  void setLineOffset(int offset);
+//
+//  /**
+//   * Sets the character offset. Typically this will only be used by the parser.
+//   */
+//  void setCharOffset(int offset);
+//
+//  /**
+//   * Returns the opaque object associated with this node.
+//   */
+//  Object userData();
+//
+//  /**
+//   * Associates an opaque object with this node.
+//   */
+//  void userData(Object obj);
 
   /**
    * Returns the original LESS representation of this node as a string.

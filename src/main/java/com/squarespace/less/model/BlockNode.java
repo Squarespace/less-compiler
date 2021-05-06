@@ -26,7 +26,7 @@ import com.squarespace.less.core.Buffer;
 /**
  * Base class for all nodes that have nested blocks.
  */
-public abstract class BlockNode extends BaseNode implements BlockLike {
+public abstract class BlockNode extends StructuralNode implements BlockLike {
 
   /**
    * Nested block associated with this node.

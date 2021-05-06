@@ -58,7 +58,7 @@ public class BlockDirective extends BlockNode {
    */
   public BlockDirective copy() {
     BlockDirective result = new BlockDirective(name, block.copy());
-    result.copyBase(this);
+    result.copyStructure(this);
     result.fileName = fileName;
     return result;
   }

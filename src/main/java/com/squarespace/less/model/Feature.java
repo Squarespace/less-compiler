@@ -84,9 +84,7 @@ public class Feature extends BaseNode {
     if (!needsEval()) {
       return this;
     }
-    Feature result = new Feature(property.eval(env), value.eval(env));
-    result.copyBase(this);
-    return result;
+    return new Feature(property.eval(env), value.eval(env));
   }
 
   /**

@@ -64,6 +64,7 @@ import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
 import com.squarespace.less.model.Shorthand;
+import com.squarespace.less.model.StructuralNode;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.TextElement;
 import com.squarespace.less.model.UnicodeRange;
@@ -332,7 +333,7 @@ public class LessParser {
   /**
    * Set line and column offsets for the given node.
    */
-  private <T extends Node> T setpos(int[] mark, T node) {
+  private <T extends StructuralNode> T setpos(int[] mark, T node) {
     if (node != null) {
       node.setLineOffset(mark[1]);
       node.setCharOffset(mark[2]);
@@ -1403,7 +1404,7 @@ public class LessParser {
   /**
    * Completes parsing an '@import' directive with optional features.
    */
-  private Node directive_import(String name) throws LessException {
+  private Import directive_import(String name) throws LessException {
     boolean once = name.endsWith("-once");
     Node path = quoted();
     if (path == null) {

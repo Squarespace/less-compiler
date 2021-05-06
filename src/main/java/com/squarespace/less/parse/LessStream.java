@@ -27,6 +27,7 @@ import com.squarespace.less.core.Chars;
 import com.squarespace.less.match.Recognizer;
 import com.squarespace.less.match.Recognizers;
 import com.squarespace.less.model.Node;
+import com.squarespace.less.model.StructuralNode;
 
 
 /**
@@ -91,8 +92,10 @@ public class LessStream extends Stream {
     for (int i = 0; i < parselets.length; i++) {
         result = parselets[i].parse(this);
       if (result != null) {
-        result.setLineOffset(pos[1]);
-        result.setCharOffset(pos[2]);
+        if (result.isStructural()) {
+          ((StructuralNode)result).setLineOffset(pos[1]);
+          ((StructuralNode)result).setCharOffset(pos[2]);
+        }
         break;
       }
     }

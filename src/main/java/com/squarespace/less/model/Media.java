@@ -69,7 +69,7 @@ public class Media extends BlockNode {
   public Media copy(ExecEnv env) throws LessException {
     Features temp = features == null ? null : (Features) features.eval(env);
     Media result = new Media(temp, block.copy());
-    result.copyBase(this);
+    result.copyStructure(this);
     result.fileName = fileName;
     return result;
   }

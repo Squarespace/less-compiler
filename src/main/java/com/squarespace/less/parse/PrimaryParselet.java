@@ -21,6 +21,7 @@ import static com.squarespace.less.parse.Parselets.PRIMARY_SUB;
 import com.squarespace.less.LessException;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Node;
+import com.squarespace.less.model.StructuralNode;
 
 
 public class PrimaryParselet implements Parselet {
@@ -37,8 +38,10 @@ public class PrimaryParselet implements Parselet {
     int[] pos = stm.mark();
     while ((node = stm.parse(PRIMARY_SUB)) != null) {
       // Assign stream position to successfully-parsed rule.
-      node.setLineOffset(pos[1]);
-      node.setCharOffset(pos[2]);
+      if (node.isStructural()) {
+        ((StructuralNode)node).setLineOffset(pos[1]);
+        ((StructuralNode)node).setCharOffset(pos[2]);
+      }
 
       // Importing a stylesheet can return a block, so we need to expand it here.
       if (node instanceof Block) {

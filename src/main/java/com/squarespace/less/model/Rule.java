@@ -29,7 +29,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * A CSS rule, e.g.  font-size: 12px !important;
  */
-public class Rule extends BaseNode {
+public class Rule extends StructuralNode {
 
   /**
    * Property name for this rule.
@@ -79,7 +79,7 @@ public class Rule extends BaseNode {
    */
   public Rule copy(Node newValue, boolean important) {
     Rule result = new Rule(property, newValue, important);
-    result.copyBase(this);
+    result.copyStructure(this);
     result.fileName(fileName);
     return result;
   }
@@ -175,7 +175,7 @@ public class Rule extends BaseNode {
     }
     Rule result = new Rule(property, value.eval(env), important);
     result.fileName(fileName);
-    result.copyBase(this);
+    result.copyStructure(this);
     return result;
   }
 
