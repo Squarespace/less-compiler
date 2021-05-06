@@ -217,7 +217,7 @@ public class LessMaker {
     return new TextElement(combinator, name);
   }
 
-  public ValueElement element(Combinator combinator, Variable ref) {
+  public ValueElement element(Combinator combinator, Node ref) {
     return new ValueElement(combinator, ref);
   }
 
@@ -399,6 +399,14 @@ public class LessMaker {
 
   public Stylesheet stylesheet() {
     return new Stylesheet();
+  }
+
+  public Stylesheet stylesheet(Node ...nodes) {
+    Stylesheet stylesheet = new Stylesheet();
+    for (Node node : nodes) {
+      stylesheet.add(node);
+    }
+    return stylesheet;
   }
 
   public Shorthand shorthand(Node left, Node right) {

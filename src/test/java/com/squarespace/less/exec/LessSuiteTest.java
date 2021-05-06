@@ -40,7 +40,7 @@ import com.squarespace.less.core.LessUtils;
  */
 public class LessSuiteTest extends LessSuiteBase {
 
-  private static final boolean VERBOSE = true;
+  private static final boolean VERBOSE = false;
   private static final LessMessages MESSAGES = new LessMessages();
 
   @Test

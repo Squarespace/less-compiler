@@ -2386,6 +2386,8 @@ public class LessParser {
         break;
       }
 
+      // TODO: if we see a valid operator, start a marker here
+
       // Avoid treating a comment as the start of a divide.
       char c2 = peek(pos + 1);
       if (c == '/' && (c2 == '*' || c2 == '/')) {
@@ -2396,6 +2398,7 @@ public class LessParser {
       if (!ws()) {
         break;
       }
+
       Node operand1 = operand();
       if (operand1 == null) {
         break;
@@ -2872,17 +2875,16 @@ public class LessParser {
       return null;
     }
     begin();
-    ws();
     Node left = entity();
 
-    ws();
     if (next() != '/') {
       rollback();
       return null;
     }
 
-    ws();
     Node right = entity();
+
+    // TODO: this shouldn't fail since the SHORTHAND pattern matched
     if (left == null || right == null) {
       rollback();
       throw parseError(new LessException(general("Shorthand pattern matched but failed to complete parse")));
