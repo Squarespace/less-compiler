@@ -69,16 +69,25 @@ public class LessCompiler {
     return functionTable;
   }
 
+  /**
+   * Parse the source into a stylesheet, putting the parser into safe mode by default.
+   */
   public Stylesheet parse(String raw, LessContext ctx) throws LessException {
-    return parse(raw, ctx, null, null, false);
+    return parse(raw, ctx, null, null, true);
   }
 
+  /**
+   * Parse the source into a stylesheet, setting the parser's safe mode flag.
+   */
   public Stylesheet parse(String raw, LessContext ctx, boolean safeMode) throws LessException {
     return parse(raw, ctx, null, null, safeMode);
   }
 
+  /**
+   * Parse the source into a stylesheet, putting the parser into safe mode by default.
+   */
   public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
-    return parse(raw, ctx, rootPath, fileName, false);
+    return parse(raw, ctx, rootPath, fileName, true);
   }
 
   public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName, boolean safeMode) throws LessException {

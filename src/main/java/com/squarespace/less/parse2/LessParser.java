@@ -248,8 +248,9 @@ public class LessParser {
 
   /**
    * Safe mode, which allows a small class of bugs from the legacy parser.
+   * We set this to 'true' by default to remain backwards-compatible.
    */
-  private boolean safe_mode = false;
+  private boolean safe_mode = true;
 
   /**
    * Construct a parser for the given context and source string.
@@ -2827,9 +2828,11 @@ public class LessParser {
       ws();
       if (peek() == ')') {
         next();
-        Selector selector = builder.buildSelector();
-        selector.add(new ValueElement(Combinator.DESC, value));
-        return selector;
+        if (value != null) {
+          Selector selector = builder.buildSelector();
+          selector.add(new ValueElement(Combinator.DESC, value));
+          return selector;
+        }
       }
       return null;
     }
