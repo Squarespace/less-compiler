@@ -98,6 +98,7 @@ import com.squarespace.less.parse.Patterns;
  * - BUG1: a '+' character before end of block scope
  * - BUG2: an unclosed '@media' directive at end of file, either EOF or '}' char
  * - BUG3: variable references followed immediately by parenthesis '@foo()' at the end of a rule
+ * - BUG4: addition allows sequences like "1 + px" to parse as EXPRESSION[ DIM(1), KWD("px") ].
  */
 public class LessParser {
 
@@ -817,30 +818,44 @@ public class LessParser {
         break;
       }
 
-      // Ensure that if we parse an operator we also parse an operand
-      begin();
+      // TODO: see BUG4
+      if (!safe_mode) {
+        begin();
+      }
 
       // Parse operator
       Operator operator = addition_op();
       if (operator == null) {
-        rollback();
+        // TODO: see BUG4
+        if (!safe_mode) {
+          rollback();
+        }
         break;
       }
 
       // Skip whitespace
       if (!ws()) {
-        rollback();
+        // TODO: see BUG4
+        if (!safe_mode) {
+          rollback();
+        }
         break;
       }
 
       // Parse right operand
       Node operand1 = multiplication();
       if (operand1 == null) {
-        rollback();
+        // TODO: see BUG4
+        if (!safe_mode) {
+          rollback();
+        }
         break;
       }
 
-      commit();
+      // TODO: see BUG4
+      if (!safe_mode) {
+        commit();
+      }
       operation = builder.buildOperation(operator, operation, operand1);
     }
     return operation;

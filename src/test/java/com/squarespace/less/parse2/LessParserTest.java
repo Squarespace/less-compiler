@@ -79,9 +79,11 @@ public class LessParserTest extends LessMaker {
         oper(Operator.SUBTRACT, dim(3),
         expn(comment(" foo ", true), oper(Operator.MULTIPLY, dim(2), dim(7)))));
 
+    // BUG4
+    t.ok("1 + ", dim(1));
+
     t.fail("1 -2", INCOMPLETE_PARSE);
     t.fail("1 ! ", INCOMPLETE_PARSE);
-    t.fail("1 + ", INCOMPLETE_PARSE);
     t.fail("x + y ", INCOMPLETE_PARSE);
     t.fail("1 + y ", INCOMPLETE_PARSE);
     t.fail("1 + ! ", INCOMPLETE_PARSE);
@@ -657,7 +659,15 @@ public class LessParserTest extends LessMaker {
     // BUG3
     t.ok("foo: @foo();", rule(prop("foo"), var("@foo", false)));
 
+    // BUG4
+    t.ok("font-size: random(98) + px;",
+        rule(prop("font-size"), expn(call("random", dim(98)), kwd("px"))));
+
+    t.ok("font-size: 1 + px;",
+        rule(prop("font-size"), expn(dim(1), kwd("px"))));
+
     t.ok("", null);
+
     t.fail("foo!", INCOMPLETE_PARSE);
     t.fail("foo: bar!", INCOMPLETE_PARSE);
   }

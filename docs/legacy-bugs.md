@@ -80,3 +80,15 @@ Acceptance of variables followed by `"()"` parenthesis, e.g. `@dk-gray()`.
     color: @white;
   }
 ```
+
+### BUG4
+
+Acceptance of invalid addition expressions: `1 + px`.
+
+**site**: brine-may2017 line 20614:
+
+```less
+.mySize {
+  font-size: random(90) + px;
+}
+```
