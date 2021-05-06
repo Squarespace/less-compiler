@@ -35,7 +35,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Represents one conditional clause in a {@link Guard}.
  */
-public class Condition extends BaseNode {
+public class Condition implements Node {
 
   /**
    * Operator to apply to the left and right operands.
@@ -173,8 +173,13 @@ public class Condition extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
   /**

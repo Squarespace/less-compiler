@@ -157,8 +157,13 @@ public abstract class BlockNode extends StructuralNode implements BlockLike {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

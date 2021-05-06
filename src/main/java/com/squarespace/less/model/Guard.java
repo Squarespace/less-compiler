@@ -31,7 +31,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * List of Condition that follow a Mixin.
  */
-public class Guard extends BaseNode {
+public class Guard implements Node {
 
   /**
    * List of conditions to be evaluated.
@@ -141,8 +141,13 @@ public class Guard extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

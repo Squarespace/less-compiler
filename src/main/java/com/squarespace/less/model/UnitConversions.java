@@ -46,6 +46,8 @@ public class UnitConversions {
    */
   private static final double[][] CONVERSIONS;
 
+  private UnitConversions() { }
+
   /**
    * Constructs a 2-way conversion between the {@code from} and {@code to} units
    * with the given factor.

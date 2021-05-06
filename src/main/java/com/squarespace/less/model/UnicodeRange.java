@@ -25,7 +25,7 @@ import com.squarespace.less.core.Buffer;
 /**
  * A wrapper around a CSS Unicode character range.
  */
-public class UnicodeRange extends BaseNode {
+public class UnicodeRange implements Node {
 
   /**
    * String representing the Unicode character range.
@@ -79,8 +79,13 @@ public class UnicodeRange extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

@@ -30,7 +30,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Represents a reference to a variable.
  */
-public class Variable extends BaseNode {
+public class Variable implements Node {
 
   /**
    * Name of the variable.
@@ -182,8 +182,13 @@ public class Variable extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

@@ -22,7 +22,7 @@ import com.squarespace.less.core.LessInternalException;
 /**
  * Base class for all elements, which are building blocks of {@link Selector}.
  */
-public abstract class Element extends BaseNode {
+public abstract class Element implements Node {
 
   /**
    * The element's combinator character.
@@ -62,8 +62,13 @@ public abstract class Element extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

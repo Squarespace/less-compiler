@@ -29,7 +29,7 @@ import com.squarespace.less.core.Buffer;
  *
  * Example: {@code border: 1px solid red} both solid and red are keywords.
  */
-public class Keyword extends BaseNode {
+public class Keyword implements Node {
 
   /**
    * Keyword string value.
@@ -82,8 +82,13 @@ public class Keyword extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

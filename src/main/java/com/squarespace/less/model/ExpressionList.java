@@ -30,7 +30,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Represents a comma-separated list of {@link Expression} nodes.
  */
-public class ExpressionList extends BaseNode {
+public class ExpressionList implements Node {
 
   /**
    * List of values in the expression list.
@@ -159,8 +159,13 @@ public class ExpressionList extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

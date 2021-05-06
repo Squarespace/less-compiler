@@ -29,7 +29,7 @@ import com.squarespace.less.core.LessInternalException;
 /**
  * Single-line and block CSS comments.
  */
-public class Comment extends BaseNode {
+public class Comment implements Node {
 
   /**
    * Body of the comment.
@@ -148,8 +148,13 @@ public class Comment extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

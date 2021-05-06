@@ -21,7 +21,7 @@ package com.squarespace.less.model;
  * A dummy node which is placed into a block to indicate where an IMPORT
  * statements imported rules begins and ends.
  */
-public class ImportMarker extends BaseNode {
+public class ImportMarker implements Node {
 
   /**
    * Import statement we're marking.
@@ -64,4 +64,13 @@ public class ImportMarker extends BaseNode {
     return NodeType.IMPORT_MARKER;
   }
 
+  @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
+  public int hashCode() {
+    return ModelUtils.notHashable();
+  }
 }

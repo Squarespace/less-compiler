@@ -30,7 +30,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Arguments to a mixin call.
  */
-public class MixinCallArgs extends BaseNode {
+public class MixinCallArgs implements Node {
 
   /**
    * The argument delimiter.
@@ -169,8 +169,13 @@ public class MixinCallArgs extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

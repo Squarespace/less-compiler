@@ -38,7 +38,7 @@ import com.squarespace.less.core.LessUtils;
  * Each block contains a set of flags which are used to avoid unnecessary
  * scans of its rules during evaluation.
  */
-public class Block extends BaseNode {
+public class Block implements Node {
 
   /**
    * Variable cache needs to be rebuilt.
@@ -335,7 +335,7 @@ public class Block extends BaseNode {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
   @Override

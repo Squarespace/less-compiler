@@ -106,9 +106,4 @@ public class AttributeElement extends Element {
     return false;
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
 }

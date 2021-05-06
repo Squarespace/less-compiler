@@ -100,9 +100,4 @@ public class TextElement extends Element {
     return false;
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
 }

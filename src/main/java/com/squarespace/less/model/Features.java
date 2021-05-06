@@ -29,7 +29,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * List of {@link Feature} expressions that are part of a {@link Media}.
  */
-public class Features extends BaseNode {
+public class Features implements Node {
 
   /**
    * List of feature expressions.
@@ -146,8 +146,13 @@ public class Features extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

@@ -288,7 +288,7 @@ public class RGBColor extends BaseColor {
       buf.append("rgba(").append(red).listSep();
       buf.append(green).listSep();
       buf.append(blue).listSep();
-      formatDouble(buf, alpha);
+      ModelUtils.formatDouble(buf, alpha);
       buf.append(')');
 
     } else {
@@ -351,11 +351,6 @@ public class RGBColor extends BaseColor {
           && fromKeyword == other.fromKeyword;
     }
     return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
   }
 
 }

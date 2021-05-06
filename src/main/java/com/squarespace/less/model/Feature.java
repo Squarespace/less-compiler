@@ -26,7 +26,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Represents a property / value pair in a media feature.
  */
-public class Feature extends BaseNode {
+public class Feature implements Node {
 
   /**
    * Feature property node.
@@ -121,8 +121,13 @@ public class Feature extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

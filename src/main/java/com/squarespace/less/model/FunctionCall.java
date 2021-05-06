@@ -33,7 +33,7 @@ import com.squarespace.less.exec.Function;
  * Calls a named {@link Function}, if one has been defined, or just
  * emits something that looks like a function call.
  */
-public class FunctionCall extends BaseNode {
+public class FunctionCall implements Node {
 
   /**
    * Name of the function.
@@ -221,8 +221,13 @@ public class FunctionCall extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

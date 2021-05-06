@@ -26,7 +26,7 @@ import java.nio.file.Path;
  * the full parse error.  This node lets us pass the full parse error
  * message.
  */
-public class ParseError extends BaseNode {
+public class ParseError implements Node {
 
   /**
    * Path of the file in which this parse error occurred.
@@ -74,4 +74,13 @@ public class ParseError extends BaseNode {
     return NodeType.PARSE_ERROR;
   }
 
+  @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
+  public int hashCode() {
+    return ModelUtils.notHashable();
+  }
 }

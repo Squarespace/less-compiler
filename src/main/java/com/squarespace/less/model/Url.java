@@ -28,7 +28,7 @@ import com.squarespace.less.exec.ExecEnv;
  *
  * Examples: url("http://nytimes.com")
  */
-public class Url extends BaseNode {
+public class Url implements Node {
 
   /**
    * Value representing the URL's location.
@@ -104,8 +104,13 @@ public class Url extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

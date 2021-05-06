@@ -18,6 +18,7 @@ package com.squarespace.less.model;
 
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.Buffer;
+import com.squarespace.less.core.ExecuteErrorMaker;
 import com.squarespace.less.exec.ExecEnv;
 
 
@@ -32,70 +33,73 @@ public interface Node {
   NodeType type();
 
   /**
+   * Constructs the type representation for this node.
+   */
+  default void typeRepr(Buffer buf) {
+    buf.append(type().toString());
+  }
+
+  /**
+   * Constructs the position representation for this node.
+   */
+  default void posRepr(Buffer buf) {
+    // Nothing
+  }
+
+  /**
    * Indicates if this is a structural node.
    */
-  boolean isStructural();
-
-//  /**
-//   * Line offset from start of the file for this node's definition.
-//   */
-//  int lineOffset();
-//
-//  /**
-//   * Character offset for the current line for this node's definition.
-//   */
-//  int charOffset();
-//
-//  /**
-//   * Sets the line offset. Typically this will only used by the parser.
-//   */
-//  void setLineOffset(int offset);
-//
-//  /**
-//   * Sets the character offset. Typically this will only be used by the parser.
-//   */
-//  void setCharOffset(int offset);
-//
-//  /**
-//   * Returns the opaque object associated with this node.
-//   */
-//  Object userData();
-//
-//  /**
-//   * Associates an opaque object with this node.
-//   */
-//  void userData(Object obj);
+  default boolean isStructural() {
+    return false;
+  }
 
   /**
    * Returns the original LESS representation of this node as a string.
    */
-  String repr();
+  default String repr() {
+    Buffer buf = new Buffer(2);
+    repr(buf);
+    return buf.toString();
+  }
 
   /**
    * Writes the original LESS representation of this node to the given {@link Buffer}.
    */
-  void repr(Buffer buf);
+  default void repr(Buffer buf) {
+    buf.append("<no repr for " + type().toString() + ">");
+  }
 
   /**
    * Outputs a human-readable representation of the model node.
    */
-  void modelRepr(Buffer buf);
+  default void modelRepr(Buffer buf) {
+    typeRepr(buf);
+    posRepr(buf);
+    buf.append("<not implemented>");
+  }
 
   /**
    * Evaluates the node against the Frame and returns itself or a new Node
    * that is itself an Atom, e.g. reduced to its simplest form possible.
    */
-  Node eval(ExecEnv env) throws LessException;
+  default Node eval(ExecEnv env) throws LessException {
+    return this;
+  }
 
   /**
    * Optimization to avoid eval() when the node is an Atom or a composite
    * that contains no variable references.
    */
-  boolean needsEval();
+  default boolean needsEval() {
+    return false;
+  }
 
   /**
    * Called when a node participates on an operation.
    */
-  Node operate(ExecEnv env, Operator op, Node arg) throws LessException;
+  default Node operate(ExecEnv env, Operator op, Node arg) throws LessException {
+    NodeType argType = (arg == null) ? null : arg.type();
+    throw new LessException(ExecuteErrorMaker.invalidOperation(op, type(), argType));
+  }
 
 }

@@ -31,7 +31,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * A quoted string which may contain embedded variables.
  */
-public class Quoted extends BaseNode {
+public class Quoted implements Node {
 
   /**
    * Default capacity for the components in the string.
@@ -216,8 +216,13 @@ public class Quoted extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

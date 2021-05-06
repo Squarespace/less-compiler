@@ -7,7 +7,7 @@ import com.squarespace.less.core.Buffer;
  * We are able to associate position information (line and column) and user data
  * with these nodes.
  */
-public abstract class StructuralNode extends BaseNode {
+public abstract class StructuralNode implements Node {
 
   /**
    * Line offset where this node was defined.
@@ -90,4 +90,13 @@ public abstract class StructuralNode extends BaseNode {
     buf.append(" [").append(lineOffset).append(',').append(charOffset).append("]");
   }
 
+  @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
+  public int hashCode() {
+    return ModelUtils.notHashable();
+  }
 }

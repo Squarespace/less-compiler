@@ -26,7 +26,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Parameter of a {@link Mixin} definition.
  */
-public class Parameter extends BaseNode {
+public class Parameter implements Node {
 
   /**
    * Parameter name.
@@ -166,8 +166,13 @@ public class Parameter extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

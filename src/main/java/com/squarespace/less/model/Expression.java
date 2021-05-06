@@ -31,7 +31,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * A space-separated list of values.
  */
-public class Expression extends BaseNode {
+public class Expression implements Node {
 
   /**
    * List of values that make up the expression.
@@ -156,8 +156,13 @@ public class Expression extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

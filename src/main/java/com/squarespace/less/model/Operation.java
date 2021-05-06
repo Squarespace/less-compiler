@@ -28,7 +28,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Represents an operator being applied to a pair of operands.
  */
-public class Operation extends BaseNode {
+public class Operation implements Node {
 
   /**
    * Operator to be applied to the operands.
@@ -176,8 +176,13 @@ public class Operation extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

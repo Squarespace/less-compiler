@@ -165,8 +165,13 @@ public class HSLColor extends BaseColor {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
   private double hue(double p, double q, double h) {

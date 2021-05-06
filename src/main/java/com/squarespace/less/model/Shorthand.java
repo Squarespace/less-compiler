@@ -30,7 +30,7 @@ import com.squarespace.less.exec.ExecEnv;
  * This is a special node to distinguish the shorthand from division, since
  * they have the same appearance to the parser.
  */
-public class Shorthand extends BaseNode {
+public class Shorthand implements Node {
 
   /**
    * Left-hand side of the shorthand expression.
@@ -122,8 +122,13 @@ public class Shorthand extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

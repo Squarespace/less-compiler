@@ -28,7 +28,7 @@ import com.squarespace.less.exec.ExecEnv;
  * Represents a comma-separated list of Selector nodes that forms
  * the header of a {@link Ruleset}.
  */
-public class Selectors extends BaseNode {
+public class Selectors implements Node {
 
   /**
    * List of {@link Selector} nodes in this set.
@@ -202,8 +202,13 @@ public class Selectors extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

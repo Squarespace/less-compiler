@@ -40,9 +40,4 @@ public class False extends Keyword {
     return obj instanceof False ? true : super.equals(obj);
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
 }
