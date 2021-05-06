@@ -154,7 +154,7 @@ public class LessParser {
   /**
    * Stack of nested blocks encountered during the parse.
    */
-  private BlockLike[] blocks = new BlockLike[32];
+  private BlockLike[] blocks = new BlockLike[16];
 
   /**
    * Current block (top of the stack). It is accessed frequently lot.
@@ -314,8 +314,8 @@ public class LessParser {
   private void push(BlockLike b) {
     if (b_ptr + 1 == blocks.length) {
       BlockLike[] old = blocks;
-      blocks = new BlockNode[b_ptr * 2];
-      System.arraycopy(old, 0, blocks, 0, b_ptr);
+      blocks = new BlockLike[old.length * 2];
+      System.arraycopy(old, 0, blocks, 0, old.length);
     }
 
     b_ptr++;
@@ -817,23 +817,30 @@ public class LessParser {
         break;
       }
 
+      // Ensure that if we parse an operator we also parse an operand
+      begin();
+
       // Parse operator
       Operator operator = addition_op();
       if (operator == null) {
+        rollback();
         break;
       }
 
       // Skip whitespace
       if (!ws()) {
+        rollback();
         break;
       }
 
       // Parse right operand
       Node operand1 = multiplication();
       if (operand1 == null) {
+        rollback();
         break;
       }
 
+      commit();
       operation = builder.buildOperation(operator, operation, operand1);
     }
     return operation;

@@ -277,6 +277,10 @@ public class LessMaker {
     return new Media(features);
   }
 
+  public Media media(Features features, Block block) {
+    return new Media(features, block);
+  }
+
   public Mixin mixin(String name) {
     return mixin(name, null, null);
   }
