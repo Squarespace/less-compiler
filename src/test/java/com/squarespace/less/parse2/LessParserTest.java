@@ -23,6 +23,7 @@ import com.squarespace.less.core.LessMaker;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Operator;
+import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Unit;
 
@@ -32,35 +33,21 @@ public class LessParserTest extends LessMaker {
   public void testDeepNestingRulesets() throws LessException {
     Tester t = tester(LessSyntax.RULESET);
 
-    t.ok("a { b { c { d { e { f { g { h { i { j { k { l { m { n { o { p { q { r { s { color: red; } } } } } } } } } } } } } } } } } } }",
-        rs("a", rs("b", rs("c", rs("d", rs("e",
-            rs("f", rs("g", rs("h", rs("i", rs("j",
-                rs("k", rs("l", rs("m", rs("n", rs("o", rs("p", rs("q", rs("r", rs("s",
-                    rule(prop("color"), color("red"))))))))))))))))))))));
+    t.ok(
+        "a { b { c { d { e { f { g { h { i { j { k { l { m { n { o { p { q { r { s { color: red; } } } } } } } } } } } } } } } } } } }",
+        rs("a", rs("b", rs("c", rs("d", rs("e", rs("f", rs("g", rs("h", rs("i", rs("j", rs("k", rs("l", rs("m",
+            rs("n", rs("o", rs("p", rs("q", rs("r", rs("s", rule(prop("color"), color("red"))))))))))))))))))))));
   }
 
   @Test
   public void testDeepNestingMath() throws LessException {
     Tester t = tester(LessSyntax.ADDITION);
 
-    t.ok("1+(2+(3+(4+(5+(6+(7+(8+(9+(10+(11+(12+(13+(14+(15+(16+(17+(18)))))))))))))))))",
-        oper(ADD, dim(1),
-            oper(ADD, dim(2),
-                oper(ADD, dim(3),
-                    oper(ADD, dim(4),
-                        oper(ADD, dim(5),
-                            oper(ADD, dim(6),
-                                oper(ADD, dim(7),
-                                    oper(ADD, dim(8),
-                                        oper(ADD, dim(9),
-                                            oper(ADD, dim(10),
-                                                oper(ADD, dim(11),
-                                                    oper(ADD, dim(12),
-                                                        oper(ADD, dim(13),
-                                                            oper(ADD, dim(14),
-                                                                oper(ADD, dim(15),
-                                                                    oper(ADD, dim(16),
-                                                                        oper(ADD, dim(17), dim(18)))))))))))))))))));
+    t.ok("1+(2+(3+(4+(5+(6+(7+(8+(9+(10+(11+(12+(13+(14+(15+(16+(17+(18)))))))))))))))))", oper(ADD, dim(1), oper(ADD,
+        dim(2),
+        oper(ADD, dim(3), oper(ADD, dim(4), oper(ADD, dim(5), oper(ADD, dim(6), oper(ADD, dim(7), oper(ADD, dim(8),
+            oper(ADD, dim(9), oper(ADD, dim(10), oper(ADD, dim(11), oper(ADD, dim(12), oper(ADD, dim(13),
+                oper(ADD, dim(14), oper(ADD, dim(15), oper(ADD, dim(16), oper(ADD, dim(17), dim(18)))))))))))))))))));
   }
 
   public Ruleset rs(String name, Node child) {
@@ -80,14 +67,24 @@ public class LessParserTest extends LessMaker {
         oper(Operator.SUBTRACT, dim(3),
         expn(comment(" foo ", true), oper(Operator.MULTIPLY, dim(2), dim(7)))));
 
-    // BUG4
-    t.ok("1 + ", dim(1));
-
     t.fail("1 -2", INCOMPLETE_PARSE);
     t.fail("1 ! ", INCOMPLETE_PARSE);
     t.fail("x + y ", INCOMPLETE_PARSE);
     t.fail("1 + y ", INCOMPLETE_PARSE);
     t.fail("1 + ! ", INCOMPLETE_PARSE);
+  }
+
+  @Test
+  public void testAdditionBugs() throws LessException {
+    Tester t = tester(LessSyntax.ADDITION);
+
+    // BUG4
+    t.ok("1 + ", dim(1));
+
+    // BUG4
+    t.safeMode(false);
+    t.fail("1 + ", INCOMPLETE_PARSE);
+    t.fail("@foo + px", INCOMPLETE_PARSE);
   }
 
   @Test
@@ -111,6 +108,7 @@ public class LessParserTest extends LessMaker {
 
     t.ok("foo=123", assign("foo", dim(123)));
     t.ok("foo = 123", assign("foo", dim(123)));
+    t.ok("a=foo(b=123)", assign("a", call("foo", assign("b", dim(123)))));
 
     t.fail("!", INCOMPLETE_PARSE);
     t.fail("foo!", INCOMPLETE_PARSE);
@@ -211,7 +209,7 @@ public class LessParserTest extends LessMaker {
   public void testDefinition() throws LessException {
     Tester t = tester(LessSyntax.DEFINITION);
 
-    t.ok("@foo: red", def("@foo", color("red")));
+//    t.ok("@foo: red", def("@foo", color("red")));
     t.ok("@foo: ;", def("@foo", anon("")));
     t.ok("@foo : 123 ;", def("@foo", dim(123)));
     t.ok("@foo: 123;", def("@foo", dim(123)));
@@ -293,6 +291,26 @@ public class LessParserTest extends LessMaker {
   }
 
   @Test
+  public void testElementSub() throws LessException {
+    Tester t = tester(LessSyntax.ELEMENT_SUB);
+
+    t.ok("(@foo)", paren(var("@foo")));
+    t.ok("(@{foo})", paren(var("@foo", true)));
+    t.ok("(.bar)", paren(selector(element(null, ".bar"))));
+    t.ok("( .bar )", paren(selector(element(Combinator.DESC, ".bar"))));
+    t.ok("( >.bar )", paren(selector(element(Combinator.CHILD, ".bar"))));
+    t.ok("( +.bar )", paren(selector(element(Combinator.SIB_ADJ, ".bar"))));
+    t.ok("", null);
+
+    // Partial matches consume the input
+    t.ok("(.bar", null);
+    t.ok("(", null);
+
+    // T
+    t.fail(".bar", INCOMPLETE_PARSE);
+  }
+
+  @Test
   public void testExpression() throws LessException {
     Tester t = tester(LessSyntax.EXPRESSION);
 
@@ -332,10 +350,27 @@ public class LessParserTest extends LessMaker {
     t.ok("/* bar */// foo\n",
         expn(comment(" bar ", true), comment(" foo", false)));
 
+    t.ok("a #123 b", expn(kwd("a"), color("#123"), kwd("b")));
+
     t.ok("", null);
 
     t.fail("!foo", INCOMPLETE_PARSE);
     t.fail("foo \n !", INCOMPLETE_PARSE);
+  }
+
+  @Test
+  public void testExpressionBugs() throws LessException {
+    Tester t = tester(LessSyntax.EXPRESSION);
+
+    // BUG4
+    t.ok("@foo + px", expn(var("@foo"), kwd("px")));
+    t.ok("1 x 2", expn(dim(1), kwd("x"), dim(2)));
+
+    // BUG4
+    t.safeMode(false);
+    t.ok("1 + 2", oper(ADD, dim(1), dim(2)));
+    t.ok("1 x 2", expn(dim(1), kwd("x"), dim(2)));
+    t.fail("@foo + px", INCOMPLETE_PARSE);
   }
 
   @Test
@@ -350,6 +385,19 @@ public class LessParserTest extends LessMaker {
     t.fail("!", INCOMPLETE_PARSE);
     t.fail("foo !", INCOMPLETE_PARSE);
     t.fail("foo , !", INCOMPLETE_PARSE);
+  }
+
+  @Test
+  public void testExpressionSub() throws LessException {
+    Tester t = tester(LessSyntax.EXPRESSION_SUB);
+
+    t.ok("abc", kwd("abc"));
+    t.ok("U+0?", unicode("U+0?"));
+    t.ok("12px/14px", oper(Operator.DIVIDE, dim(12, Unit.PX), dim(14, Unit.PX)));
+    t.ok("~\" foo \"", quoted('"', true, " foo "));
+    t.ok("#123", color("#123"));
+    t.ok("foo(a=1)", call("foo", assign("a", dim(1))));
+    t.ok("", null);
   }
 
   @Test
@@ -430,6 +478,7 @@ public class LessParserTest extends LessMaker {
     t.ok("", null);
     t.fail("when (@a = 1), !", EXPECTED);
     t.fail("when x", EXPECTED);
+    t.fail("whenx", EXPECTED);
     t.fail("!", INCOMPLETE_PARSE);
     t.fail("WHEN (@a = 1)", INCOMPLETE_PARSE);
   }
@@ -456,6 +505,21 @@ public class LessParserTest extends LessMaker {
     t.ok("", null);
 
     t.fail("!", INCOMPLETE_PARSE);
+  }
+
+  @Test
+  public void testLiteral() throws LessException {
+    Tester t = tester(LessSyntax.LITERAL);
+
+    t.ok("U+0?", unicode("U+0?"));
+    t.ok("~'foo'", quoted('\'', true, "foo"));
+    t.ok("'foo'", quoted('\'', false, "foo"));
+    t.ok("\"foo\"", quoted('"', false, "foo"));
+    t.ok("1/3", ratio("1/3"));
+    t.ok("1.5", dim(1.5));
+    t.ok("14px", dim(14, Unit.PX));
+
+    t.fail("Ux", INCOMPLETE_PARSE);
   }
 
   @Test
@@ -503,6 +567,13 @@ public class LessParserTest extends LessMaker {
         mixincall(
             selector(element(null, ".mixin")),
             args(',', arg(dim(1)))));
+
+    t.ok(".mixin  (  1  ) /* foo */ ;",
+        mixincall(
+            selector(element(null, ".mixin")),
+            args(',', arg(dim(1)))));
+
+    t.ok(".mixin", mixincall(selector(element(null, ".mixin"))));
 
     t.ok("", null);
 
@@ -604,6 +675,8 @@ public class LessParserTest extends LessMaker {
     t.ok("@foo: 1", param("@foo", dim(1)));
     t.ok("@foo ...", param("@foo", true));
     t.ok("123", param(null, dim(123)));
+    t.ok("U+0?", param(null, unicode("U+0?")));
+    t.ok("@foo: foo(a=1)", param("@foo", call("foo", assign("a", dim(1)))));
     t.ok("", null);
 
     t.fail("!", INCOMPLETE_PARSE);
@@ -727,6 +800,7 @@ public class LessParserTest extends LessMaker {
 
     t.ok("small/12px", shorthand(kwd("small"), dim(12, Unit.PX)));
     t.ok("foo/3.14", shorthand(kwd("foo"), dim(3.14)));
+    t.ok("s-y/12px", shorthand(kwd("s-y"), dim(12, Unit.PX)));
 
     t.ok("", null);
 
@@ -735,6 +809,9 @@ public class LessParserTest extends LessMaker {
     t.fail("!", INCOMPLETE_PARSE);
     t.fail("!/!", INCOMPLETE_PARSE);
     t.fail("small / 12px", INCOMPLETE_PARSE);
+    t.fail("sy/.s", GENERAL);
+    t.fail("%/.s", INCOMPLETE_PARSE);
+    t.fail("1/%", GENERAL);
   }
 
   @Test
@@ -750,7 +827,31 @@ public class LessParserTest extends LessMaker {
             rule(prop("color"), color("red")),
             rule(prop("font-size"), dim(12, Unit.PX))));
 
+    t.ok("@foo: bar", stylesheet(def("@foo", kwd("bar"))));
+
+    // =======
+    Ruleset r1 = ruleset(selector(element("a")));
+    r1.add(rule(prop("color"), color("blue")));
+
+    Ruleset r2 = ruleset(
+        selector(element(null, ".foo")),
+        selector(element(".bar"), element(null, ".baz")));
+    r2.add(rule(prop("color"), color("red")));
+
+    t.ok("a{color:blue}.foo,.bar.baz{color:red}", stylesheet(r1, r2));
+
+    // =======
+    Rule r = rule(prop("o"), dim(1));
+    r2 = ruleset(selector(element(null, "b")));
+    r2.add(r);;
+    r1 = ruleset(selector(element("a")));
+    r1.add(r);;
+    r1.add(r2);
+
+    t.ok("a{o:1;b{o:1}}", stylesheet(r1));
+
     t.fail("}}}\n", GENERAL);
+    t.fail("@foo:}", GENERAL);
   }
 
   @Test
@@ -805,10 +906,15 @@ public class LessParserTest extends LessMaker {
 
     LessSyntax syntax;
     LessMessages messages = new LessMessages(4, 10);
+    boolean safeMode = true;
     boolean ignoreComments = false;
 
     public Tester(LessSyntax syntax) {
       this.syntax = syntax;
+    }
+
+    public void safeMode(boolean flag) {
+      this.safeMode = flag;
     }
 
     public void ignoreComments() {
@@ -821,6 +927,7 @@ public class LessParserTest extends LessMaker {
 
       LessContext ctx = new LessContext(opts);
       LessParser parser = new LessParser(ctx, source);
+      parser.safeMode(safeMode);
 
       Node actual = null;
       try {
@@ -839,6 +946,7 @@ public class LessParserTest extends LessMaker {
     public void fail(String source, SyntaxErrorType expected) {
       LessContext ctx = new LessContext();
       LessParser parser = new LessParser(ctx, source);
+      parser.safeMode(safeMode);
       try {
         Node node = parser.parse(syntax);
         Assert.fail("expected case to fail, but got:\n\n" + repr(ctx, node) + "\n");

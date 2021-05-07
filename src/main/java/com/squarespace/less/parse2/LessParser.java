@@ -479,6 +479,10 @@ public class LessParser {
         r = expression_list();
         break;
 
+      case EXPRESSION_SUB:
+        r = expression_sub();
+        break;
+
       case FEATURES:
         r = features();
         break;
@@ -501,6 +505,10 @@ public class LessParser {
 
       case KEYWORD:
         r = keyword();
+        break;
+
+      case LITERAL:
+        r = literal();
         break;
 
       case MIXIN:
@@ -825,14 +833,7 @@ public class LessParser {
         break;
       }
 
-      // Skip whitespace
-      if (!ws()) {
-        // TODO: see BUG4
-        if (!safe_mode) {
-          rollback();
-        }
-        break;
-      }
+      ws();
 
       // Parse right operand
       Node operand1 = multiplication();
@@ -1191,7 +1192,8 @@ public class LessParser {
       return null;
     }
 
-    // Mark start of rule.
+    // Mark start of rule to delay copying the definition name until we have
+    // a full match
     int[] mark = begin();
 
     consume(m_end);
@@ -1204,11 +1206,7 @@ public class LessParser {
       return null;
     }
     next();
-
     ws();
-
-    // Mark start of value.
-    begin();
 
     // TODO: this is quite similar to the parsing of the value of a rule()
     // but is tricky to unify at the moment. reorganize to share some code.
@@ -1222,50 +1220,31 @@ public class LessParser {
       consume(m_end);
     }
 
-    boolean fallback = false;
-
     ws();
     if (!rule_end_peek()) {
       rollback();
-      fallback = true;
+      return null;
+    }
 
-// TODO: disabled for compatibility, but we may want this match here.
-//      fallback = true;
-//
-//      // Roll back to value checkpoint
-//      rollback();
-//      if (match(Patterns.ANON_RULE_VALUE)) {
-//        // Don't skip over the trailing char
-//        consume(m_end - 1);
-//        value = new Anonymous(raw.substring(m_start, m_end - 1).trim());
-//      }
-
-    } else if (value == null) {
+    // This covers the case "@foo:;" since expression_list() will fail to parse
+    // a zero-width string
+    if (value == null) {
       value = ANON;
     }
 
-    ws();
-    if (value != null && rule_end()) {
-      if (!fallback) {
-        commit();
-      }
+    // We know we have a rule ending from the peek above
+    rule_end();
 
-      // High confidence we have a valid definition, so copy the name
-      String name = raw.substring(ms, me);
+    // High confidence we have a valid definition, so copy the name
+    String name = raw.substring(ms, me);
 
-      flags |= FLAG_OPENSPACE;
+    // Ensures a selector immediately after ';' will create a descendant delimiter
+    flags |= FLAG_OPENSPACE;
 
-      Definition result = setpos(mark, builder.buildDefinition(name, value == null ? ANON : value));
-      result.fileName(fileName);
-      commit();
-      return result;
-    }
-
-    if (!fallback) {
-      rollback();
-    }
-    rollback();
-    return null;
+    Definition result = setpos(mark, builder.buildDefinition(name, value));
+    result.fileName(fileName);
+    commit();
+    return result;
   }
 
   /**
@@ -1635,7 +1614,6 @@ public class LessParser {
     if (n != null) {
       return n;
     }
-
     n = keyword();
     if (n != null) {
       return n;
@@ -1720,14 +1698,14 @@ public class LessParser {
     if (n != null) {
       return n;
     }
-    n = ratio();
-    if (n != null) {
-      return n;
-    }
-    n = color();
-    if (n != null) {
-      return n;
-    }
+//    n = ratio(); // TODO: "1/2" will be matched by addition -> multiplication -> operand
+//    if (n != null) {
+//      return n;
+//    }
+//    n = color(); // TODO: colors are matched in addition -> multiplication -> operand
+//    if (n != null) {
+//      return n;
+//    }
     n = quoted();
     if (n != null) {
       return n;
@@ -1736,10 +1714,10 @@ public class LessParser {
     if (n != null) {
       return n;
     }
-    n = function_call();
-    if (n != null) {
-      return n;
-    }
+//    n = function_call(); // TODO: function call matched by addition -> multiplication -> operand
+//    if (n != null) {
+//      return n;
+//    }
 
 //    n = escape();
 //    if (n != null) {
@@ -2025,10 +2003,10 @@ public class LessParser {
     Condition condition = null;
     while (true) {
       ws();
-      condition = conditions();
-      if (condition == null) {
-        break;
-      }
+      condition = conditions(); // TODO: never returns null
+//      if (condition == null) {
+//        break;
+//      }
       guard.add(condition);
 
       ws();
@@ -2755,6 +2733,7 @@ public class LessParser {
       return rule;
     }
 
+    // TODO: this branch may not be reachable, restructure the end-of-rule logic above
     if (!fallback) {
       rollback();
     }
@@ -2891,6 +2870,7 @@ public class LessParser {
 
     Node right = entity();
 
+    // TODO: left can't be null here, since '/' wouldn't match
     // TODO: this shouldn't fail since the SHORTHAND pattern matched
     if (left == null || right == null) {
       rollback();
