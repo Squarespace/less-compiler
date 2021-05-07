@@ -26,8 +26,6 @@ import com.squarespace.less.model.Operator;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.LessParser;
-import com.squarespace.less.parse.LessSyntax;
 
 public class LessParserTest extends LessMaker {
 
@@ -58,6 +56,14 @@ public class LessParserTest extends LessMaker {
     r.add(child);
     return r;
   }
+
+  // TODO: more efficient location of parse error line in ParseUtils
+//  @Test
+//  public void testErrorLine() throws LessException {
+//    Tester t = tester(LessSyntax.STYLESHEET);
+//
+//    t.fail("\n@foo: 1;\n\na {\n  color: red;\n}\n               |", INCOMPLETE_PARSE);
+//  }
 
   @Test
   public void testAddition() throws LessException {
