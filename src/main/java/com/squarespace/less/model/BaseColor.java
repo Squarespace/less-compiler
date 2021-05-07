@@ -24,6 +24,7 @@ import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.exec.ExecEnv;
+import com.squarespace.less.match.Interner;
 
 
 /**
@@ -67,14 +68,8 @@ public abstract class BaseColor implements Node {
    * Convert a color name to its {@link RGBColor} instance.
    */
   public static RGBColor fromName(String name) {
-    if (name.equals("transparent")) {
-      return new KeywordColor(name, 0, 0, 0);
-    }
-    int[] c = Colors.nameToRGB(name);
-    if (c != null) {
-      return new RGBColor(c[0], c[1], c[2], true);
-    }
-    return null;
+    int ix = Interner.COLORS_DAT.getIgnoreCase(name, 0, name.length());
+    return ix == -1 ? null : Interner.COLORS[ix];
   }
 
   /**

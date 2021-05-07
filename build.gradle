@@ -237,3 +237,17 @@ task makeCli(type: Exec, dependsOn: execJar,
     args '-c', "cat ${inputScript} ${inputArchive} >lessc; chmod ug+x lessc"
 }
 
+task generateCode(type: GenerateCode, dependsOn: classes) {
+}
+
+class GenerateCode extends DefaultTask {
+
+  @TaskAction
+  def generate() {
+    project.javaexec {
+      classpath = project.sourceSets.main.runtimeClasspath
+      main = 'com.squarespace.less.match.Generate'
+    }
+  }
+
+}

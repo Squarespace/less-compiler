@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+
+import json
+import os
+import requests
+import sys
+
+PWD = os.path.abspath(os.path.dirname(__file__))
+
+DST = os.path.join(PWD, '../src/main/resources/com/squarespace/less/match')
+
+def load_text(name):
+    p = os.path.join(PWD, name + '.txt')
+    if os.path.exists(p):
+        return [r.strip() for r in open(p).read().split('\n')]
+    return []
+
+def load_json(name):
+    p = os.path.join(PWD, name +'.json')
+    return json.load(open(p))
+
+def save(name, keys):
+    if not os.path.exists(DST):
+        os.makedirs(DST)
+    dst = os.path.join(DST, '%s.txt' % name)
+    out = open(dst, 'w')
+    for k in sorted(keys):
+        out.write(k)
+        out.write('\n')
+    out.close()
+
+IGNORE_PROPS = set(['--*'])
+
+def keywords(key):
+    r = load_text('71-keywords')
+    r += load_text('keywords')
+    r = [x for x in r if x]
+    save(key, set(r))
+
+def properties(key):
+    r = [p['property'] for p in load_json('properties')]
+    r += load_text('properties')
+    r = filter(lambda x: x not in IGNORE_PROPS, r)
+    save(key, set(r))
+    #print(list(r))
+    #save(key, set(e['property'] for e in r))
+
+def main():
+    args = sys.argv[1:]
+    if not args:
+        return
+    arg = args[0]
+    if arg == 'properties':
+        properties(arg)
+    if arg == 'keywords':
+        keywords(arg)
+
+if __name__ == '__main__':
+    main()
+

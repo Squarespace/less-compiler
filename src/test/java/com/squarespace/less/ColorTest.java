@@ -41,8 +41,11 @@ public class ColorTest extends LessTestBase {
     h.parseEquals("white", rgb(255, 255, 255, 1.0, true));
 
     h = new LessHarness(LessSyntax.COLOR);
-    h.parseEquals("#fff", rgb(255, 255, 255));
-    h.parseEquals("#000", rgb(0, 0, 0));
+    // Some '#fff' representations map to names like 'white'
+    h.parseEquals("#fff", rgb(255, 255, 255, 1.0, true));
+    h.parseEquals("#000", rgb(0, 0, 0, 1.0, true));
+
+    // Others don't have a name
     h.parseEquals("#010203", rgb(1, 2, 3));
   }
 

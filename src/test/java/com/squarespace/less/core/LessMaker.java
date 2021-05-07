@@ -21,6 +21,7 @@ import static com.squarespace.less.model.Combinator.DESC;
 import java.util.Arrays;
 
 import com.squarespace.less.exec.ArgSpec;
+import com.squarespace.less.match.Interner;
 import com.squarespace.less.model.Alpha;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Argument;
@@ -28,7 +29,6 @@ import com.squarespace.less.model.Assignment;
 import com.squarespace.less.model.AttributeElement;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockDirective;
-import com.squarespace.less.model.Colors;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Condition;
@@ -154,12 +154,14 @@ public class LessMaker {
     return new FunctionCall(name, Arrays.asList(args));
   }
 
+//  public RGBColor namedColor(String name) {
+//    int ix = Interner.COLORS_DAT.getIgnoreCase(name, 0, name.length());
+//    return ix == -1 ? null : Interner.COLORS[ix];
+//  }
+
   public RGBColor color(String raw) {
-    int[] comp = Colors.nameToRGB(raw);
-    if (comp != null) {
-      return new RGBColor(comp[0], comp[1], comp[2], true);
-    }
-    return RGBColor.fromHex(raw);
+    int ix = Interner.COLORS_DAT.getIgnoreCase(raw, 0, raw.length());
+    return ix == -1 ? RGBColor.fromHex(raw) : Interner.COLORS[ix];
   }
 
   public Comment comment(String body, boolean block) {
@@ -367,7 +369,7 @@ public class LessMaker {
   }
 
   public RGBColor rgb(int red, int green, int blue, double alpha, boolean keyword) {
-    return new RGBColor(red, green, blue, alpha, keyword);
+    return new RGBColor(red, green, blue, alpha);
   }
 
   public Rule rule(Node name, Node value) {

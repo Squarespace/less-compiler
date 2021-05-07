@@ -46,7 +46,6 @@ import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.Import;
 import com.squarespace.less.model.Keyword;
-import com.squarespace.less.model.KeywordColor;
 import com.squarespace.less.model.Media;
 import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.MixinCall;
@@ -69,6 +68,7 @@ import com.squarespace.less.model.Shorthand;
 import com.squarespace.less.model.StructuralNode;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.TextElement;
+import com.squarespace.less.model.TransparentColor;
 import com.squarespace.less.model.UnicodeRange;
 import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.Url;
@@ -238,7 +238,10 @@ public class AstEmitter {
       case COLOR:
       {
         BaseColor base = (BaseColor) n;
-        String keyword = base instanceof KeywordColor ? ((KeywordColor)base).keyword() : null;
+        String keyword = null;
+        if (base instanceof TransparentColor) {
+          keyword = ((TransparentColor) base).keyword();
+        }
         RGBColor o = (RGBColor) base.toRGB();
         open(COLOR, n);
         sep();

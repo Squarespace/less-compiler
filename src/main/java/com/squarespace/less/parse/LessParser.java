@@ -21,6 +21,7 @@ import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.core.LessUtils;
+import com.squarespace.less.match.Interner;
 import com.squarespace.less.match.Recognizer;
 import com.squarespace.less.model.Alpha;
 import com.squarespace.less.model.Anonymous;
@@ -30,6 +31,7 @@ import com.squarespace.less.model.AttributeElement;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockLike;
 import com.squarespace.less.model.BlockNode;
+import com.squarespace.less.model.Colors;
 import com.squarespace.less.model.Combinator;
 import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Condition;
@@ -75,48 +77,49 @@ import com.squarespace.less.model.Variable;
 /**
  * Parser for the LESS language.
  *
- * The parser is structured to enable parsing of individual fragments of syntax, to both modularize the parser and
- * facilitate focused bottom-up testing of the syntax.
+ * The parser is structured to enable parsing of individual fragments of syntax, to both
+ * modularize the parser and facilitate focused bottom-up testing of the syntax.
  *
- * The code may seem long but this is intentional to minimize the amount of jumping around during debugging and tracing
- * through the code. It makes it much easier to locate a particular piece of parser logic and how it relates to the rest
- * of the parse.
+ * The code may seem long but this is intentional to minimize the amount of jumping around
+ * during debugging and tracing through the code. It makes it much easier to locate a
+ * particular piece of parser logic and how it relates to the rest of the parse.
  *
- * The previous parser was too spread out over many classes and wired together in a way that was difficult to trace and
- * created too many intermediate Java stack frames.
+ * The previous parser was too spread out over many classes and wired together in a way
+ * that was difficult to trace and created too many intermediate Java stack frames.
  *
- * This new parser uses an explicit stack to track nested blocks, avoiding Java recursion. Fragments of syntax are
- * parsed by methods which themselves may call other methods, but the call stack should be shallow, non-recursive, and
- * much easier to trace and debug.
+ * This new parser uses an explicit stack to track nested blocks, avoiding Java recursion.
+ * Fragments of syntax are parsed by methods which themselves may call other methods, but
+ * the call stack should be shallow, non-recursive, and much easier to trace and debug.
  *
  *
- * TODO: BUGS from the old parser which we need to keep working until the issues are resolved in the source stylesheets:
+ * TODO: BUGS from the old parser which we need to keep working until the issues are
+ * resolved in the source stylesheets:
  *
+ * <pre>
  * - BUG1: a '+' character before end of block scope
  * - BUG2: an unclosed '@media' directive at end of file, either EOF or '}' char
  * - BUG3: variable references followed immediately by parenthesis '@foo()' at the end of a rule
  * - BUG4: addition allows sequences like "1 + px" to parse as EXPRESSION[ DIM(1), KWD("px") ].
+ * </pre>
  */
 public class LessParser {
 
-  // TODO: investigate unifying MIXIN, MIXIN_CALL, RULESET prefix parsing to lower the amount of backtracking.
-  // there is overlap between these fragments, as they all use a selector prefix, and MIXIN and MIXIN_CALL
-  // both have optional parameters, e.g. if we parse ".mixin();" as a MIXIN, the tokens up to the ';'
-  // also correspond to a MIXIN_CALL.  see if we can parse these 3 prefxes somewhat generally and when certain
-  // key fragments are detected, specialize at the last minute.
+  // TODO: investigate unifying MIXIN, MIXIN_CALL, RULESET prefix parsing to lower the
+  // amount of backtracking. there is overlap between these fragments, as they all use a
+  // selector prefix, and MIXIN and MIXIN_CALL both have optional parameters, e.g. if we
+  // parse ".mixin();" as a MIXIN, the tokens up to the ';' also correspond to a MIXIN_CALL.
+  // see if we can parse these 3 prefxes somewhat generally and when certain key fragments
+  // are detected, specialize at the last minute.
 
   /**
-   * Flag that indicates we've just passed a character that should be considered equivalent
-   * to open space.  For example, if you parse the sequence "}foo {" this is equivalent
-   * to parsing "} foo {", creating a descendant combinator before the "foo" selector.
+   * Flag that indicates we've just passed a character that should be considered
+   * equivalent to open space. For example, if you parse the sequence "}foo {" this is
+   * equivalent to parsing "} foo {", creating a descendant combinator before the "foo"
+   * selector.
    */
   private static final int FLAG_OPENSPACE = 1;
 
   private static final Anonymous ANON = new Anonymous();
-
-  private static final String ASTERISK = "*";
-
-  private static final String AMPERSAND = "&";
 
   /**
    * Number of values in a mark record.
@@ -150,8 +153,9 @@ public class LessParser {
   };
 
   /*
-   * TODO: - perhaps we can remove the flags variable by tracking the openspace state in a different way. that would
-   * shrink the marker array to 3 and speed up creation and rollback of marks.
+   * TODO: - perhaps we can remove the flags variable by tracking the openspace state in a
+   * different way. that would shrink the marker array to 3 and speed up creation and
+   * rollback of marks.
    */
 
   /**
@@ -256,6 +260,18 @@ public class LessParser {
   private boolean safe_mode = true;
 
   /**
+   * Storage for color conversion.
+   */
+  private int[] color_array = new int[] { 0, 0, 0 };
+
+  public int interned = 0;
+  public int failed = 0;
+  public int interned_bytes = 0;
+  public int interned_fail = 0;
+
+
+
+  /**
    * Construct a parser for the given context and source string.
    */
   public LessParser(LessContext ctx, String source) {
@@ -297,7 +313,8 @@ public class LessParser {
   }
 
   /**
-   * Enable or disable safe mode. Safe mode allows a small set of bugs to occur in stylesheets.
+   * Enable or disable safe mode. Safe mode allows a small set of bugs to occur in
+   * stylesheets.
    */
   public void safeMode(boolean flag) {
     this.safe_mode = flag;
@@ -346,15 +363,16 @@ public class LessParser {
   }
 
   /**
-   * Create a mark in the stream that we can roll back to if necessary. We use a stack so we can mark the stream more
-   * than once in nested code.
+   * Create a mark in the stream that we can roll back to if necessary. We use a stack so
+   * we can mark the stream more than once in nested code.
    *
-   * We combine two ideas here to form an optimistic parsing strategy. We peek at a fragment of syntax to "sniff"
-   * whether the current parsing direction has a high probability of success. On success we call unmark() commit the
-   * current stream state. On failure we call restore() to restore the stream to its prior state.
+   * We combine two ideas here to form an optimistic parsing strategy. We peek at a
+   * fragment of syntax to "sniff" whether the current parsing direction has a high
+   * probability of success. On success we call unmark() commit the current stream state.
+   * On failure we call restore() to restore the stream to its prior state.
    *
-   * NOTE: every call to begin() must be paired with exactly one call to commit() or rollback() when the scope of the
-   * begin() is exited.
+   * NOTE: every call to begin() must be paired with exactly one call to commit() or
+   * rollback() when the scope of the begin() is exited.
    */
   private int[] begin() {
     if (m_ptr == marks.length) {
@@ -728,8 +746,9 @@ public class LessParser {
         case '#': {
           // Possible MIXIN definition, MIXIN_CALL or RULESET start.
 
-          // TODO: unify similarities between MIXIN and MIXIN_CALL? as there is some overlap in the syntax.
-          // a declaration ".mixin()" is also a call, but we only know when we hit ';' or fail to hit '{'
+          // TODO: unify similarities between MIXIN and MIXIN_CALL? as there is some
+          // overlap in the syntax. a fragment ".mixin()" is also a call, but we
+          // only know when we hit ';' or fail to hit '{'
 
           Mixin mixin = mixin();
           if (mixin != null) {
@@ -977,10 +996,14 @@ public class LessParser {
     if (peek() != '#' || !match(Patterns.HEXCOLOR)) {
       return null;
     }
-    String token = raw.substring(m_start, m_end);
     consume(m_end);
+    RGBColor color = intern_color(raw, m_start, m_end);
+    if (color != null) {
+      return color;
+    }
 
-    return RGBColor.fromHex(token);
+    Colors.hexToRGB(raw, m_start, m_end, color_array);
+    return new RGBColor(color_array[0], color_array[1], color_array[2]);
   }
 
   /**
@@ -992,13 +1015,13 @@ public class LessParser {
     if (!match(Patterns.KEYWORD)) {
       return null;
     }
-    String token = raw.substring(m_start, m_end);
-    RGBColor color = RGBColor.fromName(token);
-    if (color == null) {
-      return null;
+
+    RGBColor color = intern_color(raw, m_start, m_end);
+    if (color != null) {
+      consume(m_end);
+      return color;
     }
-    consume(m_end);
-    return color;
+    return null;
   }
 
   /**
@@ -1267,20 +1290,30 @@ public class LessParser {
       return null;
     }
 
-    String value = raw.substring(m_start, m_end);
+    int d_ms = m_start;
+    int d_me = m_end;
+
     consume(m_end);
 
-    Unit unit = null;
-    if (match(Patterns.DIMENSION_UNIT)) {
-
-      // TODO: faster lookup for these without copying the substring
-
-      unit = Unit.get(raw.substring(m_start, m_end));
+    int u_ms = pos;
+    int u_me = pos;
+    boolean have_unit = match(Patterns.DIMENSION_UNIT);
+    if (have_unit) {
+      u_me = m_end;
       consume(m_end);
     }
 
-    // TODO: builder
-    return new Dimension(Double.parseDouble(value), unit);
+    Dimension dim = intern_dimension(raw, d_ms, u_me);
+    if (dim == null) {
+      Double value = Double.parseDouble(raw.substring(d_ms, d_me));
+      Unit unit = null;
+      if (have_unit) {
+        // Lookup unit without allocations
+        unit = intern_unit(raw, u_ms, u_me);
+      }
+      dim = new Dimension(value, unit);
+    }
+    return dim;
   }
 
   /**
@@ -1462,14 +1495,14 @@ public class LessParser {
 
     if (match(Patterns.ELEMENT0) || match(Patterns.ELEMENT1)) {
       consume(m_end);
-      return new TextElement(comb, raw.substring(m_start, m_end));
+      return intern_element(comb, raw, m_start, m_end);
 
     } else {
       // Look for bare '*' or '&'
       char ch = peek();
       if (ch == '*' || ch == '&') {
         next();
-        return new TextElement(comb, ch == '*' ? ASTERISK : AMPERSAND);
+        return intern_element(comb, raw, pos - 1, pos);
       }
     }
 
@@ -1481,7 +1514,7 @@ public class LessParser {
 
     if (match(Patterns.ELEMENT2) || match(Patterns.ELEMENT3)) {
       consume(m_end);
-      return new TextElement(comb, raw.substring(m_start, m_end));
+      return intern_element(comb, raw, m_start, m_end);
 
     } else {
       Node var = variable(true);
@@ -1598,7 +1631,8 @@ public class LessParser {
       next();
       return Combinator.fromChar(ch);
 
-    } else if (block || skipped > 0 || CharClass.CLASSIFIER.whitespace(prev) || prev == Chars.EOF || prev == ',') {
+    } else if (block || skipped > 0 || CharClass.CLASSIFIER.whitespace(prev)
+        || prev == Chars.EOF || prev == ',') {
       return Combinator.DESC;
     }
     return null;
@@ -1632,7 +1666,8 @@ public class LessParser {
       return n;
     }
 
-    // JavaScript is unsupported so this should throw an exception, but never return a value.
+    // JavaScript is unsupported so this should throw an exception,
+    // but never return a value.
     javascript();
 
     n = comment(true, false);
@@ -1685,6 +1720,14 @@ public class LessParser {
       }
 
       ws();
+
+      // Expression lists are delimited by commas, which cannot
+      // appear in an expression. Peeking here should save trying some
+      // dead-ends.
+      if (peek() == ',') {
+        break;
+      }
+
       elem = expression_sub();
       if (elem == null) {
         break;
@@ -1860,8 +1903,7 @@ public class LessParser {
       if (peek() == ':') {
         commit();
         next();
-        String token = raw.substring(m_start, m_end);
-        return new Property(token);
+        return intern_property(raw, m_start, m_end);
       }
     }
     rollback();
@@ -1970,7 +2012,7 @@ public class LessParser {
     begin();
     consume(m_end);
 
-    String name = raw.substring(m_start, m_end - 1).toLowerCase();
+    String name = intern_function(raw, m_start, m_end - 1);
     if (name.equals("url")) {
       commit();
       return url(false);
@@ -2068,13 +2110,13 @@ public class LessParser {
     if (!match(Patterns.KEYWORD)) {
       return null;
     }
-    String token = raw.substring(m_start, m_end);
+
     consume(m_end);
-
-    // TODO: named color lookup can be done fast without copying the token
-
-    Node color = RGBColor.fromName(token);
-    return color == null ? new Keyword(token) : color;
+    Node color = intern_color(raw, m_start, m_end);
+    if (color != null) {
+      return color;
+    }
+    return intern_keyword(raw, m_start, m_end);
   }
 
   /**
@@ -2163,8 +2205,8 @@ public class LessParser {
     while (match(Patterns.MIXIN_NAME)) {
       consume(m_end);
 
-      String name = raw.substring(m_start, m_end);
-      selector.add(new TextElement(comb, name));
+      TextElement elem = intern_element(comb, raw, m_start, m_end);
+      selector.add(elem);
 
       // Compute number of spaces skipped
       int here = pos;
@@ -2525,8 +2567,8 @@ public class LessParser {
    *
    * Parameter in a mixin definition.
    *
-   * We assume if we're here we have high confidence that we're inside a parameter list, so we don't bother marking the
-   * stream, we just press forward.
+   * We assume if we're here we have high confidence that we're inside a parameter
+   * list, so we don't bother marking the stream, we just press forward.
    */
   private Parameter parameter() throws LessException {
     // Sniff to detect which type of parameter we have.
@@ -2701,9 +2743,9 @@ public class LessParser {
     // Mark start of value
     begin();
 
-    String property = raw.substring(m_start, m_end);
+    Property property = intern_property(raw, m_start, m_end);
     Node value = null;
-    if (property.equals("font")) {
+    if (property.name().equals("font")) {
       // parse font
       value = font();
     } else {
@@ -2750,13 +2792,14 @@ public class LessParser {
 
       flags |= FLAG_OPENSPACE;
 
-      Rule rule = setpos(mark, builder.buildRule(new Property(property), value, important));
+      Rule rule = setpos(mark, builder.buildRule(property, value, important));
       rule.fileName(fileName);
       commit();
       return rule;
     }
 
-    // TODO: this branch may not be reachable, restructure the end-of-rule logic above
+    // TODO: this branch may not be reachable, restructure the
+    // end-of-rule logic above
     if (!fallback) {
       rollback();
     }
@@ -3016,8 +3059,8 @@ public class LessParser {
   /**
    * Skip whitespace.
    *
-   * The return value is true when there are characters left to parse. Hitting EOF will return false, indicating to the
-   * caller that the parse must be aborted.
+   * The return value is true when there are characters left to parse. Hitting EOF will
+   * return false, indicating to the caller that the parse must be aborted.
    */
   private boolean ws() {
     boolean lastws = false;
@@ -3327,4 +3370,74 @@ loop:
   private char peek(int index) {
     return index < len ? raw.charAt(index) : Chars.EOF;
   }
+
+  private static Property intern_property(String raw, int start, int end) {
+    int ix = Interner.PROPERTY_DAT.get(raw, start, end);
+    if (ix == -1) {
+      return new Property(raw.substring(start, end));
+    }
+    return Interner.PROPERTIES[ix];
+  }
+
+  private static Keyword intern_keyword(String raw, int start, int end) {
+    int ix = Interner.KEYWORD_DAT.get(raw, start, end);
+    if (ix == -1) {
+      return new Keyword(raw.substring(start, end));
+    }
+    return Interner.KEYWORDS[ix];
+  }
+
+  private static Unit intern_unit(String raw, int start, int end) {
+    int ix = Interner.UNITS_DAT.get(raw, start, end);
+    if (ix == -1) {
+      String rep = raw.substring(start, end);
+      return Unit.get(rep);
+    }
+    return Interner.UNITS[ix];
+  }
+
+  private static Dimension intern_dimension(String raw, int start, int end) {
+    int ix = Interner.DIMENSIONS_DAT.get(raw, start, end);
+    return ix == -1 ? null : Interner.DIMENSIONS[ix];
+  }
+
+  private static TextElement intern_element(Combinator comb, String raw, int start, int end) {
+    int ix = Interner.ELEMENT_DAT.get(raw, start, end);
+    if (ix == -1) {
+      return new TextElement(comb, raw.substring(start, end));
+    }
+    if (comb == null) {
+      return Interner.NULL_ELEMENTS[ix];
+    }
+    switch (comb) {
+      case CHILD:
+        return Interner.CHILD_ELEMENTS[ix];
+      case NAMESPACE:
+        return Interner.NAMESPACE_ELEMENTS[ix];
+      case SIB_ADJ:
+        return Interner.SIB_ADJ_ELEMENTS[ix];
+      case SIB_GEN:
+        return Interner.SIB_GEN_ELEMENTS[ix];
+      case DESC:
+      default:
+        return Interner.DESC_ELEMENTS[ix];
+    }
+  }
+
+  private static String intern_function(String raw, int start, int end) {
+    int ix = Interner.FUNCTIONS_DAT.getIgnoreCase(raw, start, end);
+    if (ix == -1) {
+      return raw.substring(start, end).toLowerCase();
+    }
+    return Interner.FUNCTIONS[ix];
+  }
+
+  private static RGBColor intern_color(String raw, int start, int end) {
+    int ix = Interner.COLORS_DAT.getIgnoreCase(raw, start, end);
+    if (ix == -1) {
+      return null;
+    }
+    return Interner.COLORS[ix];
+  }
+
 }

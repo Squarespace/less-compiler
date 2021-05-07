@@ -19,6 +19,7 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.Chars.hexchar;
 
 import com.squarespace.less.core.Buffer;
+import com.squarespace.less.match.Interner;
 
 
 /**
@@ -59,11 +60,6 @@ public class RGBColor extends BaseColor {
   protected final double alpha;
 
   /**
-   * Color was constructed from a keyword.
-   */
-  protected final boolean fromKeyword;
-
-  /**
    * Force hex representation with output.
    */
   protected boolean forceHex;
@@ -90,37 +86,20 @@ public class RGBColor extends BaseColor {
   }
 
   /**
-   * Constructs an RGB color from integer values, setting the flag indicating
-   * whether this color was defined by a keyword.
-   */
-  public RGBColor(int red, int green, int blue, boolean fromKeyword) {
-    this(red, green, blue, 1.0, fromKeyword);
-  }
-
-  /**
    * Constructs an RGB color from integer values, with an alpha channel.
    */
   public RGBColor(int red, int green, int blue, double alpha) {
-    this(red, green, blue, alpha, false);
-  }
-
-  /**
-   * Constructs an RGB color from integer values, with an alpha channel,
-   * setting the flag indicating whether this color was defined by a keyword.
-   */
-  public RGBColor(int red, int green, int blue, double alpha, boolean fromKeyword) {
     this.red = (int)clamp(red, 0, 255);
     this.green = (int)clamp(green, 0, 255);
     this.blue = (int)clamp(blue, 0, 255);
     this.alpha = clamp(alpha, 0.0, 1.0);
-    this.fromKeyword = fromKeyword;
   }
 
   /**
    * Copy the color.
    */
   public RGBColor copy() {
-    return new RGBColor(red, green, blue, alpha, fromKeyword);
+    return new RGBColor(red, green, blue, alpha);
   }
 
   /**
@@ -171,13 +150,6 @@ public class RGBColor extends BaseColor {
     b = (b <= 0.03928) ? b / 12.92 : Math.pow(((b + 0.055) / 1.055), 2.4);
 
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  }
-
-  /**
-   * Indicates whether this color was defined by a keyword.
-   */
-  public boolean fromKeyword() {
-    return fromKeyword && alpha == 1.0;
   }
 
   /**
@@ -306,7 +278,7 @@ public class RGBColor extends BaseColor {
         // Check if an equivalent color keyword exists that is shorter
         // than its hex string. Some examples: red < #f00 beige < #f5f5dc.
         // If so, we output the keyword.
-        String name = Colors.colorToName(this);
+        String name = Interner.colorToKeyword(this);
         if (name != null) {
           int len = name.length();
           if ((hex3 && len <= 4) || (!hex3 && len <= 7)) {
@@ -335,9 +307,6 @@ public class RGBColor extends BaseColor {
     posRepr(buf);
     buf.append(' ').append(getColorspace().toString()).append(' ');
     buf.append(red).append(' ').append(green).append(' ').append(blue).append(' ').append(alpha);
-    if (fromKeyword) {
-      buf.append(" [from keyword]");
-    }
   }
 
   @Override
@@ -347,8 +316,7 @@ public class RGBColor extends BaseColor {
       return red == other.red
           && green == other.green
           && blue == other.blue
-          && alpha == other.alpha
-          && fromKeyword == other.fromKeyword;
+          && alpha == other.alpha;
     }
     return false;
   }
