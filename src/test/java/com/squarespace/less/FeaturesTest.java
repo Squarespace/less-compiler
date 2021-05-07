@@ -24,7 +24,7 @@ import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Paren;
 import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.Variable;
-import com.squarespace.less.parse2.LessSyntax;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class FeaturesTest extends LessTestBase {

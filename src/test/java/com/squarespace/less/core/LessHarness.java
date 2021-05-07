@@ -31,8 +31,8 @@ import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.parse2.LessParser;
-import com.squarespace.less.parse2.LessSyntax;
+import com.squarespace.less.parse.LessParser;
+import com.squarespace.less.parse.LessSyntax;
 import com.squarespace.less.plugins.DummyFunctions;
 import com.squarespace.less.plugins.ext.ExtStringFunctions;
 

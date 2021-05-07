@@ -40,9 +40,7 @@ import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.Parselet;
-import com.squarespace.less.parse.Parselets;
-import com.squarespace.less.parse2.LessSyntax;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class ArgumentBinderTest extends LessTestBase {

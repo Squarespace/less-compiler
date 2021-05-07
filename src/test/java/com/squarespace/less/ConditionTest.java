@@ -43,7 +43,7 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.True;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse2.LessSyntax;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class ConditionTest extends LessTestBase {

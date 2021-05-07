@@ -1,4 +1,4 @@
-package com.squarespace.less.parse2;
+package com.squarespace.less.parse;
 
 import static com.squarespace.less.core.CharClass.CLASSIFIER;
 import static com.squarespace.less.core.SyntaxErrorMaker.alphaUnitsInvalid;
@@ -71,8 +71,6 @@ import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.Url;
 import com.squarespace.less.model.ValueElement;
 import com.squarespace.less.model.Variable;
-import com.squarespace.less.parse.ParseUtils;
-import com.squarespace.less.parse.Patterns;
 
 /**
  * Parser for the LESS language.

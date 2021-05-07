@@ -26,7 +26,7 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Argument;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse2.LessSyntax;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class ArgumentsTest extends LessTestBase {

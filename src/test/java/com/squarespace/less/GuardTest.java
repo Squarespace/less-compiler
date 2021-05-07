@@ -29,7 +29,7 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Condition;
 import com.squarespace.less.model.Dimension;
-import com.squarespace.less.parse2.LessSyntax;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class GuardTest extends LessTestBase {

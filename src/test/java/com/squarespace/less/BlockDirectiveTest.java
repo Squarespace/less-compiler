@@ -26,7 +26,7 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Stylesheet;
-import com.squarespace.less.parse2.LessSyntax;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class BlockDirectiveTest extends LessTestBase {

@@ -1,4 +1,4 @@
-package com.squarespace.less.parse2;
+package com.squarespace.less.parse;
 
 import static com.squarespace.less.SyntaxErrorType.ALPHA_UNITS_INVALID;
 import static com.squarespace.less.SyntaxErrorType.EXPECTED;
@@ -26,6 +26,8 @@ import com.squarespace.less.model.Operator;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.parse.LessParser;
+import com.squarespace.less.parse.LessSyntax;
 
 public class LessParserTest extends LessMaker {
 

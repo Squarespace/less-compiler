@@ -1,4 +1,4 @@
-package com.squarespace.less.parse2;
+package com.squarespace.less.parse;
 
 
 public enum LessSyntax {

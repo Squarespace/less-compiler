@@ -27,7 +27,7 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
-import com.squarespace.less.parse2.LessSyntax;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class MixinCallTest extends LessTestBase {

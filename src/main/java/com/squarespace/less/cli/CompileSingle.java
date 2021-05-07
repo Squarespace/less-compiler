@@ -28,8 +28,8 @@ import com.squarespace.less.cli.LessC.Args;
 import com.squarespace.less.core.ErrorUtils;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Stylesheet;
-import com.squarespace.less.parse2.LessParser;
-import com.squarespace.less.parse2.LessSyntax;
+import com.squarespace.less.parse.LessParser;
+import com.squarespace.less.parse.LessSyntax;
 
 
 /**

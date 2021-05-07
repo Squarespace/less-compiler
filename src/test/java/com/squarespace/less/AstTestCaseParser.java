@@ -44,9 +44,7 @@ import com.squarespace.less.exec.LessSuiteBase;
 import com.squarespace.less.jsonast.AstEmitter;
 import com.squarespace.less.jsonast.AstPrinter;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.parse.Parselet;
-import com.squarespace.less.parse.Parselets;
-import com.squarespace.less.parse2.LessSyntax;
+import com.squarespace.less.parse.LessSyntax;
 
 public class AstTestCaseParser {
 
