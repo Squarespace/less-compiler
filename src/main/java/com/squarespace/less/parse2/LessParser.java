@@ -65,7 +65,6 @@ import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
 import com.squarespace.less.model.Shorthand;
 import com.squarespace.less.model.StructuralNode;
-import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.TextElement;
 import com.squarespace.less.model.UnicodeRange;
 import com.squarespace.less.model.Unit;
@@ -108,18 +107,16 @@ public class LessParser {
   // also correspond to a MIXIN_CALL.  see if we can parse these 3 prefxes somewhat generally and when certain
   // key fragments are detected, specialize at the last minute.
 
-  /**
-   * Flag that indicates we've just passed a character that should be considered equivalent
-   * to open space.  For example, if you parse the sequence "}foo {" this is equivalent
-   * to parsing "} foo {", creating a descendant combinator before the "foo" selector.
-   */
-  private static final int FLAG_OPENSPACE = 1;
-
   private static final Anonymous ANON = new Anonymous();
 
   private static final String ASTERISK = "*";
 
   private static final String AMPERSAND = "&";
+
+  /**
+   * Number of values in a mark record.
+   */
+  private static final int MARK_DIM = 3;
 
   /**
    * Comment node that indicates a comment was parsed or skipped over, and should be suppressed from the output.
@@ -147,11 +144,6 @@ public class LessParser {
     }
   };
 
-  /*
-   * TODO: - perhaps we can remove the flags variable by tracking the openspace state in a different way. that would
-   * shrink the marker array to 3 and speed up creation and rollback of marks.
-   */
-
   /**
    * Stack of nested blocks encountered during the parse.
    */
@@ -168,9 +160,9 @@ public class LessParser {
   private int b_ptr = 0;
 
   /**
-   * Marks of parser position: position, line, column, and flags.
+   * Marks of parser position: position, line, and column.
    */
-  private int[][] marks = new int[16][4];
+  private int[][] marks = new int[16][MARK_DIM];
 
   /**
    * Marker stack pointer.
@@ -231,11 +223,6 @@ public class LessParser {
    * Current column number.
    */
   private int column = 0;
-
-  /**
-   * Flags for controlling parser state.
-   */
-  private int flags = 0;
 
   /**
    * Start of a pattern match.
@@ -357,14 +344,13 @@ public class LessParser {
   private int[] begin() {
     if (m_ptr == marks.length) {
       int[][] old = marks;
-      marks = new int[m_ptr * 2][4];
+      marks = new int[m_ptr * 2][MARK_DIM];
       System.arraycopy(old, 0, marks, 0, m_ptr);
     }
     int[] m = marks[m_ptr];
     m[0] = pos;
     m[1] = line;
     m[2] = column;
-    m[3] = flags; // TODO: try to remove the flags, we currently only have one
     m_ptr++;
     return m;
   }
@@ -385,7 +371,6 @@ public class LessParser {
     pos = m[0];
     line = m[1];
     column = m[2];
-    flags = m[3]; // TODO: try to remove the flags, we currently only have one
   }
 
   /**
@@ -574,8 +559,9 @@ public class LessParser {
         break;
 
       case STYLESHEET:
-        Stylesheet sheet = builder.buildStylesheet(new Block());
-        r = _parse(sheet) ? sheet : null;
+        // _parse cannot return false here since we're passing in a valid block node
+        r = builder.buildStylesheet(new Block());
+        _parse((BlockNode) r);
         break;
 
       case VARIABLE:
@@ -645,8 +631,6 @@ public class LessParser {
 
           // Pop the block off the stack
           pop();
-
-          flags |= FLAG_OPENSPACE;
 
           // Move forward
           pos++;
@@ -958,7 +942,6 @@ public class LessParser {
       return false;
     }
     next();
-    flags |= FLAG_OPENSPACE;
     return true;
   }
 
@@ -1082,8 +1065,6 @@ public class LessParser {
 
     // TODO: look into whether some comments can be lifted. A rule-level comment
     // might be lifted to the block above the rule. For now we ignore them.
-
-    flags |= FLAG_OPENSPACE;
 
     if (!keep) {
       return DUMMY_COMMENT;
@@ -1237,9 +1218,6 @@ public class LessParser {
 
     // High confidence we have a valid definition, so copy the name
     String name = raw.substring(ms, me);
-
-    // Ensures a selector immediately after ';' will create a descendant delimiter
-    flags |= FLAG_OPENSPACE;
 
     Definition result = setpos(mark, builder.buildDefinition(name, value));
     result.fileName(fileName);
@@ -1574,8 +1552,6 @@ public class LessParser {
    * Matches an element combinator, handling cases of defaulting for DESC combinators.
    */
   private Combinator element_combinator() {
-    boolean block = (flags & FLAG_OPENSPACE) != 0;
-
     char prev = peekprev();
 
     // Skip whitespace and count chars
@@ -1588,7 +1564,7 @@ public class LessParser {
       next();
       return Combinator.fromChar(ch);
 
-    } else if (block || skipped > 0 || CharClass.CLASSIFIER.whitespace(prev) || prev == Chars.EOF || prev == ',') {
+    } else if (skipped > 0 || CharClass.CLASSIFIER.whitespace(prev) || prev == Chars.EOF || prev == ',') {
       return Combinator.DESC;
     }
     return null;
@@ -2725,8 +2701,6 @@ public class LessParser {
         commit();
       }
 
-      flags |= FLAG_OPENSPACE;
-
       Rule rule = setpos(mark, builder.buildRule(new Property(property), value, important));
       rule.fileName(fileName);
       commit();
@@ -3048,7 +3022,6 @@ loop:
           break loop;
       }
     }
-    flags &= ~FLAG_OPENSPACE;
     if (pos > furthest) {
       furthest = pos;
     }
@@ -3151,7 +3124,6 @@ loop:
           break loop;
       }
     }
-    flags &= ~FLAG_OPENSPACE;
     if (pos > furthest) {
       furthest = pos;
     }
@@ -3262,7 +3234,6 @@ loop:
       }
       pos++;
     }
-    flags &= ~FLAG_OPENSPACE;
     if (pos > furthest) {
       furthest = pos;
     }
