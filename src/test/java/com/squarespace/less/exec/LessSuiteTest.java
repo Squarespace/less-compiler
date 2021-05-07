@@ -28,6 +28,7 @@ import com.squarespace.less.ExecuteErrorType;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessErrorType;
 import com.squarespace.less.LessException;
+import com.squarespace.less.LessMessages;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.SyntaxErrorType;
 import com.squarespace.less.core.ErrorUtils;
@@ -40,6 +41,7 @@ import com.squarespace.less.core.LessUtils;
 public class LessSuiteTest extends LessSuiteBase {
 
   private static final boolean VERBOSE = true;
+  private static final LessMessages MESSAGES = new LessMessages();
 
   @Test
   public void testSuite() throws IOException {
@@ -49,6 +51,45 @@ public class LessSuiteTest extends LessSuiteBase {
   @Test
   public void testTracing() throws IOException {
     _testSuite("trace", ".css", true);
+  }
+
+  /**
+   * Test bugs from the legacy parser that we need to keep working for now.
+   * In safe mode they work, but otherwise they raise a parsing error.
+   */
+  @Test
+  public void testBugs() throws IOException {
+    Path rootPath = testSuiteRoot();
+    Path lessRoot = rootPath.resolve("bugs");
+    int failures = 0;
+    for (Path lessPath : LessUtils.getMatchingFiles(lessRoot, GLOB_LESS)) {
+      String fileName = "bugs/" + lessPath.getFileName();
+
+
+      if (VERBOSE) {
+        System.err.println("Processing: " + fileName);
+      }
+
+      // Read and compile the .less source
+      String source = LessUtils.readFile(lessPath);
+      try {
+
+        // We just care that the file parses successfully.
+        parse(source, lessRoot, true);
+
+      } catch (LessException | RuntimeException e) {
+        logFailure("Test Suite", ++failures, "Error compiling", fileName);
+        if (e instanceof LessException) {
+          System.err.println(MESSAGES.formatError((LessException) e));
+        }
+        e.printStackTrace();
+        continue;
+      }
+    }
+
+    if (failures > 0) {
+      Assert.fail(failures + " tests failed.");
+    }
   }
 
   private void _testSuite(String subdir, String ext, boolean tracing) throws IOException {
@@ -71,6 +112,9 @@ public class LessSuiteTest extends LessSuiteBase {
         lessCompiled = compile(source, lessRoot, tracing, lessRoot, lessPath.getFileName());
       } catch (LessException | RuntimeException e) {
         logFailure("Test Suite", ++failures, "Error compiling", fileName);
+        if (e instanceof LessException) {
+          System.err.println(MESSAGES.formatError((LessException) e));
+        }
         e.printStackTrace();
         continue;
       }
@@ -112,6 +156,9 @@ public class LessSuiteTest extends LessSuiteBase {
         lessCanonical = canonicalize(source, lessRoot, 2);
       } catch (LessException | RuntimeException e) {
         logFailure("Test Suite", ++failures, "Error compiling", fileName);
+        if (e instanceof LessException) {
+          System.err.println(MESSAGES.formatError((LessException) e));
+        }
         e.printStackTrace();
         continue;
       }
@@ -159,11 +206,11 @@ public class LessSuiteTest extends LessSuiteBase {
           }
           if (!errorCase.errorType.equals(e.primaryError().type())) {
             logFailure("Error Suite", ++failures, "Expected ", errorCase.errorType, " found ", e.primaryError().type(),
-                " processing error test case '" + errorCase.failMessage + "'");
+                " processing error test case '" + errorCase.failMessage + "' in " + lessPath.getFileName() + "\n" + errorCase.source);
           }
         } catch (RuntimeException e) {
           logFailure("Error Suite", ++failures, "Unexpected runtime exception thrown processing error test case '"
-              + errorCase.failMessage + "'");
+              + errorCase.failMessage + "' in " + lessPath.getFileName() + "\n" + errorCase.source);
           e.printStackTrace();
         }
       }

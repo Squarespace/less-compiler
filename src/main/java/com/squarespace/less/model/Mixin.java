@@ -89,7 +89,7 @@ public class Mixin extends BlockNode {
    */
   public Mixin copy() {
     Mixin result = new Mixin(name, params, guard, block.copy());
-    result.copyBase(this);
+    result.copyStructure(this);
     result.closure = closure;
     if (originalBlockNode != null) {
       result.originalBlockNode = originalBlockNode;
@@ -229,8 +229,13 @@ public class Mixin extends BlockNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

@@ -217,7 +217,7 @@ public class LessMaker {
     return new TextElement(combinator, name);
   }
 
-  public ValueElement element(Combinator combinator, Variable ref) {
+  public ValueElement element(Combinator combinator, Node ref) {
     return new ValueElement(combinator, ref);
   }
 
@@ -275,6 +275,10 @@ public class LessMaker {
 
   public Media media(Features features) {
     return new Media(features);
+  }
+
+  public Media media(Features features, Block block) {
+    return new Media(features, block);
   }
 
   public Mixin mixin(String name) {
@@ -395,6 +399,14 @@ public class LessMaker {
 
   public Stylesheet stylesheet() {
     return new Stylesheet();
+  }
+
+  public Stylesheet stylesheet(Node ...nodes) {
+    Stylesheet stylesheet = new Stylesheet();
+    for (Node node : nodes) {
+      stylesheet.add(node);
+    }
+    return stylesheet;
   }
 
   public Shorthand shorthand(Node left, Node right) {

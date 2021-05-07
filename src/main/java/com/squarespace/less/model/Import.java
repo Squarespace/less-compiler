@@ -29,7 +29,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Imports an external stylesheet.
  */
-public class Import extends BaseNode {
+public class Import extends StructuralNode {
 
   /**
    * Path of the stylesheet to import.
@@ -185,7 +185,7 @@ public class Import extends BaseNode {
     Import result = new Import(path.eval(env), features == null ? null : (Features)features.eval(env), once);
     result.rootPath(rootPath);
     result.fileName(fileName);
-    result.copyBase(this);
+    result.copyStructure(this);
     return result;
   }
 
@@ -241,8 +241,13 @@ public class Import extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

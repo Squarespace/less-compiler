@@ -61,9 +61,4 @@ public class KeywordColor extends RGBColor {
     return false;
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
 }

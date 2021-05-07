@@ -22,7 +22,7 @@ import static com.squarespace.less.model.NodeType.RATIO;
 import com.squarespace.less.core.Buffer;
 
 
-public class Ratio extends BaseNode {
+public class Ratio implements Node {
 
   protected final String value;
 
@@ -40,8 +40,13 @@ public class Ratio extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
   @Override

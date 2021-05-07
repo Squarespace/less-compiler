@@ -21,14 +21,14 @@ import org.testng.annotations.Test;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class StringFunctionsTest extends LessTestBase {
 
   @Test
   public void testE() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalEquals("e('foo')", anon("foo"));
     h.evalEquals("e('-moz-foo-bar')", anon("-moz-foo-bar"));
@@ -36,14 +36,14 @@ public class StringFunctionsTest extends LessTestBase {
 
   @Test
   public void testEscape() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalEquals("escape(' (hi) ')", anon("%20%28hi%29%20"));
   }
 
   @Test
   public void testFormat() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     // Format
     h.evalEquals("%('%s, %s', 12px, 'foo')", quoted('\'', false, anon("12px, foo")));

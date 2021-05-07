@@ -1,6 +1,7 @@
 package com.squarespace.less.match;
 
 import com.squarespace.less.core.CharClass;
+import com.squarespace.less.core.Chars;
 
 /**
  * Simple pattern recognizer state machines.
@@ -113,7 +114,7 @@ public class Recognizers {
   }
 
   public static Recognizer directive() {
-    return sequence(characters('@'), oneOrMore(charClass(CharClass.DIRECTIVE, CLASSIFIER)));
+    return new Directive();
   }
 
   public static Recognizer element0() {
@@ -141,6 +142,10 @@ public class Recognizers {
     return sequence(characters('.', '#'), lookAhead(characters('@')));
   }
 
+  public static Recognizer escape() {
+    return ESC;
+  }
+
   public static Recognizer hexdigit() {
     return charClass(CharClass.HEXDIGIT, CLASSIFIER);
   }
@@ -150,8 +155,7 @@ public class Recognizers {
   }
 
   public static Recognizer identifier() {
-    return sequence(charClass(CharClass.IDENTIFIER_START, CLASSIFIER),
-        zeroOrMore(charClass(CharClass.IDENTIFIER, CLASSIFIER)));
+    return new Ident();
   }
 
   public static Recognizer important() {
@@ -159,8 +163,7 @@ public class Recognizers {
   }
 
   public static Recognizer keyword() {
-    return sequence(charClass(CharClass.KEYWORD_START, CLASSIFIER),
-        zeroOrMore(charClass(CharClass.KEYWORD, CLASSIFIER)));
+    return new Keyword();
   }
 
   public static Recognizer literal(String str) {
@@ -434,7 +437,8 @@ public class Recognizers {
         if (actual == first) {
           return invert ? FAIL : pos + 1;
         }
-        for (char expected : chars) {
+        for (int i = 0; i < chars.length; i++) {
+          char expected = chars[i];
           if (actual == expected) {
             return invert ? FAIL : pos + 1;
           }
@@ -526,9 +530,9 @@ public class Recognizers {
     @Override
     public int match(CharSequence seq, int pos, int length) {
       int save = FAIL;
-      for (Recognizer pattern : patterns) {
+      for (int i = 0; i < patterns.length; i++) {
         // Try choices until we see one that advances past current position.
-        int res = pattern.match(seq, pos, length);
+        int res = patterns[i].match(seq, pos, length);
         if (res > save) {
           save = Math.max(save, res);
         }
@@ -607,6 +611,31 @@ public class Recognizers {
     }
   }
 
+  static class Directive implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      int valid = pos + 2;
+      if (pos < len) {
+        char ch = seq.charAt(pos);
+        if (ch != Chars.AT_SIGN) {
+          return FAIL;
+        }
+        pos++;
+        while (pos < len) {
+          ch = seq.charAt(pos);
+          if (!CLASSIFIER.isMember(ch, CharClass.DIRECTIVE)) {
+            break;
+          }
+          pos++;
+        }
+        return pos >= valid ? pos : FAIL;
+      }
+      return FAIL;
+
+    }
+  }
+
   /**
    * Recognizers the element1 pattern of LESS.
    */
@@ -660,6 +689,29 @@ public class Recognizers {
 
   }
 
+  static class Ident implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      if (pos < len) {
+        char ch = seq.charAt(pos);
+        if (!CLASSIFIER.isMember(ch, CharClass.IDENTIFIER_START)) {
+          return FAIL;
+        }
+        pos++;
+        while (pos < len) {
+          ch = seq.charAt(pos);
+          if (!CLASSIFIER.isMember(ch, CharClass.IDENTIFIER)) {
+            break;
+          }
+          pos++;
+        }
+        return pos;
+      }
+      return FAIL;
+    }
+  }
+
   static class Important implements Recognizer {
 
     private static final Recognizer IMPORTANT = literal("important");
@@ -680,6 +732,29 @@ public class Recognizers {
       return FAIL;
     }
 
+  }
+
+  static class Keyword implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      if (pos < len) {
+        char ch = seq.charAt(pos);
+        if (!CLASSIFIER.isMember(ch, CharClass.KEYWORD_START)) {
+          return FAIL;
+        }
+        pos++;
+        while (pos < len) {
+          ch = seq.charAt(pos);
+          if (!CLASSIFIER.isMember(ch, CharClass.KEYWORD)) {
+            break;
+          }
+          pos++;
+        }
+        return pos;
+      }
+      return FAIL;
+    }
   }
 
   /**
@@ -839,8 +914,8 @@ public class Recognizers {
     @Override
     public int match(CharSequence seq, int pos, int length) {
       int result = 0;
-      for (Recognizer pattern : patterns) {
-        pos = pattern.match(seq, pos, length);
+      for (int i = 0; i < patterns.length; i++) {
+        pos = patterns[i].match(seq, pos, length);
         if (pos == FAIL) {
           return FAIL;
         }

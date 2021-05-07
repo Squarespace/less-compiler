@@ -1,5 +1,5 @@
 :PROPERTIES
-parser=CONDITION
+parser=CONDITIONS
 
 :LESS
 (@foo > 10px) and (@bar = white)

@@ -135,11 +135,16 @@ public class NodeRenderer {
         renderImpl(buf, (Rule)node);
         break;
 
-      case SELECTORS:
-        for (Selector selector : ((Selectors)node).selectors()) {
+      // TODO: this case should be impossible to reach - confirm and remove
+      case SELECTORS: {
+        List<Selector> _selectors = ((Selectors)node).selectors();
+        int size = 0;
+        for (int i = 0; i < size; i++) {
+          Selector selector = _selectors.get(i);
           renderImpl(buf, selector);
         }
         break;
+      }
 
       case SELECTOR:
         renderImpl(buf, (Selector)node);

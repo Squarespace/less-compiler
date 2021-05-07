@@ -29,7 +29,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * A named CSS directive.
  */
-public class Directive extends BaseNode {
+public class Directive extends StructuralNode {
 
   /**
    * Name of the directive.
@@ -144,8 +144,13 @@ public class Directive extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

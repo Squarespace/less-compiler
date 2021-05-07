@@ -31,9 +31,8 @@ import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.parse.LessStream;
-import com.squarespace.less.parse.Parselet;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessParser;
+import com.squarespace.less.parse.LessSyntax;
 import com.squarespace.less.plugins.DummyFunctions;
 import com.squarespace.less.plugins.ext.ExtStringFunctions;
 
@@ -54,22 +53,22 @@ public class LessHarness {
 
   private final List<GenericBlock> definitions = new ArrayList<>();
 
-  private final Parselet[] parselet;
+  private final LessSyntax syntax;
 
   public LessHarness() {
-    this.parselet = Parselets.STYLESHEET;
+    this.syntax = LessSyntax.STYLESHEET;
   }
 
   public LessHarness(GenericBlock defs) {
-    this(Parselets.STYLESHEET, defs);
+    this(LessSyntax.STYLESHEET, defs);
   }
 
-  public LessHarness(Parselet[] parselet) {
-    this.parselet = parselet;
+  public LessHarness(LessSyntax syntax) {
+    this.syntax = syntax;
   }
 
-  public LessHarness(Parselet[] parselet, GenericBlock ... defs) {
-    this.parselet = parselet;
+  public LessHarness(LessSyntax syntax, GenericBlock ...defs) {
+    this.syntax = syntax;
     for (GenericBlock def : defs) {
       this.definitions.add(def);
     }
@@ -103,11 +102,11 @@ public class LessHarness {
   }
 
   public Node parse(String raw) throws LessException {
-    return parse(raw, parselet);
+    return syntax != null ? parse(raw, syntax) : parse(raw, syntax);
   }
 
   public void parseEquals(String raw, Node expected) throws LessException {
-    Node res = parse(raw, parselet);
+    Node res = syntax != null ? parse(raw, syntax) : parse(raw, syntax);
     assertEquals(res, expected, raw);
   }
 
@@ -122,12 +121,12 @@ public class LessHarness {
 
   public void renderEquals(String raw, String expected) throws LessException {
     ExecEnv env = define(definitions);
-    Node res = evaluate(raw, parselet, env);
+    Node res = evaluate(raw, syntax, env);
     assertEquals(env.context().render(res), expected, raw);
   }
 
   public void evalEquals(String raw, Node expected) throws LessException {
-    Node res = evaluate(raw, parselet, define(definitions));
+    Node res = evaluate(raw, syntax, define(definitions));
     assertEquals(res, expected, raw);
   }
 
@@ -138,7 +137,7 @@ public class LessHarness {
 
   public void evalFails(String raw, LessErrorType expected) throws LessException {
     try {
-      evaluate(raw, parselet, define(definitions));
+      evaluate(raw, syntax, define(definitions));
       fail("Expected LessException of type " + expected);
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), expected);
@@ -155,7 +154,7 @@ public class LessHarness {
   }
 
   public Node evaluate(String raw) throws LessException {
-    return evaluate(parse(raw, parselet), define(definitions));
+    return evaluate(parse(raw, syntax), define(definitions));
   }
 
   public Node evaluate(Node node) throws LessException {
@@ -166,18 +165,18 @@ public class LessHarness {
     return node.eval(env);
   }
 
-  public Node evaluate(String raw, Parselet[] parselet) throws LessException {
-    return evaluate(parse(raw, parselet), define(definitions));
+  public Node evaluate(String raw, LessSyntax syntax) throws LessException {
+    return evaluate(parse(raw, syntax), define(definitions));
   }
 
-  public Node evaluate(String raw, Parselet[] parselet, ExecEnv env) throws LessException {
-    return evaluate(parse(raw, parselet), env);
+  public Node evaluate(String raw, LessSyntax syntax, ExecEnv env) throws LessException {
+    return evaluate(parse(raw, syntax), env);
   }
 
-  private Node parse(String raw, Parselet[] parselet) throws LessException {
-    LessStream stm = new LessStream(context(), raw);
-    Node res = stm.parse(parselet);
-    stm.checkComplete();
+  private Node parse(String raw, LessSyntax syntax) throws LessException {
+    LessParser parser = new LessParser(context(), raw);
+    Node res = parser.parse(syntax);
+    parser.complete();
     return res;
   }
 

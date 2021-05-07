@@ -113,9 +113,5 @@ public class ValueElement extends Element {
     return false;
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
 
 }

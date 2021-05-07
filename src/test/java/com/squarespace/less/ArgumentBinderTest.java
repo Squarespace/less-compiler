@@ -40,8 +40,7 @@ import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.Parselet;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class ArgumentBinderTest extends LessTestBase {
@@ -157,14 +156,19 @@ public class ArgumentBinderTest extends LessTestBase {
 
   }
 
-  private Node parse(String raw, Parselet[] parselet) throws LessException {
-    LessHarness h = new LessHarness(parselet);
+  private Node parse(String raw, LessSyntax syntax) throws LessException {
+    LessHarness h = new LessHarness(syntax);
     return h.parse(raw);
   }
 
+//  private Node parse(String raw, Parselet[] parselets) throws LessException {
+//    LessHarness h = new LessHarness(parselets);
+//    return h.parse(raw);
+//  }
+
   private void assertBinds(String rawParams, String rawArgs, GenericBlock defs) throws LessException {
-    MixinParams params = (MixinParams) parse(rawParams, Parselets.MIXIN_PARAMS);
-    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, Parselets.MIXIN_CALL_ARGS);
+    MixinParams params = (MixinParams) parse(rawParams, LessSyntax.MIXIN_PARAMS);
+    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, LessSyntax.MIXIN_CALL_ARGS);
     Map<String, Node> expected = new HashMap<>();
     FlexList<Node> rules = defs.block().rules();
     int size = rules.size();
@@ -184,8 +188,8 @@ public class ArgumentBinderTest extends LessTestBase {
   }
 
   private void assertBindFails(String rawParams, String rawArgs, LessErrorType errorType) throws LessException {
-    MixinParams params = (MixinParams) parse(rawParams, Parselets.MIXIN_PARAMS);
-    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, Parselets.MIXIN_CALL_ARGS);
+    MixinParams params = (MixinParams) parse(rawParams, LessSyntax.MIXIN_PARAMS);
+    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, LessSyntax.MIXIN_CALL_ARGS);
     try {
       bind(params, args);
       fail("Expected LessException of type " + errorType);
@@ -203,14 +207,14 @@ public class ArgumentBinderTest extends LessTestBase {
   }
 
   private void assertMatches(String rawParams, String rawArgs) throws LessException {
-    MixinParams params = (MixinParams) parse(rawParams, Parselets.MIXIN_PARAMS);
-    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, Parselets.MIXIN_CALL_ARGS);
+    MixinParams params = (MixinParams) parse(rawParams, LessSyntax.MIXIN_PARAMS);
+    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, LessSyntax.MIXIN_CALL_ARGS);
     assertTrue(patternMatch(params, args));
   }
 
   private void assertMatchFails(String rawParams, String rawArgs) throws LessException {
-    MixinParams params = (MixinParams) parse(rawParams, Parselets.MIXIN_PARAMS);
-    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, Parselets.MIXIN_CALL_ARGS);
+    MixinParams params = (MixinParams) parse(rawParams, LessSyntax.MIXIN_PARAMS);
+    MixinCallArgs args = (MixinCallArgs) parse(rawArgs, LessSyntax.MIXIN_CALL_ARGS);
     assertFalse(patternMatch(params, args));
   }
 

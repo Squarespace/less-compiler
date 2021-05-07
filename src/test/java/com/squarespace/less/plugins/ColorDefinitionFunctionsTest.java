@@ -24,7 +24,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class ColorDefinitionFunctionsTest extends LessTestBase {
@@ -68,7 +68,7 @@ public class ColorDefinitionFunctionsTest extends LessTestBase {
         def("@three", dim(3))
     );
 
-    return new LessHarness(Parselets.FUNCTION_CALL, defs);
+    return new LessHarness(LessSyntax.FUNCTION_CALL, defs);
   }
 
 }

@@ -30,7 +30,7 @@ import com.squarespace.less.exec.SelectorUtils;
 /**
  * Represents one selector in a selector set.
  */
-public class Selector extends BaseNode {
+public class Selector implements Node {
 
   private static final byte FLAG_EVALUATE = 0x01;
 
@@ -133,7 +133,9 @@ public class Selector extends BaseNode {
       return this;
     }
     Selector result = new Selector();
-    for (Element elem : elements) {
+    int size = elements.size();
+    for (int i = 0; i < size; i++) {
+      Element elem = elements.get(i);
       result.add((Element)elem.eval(env));
     }
 
@@ -177,8 +179,13 @@ public class Selector extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
   /**

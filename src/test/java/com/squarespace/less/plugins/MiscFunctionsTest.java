@@ -30,7 +30,7 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class MiscFunctionsTest extends LessTestBase {
@@ -62,7 +62,7 @@ public class MiscFunctionsTest extends LessTestBase {
 
   @Test
   public void testGetUnit() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalEquals("get-unit(1px)", kwd("px"));
     h.evalEquals("get-unit(1%)", quoted('"', false, "%"));
@@ -76,7 +76,7 @@ public class MiscFunctionsTest extends LessTestBase {
 
   @Test
   public void testUnit() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalEquals("unit(1, px)", dim(1, Unit.PX));
     h.evalEquals("unit(1, 'px')", dim(1, Unit.PX));
@@ -93,7 +93,7 @@ public class MiscFunctionsTest extends LessTestBase {
         def("@one", dim(1)),
         def("@three", dim(3))
     );
-    return new LessHarness(Parselets.FUNCTION_CALL, defs);
+    return new LessHarness(LessSyntax.FUNCTION_CALL, defs);
   }
 
 }

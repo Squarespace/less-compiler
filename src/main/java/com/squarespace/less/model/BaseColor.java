@@ -29,7 +29,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Base class for all color nodes.
  */
-public abstract class BaseColor extends BaseNode {
+public abstract class BaseColor implements Node {
 
   /**
    * Returns the colorspace for the node.
@@ -154,6 +154,16 @@ public abstract class BaseColor extends BaseNode {
       default:
         throw new LessException(invalidOperation(op, NodeType.COLOR));
     }
+  }
+
+  @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
+  public int hashCode() {
+    return ModelUtils.notHashable();
   }
 
 }

@@ -124,6 +124,11 @@ public class AstEmitterTest {
   }
 
   @Test
+  public void testDefinition() throws Exception {
+    runner.run("ast-definition.txt");
+  }
+
+  @Test
   public void testDimension() throws Exception {
     runner.run("ast-dimension.txt");
   }

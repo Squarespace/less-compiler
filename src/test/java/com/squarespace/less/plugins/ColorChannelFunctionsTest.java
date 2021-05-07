@@ -22,7 +22,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class ColorChannelFunctionsTest extends LessTestBase {
@@ -69,7 +69,7 @@ public class ColorChannelFunctionsTest extends LessTestBase {
         def("@one", dim(1)),
         def("@three", dim(3))
     );
-    return new LessHarness(Parselets.FUNCTION_CALL, defs);
+    return new LessHarness(LessSyntax.FUNCTION_CALL, defs);
   }
 
 }

@@ -25,7 +25,7 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Media;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class MediaTest extends LessTestBase {
@@ -45,7 +45,7 @@ public class MediaTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.DIRECTIVE);
+    LessHarness h = new LessHarness(LessSyntax.DIRECTIVE);
 
     Node exp = media(features(expn(kwd("screen"), kwd("and"), kwd("mobile"))));
     h.parseEquals("@media screen and mobile { }", exp);

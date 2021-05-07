@@ -30,7 +30,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Arguments to a mixin call.
  */
-public class MixinCallArgs extends BaseNode {
+public class MixinCallArgs implements Node {
 
   /**
    * The argument delimiter.
@@ -112,7 +112,9 @@ public class MixinCallArgs extends BaseNode {
       return this;
     }
     MixinCallArgs res = new MixinCallArgs(delimiter);
-    for (Argument arg : args) {
+    int size = args.size();
+    for (int i = 0; i < size; i++) {
+      Argument arg = args.get(i);
       res.add((Argument)arg.eval(env));
     }
     return res;
@@ -167,8 +169,13 @@ public class MixinCallArgs extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

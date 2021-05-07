@@ -21,14 +21,14 @@ import org.testng.annotations.Test;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class ColorBlendingFunctionsTest extends LessTestBase {
 
   @Test
   public void testAverage() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FUNCTION_CALL);
+    LessHarness h = new LessHarness(LessSyntax.FUNCTION_CALL);
 
     h.evalEquals("average(#888, #444)", color("#666"));
     h.evalEquals("difference(#888, #444)", color("#444"));

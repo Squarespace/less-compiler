@@ -27,7 +27,7 @@ import com.squarespace.less.core.LessInternalException;
 /**
  * Anonymous nodes are used any time an opaque string.
  */
-public class Anonymous extends BaseNode {
+public class Anonymous implements Node {
 
   /**
    * Default value for anonymous nodes are the empty string.
@@ -85,7 +85,6 @@ public class Anonymous extends BaseNode {
   @Override
   public void modelRepr(Buffer buf) {
     typeRepr(buf);
-    posRepr(buf);
     buf.append(" \"");
     if (value != null) {
       buf.append(StringEscapeUtils.escapeJava(value));
@@ -99,8 +98,13 @@ public class Anonymous extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class DimensionTest extends LessTestBase {
@@ -52,7 +52,7 @@ public class DimensionTest extends LessTestBase {
 
   @Test
   public void testDimension() throws LessException {
-    LessHarness h = new LessHarness(Parselets.DIMENSION);
+    LessHarness h = new LessHarness(LessSyntax.DIMENSION);
 
     h.parseEquals("2.3PX", dim(2.3, Unit.PX));
 

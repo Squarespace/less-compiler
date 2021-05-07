@@ -28,7 +28,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Special property for image transparency in IE8 and earlier.
  */
-public class Alpha extends BaseNode {
+public class Alpha implements Node {
 
   /**
    * Opacity value.
@@ -113,8 +113,13 @@ public class Alpha extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

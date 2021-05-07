@@ -33,7 +33,7 @@ import com.squarespace.less.exec.Function;
  * Calls a named {@link Function}, if one has been defined, or just
  * emits something that looks like a function call.
  */
-public class FunctionCall extends BaseNode {
+public class FunctionCall implements Node {
 
   /**
    * Name of the function.
@@ -82,8 +82,9 @@ public class FunctionCall extends BaseNode {
     this.args = args;
     this.noImplementation = noImplementation;
     if (args != null) {
-      for (Node arg : args) {
-        evaluate |= arg.needsEval();
+      int size = args.size();
+      for (int i = 0; i < size; i++) {
+        evaluate |= args.get(i).needsEval();
       }
     }
   }
@@ -199,7 +200,9 @@ public class FunctionCall extends BaseNode {
       return tempArgs;
     }
     List<Node> res = new ArrayList<>(tempArgs.size());
-    for (Node arg : tempArgs) {
+    int size = tempArgs.size();
+    for (int i = 0; i < size; i++) {
+      Node arg = tempArgs.get(i);
       if (arg.needsEval()) {
         arg = arg.eval(env);
       }
@@ -218,8 +221,13 @@ public class FunctionCall extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

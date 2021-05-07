@@ -29,7 +29,7 @@ import com.squarespace.less.exec.SelectorUtils;
 /**
  * A specific invocation of a mixin.
  */
-public class MixinCall extends BaseNode {
+public class MixinCall extends StructuralNode {
 
   /**
    * The mixin call's selector.
@@ -72,7 +72,7 @@ public class MixinCall extends BaseNode {
    */
   public MixinCall copy() {
     MixinCall result = new MixinCall(selector, args, important);
-    result.copyBase(this);
+    result.copyStructure(this);
     result.fileName = fileName;
     return result;
   }
@@ -182,8 +182,13 @@ public class MixinCall extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

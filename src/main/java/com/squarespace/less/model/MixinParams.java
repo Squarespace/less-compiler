@@ -29,7 +29,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Represents all parameters for a {@link Mixin} definition.
  */
-public class MixinParams extends BaseNode {
+public class MixinParams implements Node {
 
   /**
    * List of parameters in this group.
@@ -115,7 +115,10 @@ public class MixinParams extends BaseNode {
     }
 
     MixinParams result = new MixinParams();
-    for (Parameter param : params()) {
+    List<Parameter> _params = params();
+    int size = _params.size();
+    for (int i = 0; i < size; i++) {
+      Parameter param = _params.get(i);
       result.add((Parameter)param.eval(env));
     }
     return result;
@@ -160,8 +163,13 @@ public class MixinParams extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

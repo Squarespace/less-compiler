@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class CommentTest extends LessTestBase {
@@ -43,9 +43,10 @@ public class CommentTest extends LessTestBase {
 
   @Test
   public void testComment() throws LessException {
-    LessHarness h = new LessHarness(Parselets.COMMENT);
+    LessHarness h = new LessHarness(LessSyntax.COMMENT);
     h.parseEquals("/*** a*b/c ***/", comment("** a*b/c **", true));
     h.parseEquals("/* foo */", comment(" foo ", true));
+    h.parseEquals("/* \n fooo \n*/", comment(" \n fooo \n", true));
     h.parseEquals("// foo", comment(" foo", false));
     h.parseEquals("// a //", comment(" a //", false));
     h.parseFails("/x", SyntaxErrorType.INCOMPLETE_PARSE);
@@ -53,8 +54,18 @@ public class CommentTest extends LessTestBase {
 
   @Test
   public void testBangComment() throws LessException {
-    LessHarness h = new LessHarness(Parselets.STYLESHEET);
-    String actual = h.execute("/* foo *//*! bar *//* foo */", new LessOptions(true));
+    LessHarness h = new LessHarness(LessSyntax.STYLESHEET);
+    LessOptions opts = new LessOptions(true);
+
+    String actual;
+    String source = "/* foo *//*! bar *//* foo */";
+
+    actual = h.execute(source, opts);
+    assertEquals(actual, "/*! bar */\n");
+
+    // When comments are being ignored, ensure hang comments are still captured
+    opts.ignoreComments(true);
+    actual = h.execute(source, opts);
     assertEquals(actual, "/*! bar */\n");
   }
 }

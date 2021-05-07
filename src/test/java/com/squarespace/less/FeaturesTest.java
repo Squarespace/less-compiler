@@ -24,14 +24,14 @@ import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Paren;
 import com.squarespace.less.model.Unit;
 import com.squarespace.less.model.Variable;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class FeaturesTest extends LessTestBase {
 
   @Test
   public void testFeatures() throws LessException {
-    LessHarness h = new LessHarness(Parselets.FEATURES);
+    LessHarness h = new LessHarness(LessSyntax.FEATURES);
 
     Keyword and = kwd("and");
     Keyword ka = kwd("a");

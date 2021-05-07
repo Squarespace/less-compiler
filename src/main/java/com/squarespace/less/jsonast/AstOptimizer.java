@@ -47,7 +47,9 @@ public class AstOptimizer extends AstBuffer {
     List<String> table = new ArrayList<>();
     Map<String, Integer> index = new HashMap<>();
 
-    for (Entry entry : entries) {
+    int size = entries.size();
+    for (int i = 0; i < size; i++) {
+      Entry entry = entries.get(i);
       int offset = table.size();
       index.put(entry.original, offset);
       table.add(entry.escaped);
@@ -59,7 +61,9 @@ public class AstOptimizer extends AstBuffer {
     // Sort by frequency descending
     entries.sort((a, b) -> Integer.compare(b.freq, a.freq));
     StringBuilder buf = new StringBuilder();
-    for (Entry entry : entries) {
+    int size = entries.size();
+    for (int i = 0; i < size; i++) {
+      Entry entry = entries.get(i);
       if (entry.freq > 1) {
         String s = entry.escaped;
         String row = String.format("%10d  %s\n", entry.freq,
@@ -73,6 +77,7 @@ public class AstOptimizer extends AstBuffer {
   /**
    * Add a string to the entry map, escaping it, or updating its frequency.
    */
+  @Override
   public void string(String original) {
     Integer id = entryMap.get(original);
     if (id == null) {

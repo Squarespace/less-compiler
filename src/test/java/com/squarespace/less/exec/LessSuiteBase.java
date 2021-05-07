@@ -58,12 +58,16 @@ public class LessSuiteBase {
   }
 
   protected Stylesheet parse(String source, Path importRoot) throws LessException {
+    return parse(source, importRoot, false);
+  }
+
+  protected Stylesheet parse(String source, Path importRoot, boolean safeMode) throws LessException {
     LessOptions opts = new LessOptions();
     opts.addImportPath(importRoot.toString());
     LessContext ctx = new LessContext(opts);
     LessCompiler compiler = new LessCompiler();
     ctx.setCompiler(compiler);
-    return compiler.parse(source, ctx);
+    return compiler.parse(source, ctx, safeMode);
   }
 
   protected String compile(String source, Path importRoot, boolean tracing) throws LessException {

@@ -31,7 +31,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * List of Condition that follow a Mixin.
  */
-public class Guard extends BaseNode {
+public class Guard implements Node {
 
   /**
    * List of conditions to be evaluated.
@@ -80,7 +80,10 @@ public class Guard extends BaseNode {
   @Override
   public Node eval(ExecEnv env) throws LessException {
     Node result = FALSE;
-    for (Condition condition : conditions()) {
+    List<Condition> _conditions = this.conditions();
+    int size = _conditions.size();
+    for (int i = 0; i < size; i++) {
+      Condition condition = _conditions.get(i);
       result = condition.eval(env);
       if (result instanceof True) {
         break;
@@ -138,8 +141,13 @@ public class Guard extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

@@ -73,6 +73,10 @@ public class LessOptions {
     return indent;
   }
 
+  public boolean ignoreComments() {
+    return flags.contains(Option.IGNORE_COMMENTS);
+  }
+
   public boolean importOnce() {
     return flags.contains(Option.IMPORT_ONCE);
   }
@@ -117,6 +121,10 @@ public class LessOptions {
     this.indent = size;
   }
 
+  public void ignoreComments(boolean flag) {
+    set(flag, Option.IGNORE_COMMENTS);
+  }
+
   public void importOnce(boolean flag) {
     set(flag, Option.IMPORT_ONCE);
   }
@@ -131,7 +139,9 @@ public class LessOptions {
 
   public void importPaths(List<String> paths) {
     if (paths != null) {
-      for (String path : paths) {
+      int size = paths.size();
+      for (int i = 0; i < size; i++) {
+        String path = paths.get(i);
         this.importPaths.add(Paths.get(path));
       }
     }
@@ -173,6 +183,7 @@ public class LessOptions {
     COMPRESS,
     DEBUG,
     HIDE_WARNINGS,
+    IGNORE_COMMENTS,
     IMPORT_ONCE,
     LINE_NUMBERS,
     STRICT,

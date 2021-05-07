@@ -24,7 +24,7 @@ import com.squarespace.less.core.Buffer;
 /**
  * The property name for a {@link Rule}
  */
-public class Property extends BaseNode {
+public class Property implements Node {
 
   /**
    * Name of the property.
@@ -77,8 +77,13 @@ public class Property extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

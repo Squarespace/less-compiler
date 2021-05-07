@@ -46,6 +46,8 @@ public class UnitConversions {
    */
   private static final double[][] CONVERSIONS;
 
+  private UnitConversions() { }
+
   /**
    * Constructs a 2-way conversion between the {@code from} and {@code to} units
    * with the given factor.
@@ -64,7 +66,8 @@ public class UnitConversions {
     Unit[] values = Unit.values();
     int sz = values.length;
     CONVERSIONS = new double[sz][sz];
-    for (Unit unit : values) {
+    for (int i = 0; i < sz; i++) {
+      Unit unit = values[i];
       create(unit, unit, 1.0);
     }
 

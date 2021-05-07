@@ -294,7 +294,9 @@ public class LessEvaluator {
 
     Block results = new Block();
     int calls = 0;
-    for (MixinMatch match : matches) {
+    int size = matches.size();
+    for (int i = 0; i < size; i++) {
+      MixinMatch match = matches.get(i);
       Node node = match.mixin();
       if (node instanceof Mixin) {
         if (executeMixin(env, results, matcher, match)) {

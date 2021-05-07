@@ -34,7 +34,7 @@ import com.squarespace.less.exec.ExecEnv;
  * double for all LESS math operations.  The operations involved should never
  * require the full scale and precision of a double.
  */
-public class Dimension extends BaseNode {
+public class Dimension implements Node {
 
   /**
    * Numeric value of the dimension.
@@ -91,8 +91,13 @@ public class Dimension extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
   /**
@@ -108,7 +113,7 @@ public class Dimension extends BaseNode {
    */
   @Override
   public void repr(Buffer buf) {
-    formatDouble(buf, value);
+    ModelUtils.formatDouble(buf, value);
     if (unit != null) {
       buf.append(unit.repr());
     }

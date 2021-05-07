@@ -69,7 +69,7 @@ public class Media extends BlockNode {
   public Media copy(ExecEnv env) throws LessException {
     Features temp = features == null ? null : (Features) features.eval(env);
     Media result = new Media(temp, block.copy());
-    result.copyBase(this);
+    result.copyStructure(this);
     result.fileName = fileName;
     return result;
   }
@@ -143,8 +143,13 @@ public class Media extends BlockNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

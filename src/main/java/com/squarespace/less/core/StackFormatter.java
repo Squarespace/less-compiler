@@ -37,6 +37,7 @@ import com.squarespace.less.model.ParseError;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selectors;
+import com.squarespace.less.model.StructuralNode;
 
 
 /**
@@ -144,7 +145,9 @@ public class StackFormatter {
     }
     buf.append('\n');
 
-    for (Entry entry : entries) {
+    size = entries.size();
+    for (int i = 0; i < size; i++) {
+      Entry entry = entries.get(i);
       if (entry.indent) {
         indent(entry.fileName == null ? col1 : col1 - entry.fileName.length());
         if (entry.fileName != null) {
@@ -273,7 +276,7 @@ public class StackFormatter {
 
       default:
         node.repr(buf);
-        return new Entry(null, node.lineOffset() + 1, buf.toString());
+        return new Entry(null, node.isStructural() ? ((StructuralNode)node).lineOffset() + 1 : 0, buf.toString());
     }
   }
 

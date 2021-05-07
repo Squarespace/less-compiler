@@ -19,7 +19,6 @@ package com.squarespace.less;
 import static com.squarespace.less.model.Unit.PX;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
@@ -28,8 +27,7 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.LessStream;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class RuleTest extends LessTestBase {
@@ -53,7 +51,7 @@ public class RuleTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.RULE);
+    LessHarness h = new LessHarness(LessSyntax.RULE);
 
     h.parseEquals("foo  :   #123;", rule(prop("foo"), color("#123")));
     h.parseEquals("foo: 12px", rule(prop("foo"), dim(12, Unit.PX)));
@@ -68,7 +66,7 @@ public class RuleTest extends LessTestBase {
 
     h.parseFails("@foo: foo: foo: 123   ;", SyntaxErrorType.INCOMPLETE_PARSE);
 
-    h = new LessHarness(Parselets.STYLESHEET);
+    h = new LessHarness(LessSyntax.STYLESHEET);
 
     Stylesheet exp = stylesheet();
     exp.add(rule(prop("foo"), anon()));
@@ -78,14 +76,9 @@ public class RuleTest extends LessTestBase {
 
   @Test
   public void testAnonRuleValueParse() throws LessException {
-    LessContext ctx = new LessContext();
-    LessStream stm = new LessStream(ctx, "foo bar;");
-    assertTrue(stm.matchAnonRuleValue());
-    assertEquals(stm.token(), "foo bar");
+    LessHarness h = new LessHarness(LessSyntax.RULE);
 
-    stm = new LessStream(ctx, "foo: foo: foo: 123 ;");
-    assertTrue(stm.matchAnonRuleValue());
-    assertEquals(stm.token(), "foo: foo: foo: 123 "); // token before trimming
-}
+    h.parseEquals("foo: foo: foo: 123;", rule(prop("foo"), anon("foo: foo: 123")));
+  }
 
 }

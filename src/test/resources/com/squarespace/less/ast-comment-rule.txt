@@ -1,5 +1,5 @@
 :PROPERTIES
-parser=PRIMARY_SUB
+parser=COMMENT_RULE
 
 :LESS
 /* comment

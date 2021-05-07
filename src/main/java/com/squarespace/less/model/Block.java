@@ -38,7 +38,7 @@ import com.squarespace.less.core.LessUtils;
  * Each block contains a set of flags which are used to avoid unnecessary
  * scans of its rules during evaluation.
  */
-public class Block extends BaseNode {
+public class Block implements Node {
 
   /**
    * Variable cache needs to be rebuilt.
@@ -335,7 +335,7 @@ public class Block extends BaseNode {
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
   @Override
@@ -357,7 +357,10 @@ public class Block extends BaseNode {
       Ruleset ruleset = (Ruleset)node;
       Selectors selectors = ruleset.selectors();
       if (selectors.hasMixinPath()) {
-        for (Selector selector : selectors.selectors()) {
+        List<Selector> _selectors = selectors.selectors();
+        int size = _selectors.size();
+        for (int i = 0; i < size; i++) {
+          Selector selector = _selectors.get(i);
           List<String> path = selector.mixinPath();
           if (path != null) {
             this.indexMixin(path.get(0), node);

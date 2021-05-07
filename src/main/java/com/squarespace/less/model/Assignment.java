@@ -30,7 +30,7 @@ import com.squarespace.less.exec.ExecEnv;
  *
  *   filter: progid:DXImageTransform.Microsoft.Alpha( opacity=50 )
  */
-public class Assignment extends BaseNode {
+public class Assignment implements Node {
 
   /**
    * Assignment's name part.
@@ -126,8 +126,13 @@ public class Assignment extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

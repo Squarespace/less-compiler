@@ -40,9 +40,4 @@ public class True extends Keyword {
     return obj instanceof True ? true : super.equals(obj);
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
 }

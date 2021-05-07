@@ -27,7 +27,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Represents an argument to a {@link MixinCall}. The argument may have an optional name.
  */
-public class Argument extends BaseNode {
+public class Argument implements Node {
 
   /**
    * Argument's name.
@@ -139,8 +139,13 @@ public class Argument extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

@@ -26,7 +26,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Wraps another node in parenthesis.
  */
-public class Paren extends BaseNode {
+public class Paren implements Node {
 
   /**
    * Value to be wrapped.
@@ -103,8 +103,13 @@ public class Paren extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

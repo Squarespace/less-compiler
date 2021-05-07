@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class RatioTest extends LessTestBase {
@@ -45,7 +45,7 @@ public class RatioTest extends LessTestBase {
 
   @Test
   public void testRatio() throws LessException {
-    LessHarness h = new LessHarness(Parselets.RATIO);
+    LessHarness h = new LessHarness(LessSyntax.RATIO);
 
     h.parseEquals("15/30", ratio("15/30"));
     h.parseFails("foo/bar", INCOMPLETE_PARSE);

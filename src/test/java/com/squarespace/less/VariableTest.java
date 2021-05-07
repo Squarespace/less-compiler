@@ -18,9 +18,6 @@ package com.squarespace.less;
 
 import static com.squarespace.less.ExecuteErrorType.VAR_UNDEFINED;
 import static com.squarespace.less.SyntaxErrorType.INCOMPLETE_PARSE;
-import static com.squarespace.less.parse.Parselets.QUOTED;
-import static com.squarespace.less.parse.Parselets.VARIABLE;
-import static com.squarespace.less.parse.Parselets.VARIABLE_CURLY;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -30,6 +27,7 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Unit;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class VariableTest extends LessTestBase {
@@ -50,14 +48,14 @@ public class VariableTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(VARIABLE);
+    LessHarness h = new LessHarness(LessSyntax.VARIABLE);
     h.parseFails("@", INCOMPLETE_PARSE);
     h.parseFails("@-", INCOMPLETE_PARSE);
     h.parseEquals("@1", var("@1"));
     h.parseEquals("@a", var("@a"));
     h.parseEquals("@@a", var("@@a"));
 
-    h = new LessHarness(VARIABLE_CURLY);
+    h = new LessHarness(LessSyntax.VARIABLE_CURLY);
     h.parseFails("@{", INCOMPLETE_PARSE);
     h.parseFails("@{a", INCOMPLETE_PARSE);
     h.parseFails("@{aa", INCOMPLETE_PARSE);
@@ -91,7 +89,7 @@ public class VariableTest extends LessTestBase {
         def("@one", kwd("real")),
         def("@two", quoted('"', true, "real"))
         );
-    LessHarness h = new LessHarness(VARIABLE, defs);
+    LessHarness h = new LessHarness(LessSyntax.VARIABLE, defs);
     h.renderEquals("@@one", "\"12px\"");
     h.renderEquals("@@two", "\"12px\"");
   }
@@ -105,7 +103,7 @@ public class VariableTest extends LessTestBase {
         def("@color", color("#123")),
         def("@num", dim(1, Unit.PX))
         );
-    LessHarness h = new LessHarness(VARIABLE, defs);
+    LessHarness h = new LessHarness(LessSyntax.VARIABLE, defs);
     h.renderEquals("@var", "#fff");
     h.renderEquals("@color", "#123");
     h.renderEquals("@num", "1px");
@@ -120,7 +118,7 @@ public class VariableTest extends LessTestBase {
         def("@d", quoted('"', false, anon("\"bar\""))),
         def("@e", color("#123456"))
         );
-    LessHarness h = new LessHarness(QUOTED, defs);
+    LessHarness h = new LessHarness(LessSyntax.QUOTED, defs);
     h.renderEquals("'@{a} @{b} @{c} @{d} @{e}", "'1em foo 2px \"bar\" #123456'");
   }
 

@@ -31,7 +31,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * A quoted string which may contain embedded variables.
  */
-public class Quoted extends BaseNode {
+public class Quoted implements Node {
 
   /**
    * Default capacity for the components in the string.
@@ -84,7 +84,9 @@ public class Quoted extends BaseNode {
     this.escaped = escape;
     this.parts = parts;
     if (parts != null) {
-      for (Node part : parts) {
+      int size = parts.size();
+      for (int i = 0; i < size; i++) {
+        Node part = parts.get(i);
         evaluate |= part.needsEval();
       }
     }
@@ -132,7 +134,9 @@ public class Quoted extends BaseNode {
    */
   public Quoted copy() {
     Quoted res = new Quoted(delim);
-    for (Node part : parts) {
+    int size = parts.size();
+    for (int i = 0; i < size; i++) {
+      Node part = parts.get(i);
       res.append(part);
     }
     return res;
@@ -212,8 +216,13 @@ public class Quoted extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

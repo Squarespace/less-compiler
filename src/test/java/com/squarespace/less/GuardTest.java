@@ -29,7 +29,7 @@ import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Condition;
 import com.squarespace.less.model.Dimension;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class GuardTest extends LessTestBase {
@@ -42,7 +42,7 @@ public class GuardTest extends LessTestBase {
     Condition twoEq2 = cond(EQUAL, two, two);
     Condition oneNe2 = cond(NOT_EQUAL, one, two);
 
-    LessHarness h = new LessHarness(Parselets.GUARD);
+    LessHarness h = new LessHarness(LessSyntax.GUARD);
 
     h.parseEquals("when (1)",
         guard(cond(EQUAL, one, Constants.TRUE)));

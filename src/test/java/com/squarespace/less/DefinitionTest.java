@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class DefinitionTest extends LessTestBase {
@@ -43,7 +43,7 @@ public class DefinitionTest extends LessTestBase {
 
   @Test
   public void testDefinition() throws LessException {
-    LessHarness h = new LessHarness(Parselets.RULE);
+    LessHarness h = new LessHarness(LessSyntax.DEFINITION);
 
     h.parseEquals("@foo: 12px", def("@foo", dim(12, Unit.PX)));
     h.parseEquals("@foo: 'bar';", def("@foo", quoted('\'', false, "bar")));

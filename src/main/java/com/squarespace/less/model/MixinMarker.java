@@ -23,7 +23,7 @@ import java.nio.file.Path;
  * A dummy node which is placed into a block to indicate where a {@link MixinCall}
  * generated nodes begin and end.
  */
-public class MixinMarker extends BaseNode {
+public class MixinMarker implements Node {
 
   /**
    * Mixin call whose beginning and end are being marked.
@@ -96,6 +96,16 @@ public class MixinMarker extends BaseNode {
   @Override
   public NodeType type() {
     return NodeType.MIXIN_MARKER;
+  }
+
+  @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
+  public int hashCode() {
+    return ModelUtils.notHashable();
   }
 
 }

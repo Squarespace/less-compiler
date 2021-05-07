@@ -120,7 +120,9 @@ public enum Unit {
 
   // Build up the mapping from a unit's representation to its enumerated value.
   static {
-    for (Unit unit : Unit.values()) {
+    Unit[] values = Unit.values();
+    for (int i = 0; i < values.length; i++) {
+      Unit unit = values[i];
       UNIT_MAP.put(unit.repr(), unit);
     }
   }
@@ -172,6 +174,7 @@ public enum Unit {
     return "";
   }
 
+  @Override
   public String toString() {
     return repr.toUpperCase() + (humanRepr.isEmpty() ? "" : " (" + humanRepr + ")");
   }

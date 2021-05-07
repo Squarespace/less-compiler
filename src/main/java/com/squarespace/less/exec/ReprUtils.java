@@ -43,7 +43,8 @@ public class ReprUtils {
     String[] lines = raw.split("\n");
     List<String> result = new ArrayList<>();
     int count = 0;
-    for (String line : lines) {
+    for (int i = 0; i < lines.length; i++) {
+      String line = lines[i];
       line = line.trim();
       if (!line.isEmpty()) {
         if (count > 0 && count == limit) {

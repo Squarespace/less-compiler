@@ -67,6 +67,7 @@ import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Selectors;
 import com.squarespace.less.model.Shorthand;
+import com.squarespace.less.model.StructuralNode;
 import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.TextElement;
 import com.squarespace.less.model.UnicodeRange;
@@ -742,9 +743,9 @@ public class AstEmitter {
   }
 
   private void open(int type, Node n) {
-    if (n != null) {
-      int line = n.lineOffset();
-      int col = n.charOffset();
+    if (n != null && n.isStructural()) {
+      int line = ((StructuralNode)n).lineOffset();
+      int col = ((StructuralNode)n).charOffset();
       Path path = null;
       if (n instanceof BlockNode) {
         path = ((BlockNode)n).fileName();

@@ -58,7 +58,7 @@ public class BlockDirective extends BlockNode {
    */
   public BlockDirective copy() {
     BlockDirective result = new BlockDirective(name, block.copy());
-    result.copyBase(this);
+    result.copyStructure(this);
     result.fileName = fileName;
     return result;
   }
@@ -115,8 +115,13 @@ public class BlockDirective extends BlockNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
 }

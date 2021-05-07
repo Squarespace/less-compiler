@@ -31,7 +31,7 @@ import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Operator;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class OperationTest extends LessTestBase {
@@ -51,7 +51,7 @@ public class OperationTest extends LessTestBase {
 
   @Test
   public void testColorMath() throws LessException {
-    LessHarness h = new LessHarness(Parselets.ADDITION);
+    LessHarness h = new LessHarness(LessSyntax.ADDITION);
 
     // color math
     h.evalEquals("#000 + 10", color("#0a0a0a"));
@@ -72,11 +72,11 @@ public class OperationTest extends LessTestBase {
         def("@tenIN", dim(10, Unit.IN))
     );
 
-    LessHarness h = new LessHarness(Parselets.ADDITION, defs);
+    LessHarness h = new LessHarness(LessSyntax.ADDITION, defs);
 
     // whitespace
     h.evalEquals("(1+2)/(3*4)", dim(0.25));
-    h.evalEquals("\n ( \n 2 \n + \n 3 \n ) \n", dim(5));
+    h.evalEquals("( \n 2 \n + \n 3 \n ) \n", dim(5));
 
     // basic math
     h.evalEquals(".2 * 5", dim(1.0));
@@ -139,7 +139,7 @@ public class OperationTest extends LessTestBase {
 
   @Test
   public void testParse() throws LessException {
-    LessHarness h = new LessHarness(Parselets.ADDITION);
+    LessHarness h = new LessHarness(LessSyntax.ADDITION);
 
     h.parseEquals("1 + -2", oper(ADD, dim(1), dim(-2)));
     h.parseEquals("1 - -2", oper(SUBTRACT, dim(1), dim(-2)));
@@ -157,7 +157,7 @@ public class OperationTest extends LessTestBase {
         "#000 + 1px", "12em + #fff", "2 / #010101", "2 - #010101"
         };
 
-    LessHarness h = new LessHarness(Parselets.ADDITION);
+    LessHarness h = new LessHarness(LessSyntax.ADDITION);
 
     // XXX: change to use evalFail
     for (String str : strings) {
@@ -176,7 +176,7 @@ public class OperationTest extends LessTestBase {
         "1 * foo"
     };
 
-    LessHarness h = new LessHarness(Parselets.ADDITION);
+    LessHarness h = new LessHarness(LessSyntax.ADDITION);
 
     // XXX: change to use evalFail
     for (String str : strings) {

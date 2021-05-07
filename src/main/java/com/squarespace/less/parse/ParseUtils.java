@@ -28,25 +28,85 @@ import com.squarespace.less.model.ParseError;
 
 public class ParseUtils {
 
+
+  // TODO: future, more efficient location of error line in source
+  // holding off on this for now as it could produce slight differences in error
+  // messages which would cause error test cases to break. once the new parser
+  // is established we can take care of this.
+
+//  private static List<int[]> findErrorOffsets(String raw, int furthest, int lines) {
+//    System.out.println("string length: " + raw.length());
+//    List<int[]> offsets = new ArrayList<>();
+//    int index = furthest;
+//    while (index > 0 && lines > 0) {
+//      int j = raw.lastIndexOf('\n', index - 1);
+//      if (j == -1) {
+//        break;
+//      }
+//      System.out.println("newline: " + j);
+//      offsets.add(new int[] { j + 1, index});
+//      index = j;
+//      lines--;
+//    }
+//    Collections.reverse(offsets);
+//    return offsets;
+//
+//    System.out.println(offsets.stream().map(e -> Arrays.toString(e)).collect(Collectors.toList()));
+//
+//    for (int[] offset : offsets) {
+//      System.out.println(StringEscapeUtils.escapeJava(raw.substring(offset[0], offset[1])));
+//    }
+//    return offsets;
+//  }
+
   private static final int WINDOW_SIZE = 74;
+
+  private static class Stream {
+
+    final String raw;
+    final int length;
+    int pos = 0;
+
+    Stream(String raw) {
+      this.raw = raw;
+      this.length = raw.length();
+    }
+
+    char peek() {
+      return (pos >= length) ? Chars.EOF : raw.charAt(pos);
+    }
+
+    void seekTo(char ch) {
+      while (pos < length) {
+        char c = raw.charAt(pos);
+        pos++;
+        if (c == ch) {
+          break;
+        }
+      }
+    }
+  }
 
   /**
    * Build a user-readable parser error message, showing the exact context for
    * the error. We append this to the given exception inside a ParseError node.
    */
   public static LessException parseError(LessException exc, Path filePath, String raw, int index) {
-    Stream stm = new Stream(raw);
     List<int[]> offsets = new ArrayList<>();
+    Stream stm = new Stream(raw);
 
     // Search for the line that contains our error index.
     int charPos = 0;
+
     while (stm.peek() != Chars.EOF) {
-      int start = stm.position();
+      int start = stm.pos;
       charPos = index - start;
-      stm.seekTo(Chars.LINE_FEED);
-      int end = stm.position();
+      stm.seekTo('\n');
+      int end = stm.pos;
+
       offsets.add(new int[] { start, end });
-      // Stop when we've found the line that contains the index.
+
+      // Stop when we've found the line that contains the error
       if (end > index) {
         break;
       }

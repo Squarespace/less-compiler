@@ -44,8 +44,7 @@ import com.squarespace.less.exec.LessSuiteBase;
 import com.squarespace.less.jsonast.AstEmitter;
 import com.squarespace.less.jsonast.AstPrinter;
 import com.squarespace.less.model.Node;
-import com.squarespace.less.parse.Parselet;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 public class AstTestCaseParser {
 
@@ -64,7 +63,7 @@ public class AstTestCaseParser {
     Matcher matcher = RE_SECTION.matcher("");
     String[] lines = RE_LINES.split(source);
 
-    AstTestCase c = new AstTestCase(name, Parselets.STYLESHEET);
+    AstTestCase c = new AstTestCase(name, LessSyntax.STYLESHEET);
     String key = null;
     StringBuilder buf = new StringBuilder();
 
@@ -77,9 +76,9 @@ public class AstTestCaseParser {
           switch (key) {
             case "PROPERTIES":
               Properties props = loadProperties(buf.toString());
-              String parseletName = props.getProperty("parser");
-              Parselet[] parselet = parselet(parseletName == null ? "stylesheet" : parseletName);
-              c.set(parselet);
+              String syntaxName = props.getProperty("parser");
+              LessSyntax syntax = syntax(syntaxName == null ? "stylesheet" : syntaxName);
+              c.set(syntax);
               currLess = null;
               break;
 
@@ -124,17 +123,17 @@ public class AstTestCaseParser {
   public static class AstTestCase {
 
     private String name;
-    private Parselet[] parselet;
+    private LessSyntax syntax;
 
     private List<Pair<String, String>> cases = new ArrayList<>();
 
-    public AstTestCase(String name, Parselet[] parselet) {
+    public AstTestCase(String name, LessSyntax syntax) {
       this.name = name;
-      this.parselet = parselet;
+      this.syntax = syntax;
     }
 
-    public void set(Parselet[] parselet) {
-      this.parselet = parselet;
+    public void set(LessSyntax syntax) {
+      this.syntax = syntax;
     }
 
     public void add(String less, String json) {
@@ -142,7 +141,7 @@ public class AstTestCaseParser {
     }
 
     public void execute() throws LessException {
-      LessHarness h = new LessHarness(parselet);
+      LessHarness h = new LessHarness(syntax);
       int i = 1;
       for (Pair<String, String> entry : cases) {
         Node node = h.parse(entry.getLeft().trim());
@@ -215,37 +214,37 @@ public class AstTestCaseParser {
     }
   }
 
-  private static Parselet[] parselet(String name) {
-    Parselet[] result = PARSELETS.get(name);
+  private static LessSyntax syntax(String name) {
+    LessSyntax result = SYNTAX_FRAGMENTS.get(name);
     if (result != null) {
       return result;
     }
     throw new TestNGException("Unsupported parselet name '" + name + "'");
   }
 
-  private static final Map<String, Parselet[]> PARSELETS = new HashMap<String, Parselet[]>() { {
-    put("ADDITION", Parselets.ADDITION);
-    put("ALPHA", Parselets.ALPHA);
-    put("COLOR", Parselets.COLOR);
-    put("COLOR_KEYWORD", Parselets.COLOR_KEYWORD);
-    put("COMMENT", Parselets.COMMENT);
-    put("CONDITION", Parselets.CONDITION);
-    put("FUNCTION_CALL_ARGS", Parselets.FUNCTION_CALL_ARGS);
-    put("DIMENSION", Parselets.DIMENSION);
-    put("DIRECTIVE", Parselets.DIRECTIVE);
-    put("FUNCTION_CALL", Parselets.FUNCTION_CALL);
-    put("GUARD", Parselets.GUARD);
-    put("MEDIA", Parselets.PRIMARY_SUB);
-    put("MIXIN", Parselets.PRIMARY_SUB);
-    put("MIXIN_CALL", Parselets.MIXIN_CALL);
-    put("MIXIN_CALL_ARGS", Parselets.MIXIN_CALL_ARGS);
-    put("PRIMARY_SUB", Parselets.PRIMARY_SUB);
-    put("RATIO", Parselets.RATIO);
-    put("RULE", Parselets.RULE);
-    put("RULESET", Parselets.RULESET);
-    put("SELECTORS", Parselets.SELECTORS);
-    put("SHORTHAND", Parselets.SHORTHAND);
-    put("STYLESHEET", Parselets.STYLESHEET);
+  private static final Map<String, LessSyntax> SYNTAX_FRAGMENTS = new HashMap<String, LessSyntax>() { {
+    put("ADDITION", LessSyntax.ADDITION);
+    put("ALPHA", LessSyntax.ALPHA);
+    put("COLOR", LessSyntax.COLOR);
+    put("COLOR_KEYWORD", LessSyntax.COLOR_KEYWORD);
+    put("COMMENT", LessSyntax.COMMENT);
+    put("CONDITIONS", LessSyntax.CONDITIONS);
+    put("DEFINITION", LessSyntax.DEFINITION);
+    put("DIMENSION", LessSyntax.DIMENSION);
+    put("DIRECTIVE", LessSyntax.DIRECTIVE);
+    put("FUNCTION_CALL", LessSyntax.FUNCTION_CALL);
+    put("GUARD", LessSyntax.GUARD);
+    put("MEDIA", LessSyntax.DIRECTIVE);
+    put("MIXIN", LessSyntax.MIXIN);
+    put("MIXIN_CALL", LessSyntax.MIXIN_CALL);
+    put("MIXIN_CALL_ARGS", LessSyntax.MIXIN_CALL_ARGS);
+    put("COMMENT_RULE", LessSyntax.COMMENT_RULE);
+    put("RATIO", LessSyntax.RATIO);
+    put("RULE", LessSyntax.RULE);
+    put("RULESET", LessSyntax.RULESET);
+    put("SELECTORS", LessSyntax.SELECTORS);
+    put("SHORTHAND", LessSyntax.SHORTHAND);
+    put("STYLESHEET", LessSyntax.STYLESHEET);
   } };
 
 }

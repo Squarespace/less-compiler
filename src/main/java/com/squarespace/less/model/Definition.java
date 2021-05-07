@@ -57,7 +57,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Special rule which represents a variable definition.
  */
-public class Definition extends BaseNode {
+public class Definition extends StructuralNode {
 
   /**
    * Name of the variable definition.
@@ -108,7 +108,7 @@ public class Definition extends BaseNode {
   protected Definition(Definition orig, Node newValue) {
     this(orig.name(), newValue);
     this.fileName = orig.fileName;
-    copyBase(orig);
+    copyStructure(orig);
   }
 
   /**
@@ -178,8 +178,13 @@ public class Definition extends BaseNode {
   }
 
   @Override
+  public String toString() {
+    return ModelUtils.toString(this);
+  }
+
+  @Override
   public int hashCode() {
-    return super.hashCode();
+    return ModelUtils.notHashable();
   }
 
   /**

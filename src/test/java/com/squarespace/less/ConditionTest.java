@@ -43,7 +43,7 @@ import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Quoted;
 import com.squarespace.less.model.True;
 import com.squarespace.less.model.Unit;
-import com.squarespace.less.parse.Parselets;
+import com.squarespace.less.parse.LessSyntax;
 
 
 public class ConditionTest extends LessTestBase {
@@ -158,7 +158,7 @@ public class ConditionTest extends LessTestBase {
 
   @Test
   public void testCondition() throws LessException {
-    LessHarness h = new LessHarness(Parselets.CONDITION);
+    LessHarness h = new LessHarness(LessSyntax.CONDITION);
 
     h.parseEquals("(1=1)", cond(EQUAL, dim(1), dim(1)));
     h.parseEquals("(1<2)", cond(LESS_THAN, dim(1), dim(2)));
