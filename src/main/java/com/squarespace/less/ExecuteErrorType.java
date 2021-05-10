@@ -64,6 +64,9 @@ public enum ExecuteErrorType implements LessErrorType {
   INVALID_ARG
   ("Argument %(arg0)s must be %(arg1)s. Found %(arg2)s"),
 
+  INVALID_ARG_EXT
+  ("Argument %(arg0)s must be %(arg1)s. Found %(arg2)s: %(arg3)s"),
+
   INVALID_OPERATION1
   ("Operation %(arg0)s cannot be applied to %(arg1)s"),
 

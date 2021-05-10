@@ -236,7 +236,7 @@ public class LessEvaluator {
           // Track when import boundaries are crossed
           error.push(currentImport);
         }
-        throw error;
+        return;
       }
 
       rules.set(i, node);

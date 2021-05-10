@@ -73,6 +73,14 @@ public class ExecuteErrorMaker {
     return error(ExecuteErrorType.INVALID_ARG).arg0(index).arg1(type1).arg2(type2);
   }
 
+  public static LessErrorInfo invalidArgExt(int index, Object type1, Object type2, Node got) {
+    return error(ExecuteErrorType.INVALID_ARG_EXT)
+        .arg0(index)
+        .arg1(type1)
+        .arg2(type2)
+        .arg3(got.repr());
+  }
+
   public static LessErrorInfo invalidOperation(Object op, Object type) {
     return error(ExecuteErrorType.INVALID_OPERATION1).arg0(op).arg1(type);
   }

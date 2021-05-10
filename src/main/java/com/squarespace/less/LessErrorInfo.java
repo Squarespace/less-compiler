@@ -32,6 +32,8 @@ public class LessErrorInfo {
 
   private static final String ARG2 = "arg2";
 
+  private static final String ARG3 = "arg3";
+
   private static final String CODE = "code";
 
   private static final String NAME = "name";
@@ -60,6 +62,10 @@ public class LessErrorInfo {
 
   public LessErrorInfo arg2(Object arg) {
     return put(ARG2, arg);
+  }
+
+  public LessErrorInfo arg3(Object arg) {
+    return put(ARG3, arg);
   }
 
   public LessErrorInfo name(Object name) {

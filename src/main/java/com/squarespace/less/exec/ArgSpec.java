@@ -18,6 +18,7 @@ package com.squarespace.less.exec;
 
 import static com.squarespace.less.core.ExecuteErrorMaker.argCount;
 import static com.squarespace.less.core.ExecuteErrorMaker.invalidArg;
+import static com.squarespace.less.core.ExecuteErrorMaker.invalidArgExt;
 import static com.squarespace.less.model.NodeType.COLOR;
 import static com.squarespace.less.model.NodeType.DIMENSION;
 import static com.squarespace.less.model.NodeType.KEYWORD;
@@ -238,7 +239,7 @@ public class ArgSpec {
     @Override
     public void validate(int index, Node arg) throws LessException {
       if (arg.type() != type) {
-        throw new LessException(invalidArg(index + 1, type, arg.type()));
+        throw new LessException(invalidArgExt(index + 1, type, arg.type(), arg));
       }
     }
 
