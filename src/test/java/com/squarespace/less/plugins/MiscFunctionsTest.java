@@ -17,7 +17,7 @@
 package com.squarespace.less.plugins;
 
 import static com.squarespace.less.ExecuteErrorType.ARG_COUNT;
-import static com.squarespace.less.ExecuteErrorType.INVALID_ARG;
+import static com.squarespace.less.ExecuteErrorType.*;
 import static com.squarespace.less.ExecuteErrorType.UNKNOWN_UNIT;
 import static com.squarespace.less.core.Constants.TRUE;
 import static com.squarespace.less.model.Unit.MM;
@@ -50,7 +50,7 @@ public class MiscFunctionsTest extends LessTestBase {
 
     h.evalFails("convert()", ARG_COUNT);
     h.evalFails("convert(1)", ARG_COUNT);
-    h.evalFails("convert('foo', 1)", INVALID_ARG);
+    h.evalFails("convert('foo', 1)", INVALID_ARG_EXT);
 
     h.evalEquals("convert(1cm, mm)", dim(1000, MM));
     h.evalEquals("convert(10px, pt)", dim(7.5, PT));
@@ -83,7 +83,7 @@ public class MiscFunctionsTest extends LessTestBase {
     h.evalEquals("unit(3em, pt)", dim(3, Unit.PT));
     h.evalEquals("unit(3em)", dim(3));
 
-    h.evalFails("unit('foo', px)", INVALID_ARG);
+    h.evalFails("unit('foo', px)", INVALID_ARG_EXT);
     h.evalFails("unit(1px, #f00)", UNKNOWN_UNIT);
     h.evalFails("unit(3em, quark)", UNKNOWN_UNIT);
   }

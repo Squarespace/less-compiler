@@ -82,6 +82,7 @@ public class ExpressionList implements Node {
   public void add(Node node) {
     values = LessUtils.initList(values, 2);
     this.values.add(node);
+    evaluate |= node.needsEval();
   }
 
   /**

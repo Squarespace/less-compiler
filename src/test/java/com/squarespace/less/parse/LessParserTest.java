@@ -842,7 +842,7 @@ public class LessParserTest extends LessMaker {
     r1.add(rule(prop("color"), color("blue")));
 
     Ruleset r2 = ruleset(
-        selector(element(null, ".foo")),
+        selector(element(".foo")),
         selector(element(".bar"), element(null, ".baz")));
     r2.add(rule(prop("color"), color("red")));
 
@@ -850,7 +850,7 @@ public class LessParserTest extends LessMaker {
 
     // =======
     Rule r = rule(prop("o"), dim(1));
-    r2 = ruleset(selector(element(null, "b")));
+    r2 = ruleset(selector(element("b")));
     r2.add(r);;
     r1 = ruleset(selector(element("a")));
     r1.add(r);;

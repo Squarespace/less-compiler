@@ -17,7 +17,7 @@
 package com.squarespace.less.plugins;
 
 import static com.squarespace.less.ExecuteErrorType.ARG_COUNT;
-import static com.squarespace.less.ExecuteErrorType.INVALID_ARG;
+import static com.squarespace.less.ExecuteErrorType.INVALID_ARG_EXT;
 import static com.squarespace.less.model.Unit.PX;
 import static com.squarespace.less.model.Unit.RAD;
 import static com.squarespace.less.model.Unit.TURN;
@@ -118,7 +118,7 @@ public class MathFunctionsTest extends LessTestBase {
     h.evalEquals("floor(1.9)", dim(1));
     h.evalEquals("floor(-1.1)", dim(-2));
     h.evalEquals("floor(-1.9)", dim(-2));
-    h.evalFails("floor('dim')", INVALID_ARG);
+    h.evalFails("floor('dim')", INVALID_ARG_EXT);
   }
 
   @Test

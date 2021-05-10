@@ -391,6 +391,12 @@ public class LessEvaluator {
       evaluateRules(env, block, call.important());
       collector.appendBlock(block);
 
+      // Check for error here and early-return. This ensures we don't decrement the
+      // recursion depth and bounce between the recursion limit and limit-1.
+      if (env.hasError()) {
+        return true;
+      }
+
     } catch (LessException e) {
       // If any errors occur inside a mixin call, we want to show the actual
       // arguments to the mixin call.
