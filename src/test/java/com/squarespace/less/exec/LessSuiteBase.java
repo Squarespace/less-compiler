@@ -111,7 +111,7 @@ public class LessSuiteBase {
     // Finally, compile and execute the stylesheet.
     ctx = new LessContext(opts);
     ctx.setCompiler(compiler);
-    String result = compiler.compile(source, ctx, parent, fileName);
+    String result = compiler.compile(source, ctx, parent, fileName, true);
     ctx.sanityCheck();
     return result;
   }

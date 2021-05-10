@@ -41,7 +41,7 @@ public class LessImporterTest extends LessTestBase {
     LessContext ctx = new LessContext(opts, loader);
     ctx.setCompiler(COMPILER);
     String source = "@import 'base.less'; .ruleset { color: @color; font-size: @size; }";
-    String result = COMPILER.compile(source, ctx, Paths.get("."), null);
+    String result = COMPILER.compile(source, ctx, Paths.get("."), null, true);
 
     assertEquals(result, ".child{font-size:12px}.ruleset{color:#abc;font-size:12px}");
   }
@@ -64,7 +64,7 @@ public class LessImporterTest extends LessTestBase {
 
     String source = "@import '1.less';";
     try {
-      COMPILER.compile(source, ctx, path("."), path("foo.less"));
+      COMPILER.compile(source, ctx, path("."), path("foo.less"), true);
       fail("Expected import recursion limit exception");
     } catch (LessException e) {
       assertTrue(e.getMessage().contains("limit of " + recursionLimit + " exceeded"), e.getMessage());

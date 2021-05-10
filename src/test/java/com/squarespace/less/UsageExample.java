@@ -54,7 +54,7 @@ public class UsageExample {
     LessContext ctx = new LessContext(opts, loader);
     ctx.setCompiler(COMPILER);
     try {
-      String result = COMPILER.compile(source, ctx, path.getParent(), path);
+      String result = COMPILER.compile(source, ctx, path.getParent(), path, true);
       System.out.println(result);
 
     } catch (LessException exc) {

@@ -112,11 +112,11 @@ public class LessCompiler {
   }
 
   public String compile(String raw, LessContext ctx) throws LessException {
-    return compile(raw, ctx, null, null);
+    return compile(raw, ctx, null, null, true);
   }
 
-  public String compile(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
-    Stylesheet sheet = parse(raw, ctx, rootPath, fileName);
+  public String compile(String raw, LessContext ctx, Path rootPath, Path fileName, boolean safeMode) throws LessException {
+    Stylesheet sheet = parse(raw, ctx, rootPath, fileName, safeMode);
     LessStats stats = ctx.stats();
     long started = stats.now();
     String result = render(sheet, ctx);

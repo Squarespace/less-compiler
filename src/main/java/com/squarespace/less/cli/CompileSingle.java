@@ -76,7 +76,7 @@ class CompileSingle extends BaseCompile {
         if (input == null) {
           result = compiler.compile(source, ctx);
         } else {
-          result = compiler.compile(source, ctx, input.getParent(), input.getFileName());
+          result = compiler.compile(source, ctx, input.getParent(), input.getFileName(), true);
         }
         String output = args.output();
         if (output != null) {
