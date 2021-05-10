@@ -164,16 +164,17 @@ public class CssSet<E> implements Iterable<E> {
     Node<E>[] old = table;
     table = new Node[table.length * 2];
 
+
     // Rehash the contents to new locations
     int newmask = table.length - 1;
     for (int i = old.length - 1; i >= 0; i--) {
-      Node<E> elem = old[i];
-      if (elem != null) {
-        int ix = hash(elem.hashCode()) & newmask;
+      Node<E> node = old[i];
+      if (node != null) {
+        int ix = hash(node.elem.hashCode()) & newmask;
         while (table[ix] != null) {
           ix = (ix + 1) & newmask;
         }
-        table[ix] = elem;
+        table[ix] = node;
       }
     }
     this.mask = newmask;
