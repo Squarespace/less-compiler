@@ -252,23 +252,14 @@ public class LessParserTest extends LessMaker {
   public void testDirective() throws LessException {
     Tester t = tester(LessSyntax.DIRECTIVE);
 
-    t.ok("@media { }", media(null));
+    t.ok("@--font-face { }", dir("@--font-face", block()));
+    t.ok("@-foo bar;", dir("@-foo", kwd("bar")));
+    t.ok("@page bar {}", dir("@page bar", block()));
+    t.ok("@namespace bar;", dir("@namespace", kwd("bar")));
+    t.ok("@import 'foo.css';", imp(quoted('\'', false, anon("foo.css")), null, false));
+    t.ok("@import-once 'foo.css';", imp(quoted('\'', false, anon("foo.css")), null, true));
 
-    t.ok("@media a and b { }",
-        media(features(expn(kwd("a"), kwd("and"), kwd("b")))));
-
-    t.ok("@media c and d, e { }",
-        media(features(
-            expn(kwd("c"), kwd("and"), kwd("d")),
-            expn(kwd("e")))));
-
-    t.ok("@media (min-width: 48em) { }",
-        media(features(expn(paren(
-            feature(prop("min-width"), dim(48, Unit.EM)))))));
-
-    t.ok("@media", media(features()));
-
-    // TODO: test with safe mode disabled. unclosed media directives are a bug
+    t.fail("@import {", INCOMPLETE_PARSE);
   }
 
   @Test
@@ -286,6 +277,13 @@ public class LessParserTest extends LessMaker {
     t.ok("*", element("*"));
     t.ok("&", element("&"));
     t.ok("[name=]", attr(Combinator.DESC, anon("name")));
+    t.ok("['name'='bar']",
+        attr(Combinator.DESC,
+            quoted('\'', false, anon("name")),
+            anon("="),
+            quoted('\'', false, anon("bar"))));
+    t.ok("[name=ident]",
+        attr(Combinator.DESC, anon("name"), anon("="), anon("ident")));
 
     t.ok("[name=", null); // entire string is parsed, so complete, but invalid so returns null
 
@@ -295,6 +293,8 @@ public class LessParserTest extends LessMaker {
             anon("="),
             quoted('\'', false, anon("bar"))));
 
+    t.fail("[##", INCOMPLETE_PARSE);
+    t.fail("[name#", INCOMPLETE_PARSE);
     t.fail("!~", INCOMPLETE_PARSE);
   }
 
@@ -316,6 +316,20 @@ public class LessParserTest extends LessMaker {
 
     // T
     t.fail(".bar", INCOMPLETE_PARSE);
+  }
+
+  @Test
+  public void testEntity() throws LessException {
+    Tester t = tester(LessSyntax.ENTITY);
+
+    t.ok("1px", dim(1, Unit.PX));
+    t.ok("'foo'", quoted('\'', false, anon("foo")));
+    t.ok("@foo", var("@foo"));
+    t.ok("bar(a=1)", call("bar", assign("a", dim(1))));
+    t.ok("keyword", kwd("keyword"));
+    t.ok("// comment", comment(" comment", false));
+
+    t.fail("`a.b.c`", JAVASCRIPT_DISABLED);
   }
 
   @Test
@@ -409,6 +423,28 @@ public class LessParserTest extends LessMaker {
   }
 
   @Test
+  public void testFeatures() throws LessException {
+    Tester t = tester(LessSyntax.FEATURES);
+
+    t.ok("foo", features(expn(kwd("foo"))));
+    t.ok("(foo : bar)",
+        features(expn(paren(feature(prop("foo"), kwd("bar"))))));
+    t.ok("( foo )",
+        features(expn(paren(kwd("foo")))));
+    t.ok("(a: 1), @b, c",
+        features(
+            expn(paren(feature(prop("a"), dim(1)))),
+            var("@b"),
+            expn(kwd("c"))));
+
+    t.fail("(bar", INCOMPLETE_PARSE);
+    t.fail("(foo : bar", INCOMPLETE_PARSE);
+    t.fail("(foo: )", INCOMPLETE_PARSE);
+    t.fail("( !", INCOMPLETE_PARSE);
+    t.fail("foo, bar, baz, !", INCOMPLETE_PARSE);
+  }
+
+  @Test
   public void testFont() throws LessException {
     Tester t = tester(LessSyntax.FONT);
 
@@ -457,11 +493,13 @@ public class LessParserTest extends LessMaker {
 
     t.ok("url(https://example.com)", url(anon("https://example.com")));
     t.ok("url('https://example.com')", url(quoted('\'', false, "https://example.com")));
+    t.ok("url( 'https://example.com' )", url(quoted('\'', false, "https://example.com")));
 
     t.ok("alpha(1,2,3)", call("alpha", dim(1), dim(2), dim(3)));
 
     t.ok("alpha(OPACITY=1.7)", alpha(dim(1.7)));
     t.ok("alpha(opacity=@opacity)", alpha(var("@opacity")));
+    t.ok("alpha(opacity=@opacity )", alpha(var("@opacity")));
 
     t.fail("!", INCOMPLETE_PARSE);
     t.fail("foo(", INCOMPLETE_PARSE);
@@ -531,6 +569,29 @@ public class LessParserTest extends LessMaker {
   }
 
   @Test
+  public void testMedia() throws LessException {
+    Tester t = tester(LessSyntax.DIRECTIVE);
+
+    t.ok("@media { }", media(null));
+
+    t.ok("@media a and b { }",
+        media(features(expn(kwd("a"), kwd("and"), kwd("b")))));
+
+    t.ok("@media c and d, e { }",
+        media(features(
+            expn(kwd("c"), kwd("and"), kwd("d")),
+            expn(kwd("e")))));
+
+    t.ok("@media (min-width: 48em) { }",
+        media(features(expn(paren(
+            feature(prop("min-width"), dim(48, Unit.EM)))))));
+
+    t.ok("@media", media(features()));
+
+    // TODO: test with safe mode disabled. unclosed media directives are a bug
+  }
+
+  @Test
   public void testMixin() throws LessException {
     Tester t = tester(LessSyntax.MIXIN);
 
@@ -594,6 +655,21 @@ public class LessParserTest extends LessMaker {
   }
 
   @Test
+  public void testMixinCallArgs() throws LessException {
+    Tester t = tester(LessSyntax.MIXIN_CALL_ARGS);
+
+    t.ok("(1 2, 3 4; 5, 6; 7)",
+        args(';',
+            arg(null, expnlist(expn(dim(1), dim(2)), expn(dim(3), dim(4)))),
+                arg(null, expnlist(dim(5), dim(6))),
+                arg(null, dim(7))));
+
+    t.fail("(1 # )", EXPECTED);
+    t.fail("(1 2; 3, 4, @a: 1)", MIXED_DELIMITERS);
+    t.fail("(1, @a: 1; 2)", MIXED_DELIMITERS);
+  }
+
+  @Test
   public void testMixinParams() throws LessException {
     Tester t = tester(LessSyntax.MIXIN_PARAMS);
 
@@ -605,12 +681,19 @@ public class LessParserTest extends LessMaker {
     t.ok("(...)",
         params(param(null, true)));
 
+    t.ok("(1; 2; 3;)",
+        params(
+            param(null, dim(1)),
+            param(null, dim(2)),
+            param(null, dim(3))));
+
     t.ok("", null);
 
     t.fail("(1, 2, 3 !", INCOMPLETE_PARSE);
     t.fail("(", INCOMPLETE_PARSE);
     t.fail("(.", INCOMPLETE_PARSE);
     t.fail("(..", INCOMPLETE_PARSE);
+    t.fail("(1, 2:, 3:", INCOMPLETE_PARSE);
   }
 
   @Test
@@ -752,6 +835,12 @@ public class LessParserTest extends LessMaker {
 
     t.fail("foo!", INCOMPLETE_PARSE);
     t.fail("foo: bar!", INCOMPLETE_PARSE);
+
+    // BUG3
+    t.fail("foo: @foo(;", INCOMPLETE_PARSE);
+    t.fail("foo: @foo);", INCOMPLETE_PARSE);
+    t.fail("foo: @foo()", INCOMPLETE_PARSE);
+    t.fail("foo: @{foo}();", INCOMPLETE_PARSE);
   }
 
   @Test
@@ -794,6 +883,8 @@ public class LessParserTest extends LessMaker {
         selector(element(Combinator.DESC, quoted('\'', true, var("@foo", true)))));
 
     t.ok("baz > quux", selector(element("baz"), element(Combinator.CHILD, "quux")));
+
+    t.ok("#@{bar}", selector(element("#"), element(null, var("@bar", true))));
 
     t.ok("", null);
 

@@ -44,6 +44,7 @@ import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.GenericBlock;
 import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.HSLColor;
+import com.squarespace.less.model.Import;
 import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Media;
 import com.squarespace.less.model.Mixin;
@@ -263,6 +264,10 @@ public class LessMaker {
 
   public HSLColor hsla(double hue, double saturation, double lightness, double alpha) {
     return new HSLColor(hue, saturation, lightness, alpha);
+  }
+
+  public Import imp(Node node, Features features, boolean once) {
+    return new Import(node, features, once);
   }
 
   public Keyword kwd(String value) {

@@ -474,6 +474,10 @@ public class LessParser {
         r = element_sub();
         break;
 
+      case ENTITY:
+        r = entity();
+        break;
+
       case EXPRESSION:
         r = expression();
         break;
