@@ -16,8 +16,6 @@
 
 package com.squarespace.less;
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -29,8 +27,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.testng.TestNGException;
 
 import com.eclipsesource.json.Json;
@@ -40,6 +36,7 @@ import com.eclipsesource.json.WriterConfig;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessUtils;
+import com.squarespace.less.core.Pair;
 import com.squarespace.less.exec.LessSuiteBase;
 import com.squarespace.less.jsonast.AstEmitter;
 import com.squarespace.less.jsonast.AstPrinter;
@@ -144,11 +141,11 @@ public class AstTestCaseParser {
       LessHarness h = new LessHarness(syntax);
       int i = 1;
       for (Pair<String, String> entry : cases) {
-        Node node = h.parse(entry.getLeft().trim());
+        Node node = h.parse(entry.key().trim());
         String result = AstEmitter.render(node);
         JsonObject actual = parseJson(result, node);
         String actualStr = render(actual);
-        String expectedStr = entry.getRight().trim();
+        String expectedStr = entry.val().trim();
         if (!expectedStr.equals(actualStr)) {
           String header = String.format("AST test '%s' case %d", name, i);
           String diff = LessSuiteBase.diff(expectedStr, actualStr);
@@ -179,10 +176,10 @@ public class AstTestCaseParser {
       int offset = e.getLocation().offset;
       int start = Math.max(0, offset - 20);
       int end = Math.min(len, offset + 20);
-      String prefix = escapeJava(raw.substring(start, offset));
-      String suffix = escapeJava(raw.substring(offset, end));
+      String prefix = LessUtils.escapeJava(raw.substring(start, offset));
+      String suffix = LessUtils.escapeJava(raw.substring(offset, end));
       String msg = e.getMessage() + ":\n" + prefix + suffix + "\n";
-      msg += StringUtils.repeat('-', prefix.length()) + "^\n";
+      msg += LessUtils.repeat('-', prefix.length()) + "^\n";
       if (node != null) {
         Buffer buf = new Buffer(2);
         node.modelRepr(buf);

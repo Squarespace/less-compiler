@@ -19,11 +19,10 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 import static com.squarespace.less.model.NodeType.COMMENT;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.core.LessInternalException;
+import com.squarespace.less.core.LessUtils;
 
 
 /**
@@ -134,7 +133,7 @@ public class Comment implements Node {
     buf.append(' ').append(newline ? "newline" : "inline").append('\n');
     buf.incrIndent();
     buf.indent();
-    buf.append(StringEscapeUtils.escapeJava(body));
+    buf.append(LessUtils.escapeJava(body));
     buf.decrIndent();
   }
 

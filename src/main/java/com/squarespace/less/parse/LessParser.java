@@ -14,14 +14,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.NodeBuilder;
 import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.core.Constants;
+import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.match.Recognizer;
 import com.squarespace.less.model.Alpha;
 import com.squarespace.less.model.Anonymous;
@@ -1372,7 +1371,7 @@ public class LessParser {
       }
 
       consume(end);
-      name += " " + StringUtils.strip(raw.substring(start, end));
+      name += " " + LessUtils.strip(raw, start, end);
     }
 
     if (has_block) {

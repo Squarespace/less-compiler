@@ -20,9 +20,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.squarespace.less.core.FlexList;
+import com.squarespace.less.core.Pair;
 import com.squarespace.less.model.Alpha;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Argument;
@@ -153,7 +152,7 @@ public class AstEmitter {
     Pair<Map<String, Integer>, List<String>> result = optimizer.optimize();
 
     // Pass 2: encode final JSON with optimized string table
-    AstEncoder encoder = new AstEncoder(result.getLeft(), result.getRight(), savePositions);
+    AstEncoder encoder = new AstEncoder(result.key(), result.val(), savePositions);
     buf = encoder;
     emit(root);
     return encoder.render();

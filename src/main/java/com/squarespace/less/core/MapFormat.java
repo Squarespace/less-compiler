@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 
 /**
  * Support class for formatting error messages flexibly using a Map.
@@ -116,6 +114,6 @@ public class MapFormat {
       }
       values.add(obj);
     }
-    return StringEscapeUtils.escapeJava(String.format(format, values.toArray()));
+    return LessUtils.escapeJava(String.format(format, values.toArray()));
   }
 }

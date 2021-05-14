@@ -18,10 +18,9 @@ package com.squarespace.less.model;
 
 import static com.squarespace.less.core.LessUtils.safeEquals;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
+import com.squarespace.less.core.LessUtils;
 
 
 /**
@@ -87,7 +86,7 @@ public class Anonymous implements Node {
     typeRepr(buf);
     buf.append(" \"");
     if (value != null) {
-      buf.append(StringEscapeUtils.escapeJava(value));
+      buf.append(LessUtils.escapeJava(value));
     }
     buf.append('"');
   }

@@ -16,6 +16,7 @@
 
 package com.squarespace.less.core;
 
+import static com.squarespace.less.core.Chars.hexchar;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
@@ -48,6 +49,124 @@ public class LessUtils {
   private static final int COPY_BUFFER_SIZE = 1024 * 8;
 
   private LessUtils() {
+  }
+
+  /**
+   * Strip whitespace off ends of string.
+   */
+  public static String strip(String raw, int start, int end) {
+    // Skip over leading whitespace
+    while (start < end) {
+      if (!CharClass.CLASSIFIER.whitespace(raw.charAt(start))) {
+        break;
+      }
+      start++;
+    }
+
+    while (end > start) {
+      if (!CharClass.CLASSIFIER.whitespace(raw.charAt(end - 1))) {
+        break;
+      }
+      end--;
+    }
+    return raw.substring(start, end);
+  }
+
+  /**
+   * Split a string with the given separator character:
+   *
+   * <pre>
+   *
+   *      split("", ':') = []
+   *     split(":", ':') = ["", ""]
+   *     split("a", ':') = ["a", ""]
+   *   split("a:b", ':') = ["a", "b"]
+   * split("a:b:c", ':') = ["a", "b", "c"]
+   *
+   * </pre>
+   */
+  public static List<String> split(String raw, char sep) {
+    List<String> result = new ArrayList<>();
+    int len = raw.length();
+    if (len == 0) {
+      return result;
+    }
+    int i = 0;
+    while (true) {
+      int j = raw.indexOf(sep, i);
+      boolean last = j == -1;
+      result.add(raw.substring(i, last ? len : j));
+      if (last) {
+        break;
+      }
+      i = j + 1;
+    }
+    return result;
+  }
+
+  /**
+   * Repeat the character N times.
+   */
+  public static String repeat(char c, int count) {
+    StringBuilder buf = new StringBuilder(count);
+    for (int i = 0; i < count; i++) {
+      buf.append(c);
+    }
+    return buf.toString();
+  }
+
+  /**
+   * Escape a Java string.
+   */
+  public static String escapeJava(String raw) {
+    StringBuilder buf = new StringBuilder();
+    int len = raw.length();
+    for (int i = 0; i < len; i++) {
+      char c = raw.charAt(i);
+      switch (c) {
+        case '"':
+          buf.append("\\\"");
+          break;
+        case '\\':
+          buf.append("\\\\");
+          break;
+        case '\b':
+          buf.append("\\b");
+          break;
+        case '\n':
+          buf.append("\\n");
+          break;
+        case '\t':
+          buf.append("\\t");
+          break;
+        case '\f':
+          buf.append("\\f");
+          break;
+        case '\r':
+          buf.append("\\r");
+          break;
+        default:
+          if (c > 0xffff) {
+            char[] pair = Character.toChars(c);
+            hex(buf, pair[0]);
+            hex(buf, pair[1]);
+          } else if (c < ' ' || c > '\u007f') {
+              hex(buf, c);
+          } else {
+            buf.append(c);
+          }
+          break;
+      }
+    }
+    return buf.toString();
+  }
+
+  private static void hex(StringBuilder buf, int i) {
+    buf.append("\\u");
+    buf.append(hexchar((i >> 12) & 0x0f));
+    buf.append(hexchar((i >> 8) & 0x0f));
+    buf.append(hexchar((i >> 4) & 0x0f));
+    buf.append(hexchar(i & 0x0f));
   }
 
   /**

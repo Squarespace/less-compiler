@@ -18,20 +18,18 @@ package com.squarespace.less.cli;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import com.squarespace.less.LessBuildProperties;
+import com.squarespace.less.LessOptions;
+import com.squarespace.less.core.LessUtils;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.squarespace.less.LessBuildProperties;
-import com.squarespace.less.LessOptions;
 
 
 /**
@@ -222,8 +220,7 @@ public class LessC {
       return null;
     }
     char sep = IS_WINDOWS ? ';' : ':';
-    String[] parts = StringUtils.split(paths, sep);
-    return Arrays.asList(parts);
+    return LessUtils.split(paths, sep);
   }
 
   private void dumpArguments(Namespace ns) {

@@ -66,11 +66,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
+import com.squarespace.less.core.LessUtils;
 
 /**
  * Renders a JSON AST into a text representation for easier comparison
@@ -119,7 +118,7 @@ public class AstPrinter {
           if (str == null) {
             buf.append("null");
           } else {
-            buf.append('\'').append(StringEscapeUtils.escapeJava(str)).append('\'');
+            buf.append('\'').append(LessUtils.escapeJava(str)).append('\'');
           }
           break;
         }
