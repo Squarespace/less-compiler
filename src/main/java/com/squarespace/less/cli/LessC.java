@@ -97,7 +97,7 @@ public class LessC {
   public Args parseArguments(String[] args) {
     String version = buildVersion();
 
-    ArgumentParser parser = ArgumentParsers.newArgumentParser(PROGRAM_NAME)
+    ArgumentParser parser = ArgumentParsers.newFor(PROGRAM_NAME).build()
       .description("Compile .less files into .css")
       .version(version)
       .setDefault("recursion_limit", LessOptions.DEFAULT_RECURSION_LIMIT)
