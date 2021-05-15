@@ -359,14 +359,14 @@ public class LessParser {
   private int[] begin() {
     if (m_ptr == marks.length) {
       int[][] old = marks;
-      marks = new int[m_ptr * 2][4];
+      marks = new int[m_ptr * 2][MARK_DIM];
       System.arraycopy(old, 0, marks, 0, m_ptr);
     }
     int[] m = marks[m_ptr];
     m[0] = pos;
     m[1] = line;
     m[2] = column;
-    m[3] = flags; // TODO: try to remove the flags, we currently only have one
+    m[3] = flags;
     m_ptr++;
     return m;
   }
@@ -387,7 +387,7 @@ public class LessParser {
     pos = m[0];
     line = m[1];
     column = m[2];
-    flags = m[3]; // TODO: try to remove the flags, we currently only have one
+    flags = m[3];
   }
 
   /**
@@ -1181,7 +1181,11 @@ public class LessParser {
     if (n != null) {
       return n;
     }
-    return quoted();
+    n = quoted();
+    if (n != null) {
+      return n;
+    }
+    return null;
   }
 
   /**
@@ -1607,14 +1611,17 @@ public class LessParser {
    */
   private Node entity() throws LessException {
     Node n = null;
+    char c = peek();
 
     n = literal();
     if (n != null) {
       return n;
     }
-    n = variable(false);
-    if (n != null) {
-      return n;
+    if (c == '@') {
+      n = variable(false);
+      if (n != null) {
+        return n;
+      }
     }
     n = function_call();
     if (n != null) {
@@ -1628,7 +1635,11 @@ public class LessParser {
     // JavaScript is unsupported so this should throw an exception, but never return a value.
     javascript();
 
-    return comment(true, false);
+    n = comment(true, false);
+    if (n != null) {
+      return n;
+    }
+    return null;
   }
 
 // TODO: possibly in the future
@@ -1692,13 +1703,14 @@ public class LessParser {
    * One element in an expression.
    */
   private Node expression_sub() throws LessException {
-    // TODO: peek to speed this up
-
     Node n = null;
+    char c = peek();
 
-    n = comment(true, false);
-    if (n != null) {
-      return n;
+    if (c == '/') {
+      n = comment(true, false);
+      if (n != null) {
+        return n;
+      }
     }
     n = addition();
     if (n != null) {
@@ -1712,13 +1724,18 @@ public class LessParser {
 //    if (n != null) {
 //      return n;
 //    }
-    n = quoted();
-    if (n != null) {
-      return n;
-    }
-    n = unicode_range();
-    if (n != null) {
-      return n;
+
+    boolean tilde = c == '~';
+    if (tilde || c == '"' || c == '\'') {
+      n = quoted();
+      if (n != null) {
+        return n;
+      }
+    } else if (c == 'U') {
+      n = unicode_range();
+      if (n != null) {
+        return n;
+      }
     }
 //    n = function_call(); // TODO: function call matched by addition -> multiplication -> operand
 //    if (n != null) {
