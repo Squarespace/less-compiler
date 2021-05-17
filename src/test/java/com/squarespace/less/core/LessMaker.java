@@ -21,7 +21,7 @@ import static com.squarespace.less.model.Combinator.DESC;
 import java.util.Arrays;
 
 import com.squarespace.less.exec.ArgSpec;
-import com.squarespace.less.match.Interner;
+import com.squarespace.less.match.InternPool;
 import com.squarespace.less.model.Alpha;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Argument;
@@ -154,14 +154,8 @@ public class LessMaker {
     return new FunctionCall(name, Arrays.asList(args));
   }
 
-//  public RGBColor namedColor(String name) {
-//    int ix = Interner.COLORS_DAT.getIgnoreCase(name, 0, name.length());
-//    return ix == -1 ? null : Interner.COLORS[ix];
-//  }
-
   public RGBColor color(String raw) {
-    int ix = Interner.COLORS_DAT.getIgnoreCase(raw, 0, raw.length());
-    return ix == -1 ? RGBColor.fromHex(raw) : Interner.COLORS[ix];
+    return InternPool.color(raw, 0, raw.length());
   }
 
   public Comment comment(String body, boolean block) {

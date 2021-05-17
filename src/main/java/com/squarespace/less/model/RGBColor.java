@@ -19,7 +19,7 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.Chars.hexchar;
 
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.match.Interner;
+import com.squarespace.less.match.InternPool;
 
 
 /**
@@ -247,6 +247,10 @@ public class RGBColor extends BaseColor {
     return new RGBColor(red, green, blue, alpha);
   }
 
+  public String keyword() {
+    return InternPool.colorToKeyword(this);
+  }
+
   /**
    * Emits the color's representation, which may be in compressed or expanded
    * hexadecimal form, or a keyword.
@@ -276,9 +280,9 @@ public class RGBColor extends BaseColor {
 
       if (!forceHex) {
         // Check if an equivalent color keyword exists that is shorter
-        // than its hex string. Some examples: red < #f00 beige < #f5f5dc.
+        // than its hex string. Some examples: red < #f00, beige < #f5f5dc.
         // If so, we output the keyword.
-        String name = Interner.colorToKeyword(this);
+        String name = keyword();
         if (name != null) {
           int len = name.length();
           if ((hex3 && len <= 4) || (!hex3 && len <= 7)) {

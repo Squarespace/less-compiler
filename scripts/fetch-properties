@@ -1,0 +1,4 @@
+#!/bin/bash
+
+curl -o properties.json 'https://www.w3.org/Style/CSS/all-properties.en.json'
+

@@ -131,9 +131,9 @@ public class LessParserTest extends LessMaker {
   public void testColor() throws LessException {
     Tester t = tester(LessSyntax.COLOR);
 
-    t.ok("#abc123", color("abc123"));
-    t.ok("#123", color("123"));
-    t.ok("#000", color("000"));
+    t.ok("#abc123", color("#abc123"));
+    t.ok("#123", color("#123"));
+    t.ok("#000", color("#000"));
 
     t.fail("!", INCOMPLETE_PARSE);
     t.fail("#11", INCOMPLETE_PARSE);

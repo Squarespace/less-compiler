@@ -21,7 +21,7 @@ import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.core.LessUtils;
-import com.squarespace.less.match.Interner;
+import com.squarespace.less.match.InternPool;
 import com.squarespace.less.match.Recognizer;
 import com.squarespace.less.model.Alpha;
 import com.squarespace.less.model.Anonymous;
@@ -45,7 +45,6 @@ import com.squarespace.less.model.Features;
 import com.squarespace.less.model.FunctionCall;
 import com.squarespace.less.model.Guard;
 import com.squarespace.less.model.Import;
-import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Media;
 import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.MixinCall;
@@ -997,7 +996,7 @@ public class LessParser {
       return null;
     }
     consume(m_end);
-    RGBColor color = intern_color(raw, m_start, m_end);
+    RGBColor color = InternPool.color(raw, m_start, m_end);
     if (color != null) {
       return color;
     }
@@ -1016,7 +1015,7 @@ public class LessParser {
       return null;
     }
 
-    RGBColor color = intern_color(raw, m_start, m_end);
+    RGBColor color = InternPool.color(raw, m_start, m_end);
     if (color != null) {
       consume(m_end);
       return color;
@@ -1303,13 +1302,13 @@ public class LessParser {
       consume(m_end);
     }
 
-    Dimension dim = intern_dimension(raw, d_ms, u_me);
+    Dimension dim = InternPool.dimension(raw, d_ms, u_me);
     if (dim == null) {
       Double value = Double.parseDouble(raw.substring(d_ms, d_me));
       Unit unit = null;
       if (have_unit) {
         // Lookup unit without allocations
-        unit = intern_unit(raw, u_ms, u_me);
+        unit = InternPool.unit(raw, u_ms, u_me);
       }
       dim = new Dimension(value, unit);
     }
@@ -1495,14 +1494,14 @@ public class LessParser {
 
     if (match(Patterns.ELEMENT0) || match(Patterns.ELEMENT1)) {
       consume(m_end);
-      return intern_element(comb, raw, m_start, m_end);
+      return InternPool.element(comb, raw, m_start, m_end);
 
     } else {
       // Look for bare '*' or '&'
       char ch = peek();
       if (ch == '*' || ch == '&') {
         next();
-        return intern_element(comb, raw, pos - 1, pos);
+        return InternPool.element(comb, raw, pos - 1, pos);
       }
     }
 
@@ -1514,7 +1513,7 @@ public class LessParser {
 
     if (match(Patterns.ELEMENT2) || match(Patterns.ELEMENT3)) {
       consume(m_end);
-      return intern_element(comb, raw, m_start, m_end);
+      return InternPool.element(comb, raw, m_start, m_end);
 
     } else {
       Node var = variable(true);
@@ -1903,7 +1902,7 @@ public class LessParser {
       if (peek() == ':') {
         commit();
         next();
-        return intern_property(raw, m_start, m_end);
+        return InternPool.property(raw, m_start, m_end);
       }
     }
     rollback();
@@ -2012,7 +2011,7 @@ public class LessParser {
     begin();
     consume(m_end);
 
-    String name = intern_function(raw, m_start, m_end - 1);
+    String name = InternPool.function(raw, m_start, m_end - 1);
     if (name.equals("url")) {
       commit();
       return url(false);
@@ -2112,11 +2111,7 @@ public class LessParser {
     }
 
     consume(m_end);
-    Node color = intern_color(raw, m_start, m_end);
-    if (color != null) {
-      return color;
-    }
-    return intern_keyword(raw, m_start, m_end);
+    return InternPool.keyword(raw, m_start, m_end);
   }
 
   /**
@@ -2205,7 +2200,7 @@ public class LessParser {
     while (match(Patterns.MIXIN_NAME)) {
       consume(m_end);
 
-      TextElement elem = intern_element(comb, raw, m_start, m_end);
+      TextElement elem = InternPool.element(comb, raw, m_start, m_end);
       selector.add(elem);
 
       // Compute number of spaces skipped
@@ -2743,7 +2738,7 @@ public class LessParser {
     // Mark start of value
     begin();
 
-    Property property = intern_property(raw, m_start, m_end);
+    Property property = InternPool.property(raw, m_start, m_end);
     Node value = null;
     if (property.name().equals("font")) {
       // parse font
@@ -3369,75 +3364,6 @@ loop:
    */
   private char peek(int index) {
     return index < len ? raw.charAt(index) : Chars.EOF;
-  }
-
-  private static Property intern_property(String raw, int start, int end) {
-    int ix = Interner.PROPERTY_DAT.get(raw, start, end);
-    if (ix == -1) {
-      return new Property(raw.substring(start, end));
-    }
-    return Interner.PROPERTIES[ix];
-  }
-
-  private static Keyword intern_keyword(String raw, int start, int end) {
-    int ix = Interner.KEYWORD_DAT.get(raw, start, end);
-    if (ix == -1) {
-      return new Keyword(raw.substring(start, end));
-    }
-    return Interner.KEYWORDS[ix];
-  }
-
-  private static Unit intern_unit(String raw, int start, int end) {
-    int ix = Interner.UNITS_DAT.get(raw, start, end);
-    if (ix == -1) {
-      String rep = raw.substring(start, end);
-      return Unit.get(rep);
-    }
-    return Interner.UNITS[ix];
-  }
-
-  private static Dimension intern_dimension(String raw, int start, int end) {
-    int ix = Interner.DIMENSIONS_DAT.get(raw, start, end);
-    return ix == -1 ? null : Interner.DIMENSIONS[ix];
-  }
-
-  private static TextElement intern_element(Combinator comb, String raw, int start, int end) {
-    int ix = Interner.ELEMENT_DAT.get(raw, start, end);
-    if (ix == -1) {
-      return new TextElement(comb, raw.substring(start, end));
-    }
-    if (comb == null) {
-      return Interner.NULL_ELEMENTS[ix];
-    }
-    switch (comb) {
-      case CHILD:
-        return Interner.CHILD_ELEMENTS[ix];
-      case NAMESPACE:
-        return Interner.NAMESPACE_ELEMENTS[ix];
-      case SIB_ADJ:
-        return Interner.SIB_ADJ_ELEMENTS[ix];
-      case SIB_GEN:
-        return Interner.SIB_GEN_ELEMENTS[ix];
-      case DESC:
-      default:
-        return Interner.DESC_ELEMENTS[ix];
-    }
-  }
-
-  private static String intern_function(String raw, int start, int end) {
-    int ix = Interner.FUNCTIONS_DAT.getIgnoreCase(raw, start, end);
-    if (ix == -1) {
-      return raw.substring(start, end).toLowerCase();
-    }
-    return Interner.FUNCTIONS[ix];
-  }
-
-  private static RGBColor intern_color(String raw, int start, int end) {
-    int ix = Interner.COLORS_DAT.getIgnoreCase(raw, start, end);
-    if (ix == -1) {
-      return null;
-    }
-    return Interner.COLORS[ix];
   }
 
 }
