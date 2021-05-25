@@ -54,6 +54,13 @@ public interface Node {
   }
 
   /**
+   * Indicates if this node has associated user data.
+   */
+  default boolean hasUserData() {
+    return false;
+  }
+
+  /**
    * Returns the original LESS representation of this node as a string.
    */
   default String repr() {

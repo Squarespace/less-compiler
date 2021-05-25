@@ -26,7 +26,7 @@ import com.squarespace.less.exec.ExecEnv;
 /**
  * Parameter of a {@link Mixin} definition.
  */
-public class Parameter implements Node {
+public class Parameter implements Node, HasUserData {
 
   /**
    * Parameter name.
@@ -42,6 +42,11 @@ public class Parameter implements Node {
    * Indicates whether this parameter is variadic.
    */
   protected final boolean variadic;
+
+  /**
+   * User data associated with this node.
+   */
+  protected Object userData = null;
 
   /**
    * Constructs a parameter with the given name.
@@ -87,6 +92,21 @@ public class Parameter implements Node {
    */
   public boolean variadic() {
     return variadic;
+  }
+
+  @Override
+  public boolean hasUserData() {
+    return true;
+  }
+
+  @Override
+  public Object userData() {
+    return userData;
+  }
+
+  @Override
+  public void userData(Object userData) {
+    this.userData = userData;
   }
 
   /**
