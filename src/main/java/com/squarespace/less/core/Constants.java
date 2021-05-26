@@ -16,6 +16,7 @@
 
 package com.squarespace.less.core;
 
+import com.squarespace.less.match.InternPool;
 import com.squarespace.less.model.False;
 import com.squarespace.less.model.Features;
 import com.squarespace.less.model.Selectors;
@@ -35,5 +36,10 @@ public class Constants {
   public static final Selectors EMPTY_SELECTORS = new Selectors();
 
   public static final String UTF8 = "UTF-8";
+
+  /**
+   * Default string intern pool.
+   */
+  public static final InternPool INTERN_POOL = new InternPool();
 
 }

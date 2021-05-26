@@ -16,12 +16,12 @@
 
 package com.squarespace.less.core;
 
+import static com.squarespace.less.core.Constants.INTERN_POOL;
 import static com.squarespace.less.model.Combinator.DESC;
 
 import java.util.Arrays;
 
 import com.squarespace.less.exec.ArgSpec;
-import com.squarespace.less.match.InternPool;
 import com.squarespace.less.model.Alpha;
 import com.squarespace.less.model.Anonymous;
 import com.squarespace.less.model.Argument;
@@ -155,7 +155,7 @@ public class LessMaker {
   }
 
   public RGBColor color(String raw) {
-    return InternPool.color(raw, 0, raw.length());
+    return INTERN_POOL.color(raw, 0, raw.length());
   }
 
   public Comment comment(String body, boolean block) {

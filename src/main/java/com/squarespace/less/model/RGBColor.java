@@ -19,7 +19,7 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.Chars.hexchar;
 
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.match.InternPool;
+import com.squarespace.less.core.Constants;
 
 
 /**
@@ -248,7 +248,7 @@ public class RGBColor extends BaseColor {
   }
 
   public String keyword() {
-    return InternPool.colorToKeyword(this);
+    return Constants.INTERN_POOL.colorToKeyword(this);
   }
 
   /**

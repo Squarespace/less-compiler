@@ -218,6 +218,11 @@ public class LessParser {
   private final int len;
 
   /**
+   * Intern pool used to intern common values during parsing.
+   */
+  private InternPool internPool = Constants.INTERN_POOL;
+
+  /**
    * Source string position.
    */
   private int pos;
@@ -268,8 +273,6 @@ public class LessParser {
   public int interned_bytes = 0;
   public int interned_fail = 0;
 
-
-
   /**
    * Construct a parser for the given context and source string.
    */
@@ -288,6 +291,13 @@ public class LessParser {
     this.ignoreComments = ctx.options().ignoreComments();
     this.rootPath = rootPath;
     this.fileName = fileName;
+  }
+
+  /**
+   * Override the intern pool used by the parser.
+   */
+  public void internPool(InternPool pool) {
+    this.internPool = pool;
   }
 
   /**
@@ -772,6 +782,16 @@ public class LessParser {
         }
 
         default: {
+
+          // TODO: investigate speeding up where the start of a RULE
+          // pattern overlaps with a RULESET's selector. For example,
+          // the following look like a RULE but aren't, and cause us to
+          // waste cycles going deep into the rule() parser:
+          //
+          // body:not(.sqs-seven-one) {
+          // a:focus {
+          // p:empty:not([data-rte-preserve-empty]) {
+
           // Possible RULE
           Rule rule = rule();
           if (rule != null) {
@@ -996,7 +1016,7 @@ public class LessParser {
       return null;
     }
     consume(m_end);
-    RGBColor color = InternPool.color(raw, m_start, m_end);
+    RGBColor color = internPool.color(raw, m_start, m_end);
     if (color != null) {
       return color;
     }
@@ -1015,7 +1035,7 @@ public class LessParser {
       return null;
     }
 
-    RGBColor color = InternPool.color(raw, m_start, m_end);
+    RGBColor color = internPool.color(raw, m_start, m_end);
     if (color != null) {
       consume(m_end);
       return color;
@@ -1302,13 +1322,13 @@ public class LessParser {
       consume(m_end);
     }
 
-    Dimension dim = InternPool.dimension(raw, d_ms, u_me);
+    Dimension dim = internPool.dimension(raw, d_ms, u_me);
     if (dim == null) {
       Double value = Double.parseDouble(raw.substring(d_ms, d_me));
       Unit unit = null;
       if (have_unit) {
         // Lookup unit without allocations
-        unit = InternPool.unit(raw, u_ms, u_me);
+        unit = internPool.unit(raw, u_ms, u_me);
       }
       dim = new Dimension(value, unit);
     }
@@ -1494,14 +1514,14 @@ public class LessParser {
 
     if (match(Patterns.ELEMENT0) || match(Patterns.ELEMENT1)) {
       consume(m_end);
-      return InternPool.element(comb, raw, m_start, m_end);
+      return internPool.element(comb, raw, m_start, m_end);
 
     } else {
       // Look for bare '*' or '&'
       char ch = peek();
       if (ch == '*' || ch == '&') {
         next();
-        return InternPool.element(comb, raw, pos - 1, pos);
+        return internPool.element(comb, raw, pos - 1, pos);
       }
     }
 
@@ -1513,7 +1533,7 @@ public class LessParser {
 
     if (match(Patterns.ELEMENT2) || match(Patterns.ELEMENT3)) {
       consume(m_end);
-      return InternPool.element(comb, raw, m_start, m_end);
+      return internPool.element(comb, raw, m_start, m_end);
 
     } else {
       Node var = variable(true);
@@ -1902,7 +1922,7 @@ public class LessParser {
       if (peek() == ':') {
         commit();
         next();
-        return InternPool.property(raw, m_start, m_end);
+        return internPool.property(raw, m_start, m_end);
       }
     }
     rollback();
@@ -2011,7 +2031,7 @@ public class LessParser {
     begin();
     consume(m_end);
 
-    String name = InternPool.function(raw, m_start, m_end - 1);
+    String name = internPool.function(raw, m_start, m_end - 1);
     if (name.equals("url")) {
       commit();
       return url(false);
@@ -2111,7 +2131,7 @@ public class LessParser {
     }
 
     consume(m_end);
-    return InternPool.keyword(raw, m_start, m_end);
+    return internPool.keyword(raw, m_start, m_end);
   }
 
   /**
@@ -2200,7 +2220,7 @@ public class LessParser {
     while (match(Patterns.MIXIN_NAME)) {
       consume(m_end);
 
-      TextElement elem = InternPool.element(comb, raw, m_start, m_end);
+      TextElement elem = internPool.element(comb, raw, m_start, m_end);
       selector.add(elem);
 
       // Compute number of spaces skipped
@@ -2738,7 +2758,8 @@ public class LessParser {
     // Mark start of value
     begin();
 
-    Property property = InternPool.property(raw, m_start, m_end);
+    Property property = internPool.property(raw, m_start, m_end);
+
     Node value = null;
     if (property.name().equals("font")) {
       // parse font

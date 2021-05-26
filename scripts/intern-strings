@@ -11,8 +11,10 @@ DST = os.path.join(PWD, '../src/main/resources/com/squarespace/less/match')
 
 def load_text(name):
     p = os.path.join(PWD, name + '.txt')
+    print(p)
     if os.path.exists(p):
-        return [r.strip() for r in open(p).read().split('\n')]
+        rows = [r.strip() for r in open(p).read().split('\n')]
+        return [r for r in rows if r]
     return []
 
 def load_json(name):
@@ -33,6 +35,7 @@ IGNORE_PROPS = set(['--*'])
 
 def keywords(key):
     r = load_text('71-keywords')
+    r += load_text('scraped-keywords')
     r += load_text('keywords')
     r = [x for x in r if x]
     save(key, set(r))
@@ -45,6 +48,23 @@ def properties(key):
     #print(list(r))
     #save(key, set(e['property'] for e in r))
 
+def dimensions(key):
+    dims = set(load_text('dimensions'))
+
+    save(key, sorted(dims))
+
+    # TODO: generate some more dimension values
+    for d in range(-500, 501, 1):
+        for u in ('', 'px', 'em', 'rem'):
+            r = '%d%s' % (d, u)
+            dims.add(r)
+
+    for d in range(-720, 721, 1):
+        r = '%ddeg' % d
+        dims.add(r)
+
+    #save(key, sorted(dims))
+
 def main():
     args = sys.argv[1:]
     if not args:
@@ -54,6 +74,8 @@ def main():
         properties(arg)
     if arg == 'keywords':
         keywords(arg)
+    if arg == 'dimensions':
+        dimensions(arg)
 
 if __name__ == '__main__':
     main()

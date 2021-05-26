@@ -23,8 +23,8 @@ import static com.squarespace.less.model.NodeType.COLOR;
 import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
+import com.squarespace.less.core.Constants;
 import com.squarespace.less.exec.ExecEnv;
-import com.squarespace.less.match.InternPool;
 
 
 /**
@@ -68,7 +68,7 @@ public abstract class BaseColor implements Node {
    * Convert a color name to its {@link RGBColor} instance.
    */
   public static RGBColor fromName(String name) {
-    return InternPool.keywordColor(name, 0, name.length());
+    return Constants.INTERN_POOL.keywordColor(name, 0, name.length());
   }
 
   /**

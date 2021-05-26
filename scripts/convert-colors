@@ -15,7 +15,7 @@ hx1 = lambda n: '%x' % n
 SKIP = set(['rebeccapurple'])
 
 def from_hex(s):
-    return [int(c, 16) for c in (s[1:3], s[4:5], s[5:7])]
+    return [int(c, 16) for c in (s[1:3], s[3:5], s[5:7])]
 
 def convert(r, g, b):
     # 6-digit form
@@ -56,6 +56,8 @@ def main():
             s += '%s\t%s\n' % (c, name)
             seen.add(c)
 
+    # merge in the scraped colors, which occurred 50 or more times
+    # over 100k+ sites
     for line in open('scraped-colors.txt'):
         r, g, b = from_hex(line.rstrip().lower())
         for c in convert(r, g, b):

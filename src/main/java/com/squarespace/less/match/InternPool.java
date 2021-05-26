@@ -34,42 +34,45 @@ import com.squarespace.less.model.Unit;
  * This saves us from two levels of memory allocation: copying substrings from the backing
  * source file, and constructing the AST nodes that wrap them. It also avoids some deeper
  * parsing for certain types, like decimal numbers and hex colors.
+ *
+ * TODO: we could pre-process these sets and serialize them faster to improve initialization time.
  */
 public class InternPool {
 
   // Arrays of instances
-  private static final RGBColor[] COLORS_HEX;
-  private static final RGBColor[] COLORS_KEYWORD;
-  private static final Dimension[] DIMENSIONS;
-  private static final TextElement[] NULL_ELEMENTS;
-  private static final TextElement[] DESC_ELEMENTS;
-  private static final TextElement[] CHILD_ELEMENTS;
-  private static final TextElement[] NAMESPACE_ELEMENTS;
-  private static final TextElement[] SIB_ADJ_ELEMENTS;
-  private static final TextElement[] SIB_GEN_ELEMENTS;
-  private static final String[] FUNCTIONS;
-  private static final Node[] KEYWORDS;
-  private static final Property[] PROPERTIES;
-  private static final Unit[] UNITS;
+  protected static final RGBColor[] COLORS_HEX;
+  protected static final RGBColor[] COLORS_KEYWORD;
+  protected static final Dimension[] DIMENSIONS;
+  protected static final TextElement[] NULL_ELEMENTS;
+  protected static final TextElement[] DESC_ELEMENTS;
+  protected static final TextElement[] CHILD_ELEMENTS;
+  protected static final TextElement[] NAMESPACE_ELEMENTS;
+  protected static final TextElement[] SIB_ADJ_ELEMENTS;
+  protected static final TextElement[] SIB_GEN_ELEMENTS;
+  protected static final String[] FUNCTIONS;
+  protected static final Node[] KEYWORDS;
+  protected static final Property[] PROPERTIES;
+  protected static final Unit[] UNITS;
 
   // Double-array tries indexed to instances
-  private static final DAT COLORS_HEX_DAT;
-  private static final DAT COLORS_KEYWORD_DAT;
-  private static final DAT DIMENSIONS_DAT;
-  private static final DAT ELEMENT_DAT;
-  private static final DAT FUNCTIONS_DAT;
-  private static final DAT KEYWORD_DAT;
-  private static final DAT PROPERTY_DAT;
-  private static final DAT UNITS_DAT;
+  protected static final DAT COLORS_HEX_DAT;
+  protected static final DAT COLORS_KEYWORD_DAT;
+  protected static final DAT DIMENSIONS_DAT;
+  protected static final DAT ELEMENT_DAT;
+  protected static final DAT FUNCTIONS_DAT;
+  protected static final DAT KEYWORD_DAT;
+  protected static final DAT PROPERTY_DAT;
+  protected static final DAT UNITS_DAT;
 
   // Fast lookup of color names by their integer value
-  private static final int[] COLOR_NAME_INDEX;
-  private static final String[] COLOR_NAMES;
+  protected static final int[] COLOR_NAME_INDEX;
+  protected static final String[] COLOR_NAMES;
 
   // Pattern for splitting value from units to construct Dimension instances
   private static final Pattern RE_DIM = Pattern.compile("([-+\\d\\.]+)([%\\w]+)?");
 
   static {
+//    long start = System.nanoTime();
     try {
       // Load interned values for the various syntax fragments
       String[] _colors = load("colors.txt");
@@ -119,12 +122,14 @@ public class InternPool {
     } catch (IOException e) {
       throw new RuntimeException("Interning raised an error", e);
     }
+//    long elapsed = System.nanoTime() - start;
+//    System.err.println("intern pool initialized in " + (elapsed / 1000000) + " ms");
   }
 
   /**
    * Lookup a Property in the intern pool or construct a new one.
    */
-  public static Property property(String raw, int start, int end) {
+  public Property property(String raw, int start, int end) {
     int ix = PROPERTY_DAT.get(raw, start, end);
     if (ix == -1) {
       return new Property(raw.substring(start, end));
@@ -136,7 +141,7 @@ public class InternPool {
    * Lookup a Keyword in the intern pool or construct a new one. This contains
    * both color and plain keywords.
    */
-  public static Node keyword(String raw, int start, int end) {
+  public Node keyword(String raw, int start, int end) {
     int ix = KEYWORD_DAT.get(raw, start, end);
     if (ix == -1) {
       return new Keyword(raw.substring(start, end));
@@ -147,7 +152,7 @@ public class InternPool {
   /**
    * Lookup a dimension Unit in the intern pool.
    */
-  public static Unit unit(String raw, int start, int end) {
+  public Unit unit(String raw, int start, int end) {
     int ix = UNITS_DAT.get(raw, start, end);
     if (ix == -1) {
       String rep = raw.substring(start, end);
@@ -159,7 +164,7 @@ public class InternPool {
   /**
    * Lookup a Dimension in the intern pool or return null if not found,
    */
-  public static Dimension dimension(String raw, int start, int end) {
+  public Dimension dimension(String raw, int start, int end) {
     int ix = DIMENSIONS_DAT.get(raw, start, end);
     return ix == -1 ? null : DIMENSIONS[ix];
   }
@@ -168,7 +173,7 @@ public class InternPool {
    * Lookup a TextElement in the intern pool for the given Combinator. If not
    * found a new one is constructed.
    */
-  public static TextElement element(Combinator comb, String raw, int start, int end) {
+  public TextElement element(Combinator comb, String raw, int start, int end) {
     int ix = ELEMENT_DAT.get(raw, start, end);
     if (ix == -1) {
       return new TextElement(comb, raw.substring(start, end));
@@ -194,7 +199,7 @@ public class InternPool {
   /**
    * Lookup a function name in the intern pool or copy the substring.
    */
-  public static String function(String raw, int start, int end) {
+  public String function(String raw, int start, int end) {
     int ix = FUNCTIONS_DAT.getIgnoreCase(raw, start, end);
     if (ix == -1) {
       return raw.substring(start, end).toLowerCase();
@@ -205,7 +210,7 @@ public class InternPool {
   /**
    * Lookup a hex or keyword color in the intern pool.
    */
-  public static RGBColor color(String raw, int start, int end) {
+  public RGBColor color(String raw, int start, int end) {
     if (raw.charAt(start) == '#') {
       int ix = COLORS_HEX_DAT.getIgnoreCase(raw, start, end);
       return ix == -1 ? RGBColor.fromHex(raw.substring(start, end)) : COLORS_HEX[ix];
@@ -221,7 +226,7 @@ public class InternPool {
   /**
    * Lookup a keyword color in the intern pool or return null if not found.
    */
-  public static RGBColor keywordColor(String raw, int start, int end) {
+  public RGBColor keywordColor(String raw, int start, int end) {
     int ix = InternPool.COLORS_KEYWORD_DAT.get(raw, start, end);
     return ix == -1 ? null : InternPool.COLORS_KEYWORD[ix];
   }
@@ -229,7 +234,7 @@ public class InternPool {
   /**
    * Given a color, return its CSS name or null if none exists.
    */
-  public static String colorToKeyword(RGBColor color) {
+  public String colorToKeyword(RGBColor color) {
     if (color.alpha() != 1.0) {
       return null;
     }
