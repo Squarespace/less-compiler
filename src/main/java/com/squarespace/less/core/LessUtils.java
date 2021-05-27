@@ -52,6 +52,14 @@ public class LessUtils {
   }
 
   /**
+   * Strip whitespace from string. If empty string results, return null.
+   */
+  public static String stripToNull(String raw) {
+    String result = strip(raw, 0, raw.length());
+    return result.isEmpty() ? null : result;
+  }
+
+  /**
    * Strip whitespace off ends of string.
    */
   public static String strip(String raw, int start, int end) {
@@ -79,7 +87,7 @@ public class LessUtils {
    *
    *      split("", ':') = []
    *     split(":", ':') = ["", ""]
-   *     split("a", ':') = ["a", ""]
+   *     split("a", ':') = ["a"]
    *   split("a:b", ':') = ["a", "b"]
    * split("a:b:c", ':') = ["a", "b", "c"]
    *

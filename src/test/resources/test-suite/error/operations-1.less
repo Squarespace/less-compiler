@@ -1,0 +1,6 @@
+//:ExecuteErrorType.INVALID_OPERATION1 can't add a color to a keyword
+@color: red;
+@kwd: foo;
+.parent {
+    color: @color + @kwd;
+}
