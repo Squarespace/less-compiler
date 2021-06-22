@@ -268,11 +268,6 @@ public class LessParser {
    */
   private int[] color_array = new int[] { 0, 0, 0 };
 
-  public int interned = 0;
-  public int failed = 0;
-  public int interned_bytes = 0;
-  public int interned_fail = 0;
-
   /**
    * Construct a parser for the given context and source string.
    */
