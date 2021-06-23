@@ -26,9 +26,9 @@ import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.FlexList;
-import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockDirective;
+import com.squarespace.less.model.Comment;
 import com.squarespace.less.model.Definition;
 import com.squarespace.less.model.Directive;
 import com.squarespace.less.model.GenericBlock;
@@ -43,6 +43,7 @@ import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Rule;
 import com.squarespace.less.model.Ruleset;
+import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Stylesheet;
 
 
@@ -51,6 +52,21 @@ import com.squarespace.less.model.Stylesheet;
  * mixins, imports, etc. This produces a tree that is ready to be rendered.
  */
 public class LessEvaluator {
+
+  /**
+   * Evaluation complexity threshold at which to bail out and fast-exit.
+   */
+  private static final int COMPLEXITY_THRESHOLD = 2000000;
+
+  /**
+   * Limit to number of mixins which can be expanded per stylesheet.
+   */
+  private static final int MIXIN_THRESHOLD = 100000;
+
+  /**
+   * Limit estimated size of evaluated stylesheet.
+   */
+  private static final int SIZE_THRESHOLD = 15 * 1024 * 1024;
 
   /**
    * Context for the current compile.
@@ -62,9 +78,37 @@ public class LessEvaluator {
    */
   protected final LessOptions opts;
 
+  /**
+   * Track complexity of stylesheet as we're evaluating it.
+   */
+  private int complexity = 0;
+
+  /**
+   * Track number of mixins matched.
+   */
+  private int mixins = 0;
+
+  /**
+   * Estimated stylesheet size during evaluation.
+   */
+  private int size = 0;
+
+  /**
+   * Flag to indicate we're bailing out early.
+   */
+  private boolean fast_exit = false;
+
   public LessEvaluator(LessContext ctx) {
     this.ctx = ctx;
     this.opts = ctx.options();
+  }
+
+  /**
+   * Return the evaluation complexity of the stylesheet. Currently this is
+   * the number of rules in the stylesheet.
+   */
+  public int complexity() {
+    return complexity;
   }
 
   /**
@@ -77,6 +121,18 @@ public class LessEvaluator {
     if (env.hasError()) {
       throw env.error();
     }
+    if (fast_exit) {
+      result.add(new Comment(" ERROR: Evaluation incomplete: stylesheet exceeded one or more thresholds! ", true));
+    }
+    if (complexity > COMPLEXITY_THRESHOLD) {
+      result.add(new Comment(" EVAL: exceeded stylesheet complexity limit: " + complexity + " ", true));
+    }
+    if (mixins > MIXIN_THRESHOLD) {
+      result.add(new Comment(" EVAL: exceeded mixin expansion limit: " + mixins + " ", true));
+    }
+    if (size > SIZE_THRESHOLD) {
+      result.add(new Comment(" EVAL: exceeded size limit: " + size + " ", true));
+    }
     return result;
   }
 
@@ -84,6 +140,7 @@ public class LessEvaluator {
    * Evaluate a BLOCK_DIRECTIVE node.
    */
   protected BlockDirective evaluateBlockDirective(ExecEnv env, BlockDirective input) throws LessException {
+    size += input.size();
     BlockDirective directive = input.copy();
     env.push(directive);
 
@@ -99,6 +156,14 @@ public class LessEvaluator {
    * Evaluate a MEDIA node.
    */
   protected Media evaluateMedia(ExecEnv env, Media input) throws LessException {
+    size += input.size();
+    if (input.features() != null) {
+      List<Node> features = input.features().features();
+      if (features != null) {
+        complexity += features.size();
+      }
+    }
+
     Media media = input.copy(env);
     env.push(media);
 
@@ -114,6 +179,18 @@ public class LessEvaluator {
    * Evaluate a RULESET node.
    */
   protected Ruleset evaluateRuleset(ExecEnv env, Ruleset input, boolean forceImportant) throws LessException {
+    if (input.block().rules().isEmpty()) {
+      return input;
+    }
+
+    size += input.size();
+    if (input.selectors() != null) {
+      List<Selector> selectors = input.selectors().selectors();
+      if (selectors != null) {
+        complexity += selectors.size();
+      }
+    }
+
     Ruleset original = (Ruleset)input.original();
     Ruleset ruleset = input.copy(env);
 
@@ -149,7 +226,24 @@ public class LessEvaluator {
    * the list with the result of the evaluation.
    */
   protected void evaluateRules(ExecEnv env, Block block, boolean forceImportant) throws LessException {
+    if (complexity > COMPLEXITY_THRESHOLD) {
+      fast_exit = true;
+    }
+
+    if (size > SIZE_THRESHOLD) {
+      fast_exit = true;
+    }
+
+    if (fast_exit) {
+      return;
+    }
+
     FlexList<Node> rules = block.rules();
+    if (rules.size() == 0) {
+      return;
+    }
+
+    complexity += rules.size();
 
     Import currentImport = null;
     for (int i = 0; i < rules.size(); i++) {
@@ -166,6 +260,7 @@ public class LessEvaluator {
 
           case DEFINITION:
             Definition def = (Definition)node;
+            size += def.size();
             Definition newDef = def.copy(def.dereference(env));
             newDef.warnings(env.warnings());
             node = newDef;
@@ -173,6 +268,7 @@ public class LessEvaluator {
 
           case DIRECTIVE:
             Directive directive = (Directive)(node.eval(env));
+            size += directive.size();
             if (directive.name().equals("@charset")) {
               if (block.charset() == null) {
                 block.charset(directive);
@@ -199,7 +295,7 @@ public class LessEvaluator {
             break;
 
           case MIXIN_CALL:
-            throw new LessInternalException("Serious error: all mixin calls should already have been evaluated.");
+            break;
 
           case RULESET:
             node = evaluateRuleset(env, (Ruleset)node, forceImportant);
@@ -207,6 +303,7 @@ public class LessEvaluator {
 
           case RULE:
             Rule rule = (Rule) node;
+            size += rule.size();
             Rule newRule = null;
             if (forceImportant && !rule.important()) {
               newRule = rule.copy(rule.value().eval(env), forceImportant);
@@ -241,6 +338,7 @@ public class LessEvaluator {
 
       rules.set(i, node);
     }
+
   }
 
   /**
@@ -252,6 +350,10 @@ public class LessEvaluator {
     if (!block.hasMixinCalls()) {
       return;
     }
+    if (fast_exit) {
+      return;
+    }
+
     FlexList<Node> rules = block.rules();
     // Use of rules.size() intentional since the list size can change during iteration.
     for (int i = 0; i < rules.size(); i++) {
@@ -259,9 +361,15 @@ public class LessEvaluator {
       if (node instanceof MixinCall) {
         Block mixinResult = executeMixinCall(env, (MixinCall)node);
 
+        // Mixin result can return null if we exceeded our mixin expansion threshold.
+        if (mixinResult == null) {
+          return;
+        }
+
         // Splice the rules produced by the mixin call into the current block,
         // replacing the mixin call.
         FlexList<Node> other = mixinResult.rules();
+
         block.splice(i, 1, other);
         i += other.size() - 1;
 
@@ -269,6 +377,19 @@ public class LessEvaluator {
         // been added.
         block.resetVariableCache();
         block.orFlags(mixinResult);
+
+        // All rules added by expanding a mixin add to stylesheet complexity.
+        complexity += other.size();
+
+        // Bail out of complexity threshold exceeded
+        if (complexity > COMPLEXITY_THRESHOLD) {
+          fast_exit = true;
+          return;
+        }
+        if (size > SIZE_THRESHOLD) {
+          fast_exit = true;
+          return;
+        }
       }
     }
   }
@@ -281,6 +402,10 @@ public class LessEvaluator {
    * the mixin's guard to FALSE.
    */
   protected Block executeMixinCall(ExecEnv env, MixinCall call) throws LessException {
+    if (mixins > MIXIN_THRESHOLD) {
+      return null;
+    }
+
     MixinMatcher matcher = new MixinMatcher(env, call);
     MixinResolver resolver = ctx.mixinResolver();
     resolver.reset(matcher);
@@ -295,6 +420,12 @@ public class LessEvaluator {
     Block results = new Block();
     int calls = 0;
     int size = matches.size();
+    mixins += size;
+
+    if (mixins > MIXIN_THRESHOLD) {
+      return null;
+    }
+
     for (int i = 0; i < size; i++) {
       MixinMatch match = matches.get(i);
       Node node = match.mixin();
@@ -426,6 +557,9 @@ public class LessEvaluator {
 
     ctx.enterMixin();
     Ruleset result = evaluateRuleset(env, ruleset, call.important());
+    if (env.hasError()) {
+      return true;
+    }
     ctx.exitMixin();
 
     Block block = result.block();

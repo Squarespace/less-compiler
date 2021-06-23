@@ -33,6 +33,7 @@ import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.BlockDirective;
+import com.squarespace.less.model.Media;
 import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Stylesheet;
@@ -92,11 +93,29 @@ public class CssModel {
   private int blockId;
 
   /**
+   * Complexity of the model.
+   */
+  private int complexity;
+
+  /**
+   * Tracks the size of the model's output as it is constructed.
+   */
+  private int size;
+
+  /**
    * Constructs a CSS model with the given context.
    */
   public CssModel(LessContext ctx) {
     buffer = ctx.newBuffer();
     current = new CssBlock(this.blockId++, STYLESHEET);
+  }
+
+  public int complexity() {
+    return complexity;
+  }
+
+  public int size() {
+    return size;
   }
 
   /**
@@ -115,6 +134,8 @@ public class CssModel {
    * Appends a value to the current block.
    */
   public CssModel value(String value) {
+    this.complexity++;
+    this.size += value.length();
     current.add(new CssValue(value));
     return this;
   }
@@ -123,6 +144,8 @@ public class CssModel {
    * Appends a comment to the current block.
    */
   public CssModel comment(String value) {
+    this.complexity++;
+    this.size += value.length();
     if (!value.isEmpty()) {
       current.add(new CssComment(value));
     }
@@ -132,10 +155,10 @@ public class CssModel {
   /**
    * Add raw strings to the header of the current block.
    */
-  public CssModel header(String ... strings) {
-    for (int i = 0; i < strings.length; i++) {
-      current.add(strings[i]);
-    }
+  public CssModel header(String value) {
+    this.complexity++;
+    this.size += value.length();
+    current.add(value);
     return this;
   }
 

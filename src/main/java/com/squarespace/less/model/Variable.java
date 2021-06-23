@@ -16,6 +16,7 @@
 
 package com.squarespace.less.model;
 
+import static com.squarespace.less.core.ExecuteErrorMaker.varCircularRef;
 import static com.squarespace.less.core.ExecuteErrorMaker.varUndefined;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 import static com.squarespace.less.model.NodeType.VARIABLE;
@@ -97,8 +98,16 @@ public class Variable implements Node {
    * Traverses the variable reference, to get its value.
    */
   protected Node dereference(Definition def, ExecEnv env) throws LessException {
+    // Ensure we're not currently evaluating this variable definition through
+    // a circular reference.
+    if (def.evaluating()) {
+      throw new LessException(varCircularRef(env));
+    }
+
+    def.evaluating(true);
     Node result = def.dereference(env);
     if (!indirect) {
+      def.evaluating(false);
       return result;
     }
 
@@ -108,7 +117,9 @@ public class Variable implements Node {
     Buffer buf = ctx.newBuffer();
     buf.startDelim('"');
     ctx.render(buf, result);
-    return env.context().nodeBuilder().buildVariable("@" + buf.toString()).eval(env);
+    result = env.context().nodeBuilder().buildVariable("@" + buf.toString()).eval(env);
+    def.evaluating(false);
+    return result;
   }
 
   /**

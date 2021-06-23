@@ -3,6 +3,7 @@ package com.squarespace.less.parse;
 import static com.squarespace.less.core.CharClass.CLASSIFIER;
 import static com.squarespace.less.core.SyntaxErrorMaker.alphaUnitsInvalid;
 import static com.squarespace.less.core.SyntaxErrorMaker.bug;
+import static com.squarespace.less.core.SyntaxErrorMaker.excessiveRollbacks;
 import static com.squarespace.less.core.SyntaxErrorMaker.expected;
 import static com.squarespace.less.core.SyntaxErrorMaker.general;
 import static com.squarespace.less.core.SyntaxErrorMaker.incompleteParse;
@@ -21,6 +22,7 @@ import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.core.LessUtils;
+import com.squarespace.less.core.SyntaxErrorMaker;
 import com.squarespace.less.match.InternPool;
 import com.squarespace.less.match.Recognizer;
 import com.squarespace.less.model.Alpha;
@@ -117,6 +119,11 @@ public class LessParser {
    * selector.
    */
   private static final int FLAG_OPENSPACE = 1;
+
+  /**
+   * Exceeding rollback threshold indicates parser unable to make fast (quasi-linear) progress.
+   */
+  private static final int ROLLBACK_THRESHOLD = 1000;
 
   private static final Anonymous ANON = new Anonymous();
 
@@ -264,6 +271,11 @@ public class LessParser {
   private boolean safe_mode = true;
 
   /**
+   * Number of rollbacks that have occurred.
+   */
+  private int rollbacks = 0;
+
+  /**
    * Storage for color conversion.
    */
   private int[] color_array = new int[] { 0, 0, 0 };
@@ -356,12 +368,13 @@ public class LessParser {
   }
 
   /**
-   * Set line and column offsets for the given node.
+   * Set line and column offsets and estimated size for the given node.
    */
-  private <T extends StructuralNode> T setpos(int[] mark, T node) {
+  private <T extends StructuralNode> T setinfo(int[] mark, int size, T node) {
     if (node != null) {
       node.setLineOffset(mark[1]);
       node.setCharOffset(mark[2]);
+      node.setSize(size);
     }
     return node;
   }
@@ -403,13 +416,17 @@ public class LessParser {
   /**
    * Restore the stream state to the last marked position.
    */
-  private void rollback() {
+  private void rollback() throws LessException {
     m_ptr--;
     int[] m = marks[m_ptr];
     pos = m[0];
     line = m[1];
     column = m[2];
     flags = m[3];
+    rollbacks++;
+    if (rollbacks > ROLLBACK_THRESHOLD) {
+      throw parseError(new LessException(excessiveRollbacks()));
+    }
   }
 
   /**
@@ -428,202 +445,206 @@ public class LessParser {
     }
 
     Node r = null;
-    switch (syntax) {
+    try {
+      switch (syntax) {
 
-      case ADDITION:
-        r = addition();
-        break;
+        case ADDITION:
+          r = addition();
+          break;
 
-      case ALPHA:
-        r = alpha();
-        break;
+        case ALPHA:
+          r = alpha();
+          break;
 
-      case ASSIGNMENT:
-        r = assignment();
-        break;
+        case ASSIGNMENT:
+          r = assignment();
+          break;
 
-      case COLOR:
-        r = color();
-        break;
+        case COLOR:
+          r = color();
+          break;
 
-      case COLOR_KEYWORD:
-        r = color_keyword();
-        break;
+        case COLOR_KEYWORD:
+          r = color_keyword();
+          break;
 
-      case COMMENT:
-        r = comment(true, false);
-        break;
+        case COMMENT:
+          r = comment(true, false);
+          break;
 
-      case COMMENT_RULE:
-        r = comment(true, true);
-        break;
+        case COMMENT_RULE:
+          r = comment(true, true);
+          break;
 
-      case CONDITION:
-        r = condition();
-        break;
+        case CONDITION:
+          r = condition();
+          break;
 
-      case CONDITIONS:
-        r = conditions();
-        break;
+        case CONDITIONS:
+          r = conditions();
+          break;
 
-      case DEFINITION:
-        r = definition();
-        break;
+        case DEFINITION:
+          r = definition();
+          break;
 
-      case DIMENSION:
-        r = dimension();
-        break;
+        case DIMENSION:
+          r = dimension();
+          break;
 
-      case DIRECTIVE:
-        Node directive = directive();
-        r = directive;
-        if (directive != null && directive != DUMMY_MEDIA) {
-          NodeType type = directive.type();
-          if (type == NodeType.MEDIA || type == NodeType.BLOCK_DIRECTIVE) {
-            r = _parse((BlockNode) directive) ? directive : null;
+        case DIRECTIVE:
+          Node directive = directive();
+          r = directive;
+          if (directive != null && directive != DUMMY_MEDIA) {
+            NodeType type = directive.type();
+            if (type == NodeType.MEDIA || type == NodeType.BLOCK_DIRECTIVE) {
+              r = _parse((BlockNode) directive) ? directive : null;
+            }
           }
-        }
 
-        // Note that we don't handle '@import' here, just parse and return it
-        break;
+          // Note that we don't handle '@import' here, just parse and return it
+          break;
 
-      case ELEMENT:
-        r = element();
-        break;
+        case ELEMENT:
+          r = element();
+          break;
 
-      case ELEMENT_SUB:
-        r = element_sub();
-        break;
+        case ELEMENT_SUB:
+          r = element_sub();
+          break;
 
-      case ENTITY:
-        r = entity();
-        break;
+        case ENTITY:
+          r = entity();
+          break;
 
-      case EXPRESSION:
-        r = expression();
-        break;
+        case EXPRESSION:
+          r = expression();
+          break;
 
-      case EXPRESSION_LIST:
-        r = expression_list();
-        break;
+        case EXPRESSION_LIST:
+          r = expression_list();
+          break;
 
-      case EXPRESSION_SUB:
-        r = expression_sub();
-        break;
+        case EXPRESSION_SUB:
+          r = expression_sub();
+          break;
 
-      case FEATURES:
-        r = features();
-        break;
+        case FEATURES:
+          r = features();
+          break;
 
-      case FONT:
-        r = font();
-        break;
+        case FONT:
+          r = font();
+          break;
 
-      case FUNCTION_CALL:
-        r = function_call();
-        break;
+        case FUNCTION_CALL:
+          r = function_call();
+          break;
 
-      case GUARD:
-        r = guard();
-        break;
+        case GUARD:
+          r = guard();
+          break;
 
-      case JAVASCRIPT:
-        javascript();
-        break;
+        case JAVASCRIPT:
+          javascript();
+          break;
 
-      case KEYWORD:
-        r = keyword();
-        break;
+        case KEYWORD:
+          r = keyword();
+          break;
 
-      case LITERAL:
-        r = literal();
-        break;
+        case LITERAL:
+          r = literal();
+          break;
 
-      case MIXIN:
-        Mixin mixin = mixin();
-        r = _parse(mixin) ? mixin : null;
-        break;
+        case MIXIN:
+          Mixin mixin = mixin();
+          r = _parse(mixin) ? mixin : null;
+          break;
 
-      case MIXIN_CALL:
-        r = mixin_call();
-        break;
+        case MIXIN_CALL:
+          r = mixin_call();
+          break;
 
-      case MIXIN_CALL_ARGS:
-        r = mixin_call_args();
-        break;
+        case MIXIN_CALL_ARGS:
+          r = mixin_call_args();
+          break;
 
-      case MIXIN_PARAMS:
-        r = mixin_params();
-        break;
+        case MIXIN_PARAMS:
+          r = mixin_params();
+          break;
 
-      case MULTIPLICATION:
-        r = multiplication();
-        break;
+        case MULTIPLICATION:
+          r = multiplication();
+          break;
 
-      case OPERAND:
-        r = operand();
-        break;
+        case OPERAND:
+          r = operand();
+          break;
 
-      case OPERAND_SUB:
-        r = operand_sub();
-        break;
+        case OPERAND_SUB:
+          r = operand_sub();
+          break;
 
-      case PARAMETER:
-        r = parameter();
-        break;
+        case PARAMETER:
+          r = parameter();
+          break;
 
-      case QUOTED:
-        r = quoted();
-        break;
+        case QUOTED:
+          r = quoted();
+          break;
 
-      case RATIO:
-        r = ratio();
-        break;
+        case RATIO:
+          r = ratio();
+          break;
 
-      case RULE:
-        r = rule();
-        break;
+        case RULE:
+          r = rule();
+          break;
 
-      case RULESET:
-        Ruleset ruleset = ruleset();
-        r = _parse(ruleset) ? ruleset : null;
-        break;
+        case RULESET:
+          Ruleset ruleset = ruleset();
+          r = _parse(ruleset) ? ruleset : null;
+          break;
 
-      case SELECTOR:
-        r = selector();
-        break;
+        case SELECTOR:
+          r = selector();
+          break;
 
-      case SELECTORS:
-        r = selectors();
-        break;
+        case SELECTORS:
+          r = selectors();
+          break;
 
-      case SHORTHAND:
-        r = shorthand();
-        break;
+        case SHORTHAND:
+          r = shorthand();
+          break;
 
-      case STYLESHEET:
-        Stylesheet sheet = builder.buildStylesheet(new Block());
-        r = _parse(sheet) ? sheet : null;
-        break;
+        case STYLESHEET:
+          Stylesheet sheet = builder.buildStylesheet(new Block());
+          r = _parse(sheet) ? sheet : null;
+          break;
 
-      case VARIABLE:
-        r = variable(false);
-        break;
+        case VARIABLE:
+          r = variable(false);
+          break;
 
-      case VARIABLE_CURLY:
-        r = variable(true);
-        break;
+        case VARIABLE_CURLY:
+          r = variable(true);
+          break;
 
-      case UNICODE_RANGE:
-        r = unicode_range();
-        break;
+        case UNICODE_RANGE:
+          r = unicode_range();
+          break;
 
-      case URL:
-        r = url(true);
-        break;
+        case URL:
+          r = url(true);
+          break;
 
-      default:
-        throw parseError(new LessException(bug("unsupported syntax fragment")));
+        default:
+          throw parseError(new LessException(bug("unsupported syntax fragment")));
+      }
+    } catch (StackOverflowError e) {
+      throw parseError(new LessException(SyntaxErrorMaker.general("stack overflow")));
     }
 
     if (syntax != LessSyntax.STYLESHEET) {
@@ -660,6 +681,9 @@ public class LessParser {
       if (!ws_comments(true, true)) {
         break;
       }
+
+      // Reset rollbacks counter between each major syntax fragment
+      rollbacks = 0;
 
       // Peek at the current character
       char c = raw.charAt(pos);
@@ -1288,7 +1312,8 @@ public class LessParser {
     // Ensures a selector immediately after ';' will create a descendant delimiter
     flags |= FLAG_OPENSPACE;
 
-    Definition result = setpos(mark, builder.buildDefinition(name, value));
+    int size = pos - ms;
+    Definition result = setinfo(mark, size, builder.buildDefinition(name, value));
     result.fileName(fileName);
     commit();
     return result;
@@ -1340,6 +1365,7 @@ public class LessParser {
       return null;
     }
 
+    int ms = m_start;
     int[] mark = begin();
     consume(m_end);
 
@@ -1360,17 +1386,23 @@ public class LessParser {
 
     switch (nvname) {
       case "@import":
-      case "@import-once":
+      case "@import-once": {
         ws();
-        Node node = setpos(mark, directive_import(nvname));
+        Import node = directive_import(nvname);
+        int size = pos - ms;
+        node = setinfo(mark, size, node);
         commit();
         return node;
+      }
 
-      case "@media":
+      case "@media": {
         ws();
-        Media media = setpos(mark, directive_media());
+        Media media = directive_media();
+        int size = pos - ms;
+        media = setinfo(mark, size, media);
         commit();
         return media;
+      }
 
       case "@font-face":
       case "@viewport":
@@ -1429,7 +1461,8 @@ public class LessParser {
       ws();
       if (peek() == '{') {
         block_open();
-        Node node = setpos(mark, builder.buildBlockDirective(name, new Block()));
+        int size = pos - ms;
+        Node node = setinfo(mark, size, builder.buildBlockDirective(name, new Block()));
         commit();
         return node;
       }
@@ -1441,7 +1474,8 @@ public class LessParser {
       if (peek() == ';') {
         next();
         if (value != null) {
-          Node node = setpos(mark, builder.buildDirective(name,  value));
+          int size = pos - ms;
+          Node node = setinfo(mark, size, builder.buildDirective(name,  value));
           commit();
           return node;
         }
@@ -1909,7 +1943,7 @@ public class LessParser {
   /**
    * Property inside a feature.
    */
-  private Node feature_property() {
+  private Node feature_property() throws LessException {
     begin();
     if (match(Patterns.PROPERTY)) {
       consume(m_end);
@@ -2173,6 +2207,7 @@ public class LessParser {
       return null;
     }
 
+    int ms = m_start;
     int[] mark = begin();
 
     String name = raw.substring(m_start, m_end);
@@ -2197,7 +2232,8 @@ public class LessParser {
     }
 
     // Definition is valid
-    Mixin mixin = setpos(mark, builder.buildMixin(name, params, guard, new Block()));
+    int size = pos - ms;
+    Mixin mixin = setinfo(mark, size, builder.buildMixin(name, params, guard, new Block()));
     commit();
     return mixin;
   }
@@ -2208,6 +2244,7 @@ public class LessParser {
    * A call to a mixin with optional arguments.
    */
   private MixinCall mixin_call() throws LessException {
+    int ms = m_start;
     int[] mark = begin();
 
     Combinator comb = null;
@@ -2263,7 +2300,8 @@ public class LessParser {
         next();
       }
 
-      MixinCall call = setpos(mark, builder.buildMixinCall(selector, args, important));
+      int size = pos - ms;
+      MixinCall call = setinfo(mark, size, builder.buildMixinCall(selector, args, important));
       call.fileName(fileName);
       commit();
       return call;
@@ -2739,6 +2777,7 @@ public class LessParser {
       return null;
     }
 
+    int ms = m_start;
     int[] mark = begin();
     consume(m_end);
 
@@ -2803,7 +2842,8 @@ public class LessParser {
 
       flags |= FLAG_OPENSPACE;
 
-      Rule rule = setpos(mark, builder.buildRule(property, value, important));
+      int size = pos - ms;
+      Rule rule = setinfo(mark, size, builder.buildRule(property, value, important));
       rule.fileName(fileName);
       commit();
       return rule;
@@ -2845,6 +2885,7 @@ public class LessParser {
    * Selectors and a nested set of rules.
    */
   private Ruleset ruleset() throws LessException {
+    int ms = m_start;
     int[] mark = begin();
     Selectors group = selectors();
     if (group == null) {
@@ -2857,7 +2898,8 @@ public class LessParser {
       return null;
     }
 
-    Ruleset ruleset = setpos(mark, builder.buildRuleset(group, new Block()));
+    int size = pos - ms;
+    Ruleset ruleset = setinfo(mark, size, builder.buildRuleset(group, new Block()));
     ruleset.fileName(fileName);
     commit();
     return ruleset;

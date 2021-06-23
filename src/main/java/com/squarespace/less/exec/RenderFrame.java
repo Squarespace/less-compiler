@@ -16,6 +16,7 @@
 
 package com.squarespace.less.exec;
 
+import com.squarespace.less.LessException;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Feature;
@@ -35,13 +36,9 @@ import com.squarespace.less.model.Selectors;
 public class RenderFrame {
 
   private final RenderFrame parent;
-
   private final BlockNode blockNode;
-
   private final int depth;
-
   private Selectors selectors;
-
   private Features features;
 
   public RenderFrame() {
@@ -89,12 +86,16 @@ public class RenderFrame {
   /**
    * Combines this set of {@link Selectors} with its parent's.
    */
-  public void mergeSelectors(Selectors current) {
+  public void mergeSelectors(Selectors current) throws LessException {
     Selectors ancestors = (parent == null) ? Constants.EMPTY_SELECTORS : parent.selectors();
     if (current == null || current.isEmpty()) {
       this.selectors = ancestors;
     } else {
-      this.selectors = SelectorUtils.combine(ancestors, current);
+      try {
+        this.selectors = SelectorUtils.combine(ancestors, current);
+      } catch (LessException e) {
+        this.selectors = ancestors;
+      }
     }
   }
 

@@ -24,7 +24,6 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.FlexList;
-import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.BlockDirective;
 import com.squarespace.less.model.Comment;
@@ -49,6 +48,16 @@ import com.squarespace.less.model.Stylesheet;
  * Given an executed tree, renders the final output.
  */
 public class LessRenderer {
+
+  /**
+   * Rendering complexity threshold.
+   */
+  private static final int COMPLEXITY_THRESHOLD = 2000000;
+
+  /**
+   * Output size limit of 10 MB.
+   */
+  private static final int SIZE_THRESHOLD = 10 * 1024 * 1024;
 
   /**
    * Context for the current compile.
@@ -85,6 +94,16 @@ public class LessRenderer {
    */
   private int warningId;
 
+  /**
+   * Indicates if a complexity warning was emitted.
+   */
+  private boolean complexity_warning = false;
+
+  /**
+   * Indicates if a size warning was emitted.
+   */
+  private boolean size_warning = false;
+
   protected LessRenderer(LessContext context, Stylesheet stylesheet) {
     this.ctx = context;
     this.stylesheet = stylesheet;
@@ -112,6 +131,12 @@ public class LessRenderer {
     renderBlock(block, false);
     env.pop();
 
+    if (model.complexity() > COMPLEXITY_THRESHOLD) {
+      model.comment("/* RENDER: exceeded render complexity limit: " + model.complexity() + " */");
+    }
+    if (model.size() > SIZE_THRESHOLD) {
+      model.comment("/* RENDER: exceeded render complexity limit: " + model.size() + " chars */");
+    }
     return model.render();
   }
 
@@ -121,6 +146,8 @@ public class LessRenderer {
   private void renderRuleset(Ruleset ruleset) throws LessException {
     env.push(ruleset);
     model.push(NodeType.RULESET);
+
+    // Check if selector complexity threshold was exceeded and emit a comment
 
     Selectors selectors = env.frame().selectors();
     if (!selectors.isEmpty()) {
@@ -201,6 +228,22 @@ public class LessRenderer {
    * imports.
    */
   private void renderBlock(Block block, boolean includeImports) throws LessException {
+    if (model.complexity() > COMPLEXITY_THRESHOLD) {
+      if (!complexity_warning) {
+        model.comment("/* ERROR: Render incomplete: stylesheet exceeeded complexity threshold */");
+        complexity_warning = true;
+      }
+      return;
+    }
+
+    if (model.size() > SIZE_THRESHOLD) {
+      if (!size_warning) {
+        model.comment("/* ERROR: Render incomplete: stylesheet exceeded size threshold */");
+        size_warning = true;
+      }
+      return;
+    }
+
     FlexList<Node> rules = block.rules();
     int size = rules.size();
     for (int i = 0; i < size; i++) {
@@ -263,7 +306,11 @@ public class LessRenderer {
           break;
 
         default:
-          throw new LessInternalException("Unhandled node: " + node.type());
+          // Ignore unhandled nodes. We may have exceeded a complexity threshold during
+          // evaluation, which could leave some nodes in the stylesheet unevaluated.
+          // Some of these nodes have no rendering representation (e.g. MIXIN_CALL) so must
+          // be ignored.
+          break;
       }
     }
   }

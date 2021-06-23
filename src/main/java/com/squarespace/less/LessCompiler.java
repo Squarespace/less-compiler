@@ -95,8 +95,12 @@ public class LessCompiler {
     long started = stats.now();
     LessParser parser = new LessParser(ctx, raw, rootPath, fileName);
     parser.safeMode(safeMode);
-    Stylesheet sheet = (Stylesheet) parser.parse(LessSyntax.STYLESHEET);
-    stats.parseDone(raw.length(), started);
+    Stylesheet sheet = null;
+    try {
+      sheet = (Stylesheet) parser.parse(LessSyntax.STYLESHEET);
+    } finally {
+      stats.parseDone(raw.length(), started);
+    }
     return sheet;
   }
 
@@ -119,8 +123,12 @@ public class LessCompiler {
     Stylesheet sheet = parse(raw, ctx, rootPath, fileName, safeMode);
     LessStats stats = ctx.stats();
     long started = stats.now();
-    String result = render(sheet, ctx);
-    stats.compileDone(started);
+    String result = "";
+    try {
+      result = render(sheet, ctx);
+    } finally {
+      stats.compileDone(started);
+    }
     return result;
   }
 

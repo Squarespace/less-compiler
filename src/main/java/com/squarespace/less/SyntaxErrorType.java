@@ -31,6 +31,9 @@ public enum SyntaxErrorType implements LessErrorType {
   ALPHA_UNITS_INVALID
   ("Numeric values for alpha cannot have units. Found %(arg0)s"),
 
+  EXCESSIVE_ROLLBACKS
+  ("Rollback threshold exceeded"),
+
   EXPECTED
   ("Expected %(arg0)s"),
 

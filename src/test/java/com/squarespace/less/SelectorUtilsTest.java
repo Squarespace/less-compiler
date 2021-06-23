@@ -34,7 +34,7 @@ import com.squarespace.less.model.TextElement;
 public class SelectorUtilsTest extends LessTestBase {
 
   @Test
-  public void testNested() {
+  public void testNested() throws LessException {
     TextElement parent = element(".parent");
     TextElement child = element(DESC, ".child");
     TextElement sibling = element(DESC, ".sibling");
@@ -50,7 +50,7 @@ public class SelectorUtilsTest extends LessTestBase {
   }
 
   @Test
-  public void testWildcard() {
+  public void testWildcard() throws LessException {
     TextElement parent = element(".parent");
     TextElement child = element(".child");
     TextElement sibling = element(".sibling");
@@ -67,7 +67,7 @@ public class SelectorUtilsTest extends LessTestBase {
   }
 
   @Test
-  public void testMultipleWildcards() {
+  public void testMultipleWildcards() throws LessException {
     TextElement child = element(".child");
     TextElement sibling = element(".sibling");
     TextElement wild1 = element("&");

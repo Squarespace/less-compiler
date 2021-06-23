@@ -84,7 +84,8 @@ abstract class BaseCompile {
   }
 
   protected void emitStats(LessStats stats) {
-    log(" Statistics:\n");
+    nl();
+    log(" Statistics:");
     log("      parse time: " + stats.parseTimeMs() + "ms");
     log("    compile time: " + stats.compileTimeMs() + "ms");
     log("  disk wait time: " + stats.diskWaitTimeMs() + "ms");
@@ -116,6 +117,10 @@ abstract class BaseCompile {
   protected void logElapsed(String prefix, long start, long end) {
     double compileElapsed = (end - start) / 1000000.0;
     standardErr.printf("%s %.3fms\n", prefix, compileElapsed);
+  }
+
+  protected void nl() {
+    standardErr.println();
   }
 
   protected void log(String msg) {

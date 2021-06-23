@@ -20,6 +20,11 @@ public abstract class StructuralNode implements Node, HasUserData {
   protected int charOffset;
 
   /**
+   * Estimated node size, in characters.
+   */
+  protected int size;
+
+  /**
    * User data attached to this node
    */
   protected Object userData;
@@ -86,6 +91,20 @@ public abstract class StructuralNode implements Node, HasUserData {
    */
   public void setCharOffset(int charOffset) {
     this.charOffset = charOffset;
+  }
+
+  /**
+   * Returns the nodes estimated size, in characters.
+   */
+  public int size() {
+    return size;
+  }
+
+  /**
+   * Sets the stimated size for this node.
+   */
+  public void setSize(int size) {
+    this.size = size;
   }
 
   /**

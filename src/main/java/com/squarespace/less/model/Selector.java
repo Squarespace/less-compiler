@@ -33,9 +33,7 @@ import com.squarespace.less.exec.SelectorUtils;
 public class Selector implements Node {
 
   private static final byte FLAG_EVALUATE = 0x01;
-
   private static final byte FLAG_HAS_WILDCARD = 0x02;
-
   private static final byte FLAG_MIXIN_PATH_BUILT = 0x04;
 
   /**

@@ -13,6 +13,11 @@ public class ModelUtils {
    * Helper method to format a double value and append it to the buffer.
    */
   public static void formatDouble(Buffer buf, double value) {
+    if (!Double.isFinite(value)) {
+      buf.append("0");
+      return;
+    }
+
     long lval = (long)value;
     if (value == lval) {
       buf.append(lval);
@@ -23,9 +28,9 @@ public class ModelUtils {
           .stripTrailingZeros()
           .toPlainString();
       // Strip leading zeros for positive and negative numbers.
-      if (value >= 0 && value < 1.0) {
+      if (value > 0 && value < 1.0) {
         buf.append(repr.substring(1));
-      } else if (value > -1.0 && value < 0) {
+      } else if (value > -1.0 && value < 0 && repr.startsWith("-")) {
         buf.append('-').append(repr.substring(2));
       } else {
         buf.append(repr);

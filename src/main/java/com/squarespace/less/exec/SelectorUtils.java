@@ -16,11 +16,14 @@
 
 package com.squarespace.less.exec;
 
+import static com.squarespace.less.core.ExecuteErrorMaker.selectorTooComplex;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.squarespace.less.LessContext;
+import com.squarespace.less.LessException;
 import com.squarespace.less.core.CartesianProduct;
 import com.squarespace.less.core.LessUtils;
 import com.squarespace.less.model.Element;
@@ -36,6 +39,11 @@ import com.squarespace.less.model.ValueElement;
  */
 public class SelectorUtils {
 
+  /**
+   * Selector complexity threshold at which to bail out.
+   */
+  private static final int SELECTOR_THRESHOLD = 4096;
+
   private SelectorUtils() {
   }
 
@@ -48,7 +56,7 @@ public class SelectorUtils {
    * 2. Otherwise, we need to replace each wildcard element in the selector with
    *    the list of ancestors, and then return the cartesian product.
    */
-  public static Selectors combine(Selectors ancestors, Selectors current) {
+  public static Selectors combine(Selectors ancestors, Selectors current) throws LessException {
     Selectors result = new Selectors();
     List<Selector> selectors = current.selectors();
     int ilen = selectors.size();
@@ -57,6 +65,7 @@ public class SelectorUtils {
 
       // When no wildcard is present, the selector is prepended to the ancestors.
       if (!selector.hasWildcard()) {
+
         List<List<Selector>> inputs = new ArrayList<>(2);
         inputs.add(ancestors.selectors());
         inputs.add(Arrays.asList(selector));
@@ -100,8 +109,9 @@ public class SelectorUtils {
    * Generates a cartesian product from {@code selectors} and appends the flattened
    * selectors {@code result}.
    */
-  public static void flatten(List<List<Selector>> selectors, Selectors result) {
+  public static void flatten(List<List<Selector>> selectors, Selectors result) throws LessException {
     CartesianProduct<Selector> product = new CartesianProduct<>(selectors);
+    int complexity = 0;
     while (product.hasNext()) {
       Selector flat = new Selector();
       List<Selector> _selectors = product.next();
@@ -110,11 +120,15 @@ public class SelectorUtils {
         Selector tmp = _selectors.get(i);
         List<Element> elements = tmp.elements();
         int jsize = elements.size();
+        complexity += jsize;
         for (int j = 0; j < jsize; j++) {
           flat.add(elements.get(j));
         }
       }
       result.add(flat);
+      if (complexity > SELECTOR_THRESHOLD) {
+        throw new LessException(selectorTooComplex());
+      }
     }
   }
 

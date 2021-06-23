@@ -73,12 +73,17 @@ public class ParseUtils {
     }
 
     char peek() {
-      return (pos >= length) ? Chars.EOF : raw.charAt(pos);
+      boolean end = pos >= length;
+      if (end) {
+        return Chars.EOF;
+      }
+      char c = raw.charAt(pos);
+      return c == Chars.EOF ? Chars.REPLACEMENT : c;
     }
 
     void seekTo(char ch) {
       while (pos < length) {
-        char c = raw.charAt(pos);
+        char c = peek();
         pos++;
         if (c == ch) {
           break;
@@ -96,11 +101,13 @@ public class ParseUtils {
     Stream stm = new Stream(raw);
 
     // Search for the line that contains our error index.
-    int charPos = 0;
+
+    // Length of the error string
+    int erridx = 0;
 
     while (stm.peek() != Chars.EOF) {
       int start = stm.pos;
-      charPos = index - start;
+      erridx = index - start;
       stm.seekTo('\n');
       int end = stm.pos;
 
@@ -123,14 +130,20 @@ public class ParseUtils {
       // Last line has special handling. We want to position the error in the middle
       // of the line, so for extremely long lines we need to shift things over.
       if (i + 1 == size) {
-        int len = pos[1] - pos[0];
-        if (len > WINDOW_SIZE) {
-          int errpos = pos[0] + charPos;
+        int errlen = pos[1] - pos[0];
+        if (errlen > WINDOW_SIZE) {
+
+          // Location of the error
+          int errpos = pos[0] + erridx;
+
           int skip = (int)Math.floor(WINDOW_SIZE / 2.0);
           int leftpos = Math.max(errpos - skip, pos[0]);
-          charPos -= leftpos - pos[0] - 4;
+          erridx -= leftpos - pos[0] - 4;
           buf.append("... ");
-          buf.append(raw.substring(leftpos, Math.min(leftpos + WINDOW_SIZE, pos[1])));
+
+          int min = Math.min(leftpos + WINDOW_SIZE, pos[1]);
+          String part = raw.substring(leftpos, min);
+          buf.append(part);
 
         } else {
           buf.append(raw.substring(pos[0], pos[1]));
@@ -146,7 +159,7 @@ public class ParseUtils {
       buf.append('\n');
     }
     indent(buf, 7);
-    for (int i = 0; i < charPos; i++) {
+    for (int i = 0; i < erridx; i++) {
       buf.append('.');
     }
     buf.append("^\n");

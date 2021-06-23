@@ -93,7 +93,6 @@ class CompileSingle extends BaseCompile {
         // Execute one of the debug modes
         LessParser parser = new LessParser(ctx, source);
         Stylesheet stylesheet = (Stylesheet) parser.parse(LessSyntax.STYLESHEET);
-//        Stylesheet stylesheet = compiler.parse(source, ctx, input.getParent(), input.getFileName());
         switch (args.debugMode()) {
 
           case CANONICALIZE:

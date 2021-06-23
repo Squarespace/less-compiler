@@ -100,8 +100,13 @@ public class ExecuteErrorMaker {
   public static LessErrorInfo patternCompile(String msg) {
     return error(ExecuteErrorType.PATTERN_COMPILE).arg0(msg);
   }
+
   public static LessErrorInfo percentMathOrder(Object dim) {
     return error(ExecuteErrorType.PERCENT_MATH_ORDER).arg0(dim);
+  }
+
+  public static LessErrorInfo selectorTooComplex() {
+    return error(ExecuteErrorType.SELECTOR_TOO_COMPLEX);
   }
 
   public static LessErrorInfo uncomparableType(Object type) {

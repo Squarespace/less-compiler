@@ -75,4 +75,12 @@ public class DimensionTest extends LessTestBase {
     h.parseFails("--1.3", SyntaxErrorType.INCOMPLETE_PARSE);
   }
 
+  @Test
+  public void testRepr() throws LessException {
+    LessHarness h = new LessHarness(LessSyntax.RULE);
+
+    h.renderEquals("foo: -1.5/3", "foo: -.5");
+    h.renderEquals("foo: 8/-63333333333333333333333333333;", "foo: 0");
+  }
+
 }

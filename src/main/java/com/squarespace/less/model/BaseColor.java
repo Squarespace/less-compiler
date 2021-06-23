@@ -128,22 +128,30 @@ public abstract class BaseColor implements Node {
   private BaseColor operate(Operator op, BaseColor arg0, BaseColor arg1) throws LessException {
     RGBColor c0 = arg0.toRGB();
     RGBColor c1 = arg1.toRGB();
-    int r = c0.red();
-    int g = c0.green();
-    int b = c0.blue();
+    int r0 = c0.red();
+    int g0 = c0.green();
+    int b0 = c0.blue();
     double a = c0.alpha() + c1.alpha(); // per less.js
     switch (op) {
       case ADD:
-        return new RGBColor(r + c1.red(), g + c1.green(), b + c1.blue(), a);
+        return new RGBColor(r0 + c1.red(), g0 + c1.green(), b0 + c1.blue(), a);
 
-      case DIVIDE:
-        return new RGBColor(r / c1.red(), g / c1.green(), b / c1.blue(), a);
+      case DIVIDE: {
+        int r1 = c1.red;
+        int g1 = c1.green;
+        int b1 = c1.blue;
+        return new RGBColor(
+            r0 / (r1 == 0 ? 1 : r1),
+            g0 / (g1 == 0 ? 1 : g1),
+            b0 / (b1 == 0 ? 1 : b1),
+            a);
+      }
 
       case MULTIPLY:
-        return new RGBColor(r * c1.red(), g * c1.green(), b * c1.blue(), a);
+        return new RGBColor(r0 * c1.red(), g0 * c1.green(), b0 * c1.blue(), a);
 
       case SUBTRACT:
-        return new RGBColor(r - c1.red(), g - c1.green(), b - c1.blue(), a);
+        return new RGBColor(r0 - c1.red(), g0 - c1.green(), b0 - c1.blue(), a);
 
       default:
         throw new LessException(invalidOperation(op, NodeType.COLOR));

@@ -126,7 +126,7 @@ public class FunctionCall implements Node {
   @Override
   public Node eval(ExecEnv env) throws LessException {
     if (noImplementation) {
-      return evaluate ? new FunctionCall(name, evalArgs(env), true) : this;
+      return new FunctionCall(name, evaluate ? evalArgs(env) : args, true);
     }
 
     // Check if this function is built-in.
@@ -146,7 +146,7 @@ public class FunctionCall implements Node {
     }
 
     // Function is not a built-in so render the function and its args.
-    return evaluate ? new FunctionCall(name, evalArgs(env), true) : this;
+    return new FunctionCall(name, evaluate ? evalArgs(env) : args, true);
   }
 
   /**

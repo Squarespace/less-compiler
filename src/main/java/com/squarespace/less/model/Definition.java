@@ -16,7 +16,6 @@
 
 package com.squarespace.less.model;
 
-import static com.squarespace.less.core.ExecuteErrorMaker.varCircularRef;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import java.nio.file.Path;
@@ -134,6 +133,14 @@ public class Definition extends StructuralNode {
     return evaluating;
   }
 
+  /**
+   * Mark or clear the definition's 'evaluating' flag, used to detect
+   * circular references during evaluation.
+   */
+  public void evaluating(boolean flag) {
+    this.evaluating = flag;
+  }
+
   public Path fileName() {
     return fileName;
   }
@@ -154,18 +161,7 @@ public class Definition extends StructuralNode {
    * Resolve the value for this definition.
    */
   public Node dereference(ExecEnv env) throws LessException {
-    // TODO: future pragma to detect and skip circular definitions,
-    // looking in a higher scope. remove the following line.
-    // see ExecEnv.resolveDefinition
-    if (evaluating) {
-      throw new LessException(varCircularRef(env));
-    }
-
-    // Mark as 'evaluating' so that we can detect circular references.
-    evaluating = true;
-    Node result = value.eval(env);
-    evaluating = false;
-    return result;
+    return value.eval(env);
   }
 
   @Override

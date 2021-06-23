@@ -88,6 +88,9 @@ public enum ExecuteErrorType implements LessErrorType {
   RULESET_RECURSE
   ("The ruleset %(name)s cannot call itself recursively."),
 
+  SELECTOR_TOO_COMPLEX
+  ("Selector exceeds the complexity threshold"),
+
   UNCOMPARABLE_TYPE
   ("Unable to compare instances of %(type)s"),
 

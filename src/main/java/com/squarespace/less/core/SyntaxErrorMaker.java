@@ -66,6 +66,10 @@ public class SyntaxErrorMaker {
     return error(SyntaxErrorType.QUOTED_BARE_LF);
   }
 
+  public static LessErrorInfo excessiveRollbacks() {
+    return error(SyntaxErrorType.EXCESSIVE_ROLLBACKS);
+  }
+
   private static LessErrorInfo error(LessErrorType type) {
     LessErrorInfo info = new LessErrorInfo(type);
     info.code(type);

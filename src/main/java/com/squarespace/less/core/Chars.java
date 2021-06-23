@@ -130,6 +130,9 @@ public class Chars {
   // 0xA0
   public static final char NO_BREAK_SPACE = '\u00A0';
 
+  // Unicode replacement character
+  public static final char REPLACEMENT = '\uFFFD';
+
   // 0xFFFF per the Unicode standard, is "guaranteed not to be a Unicode character at all"
   // and is reserved for application internal use. We use it to indicate EOF on a stream.
   public static final char EOF = '\uFFFF';

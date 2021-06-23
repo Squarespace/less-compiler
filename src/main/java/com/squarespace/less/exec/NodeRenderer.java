@@ -23,7 +23,6 @@ import java.util.List;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.Chars;
-import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Alpha;
 import com.squarespace.less.model.Assignment;
 import com.squarespace.less.model.AttributeElement;
@@ -159,7 +158,11 @@ public class NodeRenderer {
         break;
 
       default:
-        throw new LessInternalException("Don't know how to render a node of type " + node.type());
+        // Ignore unhandled nodes. We may have exceeded a complexity threshold during
+        // evaluation, which could leave some nodes in the stylesheet unevaluated.
+        // Some of these nodes have no rendering representation (e.g. MIXIN_CALL) so must
+        // be ignored.
+        break;
     }
   }
 
