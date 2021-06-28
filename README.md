@@ -10,7 +10,7 @@ Current [Less.js][lessjs] compatibility level: 1.3.3
 
 License: [Apache 2.0](LICENSE.txt) ([summary][license-tldr])
 
-Copyright (c) 2014 Squarespace, Inc.
+Copyright (c) 2021 Squarespace, Inc.
 
 ## Project Goals
 
