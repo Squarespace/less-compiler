@@ -14,7 +14,7 @@ task execJar(type: Jar, dependsOn: classes) {
   manifest {
     attributes 'Main-Class': 'com.squarespace.less.cli.LessC'
   }
-  from files(sourceSets.main.output.classesDir)
+  from files(sourceSets.main.output.classesDirs)
   from files(sourceSets.main.output.resourcesDir)
   from {
     configurations.runtime.collect {
@@ -44,8 +44,13 @@ task makeCli(type: Exec, dependsOn: execJar,
 
 artifacts {
   archives sourcesJar
-  archives testJar
   archives javadocJar
   archives execJar
+}
+
+// Ensure Eclipse can see the test base classes from less-core
+eclipse.classpath.file.whenMerged {
+  entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.ProjectDependency }
+    .each { it.entryAttributes['without_test_code'] = 'false' }
 }
 

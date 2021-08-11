@@ -1,6 +1,4 @@
-
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.gradle.plugins.signing.Sign
 
 buildscript {
   repositories {
@@ -11,14 +9,10 @@ buildscript {
 }
 
 plugins {
-  id 'net.researchgate.release' version '2.0.2'
-  id 'com.github.hierynomus.license' version '0.11.0'
-  id 'com.glonk.eclipse-checkstyle' version '0.0.4'
-  id 'com.github.kt3k.coveralls' version '2.4.0'
 }
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '2.11'
+wrapper {
+  gradleVersion = '6.8.2'
 }
 
 project.ext {
@@ -36,65 +30,12 @@ project.ext {
   isSign = false
 }
 
-// Sign release archives
-gradle.taskGraph.whenReady { taskGraph ->
-  ext.isUpload = taskGraph.allTasks.any { it instanceof Upload }
-  ext.isSign = taskGraph.allTasks.any { it instanceof Sign }
-  if (isRelease && isUpload && isSign) {
-    def password = System.console().readPassword('\n\n\n===>  Signing key password: ')
-    allprojects { ext.'signing.password' = password }
-  }
-}
-
 if (JavaVersion.current().isJava8Compatible()) {
   allprojects {
     tasks.withType(Javadoc) {
       options.addStringOption('Xdoclint:none', '-quiet')
     }
   }
-}
-
-def configurePom(def pom) {
-  pom.project {
-    name 'less-compiler'
-    description 'Less compiler in Java, based on less.js'
-    url 'https://github.com/squarespace/less-compiler'
-
-    licenses {
-      license {
-        name 'The Apache Software License, Version 2.0'
-        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-        distribution 'repo'
-      }
-    }
-
-    scm {
-      connection 'scm:git:git@github.com:squarespace/less-compiler.git'
-      url 'scm:git:git@github.com:squarespace/less-compiler.git'
-      developerConnection 'scm:git:git@github.com:squarespace/less-compiler.git'
-    }
-
-    issueManagement {
-      system 'github'
-      url 'https://github.com/squarespace/less-compiler/issues'
-    }
-
-    developers {
-      developer {
-        id 'pathensley'
-        name 'Patrick Hensley'
-        email 'pathensley@gmail.com'
-      }
-    }
-  }
-}
-
-release {
-  requireBranch = ''
-}
-
-clean {
-  delete 'lessc'
 }
 
 task makeCli(dependsOn: ':less-cli:makeCli') {
@@ -113,176 +54,26 @@ allprojects {
 subprojects {
   apply plugin: 'java'
   apply plugin: 'eclipse'
-  apply plugin: 'checkstyle'
-  apply plugin: 'com.glonk.eclipse-checkstyle'
-  apply plugin: 'license'
   apply plugin: 'jacoco'
-  apply plugin: 'signing'
-  apply plugin: 'maven'
-  apply plugin: 'com.github.kt3k.coveralls'
+  apply plugin: 'maven-publish'
 
-  group 'com.squarespace.less'
+  group 'com.squarespace.lessnorel'
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
-
-  configurations {
-    animalSniffer
-    javaApiSignature
-  }
-
-  dependencies {
-    animalSniffer("org.codehaus.mojo:animal-sniffer-ant-tasks:${snifferVersion}")
-    javaApiSignature("org.codehaus.mojo.signature:java18:1.0@signature")
-  }
-
-  license {
-    header rootProject.file('conf/apache-2.0-header.txt')
-    ext.year = Calendar.getInstance().get(Calendar.YEAR)
-    skipExistingHeaders true
-    include '**/*.java'
-  }
 
   repositories {
     mavenCentral()
   }
 
-  checkstyle {
-    toolVersion = '6.12.1'
-    ignoreFailures = false
-    configFile = rootProject.file('checkstyle.xml')
-    configProperties = [samedir: "${rootDir}"]
-  }
-
-  eclipseCheckstyle {
-    syncFormatter = true
-    exclude = ['derived']
-  }
-
   test {
     useTestNG()
-    finalizedBy jacocoTestReport
-    jacoco {
-      append = false
-    }
   }
 
-  jacoco {
-    toolVersion '0.7.1.201405082137'
-  }
-
-  jacocoTestReport {
-    group = 'Reporting'
-    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
-    reports {
-      html.destination = "${buildDir}/jacoco-report"
-    }
-  }
-
-  signing {
-    required { isRelease && isUpload }
-    sign configurations.archives
-  }
-
-  task testJar(type: Jar, dependsOn: testClasses) {
-    classifier = 'tests'
-    from(
-      sourceSets.main.output,
-      sourceSets.test.output
-    )
-  }
-
-  task sourcesJar(type: Jar, dependsOn:classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-  }
-
-  task javadocJar(type: Jar, dependsOn:javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-  }
-
-  task copyJavaApiSignature(type: Copy) {
-      from configurations.javaApiSignature
-      into "$buildDir/javaApiSignature/"
-      rename '.*signature', 'javaApi.signature'
-  }
-
-  task checkJavaApiSignature << {
-      ant.taskdef(
-        name: 'animalSniffer',
-        classname: 'org.codehaus.mojo.animal_sniffer.ant.CheckSignatureTask',
-        classpath: configurations.animalSniffer.asPath
-      )
-      ant.animalSniffer(
-        signature: "$buildDir/javaApiSignature/javaApi.signature",
-        classpath: configurations.compile.asPath
-      ) { path(path: "$buildDir/classes/main") }
-  }
-
-  checkJavaApiSignature.dependsOn compileJava
-  checkJavaApiSignature.dependsOn copyJavaApiSignature
-  check.dependsOn checkJavaApiSignature
-
-  processResources {
-    from (sourceSets.main.resources.srcDirs) {
-      include '**/build.properties'
-      filter(ReplaceTokens, tokens: [
-        'build.version': project.version,
-        'build.date': buildDate.toString(),
-        'build.commit': buildCommit
-      ])
-    }
-
-    from (sourceSets.main.resources.srcDirs) {
-      exclude '**/build.properties'
-    }
-  }
-
-  // Ensure this always runs, to generate fresh build.properties
-  processResources.outputs.upToDateWhen{ false }
-
-  uploadArchives {
-    repositories.mavenDeployer {
-      beforeDeployment { 
-        MavenDeployment deployment -> signing.signPom(deployment) 
-      }
-
-      if (project.hasProperty('OSS_USERNAME') && project.hasProperty('OSS_PASSWORD')) {
-        repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-          authentication(userName: OSS_USERNAME, password: OSS_PASSWORD)
-        }
-
-        snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-          authentication(userName: OSS_USERNAME, password: OSS_PASSWORD)
-        }
-      } else {
-        logger.error('Missing OSS_USERNAME, OSS_PASSWORD properties.')
-      }
-
-      configurePom(pom)
-    }
-  }
-
-  uploadArchives.dependsOn ':build'
-
-  if (project.hasProperty('NEXUS_INTERNAL_RELEASE_URL')) {
-    task uploadInternal(type: Upload, dependsOn: build) {
-      description = 'Uploads archives to internal Nexus'
-      configuration = configurations.archives
-
-      repositories.mavenDeployer {
-        beforeDeployment { 
-          MavenDeployment deployment -> signing.signPom(deployment) 
-        }
-        repository(url: NEXUS_INTERNAL_RELEASE_URL)
-        snapshotRepository(url: NEXUS_INTERNAL_SNAPSHOT_URL)
-        configurePom(pom)
-      }
-    }
+  java {
+    withSourcesJar()
+    withJavadocJar()
   }
 
 }
-
-apply from: 'gradle/coverage.gradle'
 
