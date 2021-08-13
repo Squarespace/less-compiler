@@ -2,10 +2,10 @@
 apply plugin: 'application'
 
 dependencies {
-  compile project(':less-core')
+  compile project(':less2-core')
   compile 'net.sourceforge.argparse4j:argparse4j:0.4.4'
 
-  testCompile project(path: ':less-core', configuration: 'tests')
+  testCompile project(path: ':less2-core', configuration: 'tests')
   testCompile 'org.testng:testng:6.8.7'
 }
 
