@@ -1,0 +1,30 @@
+.btn-success {
+  background: #18682f;
+  border: 1px solid #0a2a13;
+  border-radius: 4px;
+  color: #fff;
+}
+.btn-success:hover {
+  background: #229142;
+  border-color: #135326;
+}
+.btn-alert {
+  background: #9b6910;
+  border: 1px solid #563a09;
+  border-radius: 4px;
+  color: #fff;
+}
+.btn-alert:hover {
+  background: #c98815;
+  border-color: #84590e;
+}
+.btn-error {
+  background: #9b261a;
+  border: 1px solid #59160f;
+  border-radius: 4px;
+  color: #fff;
+}
+.btn-error:hover {
+  background: #c73121;
+  border-color: #852116;
+}

@@ -1,0 +1,80 @@
+.a,
+.b,
+.c {
+  color: #000;
+}
+.f,
+.e,
+.d {
+  color: #000;
+}
+.g.h,
+.i.j.h,
+.k.j.h {
+  color: #000;
+}
+.i.j,
+.k.j {
+  color: #fff;
+}
+.l,
+.m,
+.n,
+.o,
+.p,
+.q,
+.r,
+.s,
+.t {
+  color: #000;
+}
+.u,
+.v.u.v {
+  color: #000;
+}
+.w,
+.v.w.v {
+  color: #000;
+}
+.x,
+.y,
+.z {
+  color: x;
+}
+.y,
+.z,
+.x {
+  color: y;
+}
+.z,
+.x,
+.y {
+  color: z;
+}
+.va,
+.vb,
+.vc {
+  color: #000;
+}
+.vb,
+.vc {
+  color: #fff;
+}
+@media tv {
+  .ma,
+  .mb,
+  .mc {
+    color: #000;
+  }
+  .md,
+  .ma,
+  .mb {
+    color: #fff;
+  }
+}
+@media tv and plasma {
+  .me,
+  .mf {
+    background: red;
+  }
+}
