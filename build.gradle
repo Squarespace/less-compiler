@@ -38,7 +38,7 @@ if (JavaVersion.current().isJava8Compatible()) {
   }
 }
 
-task makeCli(dependsOn: ':less-cli:makeCli') {
+task makeCli(dependsOn: ':less2-cli:makeCli') {
 }
 
 allprojects {
