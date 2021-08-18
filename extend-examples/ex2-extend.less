@@ -1,0 +1,23 @@
+
+.base {
+  border: 1px solid grey;
+}
+  
+.mixin(@color, @size) {
+  color: @color;
+  font-size: @size;
+  &:extend(.base);
+}
+
+.very-long-selector-1 {
+  .mixin(black, 12px);
+}
+
+.another-very-long-selector-2 {
+  .mixin(red, 14px);
+}
+
+.still-another-very-long-selector-3 {
+  .mixin(green, 14px);
+}
+

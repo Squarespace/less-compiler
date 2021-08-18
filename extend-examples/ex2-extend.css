@@ -1,0 +1,18 @@
+.base,
+.very-long-selector-1,
+.another-very-long-selector-2,
+.still-another-very-long-selector-3 {
+  border: 1px solid grey;
+}
+.very-long-selector-1 {
+  color: #000;
+  font-size: 12px;
+}
+.another-very-long-selector-2 {
+  color: red;
+  font-size: 14px;
+}
+.still-another-very-long-selector-3 {
+  color: green;
+  font-size: 14px;
+}
