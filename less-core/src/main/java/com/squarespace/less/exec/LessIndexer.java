@@ -16,6 +16,8 @@
 
 package com.squarespace.less.exec;
 
+import java.util.List;
+
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.FlexList;
 import com.squarespace.less.model.Block;
@@ -29,7 +31,9 @@ import com.squarespace.less.model.Stylesheet;
 
 
 /**
- * Scans a stylesheet recursively, performing indexing
+ * Scans a stylesheet recursively, performing indexing.
+ *
+ * TODO: this may be optimized by indexing during evaluation.
  */
 public class LessIndexer {
 
@@ -53,7 +57,10 @@ public class LessIndexer {
     if (blockNode instanceof Ruleset) {
       Selectors selectors = env.frame().selectors();
       if (selectors.hasExtend()) {
-        for (Selector selector : selectors.selectors()) {
+        List<Selector> _selectors = selectors.selectors();
+        int size = _selectors.size();
+        for (int i = 0; i < size; i++) {
+          Selector selector = _selectors.get(i);
           if (selector.hasExtend()) {
             env.indexSelector(selector);
           }

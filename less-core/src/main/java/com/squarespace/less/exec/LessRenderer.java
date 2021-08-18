@@ -154,7 +154,9 @@ public class LessRenderer {
       // will return a list of generated selectors.
       List<Selector> extended = env.extend(selectors);
       if (extended != null) {
-        for (Selector selector : extended) {
+        int size = extended.size();
+        for (int i = 0; i < size; i++) {
+          Selector selector = extended.get(i);
           NodeRenderer.render(buf, selector);
           model.header(buf.toString());
           buf.reset();
