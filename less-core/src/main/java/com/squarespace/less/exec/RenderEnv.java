@@ -134,6 +134,17 @@ public class RenderEnv {
       extended = extendMatcher.extend(globalExtendIndex, selectors, extended);
     }
 
+    // Index all generated selectors
+    if (extended != null) {
+      int size = extended.size();
+      for (int i = 0; i < size; i++ ) {
+        Selector selector = extended.get(i);
+        if (selector != null) {
+          indexSelector(selector);
+        }
+      }
+    }
+
     return extended;
   }
 

@@ -85,9 +85,14 @@ public class ExtendIndex {
    */
   public void index(Selector selector) {
     ExtendList extendList = selector.extendList();
-    capturedExtends.add(new CapturedExtend(extendList, selector));
-    for (Extend extend : extendList.values()) {
-      insert(selector, extend);
+    if (extendList != null) {
+      capturedExtends.add(new CapturedExtend(extendList, selector));
+      List<Extend> values = extendList.values();
+      int size = values.size();
+      for (int i = 0; i < size; i++) {
+        Extend extend = values.get(i);
+        insert(selector, extend);
+      }
     }
   }
 
