@@ -1,6 +1,5 @@
 
-TARGETS := $(shell basename -a -s .less *.less | xargs -I % echo %.css)
-#LESSARGS := --compress
+TARGETS := chain.css ex1-extend.css ex1-mixin.css
 
 %.css : %.less
 	../lessc $(LESSARGS) $< $@
@@ -8,7 +7,7 @@ TARGETS := $(shell basename -a -s .less *.less | xargs -I % echo %.css)
 all: $(TARGETS)
 
 clean:
-	rm -f *.css
+	rm -f $(TARGETS)
 
 .PHONY: all clean
 
