@@ -894,6 +894,21 @@ public class LessParserTest extends LessMaker {
   }
 
   @Test
+  public void testSelectorNesting() throws LessException {
+    Tester t = tester(LessSyntax.STYLESHEET);
+
+    Ruleset r2 = ruleset(selector(element(".foo"), element("&")));
+    r2.add(rule(prop("color"), color("black")));
+
+    Ruleset r1 = ruleset(selector(element(".parent")));
+    r1.add(nest());
+    r1.add(r2);
+
+    t.ok(".parent { @nest .foo & { color: black; } }",
+        stylesheet(r1));
+  }
+
+  @Test
   public void testShorthand() throws LessException {
     Tester t = tester(LessSyntax.SHORTHAND);
 

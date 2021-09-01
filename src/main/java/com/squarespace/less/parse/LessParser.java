@@ -52,6 +52,7 @@ import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.MixinCall;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.MixinParams;
+import com.squarespace.less.model.NestDirective;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Operator;
@@ -1385,6 +1386,15 @@ public class LessParser {
     boolean has_ident = false;
 
     switch (nvname) {
+      // Dummy element for new CSS selector nesting directive
+      case "@nest": {
+        NestDirective node = new NestDirective();
+        int size = pos - ms;
+        node = setinfo(mark, size, node);
+        commit();
+        return node;
+      }
+
       case "@import":
       case "@import-once": {
         ws();

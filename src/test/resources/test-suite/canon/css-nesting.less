@@ -1,0 +1,98 @@
+// This file ensures that the new CSS Nesting syntax is compatible with 
+// LESS. For LESS compilation purposes the "@nest" at-rule is ignored.
+//
+// Examples are taken from https://www.w3.org/TR/2021/WD-css-nesting-1-20210831/
+/* 1: valid */
+.foo-1 {
+  color: red;
+  @nest & > .bar {
+    color: blue;
+  }
+}
+/* 2: valid */
+.foo-2 {
+  color: red;
+  @nest .parent & {
+    color: blue;
+  }
+}
+/* 3: valid */
+.foo-3 {
+  color: red;
+  @nest :not(&) {
+    color: blue;
+  }
+}
+/* 4: invalid, but LESS allows */
+.foo-4 {
+  color: red;
+  @nest .bar {
+    color: blue;
+  }
+}
+/* 5: invalid, but LESS allows */
+.foo-5 {
+  color: red;
+  @nest & .bar,
+  .baz {
+    color: blue;
+  }
+}
+/* 6: valid */
+.foo-6 {
+  color: blue;
+  @nest .bar & {
+    color: red;
+    &.baz {
+      color: green;
+    }
+  }
+}
+/* 7: invalid, but LESS allows */
+.foo-7 {
+  color: red;
+  @media (min-width: 480px) {
+    & h1,
+    h2 {
+      color: blue;
+    }
+  }
+}
+/* 8: invalid, but LESS allows */
+.foo-8 {
+  color: red;
+  @nest @media (min-width: 480px) {
+    & {
+      color: blue;
+    }
+  }
+}
+/* 9: valid */
+article-9 {
+  color: green;
+  & {
+    color: blue;
+  }
+  color: red;
+}
+/* 10: valid */
+article-10 {
+  color: green;
+  & {
+    color: blue;
+  }
+  color: red;
+  &.foo {
+    color: #ff0;
+  }
+  /* valid! */
+}
+/* Our contrived examples follow */
+/* 11: valid */
+.foo-11 {
+  @nest @nest @nest .bar & {
+    color: red;
+  }
+  @nest
+}
+

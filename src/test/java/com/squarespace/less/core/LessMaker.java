@@ -51,6 +51,7 @@ import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.MixinCall;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.MixinParams;
+import com.squarespace.less.model.NestDirective;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Operation;
@@ -300,6 +301,10 @@ public class LessMaker {
 
   public MixinCall mixincall(Selector selector, MixinCallArgs args, boolean important) {
     return new MixinCall(selector, args, important);
+  }
+
+  public NestDirective nest() {
+    return new NestDirective();
   }
 
   public Operation oper(Operator op, Node operand0, Node operand1) {

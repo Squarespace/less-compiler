@@ -61,7 +61,7 @@ abstract class BaseCompile {
   public abstract int process();
 
   protected String canonicalize(Stylesheet stylesheet) {
-    Buffer buf = new Buffer(args.compilerOptions().indent());
+    Buffer buf = new Buffer(args.compilerOptions().indent(), args.compilerOptions().compress());
     stylesheet.repr(buf);
     return buf.toString();
   }

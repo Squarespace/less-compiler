@@ -294,16 +294,33 @@ public class Block implements Node {
    */
   @Override
   public void repr(Buffer buf) {
+    boolean noindent = false;
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node rule = rules.get(i);
       if (rule == null) {
         continue;
       }
-      if (!buf.compress()) {
+      if (!noindent && !buf.compress()) {
         buf.indent();
+        noindent = false;
+      }
+      if (rule instanceof BlockNode) {
+        noindent = false;
       }
       rule.repr(buf);
+
+      // This is a hack, but for the "@nest" directive we
+      // skip one indent here.
+      if (rule.type() == NodeType.NEST) {
+        if (i + 1 < size) {
+          buf.append(' ');
+          noindent = true;
+        } else if (!buf.compress()){
+          buf.append('\n');
+        }
+        continue;
+      }
       if (!(rule instanceof BlockNode) && !(rule instanceof Comment)) {
         if (!buf.compress() || i + 1 < size) {
           buf.append(';');

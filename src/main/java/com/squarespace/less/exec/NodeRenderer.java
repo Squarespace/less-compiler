@@ -122,6 +122,10 @@ public class NodeRenderer {
         renderImpl(buf, (FunctionCall)node);
         break;
 
+      case NEST:
+        // TODO: emit nest at-rule in css output
+        break;
+
       case PAREN:
         renderImpl(buf, (Paren)node);
         break;

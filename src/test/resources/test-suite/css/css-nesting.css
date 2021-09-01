@@ -1,0 +1,90 @@
+/* 1: valid */
+.foo-1 {
+  color: red;
+}
+.foo-1 > .bar {
+  color: blue;
+}
+/* 2: valid */
+.foo-2 {
+  color: red;
+}
+.parent .foo-2 {
+  color: blue;
+}
+/* 3: valid */
+.foo-3 {
+  color: red;
+}
+.foo-3 :not(&) {
+  color: blue;
+}
+/* 4: invalid, but LESS allows */
+.foo-4 {
+  color: red;
+}
+.foo-4 .bar {
+  color: blue;
+}
+/* 5: invalid, but LESS allows */
+.foo-5 {
+  color: red;
+}
+.foo-5 .bar,
+.foo-5 .baz {
+  color: blue;
+}
+/* 6: valid */
+.foo-6 {
+  color: blue;
+}
+.bar .foo-6 {
+  color: red;
+}
+.bar .foo-6.baz {
+  color: green;
+}
+/* 7: invalid, but LESS allows */
+.foo-7 {
+  color: red;
+}
+@media (min-width: 480px) {
+  .foo-7 h1,
+  .foo-7 h2 {
+    color: blue;
+  }
+}
+/* 8: invalid, but LESS allows */
+.foo-8 {
+  color: red;
+}
+@media (min-width: 480px) {
+  .foo-8 {
+    color: blue;
+  }
+}
+/* 9: valid */
+article-9 {
+  color: green;
+  color: red;
+}
+article-9 {
+  color: blue;
+}
+/* 10: valid */
+article-10 {
+  color: green;
+  color: red;
+  /* valid! */
+}
+article-10 {
+  color: blue;
+}
+article-10.foo {
+  color: #ff0;
+}
+/* Our contrived examples follow */
+/* 11: valid */
+.bar .foo-11 {
+  color: red;
+}

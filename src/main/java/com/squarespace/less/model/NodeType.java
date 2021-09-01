@@ -52,6 +52,7 @@ public enum NodeType {
   MIXIN_CALL,
   MIXIN_MARKER,
   MIXIN_PARAMS,
+  NEST,
   OPERATION,
   PARAMETER,
   PAREN,
