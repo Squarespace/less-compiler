@@ -36,9 +36,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -154,11 +152,7 @@ public class LessUtils {
           buf.append("\\r");
           break;
         default:
-          if (c > 0xffff) {
-            char[] pair = Character.toChars(c);
-            hex(buf, pair[0]);
-            hex(buf, pair[1]);
-          } else if (c < ' ' || c > '\u007f') {
+          if (c < ' ' || c > '\u007f') {
               hex(buf, c);
           } else {
             buf.append(c);
@@ -199,16 +193,6 @@ public class LessUtils {
       list = new ArrayList<T>(initialSize);
     }
     return list;
-  }
-
-  /**
-   * Initializes a map if necessary, with {@code initialSize}.
-   */
-  public static <K, V> Map<K, V> initHashMap(Map<K, V> map, int initialSize) {
-    if (map == null) {
-      map = new HashMap<K, V>(initialSize);
-    }
-    return map;
   }
 
   /**

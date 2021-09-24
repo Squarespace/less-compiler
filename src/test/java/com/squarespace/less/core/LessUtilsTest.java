@@ -1,5 +1,6 @@
 package com.squarespace.less.core;
 
+import static com.squarespace.less.core.LessUtils.enumValueList;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Arrays;
@@ -44,6 +45,21 @@ public class LessUtilsTest {
     assertEquals(LessUtils.escapeJava("\"a b c\""), "\\\"a b c\\\"");
     assertEquals(LessUtils.escapeJava("\u2018foo\u2019"), "\\u2018foo\\u2019");
     assertEquals(LessUtils.escapeJava("\t\n\r\b\f\\"), "\\t\\n\\r\\b\\f\\\\");
+    assertEquals(LessUtils.escapeJava("\u0000\u0003"), "\\u0000\\u0003");
+  }
+
+  @Test
+  public void testEnumValueList() {
+    assertEquals(enumValueList(ProductType.class, false), "UNDEFINED, PHYSICAL, DIGITAL, SERVICE, GIFT_CARD");
+    assertEquals(enumValueList(ProductType.class, true), "undefined, physical, digital, service, gift_card");
+  }
+
+  private enum ProductType {
+    UNDEFINED,
+    PHYSICAL,
+    DIGITAL,
+    SERVICE,
+    GIFT_CARD
   }
 
 }
