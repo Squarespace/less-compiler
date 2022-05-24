@@ -35,28 +35,28 @@ import com.squarespace.less.parse.Patterns;
 @OutputTimeUnit(TimeUnit.SECONDS)
 public class PatternBenchmark {
 
-  private static final String ALPHA_OK = "___alpha  (";
-  private static final String ALPHA_FAIL = "___alpha  %";
+//  private static final String ALPHA_OK = "___alpha  (";
+//  private static final String ALPHA_FAIL = "___alpha  %";
 
-  @Benchmark
-  public void regexAlphaOk(BenchmarkState state, Blackhole blackhole) {
-    blackhole.consume(state.matches(state.benchAlpha.regex, ALPHA_OK, 3));
-  }
-
-  @Benchmark
-  public void regexAlphaFail(BenchmarkState state, Blackhole blackhole) {
-    blackhole.consume(state.matches(state.benchAlpha.regex, ALPHA_FAIL, 3));
-  }
-
-  @Benchmark
-  public void recognizerAlphaOk(BenchmarkState state, Blackhole blackhole) {
-    blackhole.consume(state.matches(state.benchAlpha.recognizer, ALPHA_OK, 3));
-  }
-
-  @Benchmark
-  public void recognizerAlphaFail(BenchmarkState state, Blackhole blackhole) {
-    blackhole.consume(state.matches(state.benchAlpha.recognizer, ALPHA_FAIL, 3));
-  }
+//  @Benchmark
+//  public void regexAlphaOk(BenchmarkState state, Blackhole blackhole) {
+//    blackhole.consume(state.matches(state.benchAlpha.regex, ALPHA_OK, 3));
+//  }
+//
+//  @Benchmark
+//  public void regexAlphaFail(BenchmarkState state, Blackhole blackhole) {
+//    blackhole.consume(state.matches(state.benchAlpha.regex, ALPHA_FAIL, 3));
+//  }
+//
+//  @Benchmark
+//  public void recognizerAlphaOk(BenchmarkState state, Blackhole blackhole) {
+//    blackhole.consume(state.matches(state.benchAlpha.recognizer, ALPHA_OK, 3));
+//  }
+//
+//  @Benchmark
+//  public void recognizerAlphaFail(BenchmarkState state, Blackhole blackhole) {
+//    blackhole.consume(state.matches(state.benchAlpha.recognizer, ALPHA_FAIL, 3));
+//  }
 
   private static final String ATTR_KEY_OK = "___foo\\tbar";
   private static final String ATTR_KEY_FAIL = "___foo\\tbar!";
@@ -360,10 +360,10 @@ public class PatternBenchmark {
   @State(Scope.Benchmark)
   public static class BenchmarkState {
 
-    public final BenchCase benchAlpha = benchCase(
-        "alpha\\s*\\(",
-        Patterns.ALPHA_START
-    );
+//    public final BenchCase benchAlpha = benchCase(
+//        "alpha\\s*\\(",
+//        Patterns.ALPHA_START
+//    );
 
     public final BenchCase benchAttributeKey = benchCase(
         "([\\w-]|\\\\.)+",

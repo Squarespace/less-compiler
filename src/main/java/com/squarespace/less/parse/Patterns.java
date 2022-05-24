@@ -46,9 +46,9 @@ public class Patterns {
 
   // REGEX: "alpha\\s*\\("
   // TODO: hand-code
-  public static final Recognizer ALPHA_START = sequence(literal("alpha"), zeroOrMore(whitespace()), literal("("));
+//  public static final Recognizer ALPHA_START = sequence(literal("alpha"), zeroOrMore(whitespace()), literal("("));
 
-  public static final Recognizer AND = literal("and");
+//  public static final Recognizer AND = literal("and");
 
   // REGEX: "(?:[^;@+/'\"*`({}-]*);"
   public static final Recognizer ANON_RULE_VALUE = anon();
@@ -102,7 +102,7 @@ public class Patterns {
 
   public static final Recognizer NOT = literal("not");
 
-  public static final Recognizer OPACITY = literal("opacity=", true);
+//  public static final Recognizer OPACITY = literal("opacity=", true);
 
 //  public static final Pattern OPERATOR = pattern("\\+|\\-|\\*|\\/");
 
