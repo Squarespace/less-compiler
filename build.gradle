@@ -8,9 +8,9 @@ buildscript {
 
 plugins {
   id 'com.github.ben-manes.versions' version '0.47.0'
-  id 'me.champeau.gradle.jmh' version '0.5.3'
+  id 'me.champeau.jmh' version '0.7.1'
   id 'net.researchgate.release' version '3.0.2'
-  id 'com.moowork.node' version '1.3.1'
+  id 'com.github.node-gradle.node' version '7.0.0'
   id 'jacoco'
   id 'java-library'
   id 'maven-publish'
@@ -26,7 +26,7 @@ allprojects {
 }
 
 wrapper {
-  gradleVersion = '6.8.2'
+  gradleVersion = '8.3'
 }
 
 project.ext {
@@ -49,30 +49,27 @@ if (JavaVersion.current().isJava8Compatible()) {
 
 group = 'com.squarespace.less'
 
-apply plugin: 'me.champeau.gradle.jmh'
+apply plugin: 'me.champeau.jmh'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
-sourceCompatibility = 11
-targetCompatibility = 11
-
 dependencies {
-    compile 'net.sourceforge.argparse4j:argparse4j:0.9.0'
-    compile 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
+    implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
+    implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
 
-    testCompile 'org.testng:testng:7.8.0'
-    testCompile 'com.googlecode.java-diff-utils:diffutils:1.3.0'
+    testImplementation 'org.testng:testng:7.8.0'
+    testImplementation 'com.googlecode.java-diff-utils:diffutils:1.3.0'
 }
 
 jmh {
-  jmhVersion '1.23'
+  jmhVersion = '1.23'
   forceGC = true
   includeTests = false
   zip64 = true
-  include = ['.*CssSet.*']
+  includes = ['.*']
 }
 
 plugins.withType(EclipsePlugin) {
@@ -91,12 +88,14 @@ test {
 }
 
 java {
+  sourceCompatibility = 11
+  targetCompatibility = 11
   withSourcesJar()
   withJavadocJar()
 }
 
 task testJar(type: Jar, group: 'Build', dependsOn: 'javadoc') {
-  classifier 'tests'
+  archiveClassifier = 'tests'
   from sourceSets.test.output
 }
 
@@ -108,7 +107,7 @@ configurations {
 }
 
 task execJar(type: Jar, dependsOn: classes) {
-  classifier = 'exec'
+  archiveClassifier = 'exec'
   manifest {
     attributes 'Main-Class': 'com.squarespace.less.cli.LessC'
   }
@@ -130,13 +129,14 @@ artifacts {
 
 jacocoTestReport {
     reports {
-        xml.enabled false
-        csv.enabled false
-        html.destination file("${buildDir}/jacoco-report")
+        xml.required = true
+        csv.required = true
+        html.outputLocation = file("${buildDir}/jacoco-report")
     }
 }
 
 processResources {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
   from (sourceSets.main.resources.srcDirs) {
     include '**/build.properties'
     filter(ReplaceTokens, tokens: [
