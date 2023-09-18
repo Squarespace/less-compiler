@@ -114,7 +114,7 @@ task execJar(type: Jar, dependsOn: classes) {
   from files(sourceSets.main.output.classesDirs)
   from files(sourceSets.main.output.resourcesDir)
   from {
-    configurations.runtime.collect {
+    configurations.runtimeClasspath.collect {
       it.isDirectory() ? it : zipTree(it)
     }
   }
