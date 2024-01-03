@@ -844,6 +844,14 @@ public class LessParserTest extends LessMaker {
   }
 
   @Test
+  public void testRuleProperty() throws LessException {
+    Tester t = tester(LessSyntax.RULE);
+
+    t.ok("Foo: bar", rule(prop("Foo"), kwd("bar")));
+    t.ok("-Foo-Bar: baz", rule(prop("-Foo-Bar"), kwd("baz")));
+  }
+
+  @Test
   public void testRuleset() throws LessException {
     Tester t = tester(LessSyntax.RULESET);
 

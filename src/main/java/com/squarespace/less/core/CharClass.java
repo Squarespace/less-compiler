@@ -346,6 +346,7 @@ public class CharClass implements CharClassifier {
             | CALL_START
             | KEYWORD_START
             | PROGID_WORD
+            | PROPERTY
             | SHORTHAND
             | WORD
             ;
@@ -376,6 +377,7 @@ public class CharClass implements CharClassifier {
             | CALL_START
             | KEYWORD_START
             | PROGID_WORD
+            | PROPERTY
             | SHORTHAND
             | WORD
             ;
