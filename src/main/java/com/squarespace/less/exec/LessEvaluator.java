@@ -353,6 +353,11 @@ public class LessEvaluator {
     if (fast_exit) {
       return;
     }
+    // Stop expanding once an error is recorded. Otherwise a failed call's
+    // partial result gets spliced and retried, growing the tree forever.
+    if (env.hasError()) {
+      return;
+    }
 
     FlexList<Node> rules = block.rules();
     // Use of rules.size() intentional since the list size can change during iteration.
@@ -372,6 +377,13 @@ public class LessEvaluator {
 
         block.splice(i, 1, other);
         i += other.size() - 1;
+
+        // Stop expanding once an error is recorded. Otherwise the failed
+        // call's partial result gets spliced and retried, and the tree
+        // grows without bound.
+        if (env.hasError()) {
+          return;
+        }
 
         // Indicate the block has changed, new variable definitions may have
         // been added.
@@ -437,6 +449,9 @@ public class LessEvaluator {
         if (executeRulesetMixin(env, results, matcher, match)) {
           calls++;
         }
+      }
+      if (env.hasError()) {
+        return results;
       }
     }
 
@@ -522,10 +537,11 @@ public class LessEvaluator {
       evaluateRules(env, block, call.important());
       collector.appendBlock(block);
 
-      // Check for error here and early-return. This ensures we don't decrement the
-      // recursion depth and bounce between the recursion limit and limit-1.
+      // Stop on the first error and rethrow so it reaches the outer env.
+      // A plain return would swallow it, since this env is a copy whose
+      // error is invisible to callers, and let expansion retry forever.
       if (env.hasError()) {
-        return true;
+        throw env.error();
       }
 
     } catch (LessException e) {
@@ -535,9 +551,12 @@ public class LessEvaluator {
       actualCall.args(matcher.mixinArgs());
       e.push(actualCall);
       throw e;
+    } finally {
+      // Always exit, even on error. A skipped exit leaks depth and poisons
+      // later compiles that reuse this context.
+      ctx.exitMixin();
+      original.exit();
     }
-    ctx.exitMixin();
-    original.exit();
     return true;
   }
 
@@ -556,11 +575,19 @@ public class LessEvaluator {
     }
 
     ctx.enterMixin();
-    Ruleset result = evaluateRuleset(env, ruleset, call.important());
-    if (env.hasError()) {
-      return true;
+    Ruleset result;
+    try {
+      result = evaluateRuleset(env, ruleset, call.important());
+      // Rethrow the recorded error (see executeMixin for why a plain
+      // return is not enough).
+      if (env.hasError()) {
+        throw env.error();
+      }
+    } finally {
+      // Always exit, even on error. A skipped exit leaks depth and poisons
+      // later compiles that reuse this context.
+      ctx.exitMixin();
     }
-    ctx.exitMixin();
 
     Block block = result.block();
     if (opts.tracing()) {

@@ -120,6 +120,9 @@ public class LessCompiler {
   }
 
   public String compile(String raw, LessContext ctx, Path rootPath, Path fileName, boolean safeMode) throws LessException {
+    // A prior failed compile may have left the depth counters nonzero.
+    // Reset so a reused context does not fail fresh compiles.
+    ctx.resetDepthCounters();
     Stylesheet sheet = parse(raw, ctx, rootPath, fileName, safeMode);
     LessStats stats = ctx.stats();
     long started = stats.now();

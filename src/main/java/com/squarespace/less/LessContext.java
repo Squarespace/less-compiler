@@ -157,6 +157,15 @@ public class LessContext {
     NodeRenderer.render(buf, node);
   }
 
+  /**
+   * Reset depth counters between compiles. A failed compile can leave them
+   * nonzero, which would make a later compile on the same context fail.
+   */
+  public void resetDepthCounters() {
+    this.importDepth = 0;
+    this.mixinDepth = 0;
+  }
+
   public void enterImport() {
     this.importDepth++;
     stats.importDepth(this.importDepth);

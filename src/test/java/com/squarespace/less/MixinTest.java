@@ -101,4 +101,31 @@ public class MixinTest extends LessTestBase {
       // expected
     }
   }
+
+  /**
+   * Depth counters must not leak between compiles on a reused context.
+   * Repeated failed compiles used to poison the next healthy compile.
+   */
+  @Test
+  public void testMixinDepthResetOnReusedContext() throws LessException {
+    String recursive = ".mixin-1() { .mixin-1(); } .parent { .mixin-1(); }";
+    String healthy = ".mixin-1() { .foo { color: red; } } .parent { .mixin-1(); }";
+
+    LessOptions opts = new LessOptions();
+    opts.mixinRecursionLimit(3);
+    LessCompiler compiler = new LessCompiler();
+    LessContext ctx = new LessContext(opts);
+    ctx.setCompiler(compiler);
+
+    // Fail several times, then a healthy compile must still succeed.
+    for (int i = 0; i < 3; i++) {
+      try {
+        compiler.compile(recursive, ctx);
+        fail("compile should fail with a mixin recursion error");
+      } catch (LessException e) {
+        // expected
+      }
+    }
+    assertEquals(compiler.compile(healthy, ctx), ".parent .foo {\n  color: red;\n}\n");
+  }
 }

@@ -74,34 +74,36 @@ public class LessImporter {
       return importNode;
     }
 
-    // Mark import recursion start.
+    // Mark import recursion start. Always exit in finally so a failed import
+    // does not leak depth into later compiles on a reused context.
     context.enterImport();
+    try {
+      int limit = context.options().importRecursionLimit();
+      if (context.importDepth() > limit) {
+        throw new LessException(importError(rawPath, "Recursion limit of " + limit + " exceeded"));
+      }
 
-    int limit = context.options().importRecursionLimit();
-    if (context.importDepth() > limit) {
-      throw new LessException(importError(rawPath, "Recursion limit of " + limit + " exceeded"));
-    }
+      Stylesheet sheet = importStylesheet(rawPath, importNode);
+      if (sheet == null) {
+        // When import-once is used, we disappear the import node.
+        return new Block(0);
+      }
 
-    Stylesheet sheet = importStylesheet(rawPath, importNode);
-    if (sheet == null) {
-      // When import-once is used, we disappear the import node.
+      Block block = sheet.block();
+      Features features = importNode.features();
+      if (features != null && !features.isEmpty()) {
+        Media media = new Media(features, block);
+        block = new Block();
+        block.appendNode(media);
+      }
+      if (context.options().tracing()) {
+        block.prependNode(new ImportMarker(importNode, true));
+        block.appendNode(new ImportMarker(importNode, false));
+      }
+      return block;
+    } finally {
       context.exitImport();
-      return new Block(0);
     }
-
-    Block block = sheet.block();
-    Features features = importNode.features();
-    if (features != null && !features.isEmpty()) {
-      Media media = new Media(features, block);
-      block = new Block();
-      block.appendNode(media);
-    }
-    if (context.options().tracing()) {
-      block.prependNode(new ImportMarker(importNode, true));
-      block.appendNode(new ImportMarker(importNode, false));
-    }
-    context.exitImport();
-    return block;
   }
 
   /**
