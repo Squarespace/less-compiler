@@ -1828,15 +1828,11 @@ public class LessParser {
         return n;
       }
     }
-//    n = function_call(); // TODO: function call matched by addition -> multiplication -> operand
-//    if (n != null) {
-//      return n;
-//    }
-
-//    n = escape();
-//    if (n != null) {
-//      return n;
-//    }
+    // url() no longer parses as an operand, so reach it as a plain value.
+    n = function_call();
+    if (n != null) {
+      return n;
+    }
 
     n = keyword();
     if (n != null) {
@@ -2484,24 +2480,37 @@ public class LessParser {
         break;
       }
 
-      // TODO: if we see a valid operator, start a marker here
-
       // Avoid treating a comment as the start of a divide.
       char c2 = peek(pos + 1);
       if (c == '/' && (c2 == '*' || c2 == '/')) {
         return operation;
       }
+
+      // Restore the operator when the right side fails to parse, so it can
+      // be treated as a plain CSS separator (e.g. url(x) / cover center).
+      if (!safe_mode) {
+        begin();
+      }
       next();
 
       if (!ws()) {
+        if (!safe_mode) {
+          rollback();
+        }
         break;
       }
 
       Node operand1 = operand();
       if (operand1 == null) {
+        if (!safe_mode) {
+          rollback();
+        }
         break;
       }
 
+      if (!safe_mode) {
+        commit();
+      }
       Operator operator = Operator.fromChar(c);
       operation = builder.buildOperation(operator, operation, operand1);
     }
@@ -2524,6 +2533,7 @@ public class LessParser {
       }
     }
 
+    begin();
     Node node = null;
     switch (c) {
       case '(':
@@ -2571,7 +2581,13 @@ public class LessParser {
         break;
     }
 
-    // TODO: possible for node to be null here?
+    // url() is a value, not a math operand, e.g. the
+    // "background: url(x) / 100% 50%" size/position shorthand.
+    if (node instanceof Url) {
+      rollback();
+      return null;
+    }
+    commit();
 
     return negate ? builder.buildOperation(Operator.MULTIPLY, node, new Dimension(-1, null)) : node;
   }

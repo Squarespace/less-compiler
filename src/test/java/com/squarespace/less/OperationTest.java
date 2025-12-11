@@ -26,6 +26,9 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
+import com.squarespace.less.LessCompiler;
+import com.squarespace.less.LessContext;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
@@ -149,6 +152,29 @@ public class OperationTest extends LessTestBase {
     h.parseEquals("3 * 4 - 5", oper(SUBTRACT, oper(MULTIPLY, dim(3), dim(4)), dim(5)));
     h.parseEquals("3 * (4 - 5)", oper(MULTIPLY, dim(3), oper(SUBTRACT, dim(4), dim(5))));
     h.parseEquals("(((1 - 2)))", oper(SUBTRACT, dim(1), dim(2)));
+  }
+
+  @Test
+  public void testUrlNotOperand() throws LessException {
+    // url() is a value, never a math operand: the background size/position
+    // shorthand "url(x) / 100% 50%" must pass through as written, and a
+    // non-operand right side keeps the slash instead of dropping it.
+    assertEquals(compile("a { background: url(x) / 100% 50%; }"), "a{background:url(x) / 100% 50%}");
+    assertEquals(compile("a { background: url(x) / cover center; }"), "a{background:url(x) / cover center}");
+    assertEquals(compile("a { background: url(x)/cover; }"), "a{background:url(x) / cover}");
+    assertEquals(compile("a { background: url(x); }"), "a{background:url(x)}");
+
+    // Other cases must keep their math behavior.
+    assertEquals(compile("a { width: 10px / 2; }"), "a{width:5px}");
+    assertEquals(compile("a { font: bold 14px/1.5 Helvetica; }"), "a{font:bold 14px/1.5 Helvetica}");
+  }
+
+  private static String compile(String src) throws LessException {
+    LessOptions opts = new LessOptions();
+    opts.compress(true);
+    LessContext ctx = new LessContext(opts);
+    ctx.setCompiler(new LessCompiler());
+    return new LessCompiler().compile(src, ctx, null, null, false);
   }
 
   @Test
