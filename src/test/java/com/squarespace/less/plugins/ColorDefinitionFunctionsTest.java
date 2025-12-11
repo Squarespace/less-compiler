@@ -62,6 +62,26 @@ public class ColorDefinitionFunctionsTest extends LessTestBase {
     h.evalFails("rgba(1, 1, 1, 'foo')", INVALID_ARG);
   }
 
+  @Test
+  public void testHueUnits() throws LessException {
+    LessHarness h = harness();
+
+    // CSS hue angles with units are valid. The numeric value is the
+    // degree count, so 360deg == 0deg and larger angles wrap.
+    h.evalEquals("hsl(360deg, 100%, 50%)", hsl(0.0, 1.0, 0.5));
+    h.evalEquals("hsl(450deg, 100%, 50%)", hsl(0.25, 1.0, 0.5));
+    h.evalEquals("hsla(120deg, 100%, 50%, 100%)", hsla(1.0 / 3.0, 1.0, 0.5, 1.0));
+    h.evalEquals("hsv(360deg, 100%, 100%)", color("#f00"));
+    h.evalEquals("hsva(240deg, 100%, 100%, 100%)", color("#00f"));
+
+    // Out-of-range and negative hues wrap into [0, 360).
+    h.evalEquals("hsl(720deg, 100%, 50%)", hsl(0.0, 1.0, 0.5));
+    h.evalEquals("hsl(-30deg, 100%, 50%)", hsl(330.0 / 360.0, 1.0, 0.5));
+
+    // Hue still must be a number.
+    h.evalFails("hsl('foo', 100%, 50%)", INVALID_ARG);
+  }
+
   private LessHarness harness() {
     GenericBlock defs = defs(
         def("@one", dim(1)),

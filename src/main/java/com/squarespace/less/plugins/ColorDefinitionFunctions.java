@@ -74,46 +74,55 @@ public class ColorDefinitionFunctions implements Registry<Function> {
     }
   };
 
-  public static final Function HSL = new Function("hsl", "ppp") {
+  public static final Function HSL = new Function("hsl", "hpp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      double hue = percent(args.get(0));
+      double hue = hue(args.get(0));
       double saturation = percent(args.get(1));
       double lightness = percent(args.get(2));
-      return new HSLColor(hue % 360 / 360.0, saturation, lightness, 1.0);
+      return new HSLColor(hue, saturation, lightness, 1.0);
     }
   };
 
-  public static final Function HSLA = new Function("hsla", "pppp") {
+  public static final Function HSLA = new Function("hsla", "hppp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      double hue = percent(args.get(0));
+      double hue = hue(args.get(0));
       double saturation = percent(args.get(1));
       double lightness = percent(args.get(2));
       double alpha = percent(args.get(3));
-      return new HSLColor(hue % 360 / 360.0, saturation, lightness, alpha);
+      return new HSLColor(hue, saturation, lightness, alpha);
     }
   };
 
-  public static final Function HSV = new Function("hsv", "ppp") {
+  public static final Function HSV = new Function("hsv", "hpp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      double hue = percent(args.get(0));
+      double hue = hue(args.get(0));
       double saturation = percent(args.get(1));
       double value = percent(args.get(2));
-      return RGBColor.fromHSVA(hue % 360 / 360.0, saturation, value, 1.0);
+      return RGBColor.fromHSVA(hue, saturation, value, 1.0);
     }
   };
 
-  public static final Function HSVA = new Function("hsva", "pppp") {
+  public static final Function HSVA = new Function("hsva", "hppp") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
-      double hue = percent(args.get(0));
+      double hue = hue(args.get(0));
       double saturation = percent(args.get(1));
       double value = percent(args.get(2));
       double alpha = percent(args.get(3));
-      return RGBColor.fromHSVA(hue % 360 / 360.0, saturation, value, alpha);
+      return RGBColor.fromHSVA(hue, saturation, value, alpha);
     }
   };
+
+  /**
+   * Hue from a dimension: any unit is valid CSS, so take the raw value
+   * (percentages scale like percent()) and wrap it into [0, 360).
+   */
+  private static double hue(Node node) throws LessException {
+    double value = Function.percent(node);
+    return ((value % 360) + 360) % 360 / 360.0;
+  }
 
 }

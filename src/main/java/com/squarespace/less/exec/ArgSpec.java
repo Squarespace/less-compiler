@@ -175,6 +175,10 @@ public class ArgSpec {
           validators.add(ARG_PERCENTAGE);
           break;
 
+        case 'h':
+          validators.add(ARG_HUE);
+          break;
+
         case 'n':
           validators.add(ARG_NUMBER);
           break;
@@ -269,6 +273,19 @@ public class ArgSpec {
         return;
       }
       throw new LessException(invalidArg(index, "a unit-less number", arg.type()));
+    }
+  };
+
+  /**
+   * Validator which accepts any number, with units or not. Used for hue
+   * angles, where CSS allows deg/rad/grad/turn.
+   */
+  private static final ArgValidator ARG_HUE = new ArgValidator() {
+    @Override
+    public void validate(int index, Node arg) throws LessException {
+      if (arg.type() != DIMENSION) {
+        throw new LessException(invalidArg(index + 1, DIMENSION, arg.type()));
+      }
     }
   };
 
