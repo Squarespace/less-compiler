@@ -107,6 +107,7 @@ public class Definition extends StructuralNode {
   protected Definition(Definition orig, Node newValue) {
     this(orig.name(), newValue);
     this.fileName = orig.fileName;
+    this.warnings = orig.warnings;
     copyStructure(orig);
   }
 

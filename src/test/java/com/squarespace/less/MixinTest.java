@@ -17,9 +17,12 @@
 package com.squarespace.less;
 
 import static com.squarespace.less.core.Constants.TRUE;
+import static com.squarespace.less.ExecuteErrorType.DIVIDE_BY_ZERO;
+import static com.squarespace.less.ExecuteErrorType.VAR_UNDEFINED;
 import static com.squarespace.less.model.Operator.EQUAL;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
@@ -27,6 +30,7 @@ import org.testng.annotations.Test;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Guard;
+import com.squarespace.less.model.MixinCall;
 import com.squarespace.less.model.MixinParams;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.Stylesheet;
@@ -126,6 +130,71 @@ public class MixinTest extends LessTestBase {
         // expected
       }
     }
+
     assertEquals(compiler.compile(healthy, ctx), ".parent .foo {\n  color: red;\n}\n");
+  }
+
+  @Test
+  public void testMixinBodyErrorPropagates() {
+    // An error raised inside a mixin body must fail the compile, not be
+    // silently swallowed along with a partially expanded body.
+    String source = ".m() { color: red; color: @undefvar; } .a { .m(); }";
+    LessCompiler compiler = new LessCompiler();
+    LessContext ctx = new LessContext();
+    ctx.setCompiler(compiler);
+    try {
+      compiler.compile(source, ctx);
+      fail("compile should fail with the error raised in the mixin body");
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), VAR_UNDEFINED);
+    }
+  }
+
+  @Test
+  public void testMixinBodyWarningsPreserved() throws LessException {
+    // A warning raised while evaluating a mixin body must be attached to
+    // the produced rule, exactly like the same rule outside a mixin.
+    LessHarness h = new LessHarness();
+    LessOptions opts = new LessOptions();
+    opts.strict(false);
+    String withMixin = h.execute(".m(){width:1px/0;} .a{.m();}", opts);
+    String plain = h.execute(".a{width:1px/0;}", opts);
+    assertEquals(withMixin, plain);
+    assertTrue(withMixin.contains("WARNING["), withMixin);
+  }
+
+  @Test
+  public void testMixinBodyShadowedErrorPropagates() {
+    // The call argument (0) must shadow the root-scope @x:1px inside the
+    // mixin: the strict divide-by-zero fails the compile instead of
+    // silently emitting width:1px from the root value.
+    LessHarness h = new LessHarness();
+    LessOptions opts = new LessOptions();
+    opts.strict(true);
+    try {
+      h.execute(".m(@x){width:1px/@x;} @x:1px; .a{.m(0);}", opts);
+      fail("compile should fail with a divide-by-zero error");
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), DIVIDE_BY_ZERO);
+    }
+  }
+
+  @Test
+  public void testMixinBodyErrorContextHasCall() {
+    // The error context must include the mixin call with its actual
+    // arguments, so the failure is attributed to the call site.
+    LessHarness h = new LessHarness();
+    try {
+      h.execute(".m(@x){width:1px/@x;} @x:1px; .a{.m(0);}");
+      fail("compile should fail with a divide-by-zero error");
+    } catch (LessException e) {
+      boolean hasCall = false;
+      for (Node node : e.errorContext()) {
+        if (node instanceof MixinCall && ((MixinCall)node).args() != null) {
+          hasCall = true;
+        }
+      }
+      assertTrue(hasCall, e.errorContext().toString());
+    }
   }
 }

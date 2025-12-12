@@ -81,6 +81,7 @@ public class Rule extends StructuralNode {
     Rule result = new Rule(property, newValue, important);
     result.copyStructure(this);
     result.fileName(fileName);
+    result.warnings = warnings;
     return result;
   }
 
@@ -146,6 +147,7 @@ public class Rule extends StructuralNode {
   public Rule copy() {
     Rule rule = new Rule(property, value, important);
     rule.fileName = fileName;
+    rule.warnings = warnings;
     return rule;
   }
 
