@@ -154,6 +154,24 @@ public class LessCTest {
   }
 
   @Test
+  public void testBatchCompileParseError() throws IOException {
+    // A file that fails to parse must make the batch run exit nonzero.
+    Path lessPath = suiteRootDir.resolve("batch-error");
+    tempFile = Files.createTempDirectory("lessc-unit-test").toFile();
+    int status = compile("--batch", lessPath.toString(), tempFile.toString());
+
+    assertEquals(status, BaseCompile.ERR);
+
+    // The good file still compiles.
+    Path expectedPath = suiteRootDir.resolve("css/batch-error/good.css");
+    Path actualPath = tempFile.toPath().resolve("good.css");
+    assertFilesEqual(expectedPath, actualPath);
+
+    // Broken file must not emit css.
+    assertTrue(!Files.exists(tempFile.toPath().resolve("broken.css")));
+  }
+
+  @Test
   public void testVersion() throws LessException {
     try {
       compile("-v");

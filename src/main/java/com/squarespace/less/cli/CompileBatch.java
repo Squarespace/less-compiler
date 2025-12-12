@@ -91,6 +91,8 @@ class CompileBatch extends BaseCompile {
         Stylesheet stylesheet = cache.get(path);
         if (stylesheet == null) {
           log("ERROR: '" + path + "' was not cached.\n");
+          // Parse failed earlier. Report it in the exit code.
+          error = true;
           continue;
         }
 
