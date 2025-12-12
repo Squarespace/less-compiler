@@ -229,11 +229,13 @@ public class RGBColor extends BaseColor {
   }
 
   /**
-   * Constructs an RGB color instance from HSVA values.
+   * Constructs an RGB color instance from HSVA values. Negative or
+   * out-of-range hues wrap into [0, 360) so the permutation index
+   * stays in bounds.
    */
   public static RGBColor fromHSVA(double hue, double saturation, double value, double alpha) {
-    hue *= 360;
-    int i = (int)Math.floor((hue / 60) % 6);
+    hue = ((hue % 1.0) + 1.0) % 1.0 * 360.0;
+    int i = Math.floorMod((int)Math.floor(hue / 60.0), 6);
     double f = (hue / 60.0) - i;
     double[] values = new double[] {
         value,

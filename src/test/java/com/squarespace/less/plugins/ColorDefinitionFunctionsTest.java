@@ -77,6 +77,10 @@ public class ColorDefinitionFunctionsTest extends LessTestBase {
     // Out-of-range and negative hues wrap into [0, 360).
     h.evalEquals("hsl(720deg, 100%, 50%)", hsl(0.0, 1.0, 0.5));
     h.evalEquals("hsl(-30deg, 100%, 50%)", hsl(330.0 / 360.0, 1.0, 0.5));
+    h.evalEquals("hsl(-30, 100%, 50%)", hsl(330.0 / 360.0, 1.0, 0.5));
+    h.evalEquals("hsla(-30, 50%, 50%, 50%)", hsla(330.0 / 360.0, 0.5, 0.5, 0.5));
+    h.evalEquals("hsv(-30, 100%, 100%)", color("#ff0080"));
+    h.evalEquals("hsva(-30, 100%, 100%, 50%)", rgb(255, 0, 128, 0.5));
 
     // Hue still must be a number.
     h.evalFails("hsl('foo', 100%, 50%)", INVALID_ARG);

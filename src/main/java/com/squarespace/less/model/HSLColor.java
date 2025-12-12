@@ -17,7 +17,6 @@
 package com.squarespace.less.model;
 
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.core.LessInternalException;
 
 
 /**
@@ -54,15 +53,21 @@ public class HSLColor extends BaseColor {
 
   /**
    * Constructs an HSL color with the given HSL and alpha channel values.
+   * Hue is a fraction of the wheel. Negative or out-of-range values
+   * wrap into [0, 1) instead of throwing.
    */
   public HSLColor(double hue, double saturation, double lightness, double alpha) {
-    if (hue < 0 || hue > 1.0) {
-      throw new LessInternalException("Serious error: something passing hue out of range: " + hue);
-    }
-    this.hue = clamp(hue * 360.0, 0.0, 360.0);
+    this.hue = wrapHue(hue) * 360.0;
     this.saturation = clamp(saturation, 0.0, 1.0);
     this.lightness = clamp(lightness, 0.0, 1.0);
     this.alpha = clamp(alpha, 0.0, 1.0);
+  }
+
+  /**
+   * Wrap a wheel-fraction hue into [0, 1).
+   */
+  private static double wrapHue(double hue) {
+    return ((hue % 1.0) + 1.0) % 1.0;
   }
 
   /**
