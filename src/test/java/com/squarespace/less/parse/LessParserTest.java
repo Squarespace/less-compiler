@@ -259,6 +259,18 @@ public class LessParserTest extends LessMaker {
     t.ok("@import 'foo.css';", imp(quoted('\'', false, anon("foo.css")), null, false));
     t.ok("@import-once 'foo.css';", imp(quoted('\'', false, anon("foo.css")), null, true));
 
+    // The identifier scan must stop at ';' and '}' so a stray terminator
+    // can't swallow a later block as this directive's body.
+    t.fail("@keyframes spin; .foo { color: red; }", INCOMPLETE_PARSE);
+    t.fail("@keyframes slidein } .foo { }", INCOMPLETE_PARSE);
+
+    // Terminators inside strings and comments must not truncate the name.
+    t.ok("@keyframes spin /* { */ { }", dir("@keyframes spin /* { */", block()));
+    t.ok("@keyframes spin /* } */ { }", dir("@keyframes spin /* } */", block()));
+    t.ok("@keyframes spin /* ; */ { }", dir("@keyframes spin /* ; */", block()));
+    t.ok("@document url(\"http://x/{y};z\") { }", dir("@document url(\"http://x/{y};z\")", block()));
+    t.fail("@keyframes spin /* unterminated comment { }", INCOMPLETE_PARSE);
+
     t.fail("@import {", INCOMPLETE_PARSE);
   }
 

@@ -1444,15 +1444,7 @@ public class LessParser {
     if (has_ident) {
       ws();
       int start = pos;
-      int end = pos;
-      while (end < len) {
-        char c = raw.charAt(end);
-        if (c == '{') {
-          break;
-        }
-        end++;
-      }
-
+      int end = directive_ident_end(pos);
       consume(end);
       name += " " + LessUtils.strip(raw, start, end);
     }
@@ -1484,6 +1476,60 @@ public class LessParser {
 
     rollback();
     return null;
+  }
+
+  /**
+   * Scan a directive identifier starting at 'index'. The scan stops at the
+   * first '{', ';' or '}' not inside a quoted string or comment, since these
+   * terminate the directive. Quoted strings and comments are skipped so a
+   * terminator character inside them can't truncate the name early. Returns
+   * the terminator position, or 'len' when EOF is reached first.
+   */
+  private int directive_ident_end(int index) {
+    int end = index;
+    while (end < len) {
+      char c = raw.charAt(end);
+
+      if (c == '{' || c == ';' || c == '}') {
+        break;
+      }
+
+      // Skip quoted strings, ignoring any terminators inside them.
+      if (c == '"' || c == '\'') {
+        char delim = c;
+        end++;
+        while (end < len) {
+          c = raw.charAt(end);
+          if (c == '\\') {
+            end += 2;
+            continue;
+          }
+          end++;
+          if (c == delim) {
+            break;
+          }
+        }
+        continue;
+      }
+
+      // Skip comments, ignoring any terminators inside them.
+      if (c == '/' && end + 1 < len) {
+        char next = raw.charAt(end + 1);
+        if (next == '*') {
+          int close = raw.indexOf("*/", end + 2);
+          end = close == -1 ? len : close + 2;
+          continue;
+        }
+        if (next == '/') {
+          int eol = raw.indexOf('\n', end + 2);
+          end = eol == -1 ? len : eol;
+          continue;
+        }
+      }
+
+      end++;
+    }
+    return end;
   }
 
   /**
