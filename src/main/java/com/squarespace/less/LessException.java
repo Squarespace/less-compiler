@@ -40,6 +40,14 @@ public class LessException extends Exception {
     this.info = info;
   }
 
+  /**
+   * Construct with an underlying cause, e.g. a wrapped plugin exception.
+   */
+  public LessException(LessErrorInfo info, Throwable cause) {
+    super(info.getMessage(), cause);
+    this.info = info;
+  }
+
   public LessErrorInfo primaryError() {
     return info;
   }

@@ -16,6 +16,7 @@
 
 package com.squarespace.less.model;
 
+import static com.squarespace.less.core.ExecuteErrorMaker.funcCall;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import java.util.ArrayList;
@@ -135,8 +136,17 @@ public class FunctionCall implements Node {
       // Invoke built-in function
       List<Node> values = evalArgs(env);
       Node result = null;
-      func.spec().validate(env, func, values);
-      result = func.invoke(env, values);
+      try {
+        func.spec().validate(env, func, values);
+        result = func.invoke(env, values);
+      } catch (LessException e) {
+        // A real LESS error, pass it through.
+        throw e;
+      } catch (RuntimeException e) {
+        // A plugin raised an unchecked exception. Wrap it so the
+        // compile fails with a LESS error, never a raw stack trace.
+        throw new LessException(funcCall(name, e.toString()), e);
+      }
       if (result != null) {
         return result;
       }

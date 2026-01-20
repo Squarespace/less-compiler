@@ -17,6 +17,7 @@
 package com.squarespace.less.plugins;
 
 import static com.squarespace.less.ExecuteErrorType.ARG_COUNT;
+import static com.squarespace.less.ExecuteErrorType.FUNCTION_CALL;
 
 import org.testng.annotations.Test;
 
@@ -53,6 +54,9 @@ public class DummyFunctionsTest extends LessTestBase {
     // wrong arg counts
     h.evalFails("dummy3(1, 2, 3, 4)", ARG_COUNT);
     h.evalFails("dummy3()", ARG_COUNT);
+
+    // An unchecked plugin exception is wrapped, not leaked.
+    h.evalFails("boom(1)", FUNCTION_CALL);
   }
 
 }

@@ -61,6 +61,10 @@ public class ExecuteErrorMaker {
     return error(ExecuteErrorType.EXPECTED_MATHOP).arg0(op);
   }
 
+  public static LessErrorInfo funcCall(String name, String msg) {
+    return error(ExecuteErrorType.FUNCTION_CALL).name(name).arg0(msg);
+  }
+
   public static LessErrorInfo formatFunctionArgs(int needed, int actual) {
     return error(ExecuteErrorType.FORMAT_FUNCTION_ARGS).arg0(needed).arg1(actual);
   }

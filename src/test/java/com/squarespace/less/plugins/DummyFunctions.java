@@ -35,6 +35,7 @@ public class DummyFunctions implements Registry<Function> {
   @Override
   public void registerPlugins(SymbolTable<Function> table) {
     table.add(DUMMY3);
+    table.add(BOOM);
   }
 
   public static final Function DUMMY3 = new Function("dummy3", "nnn") {
@@ -44,6 +45,16 @@ public class DummyFunctions implements Registry<Function> {
       double n1 = number(args.get(1));
       double n2 = number(args.get(2));
       return new Dimension(n0 + n1 + n2);
+    }
+  };
+
+  /**
+   * Throws an unchecked exception like a buggy plugin would.
+   */
+  public static final Function BOOM = new Function("boom", "n") {
+    @Override
+    public Node invoke(ExecEnv env, List<Node> args) throws LessException {
+      throw new IllegalStateException("boom");
     }
   };
 
