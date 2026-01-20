@@ -105,21 +105,23 @@ public class Variable implements Node {
     }
 
     def.evaluating(true);
-    Node result = def.dereference(env);
-    if (!indirect) {
-      def.evaluating(false);
-      return result;
-    }
+    try {
+      Node result = def.dereference(env);
+      if (!indirect) {
+        return result;
+      }
 
-    // Render the node to obtain the new variable name and eval that. We render
-    // the value as if it were inside a string.
-    LessContext ctx = env.context();
-    Buffer buf = ctx.newBuffer();
-    buf.startDelim('"');
-    ctx.render(buf, result);
-    result = env.context().nodeBuilder().buildVariable("@" + buf.toString()).eval(env);
-    def.evaluating(false);
-    return result;
+      // Render the node to obtain the new variable name and eval that. We render
+      // the value as if it were inside a string.
+      LessContext ctx = env.context();
+      Buffer buf = ctx.newBuffer();
+      buf.startDelim('"');
+      ctx.render(buf, result);
+      return env.context().nodeBuilder().buildVariable("@" + buf.toString()).eval(env);
+    } finally {
+      // Always clear the flag, even when dereference throws.
+      def.evaluating(false);
+    }
   }
 
   /**

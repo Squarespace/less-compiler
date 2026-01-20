@@ -20,12 +20,14 @@ import static com.squarespace.less.ExecuteErrorType.VAR_UNDEFINED;
 import static com.squarespace.less.SyntaxErrorType.INCOMPLETE_PARSE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.GenericBlock;
+import com.squarespace.less.model.Stylesheet;
 import com.squarespace.less.model.Unit;
 import com.squarespace.less.parse.LessSyntax;
 
@@ -66,6 +68,32 @@ public class VariableTest extends LessTestBase {
   public void testUndefined() throws LessException {
     LessHarness h = new LessHarness();
     h.executeFails(".foo { color: @c; }", VAR_UNDEFINED);
+  }
+
+  @Test
+  public void testEvaluatingFlagClearedOnException() throws LessException {
+    // A failed dereference must clear the definition's evaluating flag.
+    // Otherwise recompiling the same tree reports a false circular ref.
+    LessCompiler compiler = new LessCompiler();
+    LessContext ctx = new LessContext();
+    ctx.setCompiler(compiler);
+    String raw = "@a: @b; @b: @missing; .foo { color: @a; }";
+
+    Stylesheet sheet = compiler.parse(raw, ctx);
+    assertUndefined(sheet, compiler, ctx);
+
+    // Recompile the shared tree: must still report the real error.
+    assertUndefined(sheet, compiler, ctx);
+  }
+
+  private static void assertUndefined(Stylesheet sheet, LessCompiler compiler, LessContext ctx)
+      throws LessException {
+    try {
+      compiler.expand(sheet, ctx);
+      fail("Expected LessException of type " + VAR_UNDEFINED);
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), VAR_UNDEFINED);
+    }
   }
 
 // DISABLED: may restore in future as a pragma feature
