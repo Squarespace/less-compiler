@@ -19,6 +19,7 @@ package com.squarespace.less;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -81,8 +82,9 @@ public class LessOptions {
     return flags.contains(Option.IMPORT_ONCE);
   }
 
+  // Read-only view: callers must not mutate our list behind our back.
   public List<Path> importPaths() {
-    return importPaths;
+    return Collections.unmodifiableList(importPaths);
   }
 
   public boolean lineNumbers() {

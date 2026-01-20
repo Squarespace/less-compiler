@@ -43,8 +43,6 @@ import com.squarespace.less.parse.LessImporter;
  */
 public class LessContext {
 
-  private static final LessOptions DEFAULT_OPTS = new LessOptions();
-
   private static final NodeBuilder DEFAULT_NODE_BUILDER = new DefaultNodeBuilder();
 
   private final BufferStack bufferStack = new BufferStack(this);
@@ -67,8 +65,10 @@ public class LessContext {
 
   private int mixinDepth;
 
+  // Fresh options per context: a shared static instance would let one
+  // caller's mutations leak into every other context in the JVM.
   public LessContext() {
-    this(DEFAULT_OPTS);
+    this(new LessOptions());
   }
 
   public LessContext(LessOptions opts) {
