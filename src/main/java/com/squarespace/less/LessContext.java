@@ -133,6 +133,14 @@ public class LessContext {
     bufferStack.returnBuffer();
   }
 
+  /**
+   * Reset the reusable-buffer stack. Call at render start so a prior
+   * failed render cannot shift which buffers future callers get.
+   */
+  public void resetBuffers() {
+    bufferStack.reset();
+  }
+
   public Buffer newBuffer() {
     return new Buffer(opts.indent(), opts.compress());
   }

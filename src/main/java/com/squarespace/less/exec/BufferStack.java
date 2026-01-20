@@ -84,6 +84,17 @@ public class BufferStack {
   }
 
   /**
+   * Reset the stack. Clears any stale state left behind by a previous
+   * render that threw an exception before returning its buffers.
+   */
+  public void reset() {
+    index = 0;
+    for (Buffer buf : bufferList) {
+      buf.reset();
+    }
+  }
+
+  /**
    * Asserts that the internal stack's state is valid.
    */
   public void sanityCheck() {

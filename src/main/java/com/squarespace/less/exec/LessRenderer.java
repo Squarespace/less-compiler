@@ -113,6 +113,9 @@ public class LessRenderer {
   }
 
   public static String render(LessContext context, Stylesheet sheet) throws LessException {
+    // A prior render that threw may have left the buffer stack unbalanced.
+    // Reset so this render starts at zero depth with clean buffers.
+    context.resetBuffers();
     return new LessRenderer(context, sheet).render();
   }
 
@@ -153,15 +156,19 @@ public class LessRenderer {
     if (!selectors.isEmpty()) {
       // Selectors are indented and delimited by the model.
       Buffer buf = ctx.acquireBuffer();
-      List<Selector> _selectors = selectors.selectors();
-      int size = _selectors.size();
-      for (int i = 0; i < size; i++) {
-        Selector selector = _selectors.get(i);
-        ctx.render(buf, selector);
-        model.header(buf.toString());
-        buf.reset();
+      try {
+        List<Selector> _selectors = selectors.selectors();
+        int size = _selectors.size();
+        for (int i = 0; i < size; i++) {
+          Selector selector = _selectors.get(i);
+          ctx.render(buf, selector);
+          model.header(buf.toString());
+          buf.reset();
+        }
+      } finally {
+        // Always give the buffer back, even if render threw.
+        ctx.returnBuffer();
       }
-      ctx.returnBuffer();
     }
 
     renderBlock(ruleset.block(), true);
@@ -327,15 +334,17 @@ public class LessRenderer {
     if (opts.tracing()) {
       Path fileName = def.fileName();
       Buffer buf = ctx.acquireBuffer();
-
-      buf.append("  define   ");
-      buf.append(def.repr().trim());
-      if (fileName != null) {
-        buf.append("    ").append(def.fileName().toString());
+      try {
+        buf.append("  define   ");
+        buf.append(def.repr().trim());
+        if (fileName != null) {
+          buf.append("    ").append(def.fileName().toString());
+        }
+        buf.append(':').append(def.lineOffset() + 1).append(' ');
+        emitTrace(buf.toString());
+      } finally {
+        ctx.returnBuffer();
       }
-      buf.append(':').append(def.lineOffset() + 1).append(' ');
-      emitTrace(buf.toString());
-      ctx.returnBuffer();
     }
   }
 
@@ -395,14 +404,17 @@ public class LessRenderer {
       emitTrace("next rule defined at '" + line + "'");
     }
     Buffer buf = ctx.acquireBuffer();
-    ctx.render(buf, rule.property());
-    buf.ruleSep();
-    ctx.render(buf, rule.value());
-    if (rule.important()) {
-      buf.append(" !important");
+    try {
+      ctx.render(buf, rule.property());
+      buf.ruleSep();
+      ctx.render(buf, rule.value());
+      if (rule.important()) {
+        buf.append(" !important");
+      }
+      model.value(buf.toString());
+    } finally {
+      ctx.returnBuffer();
     }
-    model.value(buf.toString());
-    ctx.returnBuffer();
   }
 
   /**

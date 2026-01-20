@@ -58,9 +58,13 @@ public class NodeRenderer {
 
   public static String render(LessContext ctx, Node node) {
     Buffer buf = ctx.acquireBuffer();
-    render(buf, node);
-    ctx.returnBuffer();
-    return buf.toString();
+    try {
+      render(buf, node);
+      return buf.toString();
+    } finally {
+      // Always give the buffer back, even if render threw.
+      ctx.returnBuffer();
+    }
   }
 
   public static void render(Buffer buf, Node node) {

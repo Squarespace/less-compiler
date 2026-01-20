@@ -40,13 +40,15 @@ public class ErrorUtils {
    */
   public static String formatError(LessContext ctx, Path mainPath, LessException exc, int indent) {
     Buffer buf = ctx.acquireBuffer();
-    buf.append("An error occurred in '" + mainPath + "':\n\n");
-    StackFormatter fmt = new StackFormatter(exc.errorContext(), 4, STACK_FRAME_WINDOW);
-    buf.append(fmt.format()).append('\n');
-    buf.append(exc.primaryError().getMessage());
-    String result = buf.toString();
-    ctx.returnBuffer();
-    return result;
+    try {
+      buf.append("An error occurred in '" + mainPath + "':\n\n");
+      StackFormatter fmt = new StackFormatter(exc.errorContext(), 4, STACK_FRAME_WINDOW);
+      buf.append(fmt.format()).append('\n');
+      buf.append(exc.primaryError().getMessage());
+      return buf.toString();
+    } finally {
+      ctx.returnBuffer();
+    }
   }
 
 }
