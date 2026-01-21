@@ -18,7 +18,6 @@ package com.squarespace.less.cli;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -57,7 +56,6 @@ public class LessCTest {
 
   private InputStream savedIn;
 
-  private SecurityManager savedSecurityManager;
 
   @BeforeMethod
   private void setUp() {
@@ -73,10 +71,6 @@ public class LessCTest {
     standardIn = new PipedInputStream();
     savedIn = System.in;
     System.setIn(standardIn);
-
-    // Catch System.exit and report exit code.
-    savedSecurityManager = System.getSecurityManager();
-    System.setSecurityManager(new NoExitSecurityManager());
   }
 
   @AfterMethod
@@ -85,8 +79,7 @@ public class LessCTest {
   }
 
   private void restoreStreams() {
-    // Revert stream / exit intercepts.
-    System.setSecurityManager(savedSecurityManager);
+    // Revert stream intercepts.
     System.setOut(savedOut);
     System.setErr(savedErr);
     System.setIn(savedIn);
@@ -173,23 +166,24 @@ public class LessCTest {
 
   @Test
   public void testVersion() throws LessException {
-    try {
-      compile("-v");
-      fail("Expected call to System.exit()");
+    int status = compile("-v");
+    assertEquals(status, BaseCompile.OK);
+    assertTrue(standardOut.toString().contains("lessc version"));
 
-    } catch (ExitException e) {
-      assertEquals(e.status, 0);
-      assertTrue(standardOut.toString().contains("lessc version"));
-    }
+    standardOut.reset();
+    standardErr.reset();
+    status = compile("-h");
+    assertEquals(status, BaseCompile.ERR);
+    assertTrue(standardOut.toString().contains("usage: lessc"));
+  }
 
-    try {
-      compile("-h");
-      fail("Expected 'version' to call System.exit()");
-
-    } catch (ExitException e) {
-      assertEquals(e.status, 1);
-      assertTrue(standardOut.toString().contains("usage: lessc"));
-    }
+  @Test
+  public void testParseErrorExitCode() {
+    // Invalid arguments must surface as an error code from process()
+    // without calling System.exit.
+    int status = compile("--no-such-option");
+    assertEquals(status, BaseCompile.ERR);
+    assertTrue(standardErr.toString().contains("usage: lessc"));
   }
 
   private void assertFilesEqual(Path expectedPath, Path actualPath) throws IOException {

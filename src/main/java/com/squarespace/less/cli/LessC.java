@@ -71,11 +71,20 @@ public class LessC {
   public static int process(String[] rawArgs, PrintStream out, PrintStream err, InputStream in) {
     LessC cmd = new LessC(err);
 
+    // Check the version flag before parsing the remaining arguments:
+    // argparse4j's built-in version action calls System.exit() itself, which
+    // would break unit testing, and the required `input` positional would
+    // otherwise reject an invocation of `lessc -v`.
+    if (hasVersionFlag(rawArgs)) {
+      out.println(cmd.buildVersion().replace("${prog}", PROGRAM_NAME));
+      return BaseCompile.OK;
+    }
+
     // Bit of a catch-22 here at the moment, since we need to parse the arguments
     // and report errors before knowing which implementation to invoke.
     Args args = cmd.parseArguments(rawArgs);
     if (args == null) {
-      System.exit(BaseCompile.ERR);
+      return BaseCompile.ERR;
     }
 
     // Select the implementation based on the parsed arguments.
@@ -151,7 +160,7 @@ public class LessC {
       .help("Enables tracing for execution.");
 
     parser.addArgument("--version", "-v")
-      .action(Arguments.version())
+      .action(Arguments.storeTrue())
       .help("Show the version and exit");
 
     parser.addArgument("--verbose", "-V")
@@ -229,6 +238,18 @@ public class LessC {
     for (String key : attrs.keySet()) {
       err.printf(" %16s: %s\n", key, attrs.get(key));
     }
+  }
+
+  private static boolean hasVersionFlag(String[] rawArgs) {
+    if (rawArgs == null) {
+      return false;
+    }
+    for (String arg : rawArgs) {
+      if ("-v".equals(arg) || "--version".equals(arg)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
