@@ -68,6 +68,24 @@ public class DimensionTest extends LessTestBase {
     h.parseEquals("2.3PX", dim(2.3, Unit.PX));
     h.parseEquals("2.3CM", dim(2.3, Unit.CM));
 
+    // Exponents are part of the number, e.g. 1e2 == 100
+    h.parseEquals("1e2", dim(100));
+    h.parseEquals("1E2", dim(100));
+    h.parseEquals("2E2", dim(200));
+    h.parseEquals("1e2px", dim(100, Unit.PX));
+    h.parseEquals("1.5e3", dim(1500));
+    h.parseEquals("1.5e3px", dim(1500, Unit.PX));
+    h.parseEquals("1.5e-2", dim(0.015));
+    h.parseEquals("1e-1", dim(0.1));
+    h.parseEquals("+1e2", dim(100));
+    h.parseEquals("-1e2", dim(-100));
+    h.parseEquals("-1.5e-2", dim(-0.015));
+    h.parseEquals("1e2%", dim(100, Unit.PERCENTAGE));
+
+    // units starting with e are not mistaken for exponents
+    h.parseEquals("1em", dim(1, Unit.EM));
+    h.parseEquals("1ex", dim(1, Unit.EX));
+
     h.parseFails("apx", SyntaxErrorType.INCOMPLETE_PARSE);
     h.parseFails(".x", SyntaxErrorType.INCOMPLETE_PARSE);
     h.parseFails("1.", SyntaxErrorType.INCOMPLETE_PARSE);
@@ -81,6 +99,11 @@ public class DimensionTest extends LessTestBase {
 
     h.renderEquals("foo: -1.5/3", "foo: -.5");
     h.renderEquals("foo: 8/-63333333333333333333333333333;", "foo: 0");
+
+    // exponent notation parses and renders as the plain value
+    h.renderEquals("foo: 1e2;", "foo: 100");
+    h.renderEquals("foo: 1e2px;", "foo: 100px");
+    h.renderEquals("foo: 1.5e-2;", "foo: .015");
   }
 
 }

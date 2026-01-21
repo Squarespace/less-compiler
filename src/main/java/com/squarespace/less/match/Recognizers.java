@@ -38,6 +38,8 @@ public class Recognizers {
 
   private static final Recognizer DIGITS = digits();
 
+  private static final Recognizer EXPONENT = new Exponent();
+
   private static final Recognizer ESC = choice(
       sequence(cardinality(charClass(CharClass.HEXDIGIT, CLASSIFIER), 1, 6), zeroOrOne(characters(' '))),
       notCharClass(CharClass.HEXDIGIT, CLASSIFIER));
@@ -99,6 +101,10 @@ public class Recognizers {
 
   public static Recognizer decimal() {
     return new Recognizers.Decimal();
+  }
+
+  public static Recognizer exponent() {
+    return new Recognizers.Exponent();
   }
 
   public static Recognizer digit() {
@@ -566,7 +572,45 @@ public class Recognizers {
         pos++;
         res = pos;
       }
-      return (dot && (save == pos - 1)) ? FAIL : res;
+      if (dot && (save == pos - 1)) {
+        return FAIL;
+      }
+      if (res != FAIL) {
+        int end = EXPONENT.match(seq, res, length);
+        if (end != FAIL) {
+          res = end;
+        }
+      }
+      return res;
+    }
+
+  }
+
+  /**
+   * Matches the exponent part of a CSS number: 'e' or 'E' followed by an
+   * optional sign and one or more digits, e.g. 1e2, 1.5e-3, 2E+2. Fails
+   * and consumes nothing when no valid exponent follows, so units like
+   * 'em' or 'ex' are not swallowed: they are letters, never digits/signs.
+   */
+  static class Exponent implements Recognizer {
+
+    @Override
+    public int match(CharSequence seq, int pos, int len) {
+      if (pos >= len) {
+        return FAIL;
+      }
+      char ch = seq.charAt(pos);
+      if (ch != 'e' && ch != 'E') {
+        return FAIL;
+      }
+      pos++;
+      if (pos < len) {
+        ch = seq.charAt(pos);
+        if (ch == '+' || ch == '-') {
+          pos++;
+        }
+      }
+      return DIGITS.match(seq, pos, len);
     }
 
   }
@@ -576,7 +620,7 @@ public class Recognizers {
    *
    * Examples of valid sequences are:
    *
-   * 1 3.4 -1.2 +.3
+   * 1 3.4 -1.2 +.3 1e2 1.5e-3
    *
    * Invalid sequences:
    *
@@ -598,7 +642,12 @@ public class Recognizers {
         // First '.' we see, match at least one following digit
         if (ch == '.') {
           pos++;
-          return DIGITS.match(seq, pos, len);
+          res = DIGITS.match(seq, pos, len);
+          if (res == FAIL) {
+            return FAIL;
+          }
+          int end = EXPONENT.match(seq, res, len);
+          return end == FAIL ? res : end;
         }
 
         pos = DIGITS.match(seq, pos, len);
@@ -606,6 +655,13 @@ public class Recognizers {
           return res;
         }
         res = pos;
+
+        // optionally consume exponent part, e.g. 1e2, 2E2, 1.5e-3.
+        // if none, continue: a following '.' is the fraction part.
+        int end = EXPONENT.match(seq, pos, len);
+        if (end != FAIL) {
+          return end;
+        }
       }
       return res;
     }

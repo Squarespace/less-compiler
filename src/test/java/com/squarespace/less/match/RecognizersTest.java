@@ -196,6 +196,55 @@ public class RecognizersTest {
 
     assertEquals(match(pattern, "3.14159"), 7);
     assertEquals(match(pattern, "3.14159___"), 7);
+
+    // exponent part is part of the number, e.g. 3.14159e2
+    assertEquals(match(pattern, "3.14159e2"), 9);
+    assertEquals(match(pattern, "3.14159e-2"), 10);
+    assertEquals(match(pattern, "3.14159em"), 7);
+  }
+
+  @Test
+  public void testDimensionExponent() {
+    Recognizer pattern = Recognizers.dimension();
+
+    // exponent is part of the number
+    assertEquals(match(pattern, "1e2"), 3);
+    assertEquals(match(pattern, "2E2"), 3);
+    assertEquals(match(pattern, "1.5e3"), 5);
+    assertEquals(match(pattern, "1e-2"), 4);
+    assertEquals(match(pattern, "1e+2"), 4);
+    assertEquals(match(pattern, "+1e2"), 4);
+    assertEquals(match(pattern, "-1.5e-3"), 7);
+    assertEquals(match(pattern, ".5e1"), 4);
+
+    // the number ends at the exponent, the unit is matched next
+    assertEquals(match(pattern, "1e2px"), 3);
+    assertEquals(match(pattern, "1e2%"), 3);
+
+    // no valid exponent means the unit is not a number part
+    assertEquals(match(pattern, "1em"), 1);
+    assertEquals(match(pattern, "1ex"), 1);
+    assertEquals(match(pattern, "1eV"), 1);
+    assertEquals(match(pattern, "1e"), 1);
+    assertEquals(match(pattern, "1e+"), 1);
+  }
+
+  @Test
+  public void testExponent() {
+    Recognizer pattern = Recognizers.exponent();
+
+    assertEquals(match(pattern, "e2"), 2);
+    assertEquals(match(pattern, "E2"), 2);
+    assertEquals(match(pattern, "e-2"), 3);
+    assertEquals(match(pattern, "e+2"), 3);
+    assertEquals(match(pattern, "e12"), 3);
+    assertEquals(match(pattern, 1, "1e2"), 3);
+
+    assertEquals(match(pattern, ""), FAIL);
+    assertEquals(match(pattern, "e"), FAIL);
+    assertEquals(match(pattern, "e+"), FAIL);
+    assertEquals(match(pattern, "em"), FAIL);
+    assertEquals(match(pattern, "x"), FAIL);
   }
 
   @Test
