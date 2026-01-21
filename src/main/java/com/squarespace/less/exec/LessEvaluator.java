@@ -262,11 +262,12 @@ public class LessEvaluator {
             Definition def = (Definition)node;
             size += def.size();
             Definition newDef = def.copy(def.dereference(env));
-            // A mixin-body pass may have attached warnings already.
-            // Attach new ones only, never clobber with an empty list.
+            // Merge with warnings from an earlier pass (e.g. mixin body)
+            // and append new ones, never replace the old set.
             String defWarnings = env.warnings();
             if (defWarnings != null) {
-              newDef.warnings(defWarnings);
+              String prev = newDef.warnings();
+              newDef.warnings(prev == null ? defWarnings : prev + ", " + defWarnings);
             }
             node = newDef;
             break;
@@ -316,10 +317,11 @@ public class LessEvaluator {
               newRule = (Rule)rule.eval(env);
             }
             // Keep warnings from an earlier pass (e.g. mixin body) and
-            // attach new ones only.
+            // merge with new ones, never replace the old set.
             String ruleWarnings = env.warnings();
             if (ruleWarnings != null) {
-              newRule.warnings(ruleWarnings);
+              String prev = newRule.warnings();
+              newRule.warnings(prev == null ? ruleWarnings : prev + ", " + ruleWarnings);
             }
             node = newRule;
             break;

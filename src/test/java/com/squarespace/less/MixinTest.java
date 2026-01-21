@@ -164,6 +164,47 @@ public class MixinTest extends LessTestBase {
   }
 
   @Test
+  public void testMixinBodyColorMathWarningPreserved() throws LessException {
+    // An incompatible-units warning (2px + blue) raised for a rule
+    // inside a mixin body must render like the identical inline rule.
+    LessHarness h = new LessHarness();
+    LessOptions opts = new LessOptions();
+    opts.strict(false);
+    String withMixin = h.execute(".m(){a:2px + blue;} .x{.m();}", opts);
+    String plain = h.execute(".x{a:2px + blue;}", opts);
+    assertEquals(withMixin, plain);
+    assertTrue(withMixin.contains("WARNING["), withMixin);
+  }
+
+  @Test
+  public void testMixinBodyWarningsSurviveNestedExpansion() throws LessException {
+    // Warnings must survive nested mixin calls, multi-value expressions
+    // and important calls, matching the inline rule byte for byte.
+    LessHarness h = new LessHarness();
+    LessOptions opts = new LessOptions();
+    opts.strict(false);
+    assertEquals(
+        h.execute(".m(){margin:2px + blue 1px;} .n(){.m();} .x{.n() !important;}", opts),
+        h.execute(".x{margin:2px + blue 1px !important;}", opts));
+    assertTrue(
+        h.execute(".m(){margin:2px + blue 1px;} .n(){.m();} .x{.n();}", opts)
+            .contains("WARNING["));
+  }
+
+  @Test
+  public void testMixinBodyFunctionWarningPreserved() throws LessException {
+    // An explicit env.addWarning() from a function (replace() is flagged
+    // experimental) attached in a mixin body must survive expansion.
+    LessHarness h = new LessHarness();
+    LessOptions opts = new LessOptions();
+    opts.strict(false);
+    String withMixin = h.execute(".m(){a:replace('abc','b','c');} .x{.m();}", opts);
+    String plain = h.execute(".x{a:replace('abc','b','c');}", opts);
+    assertEquals(withMixin, plain);
+    assertTrue(withMixin.contains("WARNING["), withMixin);
+  }
+
+  @Test
   public void testMixinBodyShadowedErrorPropagates() {
     // The call argument (0) must shadow the root-scope @x:1px inside the
     // mixin: the strict divide-by-zero fails the compile instead of

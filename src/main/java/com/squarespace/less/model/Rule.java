@@ -178,6 +178,9 @@ public class Rule extends StructuralNode {
     Rule result = new Rule(property, value.eval(env), important);
     result.fileName(fileName);
     result.copyStructure(this);
+    // Carry warnings so a second eval pass (e.g. a spliced mixin rule)
+    // cannot drop diagnostics attached by an earlier pass.
+    result.warnings = warnings;
     return result;
   }
 
