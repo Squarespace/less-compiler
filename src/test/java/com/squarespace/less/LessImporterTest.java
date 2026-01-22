@@ -75,6 +75,49 @@ public class LessImporterTest extends LessTestBase {
     return Paths.get(path).toAbsolutePath().normalize();
   }
 
+  @Test
+  public void testFailedImportUnwindsDepth() throws LessException {
+    // A failed import must unwind import depth. compile() resets depth
+    // counters first, but parse() does not, so a failed parse leaks depth
+    // into later parses on a reused context and trips a false recursion
+    // limit error.
+    LessOptions opts = buildOptions();
+    opts.importRecursionLimit(3);
+    LessContext ctx = new LessContext(opts, new HashMapLessLoader(buildMap()));
+    ctx.setCompiler(COMPILER);
+
+    // Six parses, each importing one missing file. The error must stay
+    // file-not-found. Later parses must not falsely report recursion.
+    for (int i = 0; i < 6; i++) {
+      try {
+        COMPILER.parse("@import 'missing.less';", ctx, path("."), null);
+        fail("Expected file-not-found on parse " + (i + 1));
+      } catch (LessException e) {
+        assertTrue(e.getMessage().contains("File cannot be found"),
+            "parse " + (i + 1) + ": " + e.getMessage());
+      }
+    }
+
+    // Nested variant: the leaf import fails at depth 2. The error must
+    // unwind fully and name the leaf file, not the chain head.
+    Map<Path, String> map = new HashMap<>(buildMap());
+    map.put(path("chain.less"), "@import 'missing.less';\n");
+    LessContext nestedCtx = new LessContext(opts, new HashMapLessLoader(map));
+    nestedCtx.setCompiler(COMPILER);
+    for (int i = 0; i < 4; i++) {
+      try {
+        COMPILER.parse("@import 'chain.less';", nestedCtx, path("."), null);
+        fail("Expected file-not-found on nested parse " + (i + 1));
+      } catch (LessException e) {
+        assertTrue(e.getMessage().contains("missing.less"),
+            "nested parse " + (i + 1) + ": " + e.getMessage());
+      }
+    }
+    // A fresh compile on the same context must still succeed.
+    assertEquals(COMPILER.compile("@import 'base.less';", nestedCtx, path("."), null, true),
+        ".child{font-size:12px}");
+  }
+
   private static Map<Path, String> buildMap() {
     Map<Path, String> map = new HashMap<>();
     map.put(path("base.less"), "@color: #abc; @import 'child.less';");
