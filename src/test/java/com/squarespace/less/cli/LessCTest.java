@@ -173,17 +173,21 @@ public class LessCTest {
     standardOut.reset();
     standardErr.reset();
     status = compile("-h");
-    assertEquals(status, BaseCompile.ERR);
+    // Help is a success and goes to the out stream, not stderr.
+    assertEquals(status, BaseCompile.OK);
     assertTrue(standardOut.toString().contains("usage: lessc"));
+    assertTrue(standardErr.toString().isEmpty());
   }
 
   @Test
   public void testParseErrorExitCode() {
     // Invalid arguments must surface as an error code from process()
-    // without calling System.exit.
+    // without calling System.exit, and usage must go to the injected
+    // err stream, leaving stdout untouched.
     int status = compile("--no-such-option");
     assertEquals(status, BaseCompile.ERR);
     assertTrue(standardErr.toString().contains("usage: lessc"));
+    assertTrue(standardOut.toString().isEmpty());
   }
 
   private void assertFilesEqual(Path expectedPath, Path actualPath) throws IOException {

@@ -18,6 +18,7 @@ package com.squarespace.less.cli;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,11 @@ public class LessC {
 
   private static final String PROGRAM_NAME = "lessc";
 
+  private final PrintStream out;
+
   private final PrintStream err;
+
+  private boolean helpRequested;
 
   /**
    * Main entry point for the command-line compiler.
@@ -60,7 +65,8 @@ public class LessC {
    * Constructs a command-line compiler which writes output to the
    * given out and err streams.
    */
-  public LessC(PrintStream err) {
+  public LessC(PrintStream out, PrintStream err) {
+    this.out = out;
     this.err = err;
   }
 
@@ -69,7 +75,7 @@ public class LessC {
    * unit tested and all output captured.
    */
   public static int process(String[] rawArgs, PrintStream out, PrintStream err, InputStream in) {
-    LessC cmd = new LessC(err);
+    LessC cmd = new LessC(out, err);
 
     // Check the version flag before parsing the remaining arguments:
     // argparse4j's built-in version action calls System.exit() itself, which
@@ -84,7 +90,8 @@ public class LessC {
     // and report errors before knowing which implementation to invoke.
     Args args = cmd.parseArguments(rawArgs);
     if (args == null) {
-      return BaseCompile.ERR;
+      // parseArguments() printed help or an error. Help exits 0.
+      return cmd.helpRequested ? BaseCompile.OK : BaseCompile.ERR;
     }
 
     // Select the implementation based on the parsed arguments.
@@ -184,6 +191,15 @@ public class LessC {
       .nargs("?")
       .help("Output file, or a directory in batch mode.");
 
+    // argparse4j's built-in help action prints to the real System.out
+    // and then throws. Intercept -h here so help uses the injected out
+    // stream and the caller can exit 0.
+    if (hasHelpFlag(args)) {
+      out.print(parser.formatHelp());
+      helpRequested = true;
+      return null;
+    }
+
     try {
       Namespace res = parser.parseArgs(args);
 
@@ -218,7 +234,10 @@ public class LessC {
       return cmdArgs;
 
     } catch (ArgumentParserException e) {
-      parser.handleError(e);
+      // argparse4j's handleError() hardcodes System.err. Print the usage
+      // and the message to the injected err stream instead.
+      parser.printUsage(new PrintWriter(err, true));
+      err.println(PROGRAM_NAME + ": error: " + e.getMessage());
       return null;
     }
   }
@@ -238,6 +257,18 @@ public class LessC {
     for (String key : attrs.keySet()) {
       err.printf(" %16s: %s\n", key, attrs.get(key));
     }
+  }
+
+  private static boolean hasHelpFlag(String[] args) {
+    if (args == null) {
+      return false;
+    }
+    for (String arg : args) {
+      if ("-h".equals(arg) || "--help".equals(arg)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static boolean hasVersionFlag(String[] rawArgs) {
