@@ -264,6 +264,11 @@ public class LessC {
       return false;
     }
     for (String arg : args) {
+      // Stop at the end-of-options marker: anything after "--" is a
+      // positional filename, not a flag.
+      if ("--".equals(arg)) {
+        break;
+      }
       if ("-h".equals(arg) || "--help".equals(arg)) {
         return true;
       }
@@ -276,6 +281,10 @@ public class LessC {
       return false;
     }
     for (String arg : rawArgs) {
+      // Stop at the end-of-options marker (see hasHelpFlag).
+      if ("--".equals(arg)) {
+        break;
+      }
       if ("-v".equals(arg) || "--version".equals(arg)) {
         return true;
       }

@@ -234,7 +234,13 @@ public class RGBColor extends BaseColor {
    * stays in bounds.
    */
   public static RGBColor fromHSVA(double hue, double saturation, double value, double alpha) {
-    hue = ((hue % 1.0) + 1.0) % 1.0 * 360.0;
+    // Single modulus is exact for in-range hues. Wrap only negatives so
+    // in-range values are not perturbed by 1 ULP (see HSLColor.wrapHue).
+    double wrapped = hue % 1.0;
+    if (wrapped < 0) {
+      wrapped += 1.0;
+    }
+    hue = wrapped * 360.0;
     int i = Math.floorMod((int)Math.floor(hue / 60.0), 6);
     double f = (hue / 60.0) - i;
     double[] values = new double[] {

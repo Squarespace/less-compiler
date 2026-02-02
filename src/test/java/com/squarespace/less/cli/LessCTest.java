@@ -155,7 +155,13 @@ public class LessCTest {
 
     assertEquals(status, BaseCompile.ERR);
 
-    // The good file still compiles.
+    // The parse failure itself is reported with full context (message +
+    // file + line), not only as a missing-cache line and exit code.
+    assertTrue(standardErr.toString().contains("An error occurred in"));
+    assertTrue(standardErr.toString().contains("broken.less"));
+    assertTrue(standardErr.toString().contains("IMPORT_ERROR"));
+
+    // The good file still compiles...
     Path expectedPath = suiteRootDir.resolve("css/batch-error/good.css");
     Path actualPath = tempFile.toPath().resolve("good.css");
     assertFilesEqual(expectedPath, actualPath);
@@ -177,6 +183,22 @@ public class LessCTest {
     assertEquals(status, BaseCompile.OK);
     assertTrue(standardOut.toString().contains("usage: lessc"));
     assertTrue(standardErr.toString().isEmpty());
+  }
+
+  @Test
+  public void testEndOfFlagsMarker() {
+    // "--" ends option scanning: "-v" / "-h" after it are positional
+    // filenames, so the version/help pre-scan must not intercept them.
+    // The file does not exist, so this is an error, not a version print.
+    int status = compile("--", "-v");
+    assertEquals(status, BaseCompile.ERR);
+    assertTrue(!standardOut.toString().contains("lessc version"));
+
+    standardOut.reset();
+    standardErr.reset();
+    status = compile("--", "-h");
+    assertEquals(status, BaseCompile.ERR);
+    assertTrue(!standardOut.toString().contains("usage: lessc"));
   }
 
   @Test

@@ -86,6 +86,47 @@ public class ColorDefinitionFunctionsTest extends LessTestBase {
     h.evalFails("hsl('foo', 100%, 50%)", INVALID_ARG);
   }
 
+  @Test
+  public void testHueRenderParityWith172() throws LessException {
+    LessHarness h = harness();
+
+    // In-range integer hues at full saturation must render byte-identically
+    // to 1.7.2. The two-pass hue wrap ((x % m) + m) % m perturbed in-range
+    // hues by 1 ULP and flipped the 8-bit channel rounding for 23/360 hues
+    // (e.g. hue 30 was #ff8000 in 1.7.2 and #ff7f00 after the two-pass
+    // wrap). Pinning the rendered output catches that class of regression,
+    // which the hue-field comparisons in testHueUnits cannot.
+    h.renderEquals("hsl(30, 100%, 50%)", "#ff8000");
+    h.renderEquals("hsv(30, 100%, 100%)", "#ff8000");
+
+    // All 23 hsl and 29 hsv hues whose 8-bit output is sensitive to a
+    // 1-ULP hue perturbation, pinned to the 1.7.2 rendered values.
+    String[] hslFlips = {
+        "2:#ff0900", "6:#ff1a00", "10:#ff2b00", "30:#ff8000", "50:#ffd500",
+        "70:#d4ff00", "74:#c3ff00", "94:#6eff00", "102:#4cff00", "118:#08ff00",
+        "126:#00ff19", "142:#00ff5e", "146:#00ff6f", "162:#00ffb3", "186:#00e5ff",
+        "190:#00d4ff", "194:#00c3ff", "218:#005eff", "234:#0019ff", "238:#0008ff",
+        "282:#b300ff", "306:#ff00e6", "350:#ff002b"
+    };
+    for (String row : hslFlips) {
+      String[] parts = row.split(":");
+      h.renderEquals(String.format("hsl(%s, 100%%, 50%%)", parts[0]), parts[1]);
+    }
+
+    String[] hsvFlips = {
+        "26:#ff6f00", "30:#ff8000", "50:#ffd500", "54:#ffe600", "70:#d4ff00",
+        "74:#c3ff00", "78:#b3ff00", "82:#a2ff00", "86:#91ff00", "106:#3cff00",
+        "122:#00ff08", "126:#00ff19", "130:#00ff2a", "142:#00ff5e", "162:#00ffb3",
+        "166:#00ffc3", "174:#00ffe5", "186:#00e5ff", "194:#00c3ff", "210:#0080ff",
+        "218:#005eff", "238:#0008ff", "258:#4c00ff", "282:#b300ff", "302:#ff00f7",
+        "306:#ff00e6", "326:#ff0090", "346:#ff003c", "350:#ff002b"
+    };
+    for (String row : hsvFlips) {
+      String[] parts = row.split(":");
+      h.renderEquals(String.format("hsv(%s, 100%%, 100%%)", parts[0]), parts[1]);
+    }
+  }
+
   private LessHarness harness() {
     GenericBlock defs = defs(
         def("@one", dim(1)),

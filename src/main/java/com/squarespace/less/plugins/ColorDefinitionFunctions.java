@@ -122,7 +122,13 @@ public class ColorDefinitionFunctions implements Registry<Function> {
    */
   private static double hue(Node node) throws LessException {
     double value = Function.percent(node);
-    return ((value % 360) + 360) % 360 / 360.0;
+    // Single modulus is exact for in-range values. Wrap only negatives so
+    // in-range hues are not perturbed by 1 ULP (see HSLColor.wrapHue).
+    double wrapped = value % 360;
+    if (wrapped < 0) {
+      wrapped += 360;
+    }
+    return wrapped / 360.0;
   }
 
 }

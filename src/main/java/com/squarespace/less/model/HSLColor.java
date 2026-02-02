@@ -65,9 +65,20 @@ public class HSLColor extends BaseColor {
 
   /**
    * Wrap a wheel-fraction hue into [0, 1).
+   *
+   * The single modulus is exact for in-range values (IEEE: {@code x % 1.0}
+   * is {@code x} itself for {@code |x| < 1}), so only negative hues take
+   * the +1.0 wrap. The two-pass form {@code ((h % 1.0) + 1.0) % 1.0}
+   * rounds in-range hues by 1 ULP, which flips the 8-bit channel rounding
+   * for 23 of 360 fully-saturated hues vs 1.7.2 (e.g. hsl(30) rendered
+   * #ff7f00 instead of #ff8000).
    */
   private static double wrapHue(double hue) {
-    return ((hue % 1.0) + 1.0) % 1.0;
+    double wrapped = hue % 1.0;
+    if (wrapped < 0) {
+      wrapped += 1.0;
+    }
+    return wrapped;
   }
 
   /**
