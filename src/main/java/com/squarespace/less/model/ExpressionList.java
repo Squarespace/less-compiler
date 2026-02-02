@@ -131,6 +131,9 @@ public class ExpressionList implements Node {
    */
   @Override
   public void repr(Buffer buf) {
+    if (values == null) {
+      return;
+    }
     int size = values.size();
     for (int i = 0; i < size; i++) {
       if (i > 0) {

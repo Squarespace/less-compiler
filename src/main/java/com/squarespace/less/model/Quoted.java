@@ -134,6 +134,9 @@ public class Quoted implements Node {
    */
   public Quoted copy() {
     Quoted res = new Quoted(delim);
+    if (parts == null) {
+      return res;
+    }
     int size = parts.size();
     for (int i = 0; i < size; i++) {
       Node part = parts.get(i);
@@ -183,9 +186,11 @@ public class Quoted implements Node {
       buf.append('~');
     }
     buf.append(delim);
-    int size = parts.size();
-    for (int i = 0; i < size; i++) {
-      parts.get(i).repr(buf);
+    if (parts != null) {
+      int size = parts.size();
+      for (int i = 0; i < size; i++) {
+        parts.get(i).repr(buf);
+      }
     }
     buf.append(delim);
   }
