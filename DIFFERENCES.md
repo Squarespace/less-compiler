@@ -49,3 +49,33 @@ less.js:
     25     color: /* c */ red;
 
 
+#### Block-less `@media` directives are dropped in safe mode (the default)
+
+A `@media` directive that is not followed by a block is silently dropped in
+safe mode, and the statements that follow it attach to the enclosing block:
+
+    @media only screen and (max-width: 640px)
+    #content {
+      padding-top: 50px;
+    }
+
+Squarespace LESS (safe mode):
+
+    #content {
+      padding-top: 50px;
+    }
+
+less.js:
+
+    % lessc-1.7.0 bug2.less
+    ParseError: Unrecognised input in bug2.less on line 1, column 1:
+    1 @media only screen and (max-width: 640px)
+    2 #content {
+
+This leniency is intentional legacy compatibility: production stylesheets
+containing unclosed or block-less `@media` directives must keep compiling
+(see docs/legacy-bugs.md, BUG2, for the affected sites). It applies only in
+safe mode, which is the default for both `LessCompiler.parse()` and
+`LessCompiler.compile()`. With safe mode disabled the same input fails the
+compile.
+

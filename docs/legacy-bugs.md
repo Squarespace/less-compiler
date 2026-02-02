@@ -25,6 +25,10 @@ Extraneous `'+'` character at block scope.
 
 Media directives not properly opened / closed.
 
+This is tolerated on purpose: in safe mode (the default) a `@media` without a
+following block is dropped and the rest attaches to the enclosing block.
+See DIFFERENCES.md for the documented behavior.
+
 **site**: julie-kim-rd7f line 16568:
 
 ```less
