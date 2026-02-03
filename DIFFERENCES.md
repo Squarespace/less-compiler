@@ -4,6 +4,48 @@ The following is a list of known differences between the Squarespace LESS
 compiler and less.js 1.7.0.
 
 
+#### Compatibility levels
+
+The compiler accepts a per-compile compatibility level that selects how
+many legacy behaviors ("patches") are fixed: level 0 keeps every legacy
+behavior active, preserving the previous release's behavior surface, and
+at level N every patch whose threshold is at most N is fixed. The highest
+level is the fully-fixed compiler.
+
+    LessOptions opts = new LessOptions();
+    opts.compatLevel(0);   // released behavior: no fixes, every legacy behavior active
+    opts.compatLevel(1);   // level-1 fixes applied (BUG1..BUG4)
+    opts.compatLevel(2);   // fully fixed: every fix applied
+
+    LessContext ctx = new LessContext(opts);
+    new LessCompiler().compile(raw, ctx);
+
+Current patches, all at threshold 1 (the former safe-mode tolerances, see
+docs/legacy-bugs.md; fixed at level 1 and above):
+
+- `BUG1` - extraneous `'+'` at block scope is tolerated.
+- `BUG2` - a `@media` directive without a following block is dropped and the
+  statements that follow attach to the enclosing block.
+- `BUG3` - a variable reference followed by empty parentheses (`@var();`) is
+  accepted.
+- `BUG4` - invalid addition expressions such as `random(90) + px` are
+  tolerated.
+
+Per-site patches can be forced on for stylesheets that need an irregular
+combination the ladder cannot express:
+
+    opts.compatPatch(Patch.BUG2);
+
+New fixes ship with a legacy path gated by a new patch at a new higher
+threshold, so higher levels apply more fixes without changing the released
+surface at level 0. Patches are retired when the last site that needs them
+migrates to their threshold level or above.
+
+For backwards compatibility, the parser's boolean `safeMode()` flag maps onto
+the level: `true` is the default level (released behavior), `false` is the
+fully-fixed level.
+
+
 #### Color keywords are allowed to participate in math expressions
 
     foo: blue + 1;
