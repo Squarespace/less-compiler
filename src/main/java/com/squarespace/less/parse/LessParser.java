@@ -18,6 +18,8 @@ import java.util.List;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.NodeBuilder;
+import com.squarespace.less.compat.CompatLevel;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.CharClass;
 import com.squarespace.less.core.Chars;
 import com.squarespace.less.core.Constants;
@@ -265,10 +267,10 @@ public class LessParser {
   private int m_end = 0;
 
   /**
-   * Safe mode, which allows a small class of bugs from the legacy parser.
-   * We set this to 'true' by default to remain backwards-compatible.
+   * Compat level for this parse. From the context options. The safeMode()
+   * setter maps onto it for backwards compatibility.
    */
-  private boolean safe_mode = true;
+  private CompatLevel compat;
 
   /**
    * Number of rollbacks that have occurred.
@@ -296,6 +298,7 @@ public class LessParser {
     this.raw = source;
     this.len = source.length();
     this.ignoreComments = ctx.options().ignoreComments();
+    this.compat = ctx.options().compat();
     this.rootPath = rootPath;
     this.fileName = fileName;
   }
@@ -329,11 +332,12 @@ public class LessParser {
   }
 
   /**
-   * Enable or disable safe mode. Safe mode allows a small set of bugs to occur in
-   * stylesheets.
+   * Legacy boolean API: on = the default level (0, released behavior,
+   * every legacy behavior active), off = the fully-fixed level (every
+   * fix applied). New code: use LessOptions.compatLevel().
    */
   public void safeMode(boolean flag) {
-    this.safe_mode = flag;
+    this.compat = flag ? CompatLevel.defaultLevel() : CompatLevel.fixed();
   }
 
   /**
@@ -827,7 +831,7 @@ public class LessParser {
           }
 
           // TODO: SEE BUG1
-          if (safe_mode && bug1_plus_ending_block()) {
+          if (compat.enabled(Patch.BUG1) && bug1_plus_ending_block()) {
             continue;
           }
 
@@ -882,7 +886,7 @@ public class LessParser {
       }
 
       // TODO: see BUG4
-      if (!safe_mode) {
+      if (!compat.enabled(Patch.BUG4)) {
         begin();
       }
 
@@ -890,7 +894,7 @@ public class LessParser {
       Operator operator = addition_op();
       if (operator == null) {
         // TODO: see BUG4
-        if (!safe_mode) {
+        if (!compat.enabled(Patch.BUG4)) {
           rollback();
         }
         break;
@@ -902,14 +906,14 @@ public class LessParser {
       Node operand1 = multiplication();
       if (operand1 == null) {
         // TODO: see BUG4
-        if (!safe_mode) {
+        if (!compat.enabled(Patch.BUG4)) {
           rollback();
         }
         break;
       }
 
       // TODO: see BUG4
-      if (!safe_mode) {
+      if (!compat.enabled(Patch.BUG4)) {
         commit();
       }
       operation = builder.buildOperation(operator, operation, operand1);
@@ -1570,7 +1574,7 @@ public class LessParser {
     // Make sure a block follows, otherwise this is invalid.
     if (!block_open()) {
       // TODO: see BUG2
-      return safe_mode ? DUMMY_MEDIA : null;
+      return compat.enabled(Patch.BUG2) ? DUMMY_MEDIA : null;
     }
 
     Media media = builder.buildMedia(features, new Block());
@@ -3153,7 +3157,7 @@ public class LessParser {
     }
 
     // TODO: see BUG3
-    if (safe_mode && !curly && peek(end) == '(' && peek(end + 1) == ')' && peek(end + 2) == ';') {
+    if (compat.enabled(Patch.BUG3) && !curly && peek(end) == '(' && peek(end + 1) == ')' && peek(end + 2) == ';') {
       end += 2;
     }
 

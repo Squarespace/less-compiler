@@ -70,31 +70,39 @@ public class LessCompiler {
   }
 
   /**
-   * Parse the source into a stylesheet, putting the parser into safe mode by default.
+   * Parse source. The compat level comes from the context options
+   * (default: every legacy behavior active).
    */
   public Stylesheet parse(String raw, LessContext ctx) throws LessException {
-    return parse(raw, ctx, null, null, true);
+    return parse0(raw, ctx, null, null, null);
   }
 
   /**
-   * Parse the source into a stylesheet, setting the parser's safe mode flag.
+   * Parse source with the legacy safeMode flag.
    */
   public Stylesheet parse(String raw, LessContext ctx, boolean safeMode) throws LessException {
-    return parse(raw, ctx, null, null, safeMode);
+    return parse0(raw, ctx, null, null, safeMode);
   }
 
   /**
    * Parse the source into a stylesheet, putting the parser into safe mode by default.
    */
   public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
-    return parse(raw, ctx, rootPath, fileName, true);
+    return parse0(raw, ctx, rootPath, fileName, null);
   }
 
   public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName, boolean safeMode) throws LessException {
+    return parse0(raw, ctx, rootPath, fileName, safeMode);
+  }
+
+  private Stylesheet parse0(String raw, LessContext ctx, Path rootPath, Path fileName, Boolean safeMode)
+      throws LessException {
     LessStats stats = ctx.stats();
     long started = stats.now();
     LessParser parser = new LessParser(ctx, raw, rootPath, fileName);
-    parser.safeMode(safeMode);
+    if (safeMode != null) {
+      parser.safeMode(safeMode);
+    }
     Stylesheet sheet = null;
     try {
       sheet = (Stylesheet) parser.parse(LessSyntax.STYLESHEET);
@@ -116,14 +124,19 @@ public class LessCompiler {
   }
 
   public String compile(String raw, LessContext ctx) throws LessException {
-    return compile(raw, ctx, null, null, true);
+    return compile0(raw, ctx, null, null, null);
   }
 
   public String compile(String raw, LessContext ctx, Path rootPath, Path fileName, boolean safeMode) throws LessException {
+    return compile0(raw, ctx, rootPath, fileName, safeMode);
+  }
+
+  private String compile0(String raw, LessContext ctx, Path rootPath, Path fileName, Boolean safeMode)
+      throws LessException {
     // A prior failed compile may have left the depth counters nonzero.
     // Reset so a reused context does not fail fresh compiles.
     ctx.resetDepthCounters();
-    Stylesheet sheet = parse(raw, ctx, rootPath, fileName, safeMode);
+    Stylesheet sheet = parse0(raw, ctx, rootPath, fileName, safeMode);
     LessStats stats = ctx.stats();
     long started = stats.now();
     String result = "";

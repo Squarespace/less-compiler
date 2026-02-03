@@ -24,6 +24,9 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import com.squarespace.less.compat.CompatLevel;
+import com.squarespace.less.compat.Patch;
+
 
 /**
  * Represents all basic options for the compiler.
@@ -45,6 +48,9 @@ public class LessOptions {
   private int mixinRecursionLimit = DEFAULT_RECURSION_LIMIT;
 
   private int importRecursionLimit = DEFAULT_RECURSION_LIMIT;
+
+  // Compat level for this compile. Defaults to preserving released behavior.
+  private CompatLevel compat = CompatLevel.defaultLevel();
 
   public LessOptions() {
   }
@@ -171,6 +177,36 @@ public class LessOptions {
 
   public void tracing(boolean flag) {
     set(flag, Option.TRACING);
+  }
+
+  public CompatLevel compat() {
+    return compat;
+  }
+
+  /**
+   * Compat level. 0 is the released behavior. A patch's fix is applied
+   * at its threshold level and above.
+   */
+  public int compatLevel() {
+    return compat.level();
+  }
+
+  public void compatLevel(int level) {
+    this.compat = CompatLevel.at(level);
+  }
+
+  /**
+   * Force a legacy behavior on, regardless of level. Rare per-site override.
+   */
+  public void compatPatch(Patch patch) {
+    this.compat = compat.withPatch(patch);
+  }
+
+  /**
+   * True when the legacy behavior is active.
+   */
+  public boolean compatEnabled(Patch patch) {
+    return compat.enabled(patch);
   }
 
   private void set(boolean flag, Option opt) {
