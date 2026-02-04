@@ -103,13 +103,15 @@ public class CompatCompileTest {
       released.safeMode(false);
       assertTrue(compile(raw, released).length() > 0, raw);
     }
-    // At the fully-fixed level the legacy inputs still fail: safe mode
-    // does not silently re-enable legacy behavior.
+    // At the fully-fixed level with recovery on, the legacy inputs
+    // compile with recovery warnings (the level itself is unchanged.
+    // recovery is what makes them compile).
     for (String raw : new String[] { MEDIA_BLOCKLESS, VAR_PAREN, INVALID_ADDITION }) {
       LessOptions fixed = new LessOptions();
       fixed.compatLevel(Patch.maxThreshold());
       fixed.safeMode(true);
-      assertFails(raw, fixed);
+      String css = compile(raw, fixed);
+      assertTrue(css.contains("WARNING["), raw + " -> " + css);
     }
   }
 

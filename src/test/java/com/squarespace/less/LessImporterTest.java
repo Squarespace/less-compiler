@@ -63,12 +63,21 @@ public class LessImporterTest extends LessTestBase {
     ctx.setCompiler(COMPILER);
 
     String source = "@import '1.less';";
+
+    // Strict mode (safeMode=false): the recursion limit is a hard error.
     try {
-      COMPILER.compile(source, ctx, path("."), path("foo.less"), true);
+      COMPILER.compile(source, ctx, path("."), path("foo.less"), false);
       fail("Expected import recursion limit exception");
     } catch (LessException e) {
       assertTrue(e.getMessage().contains("limit of " + recursionLimit + " exceeded"), e.getMessage());
     }
+
+    // Recovery mode (safeMode=true): the failing import is dropped with a
+    // warning and the compile succeeds.
+    LessContext recovery = new LessContext(opts, loader);
+    recovery.setCompiler(COMPILER);
+    String css = COMPILER.compile(source, recovery, path("."), path("foo.less"), true);
+    assertTrue(css.contains("WARNING["), css);
   }
 
   private static Path path(String path) {

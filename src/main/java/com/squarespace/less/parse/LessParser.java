@@ -280,6 +280,11 @@ public class LessParser {
   private boolean recovery;
 
   /**
+   * Number of regions dropped by recovery. Drives the empty-parse guard.
+   */
+  private int recovered = 0;
+
+  /**
    * Number of rollbacks that have occurred.
    */
   private int rollbacks = 0;
@@ -326,17 +331,118 @@ public class LessParser {
 
     // Throw an error if the parse didn't complete.
     if (peek() != Chars.EOF) {
-      throw parseError(new LessException(incompleteParse()));
+      if (recovery) {
+        recover("trailing input");
+      } else {
+        throw parseError(new LessException(incompleteParse()));
+      }
     }
     // If we have an unclosed block in the stream, we'll hit EOF with something
     // on the stack.
     if (b_ptr != 0) {
-      throw parseError(new LessException(incompleteParse()));
+      if (recovery) {
+        ctx.addWarning("unclosed block(s) at end of input; output truncated at line " + lineAt(pos));
+        recovered++;
+      } else {
+        throw parseError(new LessException(incompleteParse()));
+      }
     }
     // Mark pointer != 0 is a parser bug.
     if (m_ptr != 0) {
       throw parseError(new LessException(bug("mark pointer != 0")));
     }
+  }
+
+  /**
+   * Best-effort recovery: drops the stream region starting at the current
+   * position up to the next synchronization point and records a warning.
+   *
+   * <p>Scanning tracks brace depth and skips strings and comments. Sync
+   * points are {@code ';'} at depth 0 (consumed) and {@code '}'} at depth 0
+   * (left for the caller, or consumed when the offending token itself).
+   * Remember: recovery is at statement/rule granularity. A block opened
+   * inside the dropped region is part of it. Without any sync point the
+   * remainder of the stream is dropped.
+   *
+   * <p>The position always advances past the scan start, so recovery cannot
+   * loop. Stale mark-slot state from the failed sub-parse is cleared.
+   */
+  private boolean recover(String what) {
+    int start = pos;
+    int line = lineAt(start);
+    int depth = 0;
+    char quote = 0;
+    int i = start;
+    while (i < len) {
+      char c = raw.charAt(i);
+      if (quote != 0) {
+        // Inside a string: only the matching close quote matters.
+        if (c == quote) {
+          quote = 0;
+        }
+        i++;
+        continue;
+      }
+      if (c == '"' || c == '\'') {
+        quote = c;
+        i++;
+        continue;
+      }
+      if (c == '/' && i + 1 < len) {
+        char n = raw.charAt(i + 1);
+        if (n == '*') {
+          int end = raw.indexOf("*/", i + 2);
+          i = end < 0 ? len : end + 2;
+          continue;
+        }
+        if (n == '/') {
+          int end = raw.indexOf('\n', i + 2);
+          i = end < 0 ? len : end + 1;
+          continue;
+        }
+      }
+      if (c == '{') {
+        depth++;
+        i++;
+        continue;
+      }
+      if (c == '}') {
+        if (depth == 0) {
+          pos = (i == start) ? i + 1 : i;
+          m_ptr = 0;
+          ctx.addWarning("skipped " + what + " at line " + line);
+          recovered++;
+          return true;
+        }
+        depth--;
+        i++;
+        continue;
+      }
+      if (c == ';' && depth == 0) {
+        pos = i + 1;
+        m_ptr = 0;
+        ctx.addWarning("skipped " + what + " at line " + line);
+        recovered++;
+        return true;
+      }
+      i++;
+    }
+    // No sync point found: drop the remainder of the stream.
+    pos = len;
+    m_ptr = 0;
+    ctx.addWarning("skipped " + what + " at line " + line + "; rest of input truncated");
+    recovered++;
+    return true;
+  }
+
+  private int lineAt(int offset) {
+    int line = 1;
+    for (int i = 0; i < offset && i < len; i++) {
+      if (raw.charAt(i) == '\n') {
+        line++;
+      }
+    }
+    return line;
   }
 
   /**
@@ -679,6 +785,12 @@ public class LessParser {
     // Confirm the parse is complete.
     complete();
 
+    if (recovery && recovered > 0 && r instanceof Stylesheet) {
+      if (((Stylesheet) r).block().rules().isEmpty()) {
+        ctx.addWarning("stylesheet produced no output; all input was skipped during recovery");
+      }
+    }
+
     return r;
   }
 
@@ -701,6 +813,7 @@ public class LessParser {
 
     // Loop until there are no more characters to inspect
     while (pos < len) {
+      try {
 
       // Skip whitespace and add comments to the current block
       if (!ws_comments(true, true)) {
@@ -860,12 +973,23 @@ public class LessParser {
         }
       }
 
-      // TODO: explore the possibility of error recovery by moving ahead
-      // in the stream to a valid synchronization point, like the next
-      // ';' or '}' to enter a known state.
-
-      // If we're here, the stylesheet contains invalid LESS syntax.
+      // If we're here, the stylesheet contains invalid LESS syntax. In
+      // recovery mode, drop the invalid region at the next synchronization
+      // point and keep parsing (see recover()).
+      if (recovery) {
+        recover("invalid statement");
+        continue;
+      }
       throw parseError(new LessException(incompleteParse()));
+      } catch (LessException e) {
+        if (!recovery) {
+          throw e;
+        }
+        // A sub-parse threw. Same treatment: drop to the next
+        // synchronization point and continue with the next statement.
+        recover("invalid statement");
+        continue;
+      }
     }
 
     if (!delimited) {

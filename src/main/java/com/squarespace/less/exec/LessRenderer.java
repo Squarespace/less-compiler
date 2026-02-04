@@ -124,6 +124,11 @@ public class LessRenderer {
    * rendered output.
    */
   public String render() throws LessException {
+    // Best-effort recovery warnings collected during parsing surface as
+    // leading WARNING comments.
+    for (String warning : ctx.drainWarnings()) {
+      model.comment("/* WARNING[" + (++warningId) + "] raised during parse: " + warning + " */\n");
+    }
     env.push(stylesheet);
     Block block = stylesheet.block();
     Directive charset = block.charset();
