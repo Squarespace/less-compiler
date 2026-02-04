@@ -18,6 +18,7 @@ import com.squarespace.less.LessException;
 import com.squarespace.less.LessMessages;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.SyntaxErrorType;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessMaker;
 import com.squarespace.less.model.Combinator;
@@ -86,11 +87,11 @@ public class LessParserTest extends LessMaker {
   public void testAdditionBugs() throws LessException {
     Tester t = tester(LessSyntax.ADDITION);
 
-    // BUG4
+    // BUG4: the released level tolerates the truncated addition.
     t.ok("1 + ", dim(1));
 
-    // BUG4
-    t.safeMode(false);
+    // At the fully-fixed level the addition must parse completely.
+    t.compatLevel(Patch.maxThreshold());
     t.fail("1 + ", INCOMPLETE_PARSE);
     t.fail("@foo + px", INCOMPLETE_PARSE);
   }
@@ -396,12 +397,12 @@ public class LessParserTest extends LessMaker {
   public void testExpressionBugs() throws LessException {
     Tester t = tester(LessSyntax.EXPRESSION);
 
-    // BUG4
+    // BUG4: the released level accepts the invalid addition.
     t.ok("@foo + px", expn(var("@foo"), kwd("px")));
     t.ok("1 x 2", expn(dim(1), kwd("x"), dim(2)));
 
-    // BUG4
-    t.safeMode(false);
+    // At the fully-fixed level the invalid addition fails.
+    t.compatLevel(Patch.maxThreshold());
     t.ok("1 + 2", oper(ADD, dim(1), dim(2)));
     t.ok("1 x 2", expn(dim(1), kwd("x"), dim(2)));
     t.fail("@foo + px", INCOMPLETE_PARSE);
@@ -1025,15 +1026,15 @@ public class LessParserTest extends LessMaker {
 
     LessSyntax syntax;
     LessMessages messages = new LessMessages(4, 10);
-    boolean safeMode = true;
+    int compatLevel = -1;
     boolean ignoreComments = false;
 
     public Tester(LessSyntax syntax) {
       this.syntax = syntax;
     }
 
-    public void safeMode(boolean flag) {
-      this.safeMode = flag;
+    public void compatLevel(int level) {
+      this.compatLevel = level;
     }
 
     public void ignoreComments() {
@@ -1043,10 +1044,12 @@ public class LessParserTest extends LessMaker {
     public void ok(String source, Node expected) throws LessException {
       LessOptions opts = new LessOptions();
       opts.ignoreComments(ignoreComments);
+      if (compatLevel >= 0) {
+        opts.compatLevel(compatLevel);
+      }
 
       LessContext ctx = new LessContext(opts);
       LessParser parser = new LessParser(ctx, source);
-      parser.safeMode(safeMode);
 
       Node actual = null;
       try {
@@ -1063,9 +1066,12 @@ public class LessParserTest extends LessMaker {
     }
 
     public void fail(String source, SyntaxErrorType expected) {
-      LessContext ctx = new LessContext();
+      LessOptions opts = new LessOptions();
+      if (compatLevel >= 0) {
+        opts.compatLevel(compatLevel);
+      }
+      LessContext ctx = new LessContext(opts);
       LessParser parser = new LessParser(ctx, source);
-      parser.safeMode(safeMode);
       try {
         Node node = parser.parse(syntax);
         Assert.fail("expected case to fail, but got:\n\n" + repr(ctx, node) + "\n");

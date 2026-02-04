@@ -17,6 +17,8 @@
 package com.squarespace.less;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.squarespace.less.core.Buffer;
@@ -50,6 +52,12 @@ public class LessContext {
   private final MixinResolver mixinResolver = new MixinResolver();
 
   private final LessStats stats = new LessStats();
+
+  /**
+   * Recovery warnings collected during parse/eval/render in safe mode.
+   * Drained by the renderer into the output's WARNING comments.
+   */
+  private final List<String> warnings = new ArrayList<>();
 
   private final LessOptions opts;
 
@@ -123,6 +131,30 @@ public class LessContext {
 
   public LessStats stats() {
     return stats;
+  }
+
+  /**
+   * Records a recovery warning.
+   */
+  public void addWarning(String warning) {
+    warnings.add(warning);
+  }
+
+  /**
+   * The recovery warnings recorded so far (unmodifiable view).
+   */
+  public List<String> warnings() {
+    return warnings;
+  }
+
+  /**
+   * Returns and clears the recovery warnings (called by the renderer once
+   * per render pass so repeated renders do not duplicate them).
+   */
+  public List<String> drainWarnings() {
+    List<String> drained = new ArrayList<>(warnings);
+    warnings.clear();
+    return drained;
   }
 
   public Buffer acquireBuffer() {

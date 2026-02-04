@@ -273,6 +273,13 @@ public class LessParser {
   private CompatLevel compat;
 
   /**
+   * Best-effort recovery mode (the redefined safe mode). True = warn and
+   * recover at well-defined boundaries instead of failing. False (default)
+   * is strict. Independent of the compat level.
+   */
+  private boolean recovery;
+
+  /**
    * Number of rollbacks that have occurred.
    */
   private int rollbacks = 0;
@@ -299,6 +306,7 @@ public class LessParser {
     this.len = source.length();
     this.ignoreComments = ctx.options().ignoreComments();
     this.compat = ctx.options().compat();
+    this.recovery = ctx.options().safeMode();
     this.rootPath = rootPath;
     this.fileName = fileName;
   }
@@ -332,12 +340,25 @@ public class LessParser {
   }
 
   /**
-   * Legacy boolean API: on = the default level (0, released behavior,
-   * every legacy behavior active), off = the fully-fixed level (every
-   * fix applied). New code: use LessOptions.compatLevel().
+   * Legacy boolean API, redefined as the recovery-mode flag: true = best
+   * effort (warn and recover at well-defined boundaries), false (default)
+   * = strict. It no longer affects the compat level, which always comes
+   * from the compile's options. New code: use LessOptions.safeMode().
+   *
+   * <p>Behavioral change versus the pre-recovery semantics: previously
+   * {@code true} pinned the parser to the default (released) level and
+   * {@code false} to the fully-fixed level. The level is now set via
+   * {@link LessOptions#compatLevel(int)} exclusively.
    */
   public void safeMode(boolean flag) {
-    this.compat = flag ? CompatLevel.defaultLevel() : CompatLevel.fixed();
+    this.recovery = flag;
+  }
+
+  /**
+   * True when best-effort recovery is enabled.
+   */
+  public boolean recovery() {
+    return recovery;
   }
 
   /**

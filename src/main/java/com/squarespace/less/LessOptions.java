@@ -52,6 +52,10 @@ public class LessOptions {
   // Compat level for this compile. Defaults to preserving released behavior.
   private CompatLevel compat = CompatLevel.defaultLevel();
 
+  // Best-effort recovery mode. Defaults to strict (released behavior:
+  // hard errors abort the compile). Orthogonal to the compat level.
+  private boolean safeMode = false;
+
   public LessOptions() {
   }
 
@@ -181,6 +185,19 @@ public class LessOptions {
 
   public CompatLevel compat() {
     return compat;
+  }
+
+  /**
+   * Recovery mode: true = best effort (warn and recover at well-defined
+   * boundaries during parse, evaluation and render), false (default) =
+   * strict. Independent of the compat level.
+   */
+  public boolean safeMode() {
+    return safeMode;
+  }
+
+  public void safeMode(boolean flag) {
+    this.safeMode = flag;
   }
 
   /**

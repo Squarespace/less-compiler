@@ -91,17 +91,25 @@ public class CompatCompileTest {
   }
 
   @Test
-  public void testSafeModeFalseMatchesFixedLevel() {
-    // safeMode(false) and the fully-fixed level must be equivalent.
+  public void testSafeModeDoesNotAffectCompatLevel() throws LessException {
+    // safeMode() is the recovery-mode flag: it must not change which
+    // legacy behaviors are active. The compat level owns that, and the
+    // default level (0, released) accepts the legacy inputs regardless
+    // of mode.
     for (String raw : new String[] { MEDIA_BLOCKLESS, VAR_PAREN, INVALID_ADDITION }) {
-      try {
-        LessContext ctx = new LessContext(new LessOptions());
-        COMPILER.compile(raw, ctx, null, null, false);
-        assertFalse(true, "expected safeMode(false) compile to fail: " + raw);
-      } catch (LessException e) {
-        // expected
-      }
-      assertFails(raw, fixedOptions());
+      LessOptions released = new LessOptions();
+      released.safeMode(true);
+      assertTrue(compile(raw, released).length() > 0, raw);
+      released.safeMode(false);
+      assertTrue(compile(raw, released).length() > 0, raw);
+    }
+    // At the fully-fixed level the legacy inputs still fail: safe mode
+    // does not silently re-enable legacy behavior.
+    for (String raw : new String[] { MEDIA_BLOCKLESS, VAR_PAREN, INVALID_ADDITION }) {
+      LessOptions fixed = new LessOptions();
+      fixed.compatLevel(Patch.maxThreshold());
+      fixed.safeMode(true);
+      assertFails(raw, fixed);
     }
   }
 
