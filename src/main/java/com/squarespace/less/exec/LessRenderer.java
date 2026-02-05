@@ -326,7 +326,7 @@ public class LessRenderer {
           break;
       }
       } catch (LessException e) {
-        if (!opts.safeMode()) {
+        if (!ctx.safeMode()) {
           throw e;
         }
         // Best effort: skip the node that failed to render, warn, and

@@ -311,7 +311,7 @@ public class LessParser {
     this.len = source.length();
     this.ignoreComments = ctx.options().ignoreComments();
     this.compat = ctx.options().compat();
-    this.recovery = ctx.options().safeMode();
+    this.recovery = ctx.safeMode();
     this.rootPath = rootPath;
     this.fileName = fileName;
   }

@@ -16,6 +16,7 @@
 
 package com.squarespace.less.compat;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -98,6 +99,28 @@ public class EvalRecoveryTest {
     String css = COMPILER.compile(".a { width: 1px; .bogus(); }", ctx, null, null, true);
     assertTrue(css.contains("width: 1px"), css);
     assertTrue(css.contains("eval: dropped mixin call"), css);
+  }
+
+  @Test
+  public void testSafeModeOverrideIsContextScoped() throws LessException {
+    // The legacy boolean override must be transient and context-scoped: a
+    // shared LessOptions used by a boolean-flag caller and a plain caller
+    // must keep the plain caller strict.
+    LessOptions shared = new LessOptions();
+    LessContext ctxA = new LessContext(shared);
+    ctxA.setCompiler(COMPILER);
+    String css = COMPILER.compile(".a { width: 1px; .bogus(); }", ctxA, null, null, true);
+    assertTrue(css.contains("WARNING["), css);   // ctxA recovered
+    assertFalse(shared.safeMode(), "boolean caller mutated the shared options");
+
+    LessContext ctxB = new LessContext(shared);
+    ctxB.setCompiler(COMPILER);
+    try {
+      COMPILER.compile(".a { width: 1px; .bogus(); }", ctxB);
+      fail("expected MIXIN_UNDEFINED; shared options poisoned by the boolean caller");
+    } catch (LessException e) {
+      assertTrue(e.primaryError().type() == ExecuteErrorType.MIXIN_UNDEFINED, e.getMessage());
+    }
   }
 
   @Test

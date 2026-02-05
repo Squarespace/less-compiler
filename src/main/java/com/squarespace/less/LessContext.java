@@ -61,6 +61,13 @@ public class LessContext {
 
   private final LessOptions opts;
 
+  /**
+   * Transient recovery-mode override from the legacy safeMode boolean
+   * entry points. Context-scoped: never mutates the caller's options, so
+   * a shared LessOptions cannot be poisoned by one boolean caller.
+   */
+  private Boolean safeModeOverride;
+
   private LessCompiler compiler;
 
   private LessImporter importer;
@@ -94,6 +101,23 @@ public class LessContext {
 
   public LessOptions options() {
     return opts;
+  }
+
+  /**
+   * Recovery mode for this compile: the transient override when set
+   * (legacy boolean entry points), else the options value. Reading this
+   * instead of {@code options().safeMode()} keeps the override
+   * context-scoped and never writes through to a shared options object.
+   */
+  public boolean safeMode() {
+    return safeModeOverride != null ? safeModeOverride : opts.safeMode();
+  }
+
+  /**
+   * Sets the transient recovery-mode override (nullable clears it).
+   */
+  public void safeModeOverride(Boolean flag) {
+    this.safeModeOverride = flag;
   }
 
   public NodeBuilder nodeBuilder() {

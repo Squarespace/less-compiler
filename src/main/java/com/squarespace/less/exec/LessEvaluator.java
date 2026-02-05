@@ -332,7 +332,7 @@ public class LessEvaluator {
         }
 
       } catch (LessException e) {
-        if (opts.safeMode()) {
+        if (ctx.safeMode()) {
           // Best effort: drop this member, warn, and continue with the
           // next sibling. Draining env warnings discards any partial
           // warnings a failed member may have produced.
@@ -389,7 +389,7 @@ public class LessEvaluator {
         try {
           mixinResult = executeMixinCall(env, (MixinCall)node);
         } catch (LessException e) {
-          if (!opts.safeMode()) {
+          if (!ctx.safeMode()) {
             throw e;
           }
           // Best effort: drop the failing call and continue.
