@@ -108,10 +108,13 @@ public class LessSuiteBase {
       }
     }
 
-    // Finally, compile and execute the stylesheet.
+    // Finally, compile and execute the stylesheet. The legacy safeMode
+    // boolean is now the recovery-mode override: the suites expect hard
+    // errors, so compile strict (the released surface is level 0, the
+    // options default, in either mode).
     ctx = new LessContext(opts);
     ctx.setCompiler(compiler);
-    String result = compiler.compile(source, ctx, parent, fileName, true);
+    String result = compiler.compile(source, ctx, parent, fileName, false);
     ctx.sanityCheck();
     return result;
   }

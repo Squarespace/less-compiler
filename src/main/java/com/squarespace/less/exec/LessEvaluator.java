@@ -332,6 +332,15 @@ public class LessEvaluator {
         }
 
       } catch (LessException e) {
+        if (opts.safeMode()) {
+          // Best effort: drop this member, warn, and continue with the
+          // next sibling. Draining env warnings discards any partial
+          // warnings a failed member may have produced.
+          env.warnings();
+          rules.set(i, null);
+          ctx.addWarning("eval: dropped " + node.type().name().toLowerCase() + ": " + e.getMessage());
+          continue;
+        }
         if (!env.hasError()) {
           env.error(e);
         }
@@ -376,7 +385,19 @@ public class LessEvaluator {
     for (int i = 0; i < rules.size(); i++) {
       Node node = rules.get(i);
       if (node instanceof MixinCall) {
-        Block mixinResult = executeMixinCall(env, (MixinCall)node);
+        Block mixinResult;
+        try {
+          mixinResult = executeMixinCall(env, (MixinCall)node);
+        } catch (LessException e) {
+          if (!opts.safeMode()) {
+            throw e;
+          }
+          // Best effort: drop the failing call and continue.
+          env.warnings();
+          rules.set(i, null);
+          ctx.addWarning("eval: dropped mixin call: " + e.getMessage());
+          continue;
+        }
 
         // Mixin result can return null if we exceeded our mixin expansion threshold.
         if (mixinResult == null) {

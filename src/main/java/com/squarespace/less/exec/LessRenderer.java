@@ -127,7 +127,7 @@ public class LessRenderer {
     // Best-effort recovery warnings collected during parsing surface as
     // leading WARNING comments.
     for (String warning : ctx.drainWarnings()) {
-      model.comment("/* WARNING[" + (++warningId) + "] raised during parse: " + warning + " */\n");
+      model.comment("/* WARNING[" + (++warningId) + "] raised during recovery: " + warning + " */\n");
     }
     env.push(stylesheet);
     Block block = stylesheet.block();
@@ -263,6 +263,7 @@ public class LessRenderer {
       if (node == null) {
         continue;
       }
+      try {
       switch (node.type()) {
 
         case BLOCK_DIRECTIVE:
@@ -324,6 +325,19 @@ public class LessRenderer {
           // be ignored.
           break;
       }
+      } catch (LessException e) {
+        if (!opts.safeMode()) {
+          throw e;
+        }
+        // Best effort: skip the node that failed to render, warn, and
+        // continue with the next sibling.
+        ctx.addWarning("render: skipped " + node.type().name().toLowerCase() + ": " + e.getMessage());
+      }
+    }
+
+    // Eval/render-phase recovery warnings surface after the output.
+    for (String warning : ctx.drainWarnings()) {
+      model.comment("/* WARNING[" + (++warningId) + "] raised during recovery: " + warning + " */\n");
     }
   }
 
