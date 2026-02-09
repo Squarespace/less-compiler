@@ -33,6 +33,10 @@ import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
+import com.squarespace.less.exec.ExecEnv;
+import com.squarespace.less.model.Node;
+import com.squarespace.less.parse.LessParser;
+import com.squarespace.less.parse.LessSyntax;
 
 
 /**
@@ -51,6 +55,32 @@ public class CompatPatchTest {
     LessOptions opts = new LessOptions();
     opts.compatLevel(level);
     return opts;
+  }
+
+  /**
+   * Evaluate a function-call fragment, mirroring the test harness, and
+   * render the result through the context (compat-aware buffers).
+   */
+  private static String evalRender(String raw, LessOptions opts) throws LessException {
+    LessContext ctx = new LessContext(opts);
+    ctx.setCompiler(COMPILER);
+    ExecEnv env = new ExecEnv(ctx);
+    LessParser parser = new LessParser(ctx, raw);
+    Node node = parser.parse(LessSyntax.FUNCTION_CALL).eval(env);
+    return ctx.render(node);
+  }
+
+  @Test
+  public void testNonFiniteAsZero() throws LessException {
+    // sqrt(-1) evaluates to a NaN dimension. The legacy default renders
+    // it as 0, level 0 renders visible text.
+    assertEquals(evalRender("sqrt(-1)", new LessOptions()), "0");
+    assertEquals(evalRender("sqrt(-1)", level(0)), "NaN");
+
+    // A per-site override restores the legacy formatting at level 0.
+    LessOptions overridden = level(0);
+    overridden.compatPatch(Patch.NONFINITE_AS_ZERO);
+    assertEquals(evalRender("sqrt(-1)", overridden), "0");
   }
 
   @Test

@@ -3,6 +3,7 @@ package com.squarespace.less.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.Buffer;
 
 public class ModelUtils {
@@ -14,7 +15,12 @@ public class ModelUtils {
    */
   public static void formatDouble(Buffer buf, double value) {
     if (!Double.isFinite(value)) {
-      buf.append("0");
+      if (buf.compatEnabled(Patch.NONFINITE_AS_ZERO)) {
+        buf.append("0");
+      } else {
+        // Render NaN/Infinity visibly (like less.js) instead of "0".
+        buf.append(Double.toString(value));
+      }
       return;
     }
 

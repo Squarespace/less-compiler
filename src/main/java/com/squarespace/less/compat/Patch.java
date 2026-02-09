@@ -64,7 +64,12 @@ public enum Patch {
    * '@import url("x.less")' is emitted literally instead of being
    * resolved and inlined.
    */
-  IMPORT_URL_INLINE(2);
+  IMPORT_URL_INLINE(2),
+
+  /**
+   * NaN and Infinity values render as '0' instead of visible text.
+   */
+  NONFINITE_AS_ZERO(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

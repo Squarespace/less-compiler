@@ -18,6 +18,9 @@ package com.squarespace.less.core;
 
 import static com.squarespace.less.core.CharClass.CLASSIFIER;
 
+import com.squarespace.less.compat.CompatLevel;
+import com.squarespace.less.compat.Patch;
+
 /**
  * General-purpose buffer. Wraps a {@link StringBuilder} with some
  * LESS-specific methods.
@@ -62,6 +65,13 @@ public class Buffer {
   private int numericScale;
 
   /**
+   * Compat level for render-time decisions like NaN formatting. Set by
+   * the less context factory. Buffers built outside a render context
+   * stay fully fixed.
+   */
+  private CompatLevel compat = CompatLevel.fixed();
+
+  /**
    * Constructs a buffer with the given indent size, with whitespace compression disabled.
    */
   public Buffer(int indentSize) {
@@ -89,7 +99,23 @@ public class Buffer {
    * Return a fresh buffer with the same initialization options as this one.
    */
   public Buffer newBuffer() {
-    return new Buffer(indentSize, compress, numericScale);
+    Buffer copy = new Buffer(indentSize, compress, numericScale);
+    copy.compat = compat;
+    return copy;
+  }
+
+  /**
+   * Set the compat level used for render-time decisions.
+   */
+  public void compat(CompatLevel compat) {
+    this.compat = compat;
+  }
+
+  /**
+   * True when the legacy behavior is active on this buffer.
+   */
+  public boolean compatEnabled(Patch patch) {
+    return compat.enabled(patch);
   }
 
   /**
