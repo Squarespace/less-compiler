@@ -117,6 +117,28 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testModZeroStrict() throws LessException {
+    // Legacy default: mod by zero silently returns NaN (renders as 0).
+    assertEquals(evalRender("mod(10, 0)", new LessOptions()), "0");
+
+    // Level 0, strict (the released default): fails like division.
+    try {
+      evalRender("mod(10, 0)", level(0));
+      fail("expected DIVIDE_BY_ZERO at level 0");
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), ExecuteErrorType.DIVIDE_BY_ZERO);
+    }
+
+    // Level 0, lenient: warns, returns NaN, renders as text.
+    LessOptions lenient = level(0);
+    lenient.strict(false);
+    assertEquals(evalRender("mod(10, 0)", lenient), "NaN");
+
+    // Non-zero divisors work at every level.
+    assertEquals(evalRender("mod(11, 3)", level(0)), "2");
+  }
+
+  @Test
   public void testImportUrlInline() throws LessException {
     // HashMapLessLoader keys must match resolvePath() output: absolute.
     Map<Path, String> files = new HashMap<>();

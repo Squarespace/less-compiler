@@ -18,7 +18,11 @@ package com.squarespace.less.plugins;
 
 import java.util.List;
 
+import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessException;
+import com.squarespace.less.LessOptions;
+import com.squarespace.less.compat.Patch;
+import com.squarespace.less.core.ExecuteErrorMaker;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
@@ -132,11 +136,24 @@ public class MathFunctions implements Registry<Function> {
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
       Dimension dividend = (Dimension)args.get(0);
       double divisor = ((Dimension)args.get(1)).value();
-      double result = Double.NaN;
-      if (divisor != 0.0) {
-        result = dividend.value() % divisor;
+      if (divisor == 0.0) {
+        if (env.context().options().compatEnabled(Patch.MOD_ZERO_STRICT)) {
+          // Legacy: mod by zero silently returns NaN (renders as 0).
+          return new Dimension(Double.NaN, dividend.unit());
+        }
+        // New: same contract as DIVIDE. Strict mode fails the compile,
+        // lenient mode warns, and the NaN result renders as visible text
+        // (like less.js), never silently as "0".
+        LessErrorInfo info = ExecuteErrorMaker.divideByZero(dividend);
+        LessOptions opts = env.context().options();
+        if (opts.strict()) {
+          throw new LessException(info);
+        } else if (!opts.hideWarnings()) {
+          env.addWarning(info.getMessage());
+        }
+        return new Dimension(Double.NaN, dividend.unit());
       }
-      return new Dimension(result, dividend.unit());
+      return new Dimension(dividend.value() % divisor, dividend.unit());
     }
   };
 

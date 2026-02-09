@@ -69,7 +69,13 @@ public enum Patch {
   /**
    * NaN and Infinity values render as '0' instead of visible text.
    */
-  NONFINITE_AS_ZERO(2);
+  NONFINITE_AS_ZERO(2),
+
+  /**
+   * 'mod(x, 0)' silently returns NaN instead of obeying the division
+   * contract (strict fails, lenient warns).
+   */
+  MOD_ZERO_STRICT(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a
