@@ -18,6 +18,7 @@ package com.squarespace.less.exec;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.BlockNode;
 import com.squarespace.less.model.Features;
@@ -104,7 +105,7 @@ public class RenderEnv {
     if (blockType.equals(NodeType.BLOCK_DIRECTIVE)) {
       frame.pushEmptySelectors();
     } else if (selectors != null) {
-      frame.mergeSelectors(selectors);
+      frame.mergeSelectors(selectors, ctx.options().compatEnabled(Patch.SELECTOR_COMPLEXITY_OVERFLOW));
     } else if (features != null) {
       frame.mergeFeatures(features);
     }

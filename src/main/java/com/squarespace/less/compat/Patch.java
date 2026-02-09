@@ -52,7 +52,13 @@ public enum Patch {
    * Invalid addition like 'random(90) + px' is tolerated. Parse
    * backtracking is skipped.
    */
-  BUG4(1);
+  BUG4(1),
+
+  /**
+   * Selector-complexity overflow in a nested rule is swallowed: the
+   * current selector is dropped instead of failing the compile.
+   */
+  SELECTOR_COMPLEXITY_OVERFLOW(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

@@ -84,9 +84,12 @@ public class RenderFrame {
   }
 
   /**
-   * Combines this set of {@link Selectors} with its parent's.
+   * Combines this set of {@link Selectors} with its parent's. When the
+   * combined selector exceeds the complexity limit and
+   * {@code fallbackOnOverflow} is set, the failure is swallowed and the
+   * current selector is dropped. Otherwise it fails the compile.
    */
-  public void mergeSelectors(Selectors current) throws LessException {
+  public void mergeSelectors(Selectors current, boolean fallbackOnOverflow) throws LessException {
     Selectors ancestors = (parent == null) ? Constants.EMPTY_SELECTORS : parent.selectors();
     if (current == null || current.isEmpty()) {
       this.selectors = ancestors;
@@ -94,7 +97,11 @@ public class RenderFrame {
       try {
         this.selectors = SelectorUtils.combine(ancestors, current);
       } catch (LessException e) {
-        this.selectors = ancestors;
+        if (fallbackOnOverflow) {
+          this.selectors = ancestors;
+        } else {
+          throw e;
+        }
       }
     }
   }
