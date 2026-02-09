@@ -29,6 +29,7 @@ import com.squarespace.less.FilesystemLessLoader;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessLoader;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.exec.ImportRecord;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Features;
@@ -49,6 +50,9 @@ public class LessImporter {
   private static final Pattern IMPORT_EXT = Pattern.compile(".*(\\.[a-z]*$)|([\\?;].*)$");
 
   private static final Pattern IMPORT_CSS = Pattern.compile(".*css([\\?;].*)?$");
+
+  // Local files never carry a scheme, so scheme or '//' prefixes are remote.
+  private static final Pattern IMPORT_REMOTE = Pattern.compile("^(?:[a-zA-Z][a-zA-Z0-9+.-]*://|//)");
 
   private final Map<Path, ImportRecord> importCache = new HashMap<>();
 
@@ -218,18 +222,25 @@ public class LessImporter {
    */
   private String renderImportPath(Import importNode) throws LessException {
     Node node = importNode.path();
-    if (node instanceof Url) {
+    boolean url = node instanceof Url;
+    if (url && context.options().compatEnabled(Patch.IMPORT_URL_INLINE)) {
+      // Legacy: url() imports are never inlined, just emitted as-is.
+      return null;
+    }
+    if (url) {
+      // Unwrap url(...) so its value goes through the same pipeline as quoted.
+      node = ((Url)node).value();
+    }
+
+    // If the path contains a variable reference, we can't currently resolve
+    // it at parse time. Just emit it as-is.
+    if (node.needsEval()) {
       return null;
     }
 
     String path = null;
     if (node instanceof Quoted) {
       Quoted quoted = ((Quoted)node).copy();
-      // If quoted path contains a variable reference, we can't currently resolve
-      // it at parse time. Just emit it as-is.
-      if (quoted.needsEval()) {
-        return null;
-      }
       quoted.setEscape(true);
       node = quoted;
     }
@@ -242,6 +253,14 @@ public class LessImporter {
     } else {
       matcher = IMPORT_CSS.matcher(path);
       if (matcher.matches()) {
+        return null;
+      }
+    }
+
+    if (url) {
+      // Keep url() imports literal when they point at remote resources or
+      // at files that cannot be found (they may be served dynamically).
+      if (IMPORT_REMOTE.matcher(path).find() || resolvePath(importNode.rootPath(), path) == null) {
         return null;
       }
     }

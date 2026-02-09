@@ -17,11 +17,18 @@
 package com.squarespace.less.compat;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.testng.annotations.Test;
 
 import com.squarespace.less.ExecuteErrorType;
+import com.squarespace.less.HashMapLessLoader;
 import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
@@ -77,5 +84,26 @@ public class CompatPatchTest {
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), ExecuteErrorType.SELECTOR_TOO_COMPLEX);
     }
+  }
+
+  @Test
+  public void testImportUrlInline() throws LessException {
+    // HashMapLessLoader keys must match resolvePath() output: absolute.
+    Map<Path, String> files = new HashMap<>();
+    files.put(Paths.get(".").resolve("a.less").toAbsolutePath().normalize(), ".a { color: red; }");
+    String source = "@import url(\"a.less\");\n";
+
+    // Legacy default: url() imports are emitted literally.
+    LessContext legacy = new LessContext(new LessOptions(), new HashMapLessLoader(files));
+    legacy.setCompiler(COMPILER);
+    String css = COMPILER.compile(source, legacy, Paths.get("."), Paths.get("t.less"));
+    assertTrue(css.contains("@import url(\"a.less\")"), css);
+
+    // Level 0: the import is resolved and inlined.
+    LessContext fixed = new LessContext(level(0), new HashMapLessLoader(files));
+    fixed.setCompiler(COMPILER);
+    css = COMPILER.compile(source, fixed, Paths.get("."), Paths.get("t.less"));
+    assertTrue(css.contains("color: red"), css);
+    assertTrue(!css.contains("@import url(\"a.less\")"), css);
   }
 }

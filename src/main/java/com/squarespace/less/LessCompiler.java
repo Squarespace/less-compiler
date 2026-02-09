@@ -131,6 +131,10 @@ public class LessCompiler {
     return compile0(raw, ctx, null, null, null);
   }
 
+  public String compile(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
+    return compile0(raw, ctx, rootPath, fileName, null);
+  }
+
   public String compile(String raw, LessContext ctx, Path rootPath, Path fileName, boolean safeMode) throws LessException {
     return compile0(raw, ctx, rootPath, fileName, safeMode);
   }

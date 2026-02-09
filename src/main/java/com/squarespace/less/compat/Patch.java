@@ -58,7 +58,13 @@ public enum Patch {
    * Selector-complexity overflow in a nested rule is swallowed: the
    * current selector is dropped instead of failing the compile.
    */
-  SELECTOR_COMPLEXITY_OVERFLOW(2);
+  SELECTOR_COMPLEXITY_OVERFLOW(2),
+
+  /**
+   * '@import url("x.less")' is emitted literally instead of being
+   * resolved and inlined.
+   */
+  IMPORT_URL_INLINE(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a
