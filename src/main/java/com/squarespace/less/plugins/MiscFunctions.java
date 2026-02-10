@@ -16,12 +16,14 @@
 
 package com.squarespace.less.plugins;
 
+import static com.squarespace.less.core.ExecuteErrorMaker.incompatibleUnits;
 import static com.squarespace.less.core.ExecuteErrorMaker.unknownUnit;
 
 import java.util.Arrays;
 import java.util.List;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
@@ -68,6 +70,12 @@ public class MiscFunctions implements Registry<Function> {
       Dimension dim = (Dimension)args.get(0);
       Unit destUnit = toUnit(env, args.get(1));
       double factor = UnitConversions.factor(dim.unit(), destUnit);
+      if (factor == 0.0 && dim.unit() != null
+          && !env.context().options().compatEnabled(Patch.CONVERT_INCOMPATIBLE_UNITS)) {
+        // Incompatible unit pair (e.g. px -> em). The legacy behavior was
+        // to silently emit the zeroed value.
+        throw new LessException(incompatibleUnits(dim.unit(), destUnit));
+      }
       return new Dimension(dim.value() * factor, destUnit);
     }
   };

@@ -47,6 +47,7 @@ public class CompatPatchTest {
 
   private static final LessCompiler COMPILER = new LessCompiler();
 
+
   private String compile(String raw, LessOptions opts) throws LessException {
     return COMPILER.compile(raw, new LessContext(opts));
   }
@@ -56,6 +57,7 @@ public class CompatPatchTest {
     opts.compatLevel(level);
     return opts;
   }
+
 
   /**
    * Evaluate a function-call fragment, mirroring the test harness, and
@@ -157,5 +159,23 @@ public class CompatPatchTest {
     css = COMPILER.compile(source, fixed, Paths.get("."), Paths.get("t.less"));
     assertTrue(css.contains("color: red"), css);
     assertTrue(!css.contains("@import url(\"a.less\")"), css);
+  }
+
+  @Test
+  public void testConvertIncompatibleUnits() throws LessException {
+    // Legacy: convert() to an incompatible unit silently emits 0.
+    assertEquals(evalRender("convert(16px, em)", new LessOptions()), "0em");
+
+    // Fixed: fails the compile with INCOMPATIBLE_UNITS.
+    try {
+      evalRender("convert(16px, em)", level(0));
+      fail("expected INCOMPATIBLE_UNITS at level 0");
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), ExecuteErrorType.INCOMPATIBLE_UNITS);
+    }
+
+    // Compatible conversions work at every level.
+
+
   }
 }

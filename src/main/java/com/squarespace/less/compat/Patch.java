@@ -75,7 +75,14 @@ public enum Patch {
    * 'mod(x, 0)' silently returns NaN instead of obeying the division
    * contract (strict fails, lenient warns).
    */
-  MOD_ZERO_STRICT(2);
+  MOD_ZERO_STRICT(2),
+
+  /**
+   * convert() to an incompatible unit silently emits 0 instead of
+   * failing the compile.
+   */
+  CONVERT_INCOMPATIBLE_UNITS(2),
+;
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a
