@@ -195,6 +195,22 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testVariadicNamedArg() throws LessException {
+    String source = ".m(@b...) { p: @b; }\n.x { .m(@b: 1); }\n";
+
+    // Legacy: a named arg targeting the variadic parameter fails.
+    try {
+      compile(source, new LessOptions());
+      fail("expected ARG_NAMED_NOTFOUND at the default level");
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), ExecuteErrorType.ARG_NAMED_NOTFOUND);
+    }
+
+    // Fixed: the named arg binds to the variadic parameter.
+    assertTrue(compile(source, level(0)).contains("p: 1"));
+  }
+
+  @Test
   public void testReplaceRegexGroups() throws LessException {
     String raw = "replace(\"abc 123\", \"([a-z]+) ([0-9]+)\", \"$2 $1\")";
 

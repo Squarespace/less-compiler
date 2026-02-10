@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Queue;
 
 import com.squarespace.less.LessContext;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.LessException;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.model.Argument;
@@ -117,16 +118,24 @@ public class MixinMatcher {
     }
 
     // Bind all named arguments.
+    boolean variadicNamed = false;
+    boolean namedToVariadic = !callEnv.context().options().compatEnabled(Patch.VARIADIC_NAMED_ARG);
     for (int i = 0; i < argSize; i++) {
       Argument arg = args.get(i);
       String argName = arg.name();
       if (argName == null) {
         continue;
       }
-      if (!names.contains(argName)) {
+      if (!names.contains(argName)
+          && !(namedToVariadic && argName.equals(variadicName))) {
         LessException exc = new LessException(argNamedNotFound(argName));
         exc.push(mixinCall);
         throw exc;
+      }
+      if (namedToVariadic && argName.equals(variadicName)) {
+        // A named argument may target the variadic parameter. Bind it
+        // directly (matches less.js evalParams).
+        variadicNamed = true;
       }
       boundValues.put(argName, arg.value());
       names.remove(argName);
@@ -176,7 +185,7 @@ public class MixinMatcher {
       bindings.appendNode(ctx.nodeBuilder().buildDefinition(entry.getKey(), value));
       arguments.add(value);
     }
-    if (variadicName != null) {
+    if (variadicName != null && !variadicNamed) {
       bindings.appendNode(ctx.nodeBuilder().buildDefinition(variadicName, variadic));
     }
     if (variadic != null) {

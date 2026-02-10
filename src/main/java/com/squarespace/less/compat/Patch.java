@@ -87,7 +87,13 @@ public enum Patch {
    * replace() treats '$' and '\\' in the replacement as regex group
    * references instead of inserting them literally.
    */
-  REPLACE_REGEX_GROUPS(2);
+  REPLACE_REGEX_GROUPS(2),
+
+  /**
+   * A named argument that targets the variadic parameter is rejected
+   * instead of binding to it.
+   */
+  VARIADIC_NAMED_ARG(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a
