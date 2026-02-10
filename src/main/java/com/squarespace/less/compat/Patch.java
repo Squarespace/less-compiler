@@ -93,7 +93,13 @@ public enum Patch {
    * A named argument that targets the variadic parameter is rejected
    * instead of binding to it.
    */
-  VARIADIC_NAMED_ARG(2);
+  VARIADIC_NAMED_ARG(2),
+
+  /**
+   * 'arguments' is emitted in binding insertion order instead of
+   * parameter declaration order.
+   */
+  ARGUMENTS_ORDER(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

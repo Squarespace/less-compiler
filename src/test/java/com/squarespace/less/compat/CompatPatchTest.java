@@ -195,6 +195,17 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testArgumentsOrder() throws LessException {
+    String source = ".m(@a, @b) { p: @arguments; }\n.x { .m(@b: 2, @a: 1); }\n";
+
+    // Legacy: @arguments follows binding insertion order.
+    assertTrue(compile(source, new LessOptions()).contains("p: 2 1"));
+
+    // Fixed: @arguments follows parameter declaration order.
+    assertTrue(compile(source, level(0)).contains("p: 1 2"));
+  }
+
+  @Test
   public void testVariadicNamedArg() throws LessException {
     String source = ".m(@b...) { p: @b; }\n.x { .m(@b: 1); }\n";
 

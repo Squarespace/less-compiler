@@ -177,20 +177,48 @@ public class MixinMatcher {
       }
     }
 
-    // Build the final bindings block.
+    // Build the final bindings block. Bindings stay in insertion order.
+    // At level 0 @arguments is emitted in parameter declaration order,
+    // like less.js.
     Expression arguments = new Expression();
     Block bindings = new Block(boundValues.size());
     for (Map.Entry<String, Node> entry : boundValues.entrySet()) {
-      Node value = entry.getValue();
-      bindings.appendNode(ctx.nodeBuilder().buildDefinition(entry.getKey(), value));
-      arguments.add(value);
+      bindings.appendNode(ctx.nodeBuilder().buildDefinition(entry.getKey(), entry.getValue()));
     }
     if (variadicName != null && !variadicNamed) {
       bindings.appendNode(ctx.nodeBuilder().buildDefinition(variadicName, variadic));
     }
-    if (variadic != null) {
-      for (Node value : variadic.values()) {
-        arguments.add(value);
+    if (callEnv.context().options().compatEnabled(Patch.ARGUMENTS_ORDER)) {
+      for (Map.Entry<String, Node> entry : boundValues.entrySet()) {
+        arguments.add(entry.getValue());
+      }
+      if (variadic != null) {
+        for (Node value : variadic.values()) {
+          arguments.add(value);
+        }
+      }
+    } else {
+      for (int i = 0; i < paramSize; i++) {
+        Parameter param = params.get(i);
+        if (param.variadic()) {
+          if (variadicNamed) {
+            arguments.add(boundValues.get(param.name()));
+          } else if (variadic != null) {
+            for (Node value : variadic.values()) {
+              arguments.add(value);
+            }
+          }
+          continue;
+        }
+        String paramName = param.name();
+        if (paramName == null) {
+          // Pattern match: contributes no value to @arguments.
+          continue;
+        }
+        Node value = boundValues.get(paramName);
+        if (value != null) {
+          arguments.add(value);
+        }
       }
     }
     bindings.appendNode(ctx.nodeBuilder().buildDefinition("@arguments", arguments));
