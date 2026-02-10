@@ -82,7 +82,12 @@ public enum Patch {
    * failing the compile.
    */
   CONVERT_INCOMPATIBLE_UNITS(2),
-;
+
+  /**
+   * replace() treats '$' and '\\' in the replacement as regex group
+   * references instead of inserting them literally.
+   */
+  REPLACE_REGEX_GROUPS(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

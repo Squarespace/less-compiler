@@ -34,9 +34,11 @@ import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.exec.ExecEnv;
+import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.parse.LessParser;
 import com.squarespace.less.parse.LessSyntax;
+import com.squarespace.less.plugins.ext.ExtStringFunctions;
 
 
 /**
@@ -47,6 +49,13 @@ public class CompatPatchTest {
 
   private static final LessCompiler COMPILER = new LessCompiler();
 
+  private static final LessCompiler EXT_COMPILER;
+
+  static {
+    FunctionTable table = LessCompiler.defaultFunctionTable();
+    table.register(new ExtStringFunctions());
+    EXT_COMPILER = new LessCompiler(table);
+  }
 
   private String compile(String raw, LessOptions opts) throws LessException {
     return COMPILER.compile(raw, new LessContext(opts));
@@ -58,18 +67,25 @@ public class CompatPatchTest {
     return opts;
   }
 
-
   /**
    * Evaluate a function-call fragment, mirroring the test harness, and
    * render the result through the context (compat-aware buffers).
    */
-  private static String evalRender(String raw, LessOptions opts) throws LessException {
+  private static String evalRender(String raw, LessOptions opts, LessCompiler compiler) throws LessException {
     LessContext ctx = new LessContext(opts);
-    ctx.setCompiler(COMPILER);
+    ctx.setCompiler(compiler);
     ExecEnv env = new ExecEnv(ctx);
     LessParser parser = new LessParser(ctx, raw);
     Node node = parser.parse(LessSyntax.FUNCTION_CALL).eval(env);
     return ctx.render(node);
+  }
+
+  private static String evalRender(String raw, LessOptions opts) throws LessException {
+    return evalRender(raw, opts, COMPILER);
+  }
+
+  private static String evalRenderExt(String raw, LessOptions opts) throws LessException {
+    return evalRender(raw, opts, EXT_COMPILER);
   }
 
   @Test
@@ -175,7 +191,19 @@ public class CompatPatchTest {
     }
 
     // Compatible conversions work at every level.
+    assertEquals(evalRender("convert(1in, px)", level(0)), "96px");
+  }
 
+  @Test
+  public void testReplaceRegexGroups() throws LessException {
+    String raw = "replace(\"abc 123\", \"([a-z]+) ([0-9]+)\", \"$2 $1\")";
 
+    // Legacy: the replacement is a regex replacement, group refs work.
+    String legacy = evalRenderExt(raw, new LessOptions());
+    assertTrue(legacy.contains("123 abc"), legacy);
+
+    // Fixed: the replacement is inserted literally.
+    String fixed = evalRenderExt(raw, level(0));
+    assertTrue(fixed.contains("$2 $1"), fixed);
   }
 }

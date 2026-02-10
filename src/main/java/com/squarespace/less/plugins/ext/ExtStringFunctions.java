@@ -20,10 +20,12 @@ import static com.squarespace.less.core.ExecuteErrorMaker.patternCompile;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
@@ -61,6 +63,10 @@ public class ExtStringFunctions implements Registry<Function> {
       Quoted stringArg = (Quoted)args.get(0);
       String string = render(env, stringArg);
       String replacement = render(env, (Quoted)args.get(2));
+      if (!env.context().options().compatEnabled(Patch.REPLACE_REGEX_GROUPS)) {
+        // Escape "$" and "\\" so the replacement is inserted literally.
+        replacement = Matcher.quoteReplacement(replacement);
+      }
 
       Pattern pattern = compile(env, (Quoted)args.get(1));
       Anonymous output = new Anonymous(pattern.matcher(string).replaceAll(replacement));
