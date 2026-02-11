@@ -117,7 +117,13 @@ public enum Patch {
    * An @import-once after a plain import re-inlines the file instead of
    * suppressing the duplicate.
    */
-  IMPORT_ONCE_SUPPRESS(2);
+  IMPORT_ONCE_SUPPRESS(2),
+
+  /**
+   * Color-blend functions drop the alpha channel: the result is
+   * opaque instead of keeping the larger input alpha.
+   */
+  COLOR_BLEND_ALPHA(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

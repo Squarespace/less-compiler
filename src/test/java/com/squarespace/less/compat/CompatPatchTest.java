@@ -195,6 +195,17 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testColorBlendAlpha() throws LessException {
+    String raw = "multiply(rgba(255, 0, 0, 0.5), rgba(0, 0, 255, 0.25))";
+
+    // Legacy: the blend result is opaque.
+    assertEquals(evalRender(raw, new LessOptions()), "#000");
+
+    // Fixed: the result keeps the larger input alpha.
+    assertEquals(evalRender(raw, level(0)), "rgba(0, 0, 0, .5)");
+  }
+
+  @Test
   public void testImportOnceSuppress() throws LessException {
     Map<Path, String> files = new HashMap<>();
     files.put(Paths.get(".").resolve("f.less").toAbsolutePath().normalize(), ".f { color: red; }");

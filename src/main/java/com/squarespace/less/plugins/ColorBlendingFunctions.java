@@ -19,6 +19,7 @@ package com.squarespace.less.plugins;
 import java.util.List;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
@@ -47,6 +48,16 @@ public class ColorBlendingFunctions implements Registry<Function> {
     table.add(SOFTLIGHT);
   }
 
+
+  /**
+   * Blend alpha: legacy emits an opaque color, level 0 keeps the
+   * larger input alpha.
+   */
+  private static double blendAlpha(ExecEnv env, RGBColor c1, RGBColor c2) {
+    return env.context().options().compatEnabled(Patch.COLOR_BLEND_ALPHA)
+        ? 1.0 : Math.max(c1.alpha(), c2.alpha());
+  }
+
   public static final Function AVERAGE = new Function("average", "cc") {
     @Override
     public Node invoke(ExecEnv env, List<Node> args) throws LessException {
@@ -55,7 +66,7 @@ public class ColorBlendingFunctions implements Registry<Function> {
       double red = (c1.red() + c2.red()) / 2.0;
       double green = (c1.green() + c2.green()) / 2.0;
       double blue = (c1.blue() + c2.blue()) / 2.0;
-      return new RGBColor(red, green, blue);
+      return new RGBColor(red, green, blue, blendAlpha(env, c1, c2));
     }
   };
 
@@ -67,7 +78,7 @@ public class ColorBlendingFunctions implements Registry<Function> {
       double red = Math.abs(c1.red() - c2.red());
       double green = Math.abs(c1.green() - c2.green());
       double blue = Math.abs(c1.blue() - c2.blue());
-      return new RGBColor(red, green, blue);
+      return new RGBColor(red, green, blue, blendAlpha(env, c1, c2));
     }
   };
 
@@ -79,7 +90,7 @@ public class ColorBlendingFunctions implements Registry<Function> {
       double red = exclusion(c1.red(), c2.red());
       double green = exclusion(c1.green(), c2.green());
       double blue = exclusion(c1.blue(), c2.blue());
-      return new RGBColor(red, green, blue);
+      return new RGBColor(red, green, blue, blendAlpha(env, c1, c2));
     }
   };
 
@@ -91,7 +102,7 @@ public class ColorBlendingFunctions implements Registry<Function> {
       double red = ColorBlendingFunctions.hardlight(c1.red(), c2.red());
       double green = ColorBlendingFunctions.hardlight(c1.green(), c2.green());
       double blue = ColorBlendingFunctions.hardlight(c1.blue(), c2.blue());
-      return new RGBColor(red, green, blue);
+      return new RGBColor(red, green, blue, blendAlpha(env, c1, c2));
     }
   };
 
@@ -103,7 +114,7 @@ public class ColorBlendingFunctions implements Registry<Function> {
       double red = (c1.red() * c2.red() / 255.0);
       double green = (c1.green() * c2.green() / 255.0);
       double blue = (c1.blue() * c2.blue() / 255.0);
-      return new RGBColor(red, green, blue);
+      return new RGBColor(red, green, blue, blendAlpha(env, c1, c2));
     }
   };
 
@@ -115,7 +126,7 @@ public class ColorBlendingFunctions implements Registry<Function> {
       double red = negation(c1.red(), c2.red());
       double green = negation(c1.green(), c2.green());
       double blue = negation(c1.blue(), c2.blue());
-      return new RGBColor(red, green, blue);
+      return new RGBColor(red, green, blue, blendAlpha(env, c1, c2));
     }
   };
 
@@ -127,7 +138,7 @@ public class ColorBlendingFunctions implements Registry<Function> {
       double red = overlay(c1.red(), c2.red());
       double green = overlay(c1.green(), c2.green());
       double blue = overlay(c1.blue(), c2.blue());
-      return new RGBColor(red, green, blue);
+      return new RGBColor(red, green, blue, blendAlpha(env, c1, c2));
     }
   };
 
@@ -139,7 +150,7 @@ public class ColorBlendingFunctions implements Registry<Function> {
       double red = screen(c1.red(), c2.red());
       double green = screen(c1.green(), c2.green());
       double blue = screen(c1.blue(), c2.blue());
-      return new RGBColor(red, green, blue);
+      return new RGBColor(red, green, blue, blendAlpha(env, c1, c2));
     }
   };
 
@@ -151,7 +162,7 @@ public class ColorBlendingFunctions implements Registry<Function> {
       double red = ColorBlendingFunctions.softlight(c1.red(), c2.red());
       double green = ColorBlendingFunctions.softlight(c1.green(), c2.green());
       double blue = ColorBlendingFunctions.softlight(c1.blue(), c2.blue());
-      return new RGBColor(red, green, blue);
+      return new RGBColor(red, green, blue, blendAlpha(env, c1, c2));
     }
   };
 
