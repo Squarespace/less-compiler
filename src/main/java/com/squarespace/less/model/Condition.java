@@ -25,6 +25,7 @@ import static com.squarespace.less.model.Operator.LESS_THAN_OR_EQUAL;
 import static com.squarespace.less.model.Operator.NOT_EQUAL;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.core.ExecuteErrorMaker;
@@ -214,17 +215,17 @@ public class Condition implements Node {
         break;
 
       case COLOR:
-        result = compare((BaseColor)op0, op1);
+        result = compare(env, (BaseColor)op0, op1);
         break;
 
       case DIMENSION:
-        result = compare((Dimension)op0, op1);
+        result = compare(env, (Dimension)op0, op1);
         break;
 
       case KEYWORD:
       case TRUE:
       case FALSE:
-        result = compare((Keyword)op0, op1);
+        result = compare(env, (Keyword)op0, op1);
         break;
 
       case QUOTED:
@@ -242,10 +243,20 @@ public class Condition implements Node {
         return operator == EQUAL || operator == LESS_THAN_OR_EQUAL || operator == GREATER_THAN_OR_EQUAL;
       case 1:
         return operator == GREATER_THAN || operator == GREATER_THAN_OR_EQUAL || operator == NOT_EQUAL;
+      case UNCOMPARABLE:
+        // '<' keeps the legacy quirk (upstream parity). The extension
+        // ops (<=, >=, !=) are false. No ordering or equality exists.
+        return operator == LESS_THAN;
       default:
         throw new LessInternalException("Serious error: comparison functions must return -1, 0, or 1. Got " + result);
     }
   }
+
+  /**
+   * Returned by the compare helpers when the operands cannot be
+   * meaningfully compared, e.g. a color vs a dimension.
+   */
+  private static final int UNCOMPARABLE = 2;
 
   /**
    * Logical AND of the two operands.
@@ -291,7 +302,7 @@ public class Condition implements Node {
   /**
    * Compares a {@link BaseColor} to another node.
    */
-  private int compare(BaseColor color, Node arg) throws LessException {
+  private int compare(ExecEnv env, BaseColor color, Node arg) throws LessException {
     if (arg instanceof Keyword) {
       Keyword kwd = (Keyword)arg;
       RGBColor tmp = RGBColor.fromName(kwd.value());
@@ -300,7 +311,7 @@ public class Condition implements Node {
       }
     }
     if (!(arg instanceof BaseColor)) {
-      return -1;
+      return uncomparable(env);
     }
     RGBColor color0 = color.toRGB();
     RGBColor color1 = ((BaseColor)arg).toRGB();
@@ -313,7 +324,7 @@ public class Condition implements Node {
   /**
    * Compares a {@link Dimension} to another node.
    */
-  private int compare(Dimension dim0, Node arg) throws LessException {
+  private int compare(ExecEnv env, Dimension dim0, Node arg) throws LessException {
     if (arg instanceof Dimension) {
       Dimension dim1 = (Dimension)arg;
       double value0 = dim0.value();
@@ -327,23 +338,31 @@ public class Condition implements Node {
       if (dim0.unit() != dim1.unit()) {
         factor = UnitConversions.factor(unit1, unit0);
         if (factor == 0.0) {
-          return -1;
+          return uncomparable(env);
         }
         scaled *= factor;
       }
       return value0 < scaled ? -1 : (value0 > scaled ? 1 : 0);
     }
-    return -1;
+    return uncomparable(env);
   }
 
   /**
    * Compares a {@link Keyword} to another node.
    */
-  private int compare(Keyword keyword, Node arg) throws LessException {
+  private int compare(ExecEnv env, Keyword keyword, Node arg) throws LessException {
     if (arg instanceof Keyword) {
       return compareTo(keyword.value(), ((Keyword)arg).value());
     }
-    return -1;
+    return uncomparable(env);
+  }
+
+  /**
+   * Legacy level maps uncomparable operands to -1. Level 0 reports
+   * them as UNCOMPARABLE so <=, >= and != are false.
+   */
+  private int uncomparable(ExecEnv env) {
+    return env.context().options().compatEnabled(Patch.GUARD_COMPARE_UNCOMPARABLE) ? -1 : UNCOMPARABLE;
   }
 
   /**

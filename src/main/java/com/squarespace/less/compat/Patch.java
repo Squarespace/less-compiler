@@ -99,7 +99,13 @@ public enum Patch {
    * 'arguments' is emitted in binding insertion order instead of
    * parameter declaration order.
    */
-  ARGUMENTS_ORDER(2);
+  ARGUMENTS_ORDER(2),
+
+  /**
+   * Uncomparable guard operands keep acting like -1: <=, >= and !=
+   * evaluate true instead of false.
+   */
+  GUARD_COMPARE_UNCOMPARABLE(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

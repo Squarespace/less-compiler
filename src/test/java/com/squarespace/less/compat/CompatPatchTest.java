@@ -195,6 +195,17 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testGuardCompareUncomparable() throws LessException {
+    String source = ".m(@a) when (@a != 10px) { p: 1; }\n.x { .m(red); }\n";
+
+    // Legacy: an uncomparable guard operand compares as -1, != is true.
+    assertTrue(compile(source, new LessOptions()).contains("p: 1"));
+
+    // Fixed: no ordering or equality exists, != is false.
+    assertTrue(!compile(source, level(0)).contains("p: 1"));
+  }
+
+  @Test
   public void testArgumentsOrder() throws LessException {
     String source = ".m(@a, @b) { p: @arguments; }\n.x { .m(@b: 2, @a: 1); }\n";
 
