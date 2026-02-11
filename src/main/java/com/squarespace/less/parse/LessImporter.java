@@ -49,7 +49,12 @@ public class LessImporter {
 
   private static final Pattern IMPORT_EXT = Pattern.compile(".*(\\.[a-z]*$)|([\\?;].*)$");
 
+  // Case-insensitive variants: "FOO.CSS" is a css import, "BASE.LESS" a less file.
+  private static final Pattern IMPORT_EXT_CI = Pattern.compile(".*(\\.[a-z]*$)|([\\?;].*)$", Pattern.CASE_INSENSITIVE);
+
   private static final Pattern IMPORT_CSS = Pattern.compile(".*css([\\?;].*)?$");
+
+  private static final Pattern IMPORT_CSS_CI = Pattern.compile(".*css([\\?;].*)?$", Pattern.CASE_INSENSITIVE);
 
   // Local files never carry a scheme, so scheme or '//' prefixes are remote.
   private static final Pattern IMPORT_REMOTE = Pattern.compile("^(?:[a-zA-Z][a-zA-Z0-9+.-]*://|//)");
@@ -246,12 +251,13 @@ public class LessImporter {
     }
 
     path = context.render(node);
-    Matcher matcher = IMPORT_EXT.matcher(path);
+    boolean legacyExt = context.options().compatEnabled(Patch.IMPORT_EXT_CASE);
+    Matcher matcher = (legacyExt ? IMPORT_EXT : IMPORT_EXT_CI).matcher(path);
     if (!matcher.matches()) {
       // Append optional ".less" extension
       path += ".less";
     } else {
-      matcher = IMPORT_CSS.matcher(path);
+      matcher = (legacyExt ? IMPORT_CSS : IMPORT_CSS_CI).matcher(path);
       if (matcher.matches()) {
         return null;
       }

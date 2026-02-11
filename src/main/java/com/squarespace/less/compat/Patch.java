@@ -105,7 +105,13 @@ public enum Patch {
    * Uncomparable guard operands keep acting like -1: <=, >= and !=
    * evaluate true instead of false.
    */
-  GUARD_COMPARE_UNCOMPARABLE(2);
+  GUARD_COMPARE_UNCOMPARABLE(2),
+
+  /**
+   * @import extensions are matched case-sensitively, so "FOO.LESS"
+   * is not resolved as a less file.
+   */
+  IMPORT_EXT_CASE(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

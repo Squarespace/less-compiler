@@ -195,6 +195,30 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testImportExtCase() throws LessException {
+    Map<Path, String> files = new HashMap<>();
+    files.put(Paths.get(".").resolve("A.LESS").toAbsolutePath().normalize(), ".a { color: red; }");
+    String source = "@import \"A.LESS\";\n";
+
+    // Legacy: uppercase extensions are not matched, ".less" is appended
+    // and the file cannot be resolved.
+    LessContext legacy = new LessContext(new LessOptions(), new HashMapLessLoader(files));
+    legacy.setCompiler(COMPILER);
+    try {
+      COMPILER.compile(source, legacy, Paths.get("."), Paths.get("t.less"));
+      fail("expected IMPORT_ERROR at the default level");
+    } catch (LessException e) {
+      // expected
+    }
+
+    // Fixed: extensions match case-insensitively.
+    LessContext fixed = new LessContext(level(0), new HashMapLessLoader(files));
+    fixed.setCompiler(COMPILER);
+    String css = COMPILER.compile(source, fixed, Paths.get("."), Paths.get("t.less"));
+    assertTrue(css.contains("color: red"), css);
+  }
+
+  @Test
   public void testGuardCompareUncomparable() throws LessException {
     String source = ".m(@a) when (@a != 10px) { p: 1; }\n.x { .m(red); }\n";
 
