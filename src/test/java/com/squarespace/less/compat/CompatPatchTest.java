@@ -195,6 +195,26 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testImportOnceSuppress() throws LessException {
+    Map<Path, String> files = new HashMap<>();
+    files.put(Paths.get(".").resolve("f.less").toAbsolutePath().normalize(), ".f { color: red; }");
+    String source = "@import 'f.less';\n@import-once 'f.less';\n";
+
+    // Legacy: the plain import cached the file first, so import-once
+    // does not suppress the second inline.
+    LessContext legacy = new LessContext(new LessOptions(), new HashMapLessLoader(files));
+    legacy.setCompiler(COMPILER);
+    String css = COMPILER.compile(source, legacy, Paths.get("."), Paths.get("t.less"));
+    assertEquals(css.split("color: red").length - 1, 2, css);
+
+    // Fixed: import-once suppresses regardless of cache order.
+    LessContext fixed = new LessContext(level(0), new HashMapLessLoader(files));
+    fixed.setCompiler(COMPILER);
+    css = COMPILER.compile(source, fixed, Paths.get("."), Paths.get("t.less"));
+    assertEquals(css.split("color: red").length - 1, 1, css);
+  }
+
+  @Test
   public void testImportExtCase() throws LessException {
     Map<Path, String> files = new HashMap<>();
     files.put(Paths.get(".").resolve("A.LESS").toAbsolutePath().normalize(), ".a { color: red; }");

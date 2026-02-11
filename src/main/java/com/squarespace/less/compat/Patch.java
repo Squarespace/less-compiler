@@ -111,7 +111,13 @@ public enum Patch {
    * @import extensions are matched case-sensitively, so "FOO.LESS"
    * is not resolved as a less file.
    */
-  IMPORT_EXT_CASE(2);
+  IMPORT_EXT_CASE(2),
+
+  /**
+   * An @import-once after a plain import re-inlines the file instead of
+   * suppressing the duplicate.
+   */
+  IMPORT_ONCE_SUPPRESS(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

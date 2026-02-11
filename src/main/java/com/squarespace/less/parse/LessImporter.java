@@ -147,12 +147,23 @@ public class LessImporter {
     // Otherwise return null, indicating to the caller that it has already been imported
     // once and the flag is being enforced.
     if (record != null) {
-
-      // If either the global or per-node "once" flag is set, suppress this import node
-      // in the output.
-      if (context.options().importOnce() || record.onlyOnce()) {
-        importNode.suppress(true);
-        return null;
+      if (context.options().compatEnabled(Patch.IMPORT_ONCE_SUPPRESS)) {
+        // If either the global or per-node "once" flag is set, suppress
+        // this import node in the output.
+        if (context.options().importOnce() || record.onlyOnce()) {
+          importNode.suppress(true);
+          return null;
+        }
+      } else {
+        // Suppress if the file was already imported once: the global
+        // import-once option is set, the first import used import-once, or
+        // this import uses import-once. Mark the record so a later plain
+        // import cannot re-inline the file after an import-once suppressed.
+        if (context.options().importOnce() || once || record.onlyOnce()) {
+          record.setOnlyOnce(true);
+          importNode.suppress(true);
+          return null;
+        }
       }
 
       context.stats().importDone(true);

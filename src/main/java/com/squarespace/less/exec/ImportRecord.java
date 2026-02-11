@@ -38,14 +38,19 @@ public class ImportRecord {
   private final Stylesheet stylesheet;
 
   /**
-   * Whether this file can only be imported once per compile.
+   * Whether this file can only be imported once per compile. Starts as
+   * the first import's flag and flips true if any import-once suppresses.
    */
-  private final boolean onlyOnce;
+  private boolean onlyOnce;
 
   public ImportRecord(Path exactPath, Stylesheet stylesheet, boolean onlyOnce) {
     this.exactPath = exactPath;
     this.stylesheet = stylesheet;
     this.onlyOnce = onlyOnce;
+  }
+
+  public void setOnlyOnce(boolean flag) {
+    onlyOnce = flag;
   }
 
   public Path exactPath() {
