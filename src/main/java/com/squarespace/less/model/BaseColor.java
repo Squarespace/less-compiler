@@ -22,6 +22,7 @@ import static com.squarespace.less.model.NodeType.COLOR;
 
 import com.squarespace.less.LessErrorInfo;
 import com.squarespace.less.LessException;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.exec.ExecEnv;
@@ -94,7 +95,10 @@ public abstract class BaseColor implements Node {
     LessOptions opts = env.context().options();
     NodeType argType = arg.type();
     if (argType.equals(NodeType.COLOR)) {
-      return operate(op, this, (BaseColor)arg);
+      if (env.context().options().compatEnabled(Patch.COLOR_CHANNEL_PRECISION)) {
+        return operate(op, this, (BaseColor)arg);
+      }
+      return operateFixed(op, this, (BaseColor)arg);
 
     } else if (argType.equals(NodeType.DIMENSION)) {
       // Dimensions that have units cannot be added/multiplied with a color.
@@ -108,7 +112,11 @@ public abstract class BaseColor implements Node {
           env.addWarning(info.getMessage() + ".. stripping unit.");
         }
       }
-      return operate(op, this, fromDimension((Dimension)arg));
+      if (env.context().options().compatEnabled(Patch.COLOR_CHANNEL_PRECISION)) {
+        return operate(op, this, fromDimension((Dimension)arg));
+      }
+      // Keep the fractional part. The RGBColor ctor rounds and clamps.
+      return operateFixed(op, this, dim.value());
 
     } else {
       LessErrorInfo info = invalidOperation(op, type());
@@ -119,6 +127,70 @@ public abstract class BaseColor implements Node {
         env.addWarning(info.getMessage() + ".. ignoring the right-hand operand.");
       }
       return this;
+    }
+  }
+
+  /**
+   * Level 0: channel math keeps fractional precision until the ctor
+   * rounds and clamps, so the only rounding that happens is the final
+   * round.
+   */
+  private BaseColor operateFixed(Operator op, BaseColor arg0, BaseColor arg1) throws LessException {
+    RGBColor c0 = arg0.toRGB();
+    RGBColor c1 = arg1.toRGB();
+    double r0 = c0.red();
+    double g0 = c0.green();
+    double b0 = c0.blue();
+    double alpha = c0.alpha() + c1.alpha(); // per less.js
+    switch (op) {
+      case ADD:
+        return new RGBColor(r0 + c1.red(), g0 + c1.green(), b0 + c1.blue(), alpha);
+
+      case DIVIDE: {
+        double r1 = c1.red() == 0 ? 1 : c1.red();
+        double g1 = c1.green() == 0 ? 1 : c1.green();
+        double b1 = c1.blue() == 0 ? 1 : c1.blue();
+        return new RGBColor(r0 / r1, g0 / g1, b0 / b1, alpha);
+      }
+
+      case MULTIPLY:
+        return new RGBColor(r0 * c1.red(), g0 * c1.green(), b0 * c1.blue(), alpha);
+
+      case SUBTRACT:
+        return new RGBColor(r0 - c1.red(), g0 - c1.green(), b0 - c1.blue(), alpha);
+
+      default:
+        throw new LessException(invalidOperation(op, NodeType.COLOR));
+    }
+  }
+
+  /**
+   * Level 0: a scalar operand stays a double so the ctor's rounding is
+   * the only rounding that happens.
+   */
+  private BaseColor operateFixed(Operator op, BaseColor arg0, double val) throws LessException {
+    RGBColor c0 = arg0.toRGB();
+    double r = c0.red();
+    double g = c0.green();
+    double b = c0.blue();
+    double alpha = c0.alpha() + 1.0; // the ctor clamps it to 1.0
+    switch (op) {
+      case ADD:
+        return new RGBColor(r + val, g + val, b + val, alpha);
+
+      case DIVIDE: {
+        double d = val == 0 ? 1 : val;
+        return new RGBColor(r / d, g / d, b / d, alpha);
+      }
+
+      case MULTIPLY:
+        return new RGBColor(r * val, g * val, b * val, alpha);
+
+      case SUBTRACT:
+        return new RGBColor(r - val, g - val, b - val, alpha);
+
+      default:
+        throw new LessException(invalidOperation(op, NodeType.COLOR));
     }
   }
 

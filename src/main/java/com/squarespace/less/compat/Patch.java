@@ -123,7 +123,13 @@ public enum Patch {
    * Color-blend functions drop the alpha channel: the result is
    * opaque instead of keeping the larger input alpha.
    */
-  COLOR_BLEND_ALPHA(2);
+  COLOR_BLEND_ALPHA(2),
+
+  /**
+   * Color channel math truncates fractional intermediates to ints
+   * before the final rounding.
+   */
+  COLOR_CHANNEL_PRECISION(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

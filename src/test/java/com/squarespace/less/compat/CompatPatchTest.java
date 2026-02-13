@@ -195,6 +195,17 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testColorChannelPrecision() throws LessException {
+    // Legacy: fractional scalar operands truncate before channel math.
+    assertTrue(compile("x { c: #fff * 0.5; }", new LessOptions()).contains("#000"));
+
+    // Fixed: fractional values survive until the final round.
+    assertTrue(compile("x { c: #fff * 0.5; }", level(0)).contains("grey"));
+    assertTrue(compile("x { c: #000 + 0.5; }", level(0)).contains("#010101"));
+    assertTrue(compile("x { c: #808080 / 3; }", level(0)).contains("#2b2b2b"));
+  }
+
+  @Test
   public void testColorBlendAlpha() throws LessException {
     String raw = "multiply(rgba(255, 0, 0, 0.5), rgba(0, 0, 255, 0.25))";
 
