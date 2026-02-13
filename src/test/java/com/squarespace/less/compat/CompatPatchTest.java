@@ -92,12 +92,13 @@ public class CompatPatchTest {
   @Test
   public void testNonFiniteAsZero() throws LessException {
     // sqrt(-1) evaluates to a NaN dimension. The legacy default renders
-    // it as 0, level 0 renders visible text.
+    // it as 0, the fully-fixed level renders visible text.
     assertEquals(evalRender("sqrt(-1)", new LessOptions()), "0");
-    assertEquals(evalRender("sqrt(-1)", level(0)), "NaN");
+    assertEquals(evalRender("sqrt(-1)", level(Patch.maxThreshold())), "NaN");
 
-    // A per-site override restores the legacy formatting at level 0.
-    LessOptions overridden = level(0);
+    // A per-site override restores the legacy formatting at the fully
+    // fixed level.
+    LessOptions overridden = level(Patch.maxThreshold());
     overridden.compatPatch(Patch.NONFINITE_AS_ZERO);
     assertEquals(evalRender("sqrt(-1)", overridden), "0");
   }
@@ -126,10 +127,10 @@ public class CompatPatchTest {
     // Legacy default: the overflow is swallowed, compile succeeds.
     compile(less.toString(), new LessOptions());
 
-    // Level 0: the compile fails with SELECTOR_TOO_COMPLEX.
+    // Fully fixed: the compile fails with SELECTOR_TOO_COMPLEX.
     try {
-      compile(less.toString(), level(0));
-      fail("expected SELECTOR_TOO_COMPLEX at level 0");
+      compile(less.toString(), level(Patch.maxThreshold()));
+      fail("expected SELECTOR_TOO_COMPLEX at the fixed level");
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), ExecuteErrorType.SELECTOR_TOO_COMPLEX);
     }
@@ -140,21 +141,21 @@ public class CompatPatchTest {
     // Legacy default: mod by zero silently returns NaN (renders as 0).
     assertEquals(evalRender("mod(10, 0)", new LessOptions()), "0");
 
-    // Level 0, strict (the released default): fails like division.
+    // Fully fixed level, strict: fails like division.
     try {
-      evalRender("mod(10, 0)", level(0));
-      fail("expected DIVIDE_BY_ZERO at level 0");
+      evalRender("mod(10, 0)", level(Patch.maxThreshold()));
+      fail("expected DIVIDE_BY_ZERO at the fixed level");
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), ExecuteErrorType.DIVIDE_BY_ZERO);
     }
 
-    // Level 0, lenient: warns, returns NaN, renders as text.
-    LessOptions lenient = level(0);
+    // Fully fixed level, lenient: warns, returns NaN, renders as text.
+    LessOptions lenient = level(Patch.maxThreshold());
     lenient.strict(false);
     assertEquals(evalRender("mod(10, 0)", lenient), "NaN");
 
     // Non-zero divisors work at every level.
-    assertEquals(evalRender("mod(11, 3)", level(0)), "2");
+    assertEquals(evalRender("mod(11, 3)", level(Patch.maxThreshold())), "2");
   }
 
   @Test
@@ -170,8 +171,8 @@ public class CompatPatchTest {
     String css = COMPILER.compile(source, legacy, Paths.get("."), Paths.get("t.less"));
     assertTrue(css.contains("@import url(\"a.less\")"), css);
 
-    // Level 0: the import is resolved and inlined.
-    LessContext fixed = new LessContext(level(0), new HashMapLessLoader(files));
+    // Fully fixed: the import is resolved and inlined.
+    LessContext fixed = new LessContext(level(Patch.maxThreshold()), new HashMapLessLoader(files));
     fixed.setCompiler(COMPILER);
     css = COMPILER.compile(source, fixed, Paths.get("."), Paths.get("t.less"));
     assertTrue(css.contains("color: red"), css);
@@ -185,14 +186,14 @@ public class CompatPatchTest {
 
     // Fixed: fails the compile with INCOMPATIBLE_UNITS.
     try {
-      evalRender("convert(16px, em)", level(0));
-      fail("expected INCOMPATIBLE_UNITS at level 0");
+      evalRender("convert(16px, em)", level(Patch.maxThreshold()));
+      fail("expected INCOMPATIBLE_UNITS at the fixed level");
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), ExecuteErrorType.INCOMPATIBLE_UNITS);
     }
 
     // Compatible conversions work at every level.
-    assertEquals(evalRender("convert(1in, px)", level(0)), "96px");
+    assertEquals(evalRender("convert(1in, px)", level(Patch.maxThreshold())), "96px");
   }
 
   @Test
@@ -205,8 +206,8 @@ public class CompatPatchTest {
 
     // Fixed: the parse fails loudly.
     try {
-      compile(source, level(0));
-      fail("expected INCOMPLETE_PARSE at level 0");
+      compile(source, level(Patch.maxThreshold()));
+      fail("expected INCOMPLETE_PARSE at the fixed level");
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), SyntaxErrorType.INCOMPLETE_PARSE);
     }
@@ -218,9 +219,9 @@ public class CompatPatchTest {
     assertTrue(compile("x { c: #fff * 0.5; }", new LessOptions()).contains("#000"));
 
     // Fixed: fractional values survive until the final round.
-    assertTrue(compile("x { c: #fff * 0.5; }", level(0)).contains("grey"));
-    assertTrue(compile("x { c: #000 + 0.5; }", level(0)).contains("#010101"));
-    assertTrue(compile("x { c: #808080 / 3; }", level(0)).contains("#2b2b2b"));
+    assertTrue(compile("x { c: #fff * 0.5; }", level(Patch.maxThreshold())).contains("grey"));
+    assertTrue(compile("x { c: #000 + 0.5; }", level(Patch.maxThreshold())).contains("#010101"));
+    assertTrue(compile("x { c: #808080 / 3; }", level(Patch.maxThreshold())).contains("#2b2b2b"));
   }
 
   @Test
@@ -231,7 +232,7 @@ public class CompatPatchTest {
     assertEquals(evalRender(raw, new LessOptions()), "#000");
 
     // Fixed: the result keeps the larger input alpha.
-    assertEquals(evalRender(raw, level(0)), "rgba(0, 0, 0, .5)");
+    assertEquals(evalRender(raw, level(Patch.maxThreshold())), "rgba(0, 0, 0, .5)");
   }
 
   @Test
@@ -248,7 +249,7 @@ public class CompatPatchTest {
     assertEquals(css.split("color: red").length - 1, 2, css);
 
     // Fixed: import-once suppresses regardless of cache order.
-    LessContext fixed = new LessContext(level(0), new HashMapLessLoader(files));
+    LessContext fixed = new LessContext(level(Patch.maxThreshold()), new HashMapLessLoader(files));
     fixed.setCompiler(COMPILER);
     css = COMPILER.compile(source, fixed, Paths.get("."), Paths.get("t.less"));
     assertEquals(css.split("color: red").length - 1, 1, css);
@@ -272,7 +273,7 @@ public class CompatPatchTest {
     }
 
     // Fixed: extensions match case-insensitively.
-    LessContext fixed = new LessContext(level(0), new HashMapLessLoader(files));
+    LessContext fixed = new LessContext(level(Patch.maxThreshold()), new HashMapLessLoader(files));
     fixed.setCompiler(COMPILER);
     String css = COMPILER.compile(source, fixed, Paths.get("."), Paths.get("t.less"));
     assertTrue(css.contains("color: red"), css);
@@ -286,7 +287,7 @@ public class CompatPatchTest {
     assertTrue(compile(source, new LessOptions()).contains("p: 1"));
 
     // Fixed: no ordering or equality exists, != is false.
-    assertTrue(!compile(source, level(0)).contains("p: 1"));
+    assertTrue(!compile(source, level(Patch.maxThreshold())).contains("p: 1"));
   }
 
   @Test
@@ -297,7 +298,7 @@ public class CompatPatchTest {
     assertTrue(compile(source, new LessOptions()).contains("p: 2 1"));
 
     // Fixed: @arguments follows parameter declaration order.
-    assertTrue(compile(source, level(0)).contains("p: 1 2"));
+    assertTrue(compile(source, level(Patch.maxThreshold())).contains("p: 1 2"));
   }
 
   @Test
@@ -313,7 +314,7 @@ public class CompatPatchTest {
     }
 
     // Fixed: the named arg binds to the variadic parameter.
-    assertTrue(compile(source, level(0)).contains("p: 1"));
+    assertTrue(compile(source, level(Patch.maxThreshold())).contains("p: 1"));
   }
 
   @Test
@@ -325,7 +326,7 @@ public class CompatPatchTest {
     assertTrue(legacy.contains("123 abc"), legacy);
 
     // Fixed: the replacement is inserted literally.
-    String fixed = evalRenderExt(raw, level(0));
+    String fixed = evalRenderExt(raw, level(Patch.maxThreshold()));
     assertTrue(fixed.contains("$2 $1"), fixed);
   }
 }
