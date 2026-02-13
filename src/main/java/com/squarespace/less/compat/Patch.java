@@ -129,7 +129,13 @@ public enum Patch {
    * Color channel math truncates fractional intermediates to ints
    * before the final rounding.
    */
-  COLOR_CHANNEL_PRECISION(2);
+  COLOR_CHANNEL_PRECISION(2),
+
+  /**
+   * An unterminated attribute selector or parenthesized element is
+   * silently dropped instead of failing the compile.
+   */
+  ATTR_SELECTOR_UNTERMINATED(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

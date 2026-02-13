@@ -1780,6 +1780,10 @@ public class LessParser {
     if (peek() != '[') {
       return null;
     }
+    boolean legacy = ctx.options().compatEnabled(Patch.ATTR_SELECTOR_UNTERMINATED);
+    if (!legacy) {
+      begin();
+    }
     next();
     ws();
 
@@ -1791,6 +1795,10 @@ public class LessParser {
       key = quoted();
     }
     if (key == null) {
+      if (!legacy) {
+        // No key, so this is not an attribute selector. Restore the stream.
+        rollback();
+      }
       return null;
     }
 
@@ -1816,12 +1824,17 @@ public class LessParser {
 
     ws();
     if (peek() != ']') {
-
-      // TODO: should we throw error here? after all we have left bracket
-
+      if (!legacy) {
+        // Missing the closing bracket: restore the stream so the caller
+        // fails loudly instead of silently dropping the attribute.
+        rollback();
+      }
       return null;
     }
     next();
+    if (!legacy) {
+      commit();
+    }
     return elem;
   }
 
@@ -1834,6 +1847,10 @@ public class LessParser {
     ws();
     if (peek() != '(') {
       return null;
+    }
+    boolean legacy = ctx.options().compatEnabled(Patch.ATTR_SELECTOR_UNTERMINATED);
+    if (!legacy) {
+      begin();
     }
     next();
 
@@ -1851,7 +1868,14 @@ public class LessParser {
     ws();
     if (n != null && peek() == ')') {
       next();
+      if (!legacy) {
+        commit();
+      }
       return new Paren(n);
+    }
+    if (!legacy) {
+      // Missing the closing paren: restore the stream and fail.
+      rollback();
     }
     return null;
   }

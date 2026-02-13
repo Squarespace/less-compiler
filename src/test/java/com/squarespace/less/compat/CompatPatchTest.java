@@ -33,6 +33,7 @@ import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
+import com.squarespace.less.SyntaxErrorType;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.model.Node;
@@ -192,6 +193,23 @@ public class CompatPatchTest {
 
     // Compatible conversions work at every level.
     assertEquals(evalRender("convert(1in, px)", level(0)), "96px");
+  }
+
+  @Test
+  public void testAttrSelectorUnterminated() throws LessException {
+    String source = "a[href { color: red; }";
+
+    // Legacy: the unterminated attribute is silently dropped and the
+    // bare element is styled.
+    assertTrue(compile(source, new LessOptions()).contains("a {"));
+
+    // Fixed: the parse fails loudly.
+    try {
+      compile(source, level(0));
+      fail("expected INCOMPLETE_PARSE at level 0");
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), SyntaxErrorType.INCOMPLETE_PARSE);
+    }
   }
 
   @Test
