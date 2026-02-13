@@ -105,7 +105,16 @@ public class RenderEnv {
     if (blockType.equals(NodeType.BLOCK_DIRECTIVE)) {
       frame.pushEmptySelectors();
     } else if (selectors != null) {
-      frame.mergeSelectors(selectors, ctx.options().compatEnabled(Patch.SELECTOR_COMPLEXITY_OVERFLOW));
+      // Best-effort recovery truncates the combined selectors at the
+      // complexity limit instead of failing (strict) or silently
+      // falling back to the ancestors (legacy fallback still wins at the
+      // legacy levels).
+      boolean legacy = ctx.options().compatEnabled(Patch.SELECTOR_COMPLEXITY_OVERFLOW);
+      boolean[] truncated = new boolean[1];
+      frame.mergeSelectors(selectors, legacy, ctx.options().safeMode() && !legacy, truncated);
+      if (truncated[0]) {
+        ctx.addWarning("render: truncated selector combination exceeding complexity limit");
+      }
     } else if (features != null) {
       frame.mergeFeatures(features);
     }

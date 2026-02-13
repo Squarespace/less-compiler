@@ -57,6 +57,17 @@ public class SelectorUtils {
    *    the list of ancestors, and then return the cartesian product.
    */
   public static Selectors combine(Selectors ancestors, Selectors current) throws LessException {
+    return combine(ancestors, current, false, null);
+  }
+
+  /**
+   * Combine with optional truncation (best-effort recovery): when true,
+   * the cartesian product stops at the complexity threshold, keeping the
+   * selectors collected so far instead of throwing. The {@code
+   * truncated} flag lets the caller warn.
+   */
+  public static Selectors combine(Selectors ancestors, Selectors current, boolean truncate, boolean[] truncated)
+      throws LessException {
     Selectors result = new Selectors();
     List<Selector> selectors = current.selectors();
     int ilen = selectors.size();
@@ -69,7 +80,7 @@ public class SelectorUtils {
         List<List<Selector>> inputs = new ArrayList<>(2);
         inputs.add(ancestors.selectors());
         inputs.add(Arrays.asList(selector));
-        SelectorUtils.flatten(inputs, result);
+        SelectorUtils.flatten(inputs, result, truncate, truncated);
         continue;
       }
 
@@ -100,7 +111,7 @@ public class SelectorUtils {
         inputs.add(Arrays.asList(temp));
       }
 
-      SelectorUtils.flatten(inputs, result);
+      SelectorUtils.flatten(inputs, result, truncate, truncated);
     }
     return result;
   }
@@ -110,6 +121,18 @@ public class SelectorUtils {
    * selectors {@code result}.
    */
   public static void flatten(List<List<Selector>> selectors, Selectors result) throws LessException {
+    flatten(selectors, result, false, null);
+  }
+
+  /**
+   * Flatten with optional truncation (best-effort recovery): when
+   * {@code truncate} is true the product stops at the complexity
+   * threshold, keeping the selectors collected so far (the truncate-the
+   * selector-at-the-upper-limit-keep-the-body contract). The {@code
+   * truncated} flag lets the caller warn.
+   */
+  public static void flatten(List<List<Selector>> selectors, Selectors result, boolean truncate, boolean[] truncated)
+      throws LessException {
     CartesianProduct<Selector> product = new CartesianProduct<>(selectors);
     int complexity = 0;
     while (product.hasNext()) {
@@ -127,6 +150,12 @@ public class SelectorUtils {
       }
       result.add(flat);
       if (complexity > SELECTOR_THRESHOLD) {
+        if (truncate) {
+          if (truncated != null) {
+            truncated[0] = true;
+          }
+          return;
+        }
         throw new LessException(selectorTooComplex());
       }
     }

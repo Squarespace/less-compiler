@@ -90,12 +90,24 @@ public class RenderFrame {
    * current selector is dropped. Otherwise it fails the compile.
    */
   public void mergeSelectors(Selectors current, boolean fallbackOnOverflow) throws LessException {
+    mergeSelectors(current, fallbackOnOverflow, false, null);
+  }
+
+  /**
+   * Merge with optional truncation (best-effort recovery): when
+   * {@code truncateOnOverflow} and the fixed level are active, a
+   * complexity overflow truncates the combined selectors at the limit
+   * instead of falling back or failing. The {@code truncated} flag
+   * lets the caller warn.
+   */
+  public void mergeSelectors(Selectors current, boolean fallbackOnOverflow, boolean truncateOnOverflow,
+      boolean[] truncated) throws LessException {
     Selectors ancestors = (parent == null) ? Constants.EMPTY_SELECTORS : parent.selectors();
     if (current == null || current.isEmpty()) {
       this.selectors = ancestors;
     } else {
       try {
-        this.selectors = SelectorUtils.combine(ancestors, current);
+        this.selectors = SelectorUtils.combine(ancestors, current, truncateOnOverflow, truncated);
       } catch (LessException e) {
         if (fallbackOnOverflow) {
           this.selectors = ancestors;
