@@ -77,9 +77,38 @@ threshold, so higher levels apply more fixes without changing the released
 surface at level 0. Patches are retired when the last site that needs them
 migrates to their threshold level or above.
 
-For backwards compatibility, the parser's boolean `safeMode()` flag maps onto
-the level: `true` is the default level (released behavior), `false` is the
-fully-fixed level.
+For backwards compatibility, the parser's boolean `safeMode()` flag is the
+recovery-mode flag (see below): `true` = best effort, `false` (default) =
+strict. It is independent of the compat level, which is set exclusively via
+`LessOptions.compatLevel(int)`.
+
+#### Recovery mode (safe mode)
+
+A second, orthogonal axis to the compat level: **what happens when the
+compiler must reject something**. The compat level decides *what* is fixed;
+the mode decides *how violations behave*.
+
+- **strict** (default, `safeMode(false)`): any hard error aborts the
+  compile with a `LessException` — released behavior.
+- **safe** (`safeMode(true)`): best effort. The offending construct is
+  dropped at a well-defined boundary, a `WARNING[n] ... raised during
+  recovery: ...` comment is emitted, and compilation continues:
+
+  - parser: the stream is resynchronized at the next `;` or `}` at
+    brace depth 0 (strings/comments skipped); an unterminated tail is
+    truncated; input that recovers to nothing reports
+    `stylesheet produced no output`;
+  - evaluation: a failed block member (rule, mixin call, ...) is dropped
+    and the next sibling is evaluated;
+  - render: a node that fails to render is skipped;
+  - complexity overflow: the combined selector is truncated at the
+    limit and the rule body is kept.
+
+  The released surface is level 0 + strict; level 0 + safe behaves
+  identically until something must be rejected, then it degrades with
+  warnings instead of failing — production keeps rendering while the
+  warning stream is the migration ledger. The matrix of (patch x level x
+  mode) outcomes is pinned by RecoveryMatrixTest.
 
 
 #### Non-finite math values render as text below level 2
