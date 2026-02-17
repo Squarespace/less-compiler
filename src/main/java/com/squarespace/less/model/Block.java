@@ -152,6 +152,9 @@ public class Block implements Node {
    * Appends a {@link Node} to the tail of the block.
    */
   public void appendNode(Node node) {
+    if (node == null) {
+      return;
+    }
     setFlags(node);
     rules.append(node);
   }
@@ -179,6 +182,10 @@ public class Block implements Node {
     this.rules.splice(start, num, other);
     int size = other.size();
     for (int i = 0; i < size; i++) {
+      // Mixin bodies evaluated in recovery mode can contain null slots.
+      if (other.get(i) == null) {
+        continue;
+      }
       setFlags(other.get(i));
     }
   }
@@ -232,7 +239,8 @@ public class Block implements Node {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node node = rules.get(i);
-      if (!node.type().equals(NodeType.DEFINITION)) {
+      // Recovery mode can leave dropped members as null slots.
+      if (node == null || !node.type().equals(NodeType.DEFINITION)) {
         continue;
       }
       Definition def = (Definition)node;

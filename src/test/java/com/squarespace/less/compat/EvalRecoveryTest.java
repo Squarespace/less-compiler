@@ -41,6 +41,13 @@ public class EvalRecoveryTest {
     return COMPILER.compile(raw, new LessContext(opts));
   }
 
+  private static LessOptions fixedSafeMode() {
+    LessOptions opts = new LessOptions();
+    opts.compatLevel(Patch.maxThreshold());
+    opts.safeMode(true);
+    return opts;
+  }
+
   private static LessOptions safeMode() {
     LessOptions opts = new LessOptions();
     opts.safeMode(true);
@@ -99,6 +106,26 @@ public class EvalRecoveryTest {
     String css = COMPILER.compile(".a { width: 1px; .bogus(); }", ctx, null, null, true);
     assertTrue(css.contains("width: 1px"), css);
     assertTrue(css.contains("eval: dropped mixin call"), css);
+  }
+
+  @Test
+  public void testDroppedMixinCallDoesNotBreakVariableLookup() throws LessException {
+    // A dropped member leaves a null slot. A later splice resets the
+    // variable cache and the lookup must not NPE in Block.buildVariables.
+    String css = compile(".a {\n  .bogus();\n  .real();\n  y: @v;\n}\n.real { @v: 4px; p: 1; }\n",
+        fixedSafeMode());
+    assertTrue(css.contains("WARNING["), css);
+    assertTrue(css.contains("4px") || css.contains(".real"), css);
+  }
+
+  @Test
+  public void testDroppedRuleDoesNotBreakImportRendering() throws LessException {
+    // A literal import sets FLAG_HAS_IMPORTS. A dropped rule leaves a
+    // null slot that renderImports must skip.
+    String css = compile("@import url(\"http://example.com/x.css\");\nx: (10px / 0);\n.a { color: red; }\n",
+        fixedSafeMode());
+    assertTrue(css.contains("WARNING["), css);
+    assertTrue(css.contains(".a"), css);
   }
 
   @Test

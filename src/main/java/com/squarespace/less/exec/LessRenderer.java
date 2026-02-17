@@ -223,6 +223,10 @@ public class LessRenderer {
     int size = rules.size();
     for (int i = 0; i < size; i++) {
       Node node = rules.get(i);
+      // Recovery mode can leave dropped members as null slots.
+      if (node == null) {
+        continue;
+      }
       switch (node.type()) {
 
         case IMPORT:
