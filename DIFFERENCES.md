@@ -63,8 +63,9 @@ Threshold 2 - legacy generation 2 (gated bug fixes; active below level 2):
 - `ATTR_SELECTOR_UNTERMINATED` - an unterminated attribute selector or
   parenthesized element is silently dropped instead of failing the compile.
 
-At level 1 only the threshold-1 patches are active; at level 0 none are.
-These behaviors are pinned by CompatPatchTest and CompatLevelTest.
+At level 0 every legacy behavior is active. At level 1 the threshold-1
+patches are fixed. At level 2 every patch is fixed. The fix ladder is
+pinned by CompatPatchTest and CompatLevelTest.
 
 Per-site patches can be forced on for stylesheets that need an irregular
 combination the ladder cannot express:
