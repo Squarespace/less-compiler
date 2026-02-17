@@ -20,8 +20,10 @@ level is the fully-fixed compiler.
     LessContext ctx = new LessContext(opts);
     new LessCompiler().compile(raw, ctx);
 
-Current patches, all at threshold 1 (the former safe-mode tolerances, see
-docs/legacy-bugs.md; fixed at level 1 and above):
+Current patches, by threshold:
+
+Threshold 1 - legacy generation 1 (the former safe-mode tolerances, see
+docs/legacy-bugs.md; active below level 1):
 
 - `BUG1` - extraneous `'+'` at block scope is tolerated.
 - `BUG2` - a `@media` directive without a following block is dropped and the
@@ -30,6 +32,39 @@ docs/legacy-bugs.md; fixed at level 1 and above):
   accepted.
 - `BUG4` - invalid addition expressions such as `random(90) + px` are
   tolerated.
+
+Threshold 2 - legacy generation 2 (gated bug fixes; active below level 2):
+
+- `SELECTOR_COMPLEXITY_OVERFLOW` - selector-combine overflow is swallowed and
+  the current selector is dropped instead of failing the compile.
+- `IMPORT_URL_INLINE` - `@import url("x.less")` is emitted literally
+  instead of being resolved and inlined.
+- `NONFINITE_AS_ZERO` - NaN and Infinity values render as `0` instead of
+  visible text.
+- `MOD_ZERO_STRICT` - `mod(x, 0)` silently returns NaN instead of obeying
+  the division contract (strict fails, lenient warns).
+- `CONVERT_INCOMPATIBLE_UNITS` - `convert()` to an incompatible unit
+  silently emits 0 instead of failing the compile.
+- `REPLACE_REGEX_GROUPS` - `replace()` treats `$` and `\` in the
+  replacement as regex group references instead of inserting them literally.
+- `VARIADIC_NAMED_ARG` - a named arg targeting the variadic parameter fails
+  with ARG_NAMED_NOTFOUND instead of binding to it.
+- `ARGUMENTS_ORDER` - `@arguments` follows binding insertion order instead
+  of parameter declaration order.
+- `GUARD_COMPARE_UNCOMPARABLE` - uncomparable guard operands compare as -1,
+  so `<=`, `>=` and `!=` evaluate true.
+- `IMPORT_EXT_CASE` - `@import` extensions match case-sensitively.
+- `IMPORT_ONCE_SUPPRESS` - a plain import caching the file first defeats a
+  later `@import-once`, which re-inlines the file.
+- `COLOR_BLEND_ALPHA` - color-blend results are opaque instead of keeping
+  the larger input alpha.
+- `COLOR_CHANNEL_PRECISION` - color channel math truncates fractional
+  intermediates before the final rounding.
+- `ATTR_SELECTOR_UNTERMINATED` - an unterminated attribute selector or
+  parenthesized element is silently dropped instead of failing the compile.
+
+At level 1 only the threshold-1 patches are active; at level 0 none are.
+These behaviors are pinned by CompatPatchTest and CompatLevelTest.
 
 Per-site patches can be forced on for stylesheets that need an irregular
 combination the ladder cannot express:
@@ -44,6 +79,20 @@ migrates to their threshold level or above.
 For backwards compatibility, the parser's boolean `safeMode()` flag maps onto
 the level: `true` is the default level (released behavior), `false` is the
 fully-fixed level.
+
+
+#### Non-finite math values render as text below level 2
+
+At the default level, the `NONFINITE_AS_ZERO` patch renders non-finite math
+values (NaN, Infinity) as `0`. Below level 2 the values render as visible
+text, same as less.js:
+
+    y: sqrt(-1);   /* level 0 -> NaN */
+    y: pow(0, -1); /* level 0 -> Infinity */
+
+Modulo by zero follows the same contract as division: strict mode fails the
+compile, lenient mode warns, and the NaN result renders according to the
+level (see `MOD_ZERO_STRICT`).
 
 
 #### Color keywords are allowed to participate in math expressions
