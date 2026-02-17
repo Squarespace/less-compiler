@@ -111,7 +111,7 @@ public class RenderEnv {
       // legacy levels).
       boolean legacy = ctx.options().compatEnabled(Patch.SELECTOR_COMPLEXITY_OVERFLOW);
       boolean[] truncated = new boolean[1];
-      frame.mergeSelectors(selectors, legacy, ctx.options().safeMode() && !legacy, truncated);
+      frame.mergeSelectors(selectors, legacy, ctx.safeMode() && !legacy, truncated);
       if (truncated[0]) {
         ctx.addWarning("render: truncated selector combination exceeding complexity limit");
       }
