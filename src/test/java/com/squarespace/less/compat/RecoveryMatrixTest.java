@@ -129,7 +129,7 @@ public class RecoveryMatrixTest {
           1, SyntaxErrorType.INCOMPLETE_PARSE, Polarity.REJECT_FIX, true, null),
       new Row("BUG2",
           "@media only screen and (max-width: 640px)\n#content {\n  padding-top: 50px;\n}\n",
-          1, SyntaxErrorType.INCOMPLETE_PARSE, Polarity.REJECT_FIX, false, null),
+          1, SyntaxErrorType.INCOMPLETE_PARSE, Polarity.REJECT_FIX, true, null),
       new Row("BUG3",
           "@dk-gray: #333;\n.dark-bg {\n  background-color: @dk-gray();\n}\n",
           1, SyntaxErrorType.INCOMPLETE_PARSE, Polarity.REJECT_FIX, false, null),

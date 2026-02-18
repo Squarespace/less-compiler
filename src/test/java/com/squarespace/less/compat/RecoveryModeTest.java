@@ -81,13 +81,46 @@ public class RecoveryModeTest {
 
   @Test
   public void testBlocklessMediaRecovers() throws LessException {
-    // BUG2 at the fixed level: the directive is dropped and the file
-    // compiles with a warning. Recovery is at statement granularity, so
-    // the block that follows the failed directive is part of the dropped
-    // region (unlike the legacy DUMMY_MEDIA path, which keeps it).
+    // BUG2 at the fixed level: the directive is dropped, the following
+    // ruleset survives the block-aware sync (matching the released
+    // DUMMY_MEDIA output), and the file compiles with a warning.
     String css = compile(MEDIA_BLOCKLESS, fixedSafe());
-    assertFalse(css.contains("#content"), css);
+    assertTrue(css.contains("#content"), css);
+    assertTrue(css.contains("padding-top: 50px"), css);
     assertRecoveredWith(css, "skipped invalid statement");
+  }
+
+  @Test
+  public void testTopLevelErrorKeepsFollowingRulesets() throws LessException {
+    // A stray bad line between two valid rulesets must not truncate
+    // the rest of the file. The followers re-parse at their line starts.
+    String css = compile(".a { color: red; }\n!!!\n.b { color: blue; }\n.c { font-size: 12px; }\n",
+        fixedSafe());
+    assertTrue(css.contains(".a"), css);
+    assertTrue(css.contains(".b"), css);
+    assertTrue(css.contains("font-size: 12px"), css);
+    assertTrue(!css.contains("truncated"), css);
+    assertRecovered(css);
+  }
+
+  @Test
+  public void testTopLevelErrorKeepsFollowingDeclarations() throws LessException {
+    // The first ';' terminates the NEXT statement. Recovery resumes
+    // at that statement's line start so it survives.
+    String css = compile("!!!\ny: 1;\n###\nz: 2;\n", fixedSafe());
+    assertTrue(css.contains("y: 1"), css);
+    assertTrue(css.contains("z: 2"), css);
+  }
+
+  @Test
+  public void testRecoveryDoesNotLoopOnGarbageBlocks() throws LessException {
+    // A garbage selector with a block is dropped. The surrounding
+    // rulesets survive and recovery terminates.
+    String css = compile(".a { color: red; }\n### { color: blue; }\n.z { font-size: 12px; }\n",
+        fixedSafe());
+    assertTrue(css.contains(".a"), css);
+    assertTrue(css.contains(".z"), css);
+    assertTrue(!css.contains("###"), css);
   }
 
   @Test

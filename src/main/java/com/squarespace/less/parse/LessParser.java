@@ -285,6 +285,13 @@ public class LessParser {
   private int recovered = 0;
 
   /**
+   * Start position of the most recent recovery, to make a resume that
+   * begins exactly at the scan start a one-shot opportunity: if the
+   * re-parse fails, the next recovery must not revisit the same spot.
+   */
+  private int lastRecoverStart = -1;
+
+  /**
    * Number of rollbacks that have occurred.
    */
   private int rollbacks = 0;
@@ -372,6 +379,12 @@ public class LessParser {
     int startLine = lineAt(start);
     int depth = 0;
     char quote = 0;
+    // A '{' at depth 0 after the scan start begins a new statement: when
+    // its balanced block closes, resume at the statement's line start so
+    // the loop re-parses it fresh (a valid follower survives, a broken
+    // one re-recovers, positions strictly advance). -1 means none found.
+    boolean repeatedStart = (pos == lastRecoverStart);
+    int resume = -1;
     int i = start;
     while (i < len) {
       char c = raw.charAt(i);
@@ -407,27 +420,63 @@ public class LessParser {
         }
       }
       if (c == '{') {
+        if (depth == 0 && resume < 0) {
+          // Remember the earliest balanced block: resume at the start of
+          // its line. The construct's line may begin exactly at the scan
+          // start (the failed statement consumed up to it), so the
+          // back-scan floor is start - 1. Resuming at the scan start
+          // itself is a one-shot opportunity: if that re-parse fails the
+          // repeated-start guard drops the candidate so the scan moves
+          // to the next balanced block (positions strictly advance, no
+          // loop).
+          for (int j = i - 1; j >= start - 1; j--) {
+            if (j >= 0 && raw.charAt(j) == '\n') {
+              if (j + 1 > start || (j + 1 == start && !repeatedStart)) {
+                resume = j + 1;
+              }
+              break;
+            }
+          }
+        }
         depth++;
         i++;
         continue;
       }
       if (c == '}') {
         if (depth == 0) {
+          // No candidate block was found: the '}' (or the offending
+          // token itself) is the sync point.
           pos = (i == start) ? i + 1 : i;
           return syncTo(what, startLine, start, "");
         }
         depth--;
+        if (depth == 0 && resume >= start) {
+          // The candidate statement's block closed: re-parse it fresh.
+          pos = resume;
+          return syncTo(what, startLine, start, "");
+        }
         i++;
         continue;
       }
       if (c == ';' && depth == 0) {
+        // The ';' terminates the statement that follows the broken one:
+        // resume at that statement's line start when it is strictly past
+        // the scan start (same-line garbage keeps the consume-the-';'
+        // behavior, which cannot loop).
+        for (int j = i - 1; j >= start; j--) {
+          if (raw.charAt(j) == '\n') {
+            pos = j + 1;
+            return syncTo(what, startLine, start, "");
+          }
+        }
         pos = i + 1;
         return syncTo(what, startLine, start, "");
       }
       i++;
     }
-    // No sync point found: drop the remainder of the stream.
-    pos = len;
+    // No sync point found: drop the remainder of the stream. A
+    // candidate's line may start exactly at the scan start.
+    pos = (resume >= start) ? resume : len;
     return syncTo(what, startLine, start, "; rest of input truncated");
   }
 
@@ -454,6 +503,7 @@ public class LessParser {
    */
   private boolean syncTo(String what, int startLine, int start, String suffix) {
     m_ptr = 0;
+    lastRecoverStart = start;
     int newline = -1;
     for (int i = start; i < pos; i++) {
       if (raw.charAt(i) == '\n') {
