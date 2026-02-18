@@ -135,6 +135,34 @@ public class RecoveryModeTest {
   }
 
   @Test
+  public void testEscapedQuoteDoesNotDesyncRecovery() throws LessException {
+    // A string containing an escaped quote must not corrupt the sync
+    // scan. The following declaration on the same block survives.
+    String css = compile(".a {\n  !!! \"a\\\"b\";\n  y: 1;\n}\n", fixedSafe());
+    assertTrue(css.contains("y: 1"), css);
+    assertTrue(!css.contains("truncated"), css);
+    assertRecovered(css);
+
+    // Top-level shape: the next statement survives.
+    css = compile("!!! \"a\\\"b\";\ny: 1;\n", fixedSafe());
+    assertTrue(css.contains("y: 1"), css);
+    assertTrue(!css.contains("truncated"), css);
+  }
+
+  @Test
+  public void testLineNumbersAfterRecovery() throws LessException {
+    // After a recovery jump the incremental counters are fast-forwarded,
+    // so nodes parsed after the jump carry correct positions (tracing
+    // shows lineOffset + 1).
+    LessOptions opts = fixedSafe();
+    opts.tracing(true);
+    LessContext ctx = new LessContext(opts);
+    ctx.setCompiler(COMPILER);
+    String css = COMPILER.compile("!!!\ny: 1;\n.z { color: red; }\n", ctx);
+    assertTrue(css.contains("':3'"), css);
+  }
+
+  @Test
   public void testStrictStillFails() {
     // Strict mode at the fixed level must keep failing exactly as before.
     for (String raw : new String[] { MEDIA_BLOCKLESS, VAR_PAREN, INVALID_ADDITION }) {

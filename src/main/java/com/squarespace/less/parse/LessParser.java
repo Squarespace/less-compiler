@@ -369,14 +369,19 @@ public class LessParser {
    */
   private boolean recover(String what) {
     int start = pos;
-    int line = lineAt(start);
+    int startLine = lineAt(start);
     int depth = 0;
     char quote = 0;
     int i = start;
     while (i < len) {
       char c = raw.charAt(i);
       if (quote != 0) {
-        // Inside a string: only the matching close quote matters.
+        // Inside a string: skip backslash-escaped characters so an
+        // escaped quote cannot desync the scanner.
+        if (c == '\\') {
+          i += 2;
+          continue;
+        }
         if (c == quote) {
           quote = 0;
         }
@@ -409,10 +414,7 @@ public class LessParser {
       if (c == '}') {
         if (depth == 0) {
           pos = (i == start) ? i + 1 : i;
-          m_ptr = 0;
-          ctx.addWarning("skipped " + what + " at line " + line);
-          recovered++;
-          return true;
+          return syncTo(what, startLine, start, "");
         }
         depth--;
         i++;
@@ -420,21 +422,20 @@ public class LessParser {
       }
       if (c == ';' && depth == 0) {
         pos = i + 1;
-        m_ptr = 0;
-        ctx.addWarning("skipped " + what + " at line " + line);
-        recovered++;
-        return true;
+        return syncTo(what, startLine, start, "");
       }
       i++;
     }
     // No sync point found: drop the remainder of the stream.
     pos = len;
-    m_ptr = 0;
-    ctx.addWarning("skipped " + what + " at line " + line + "; rest of input truncated");
-    recovered++;
-    return true;
+    return syncTo(what, startLine, start, "; rest of input truncated");
   }
 
+  /**
+   * Absolute 1-based line of an offset in the source. The incremental
+   * line/column counters can drift when marks/rollbacks straddle
+   * whitespace, so recovery diagnostics use this instead.
+   */
   private int lineAt(int offset) {
     int line = 1;
     for (int i = 0; i < offset && i < len; i++) {
@@ -443,6 +444,30 @@ public class LessParser {
       }
     }
     return line;
+  }
+
+  /**
+   * Completes a recovery jump: clears stale mark state, fast-forwards the
+   * incremental line/column counters (and {@code furthest}) past the
+   * dropped region so nodes parsed after the jump get correct positions,
+   * and records the warning for the skipped region.
+   */
+  private boolean syncTo(String what, int startLine, int start, String suffix) {
+    m_ptr = 0;
+    int newline = -1;
+    for (int i = start; i < pos; i++) {
+      if (raw.charAt(i) == '\n') {
+        line++;
+        newline = i;
+      }
+    }
+    column = (newline < 0) ? column + (pos - start) : pos - newline - 1;
+    if (pos > furthest) {
+      furthest = pos;
+    }
+    ctx.addWarning("skipped " + what + " at line " + startLine + suffix);
+    recovered++;
+    return true;
   }
 
   /**

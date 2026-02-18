@@ -139,6 +139,12 @@ public class LessRenderer {
     renderBlock(block, false);
     env.pop();
 
+    // Render-phase recovery warnings surface once, trailing, after the
+    // whole output (not at each block boundary).
+    for (String warning : ctx.drainWarnings()) {
+      model.comment("/* WARNING[" + (++warningId) + "] raised during recovery: " + warning + " */\n");
+    }
+
     if (model.complexity() > COMPLEXITY_THRESHOLD) {
       model.comment("/* RENDER: exceeded render complexity limit: " + model.complexity() + " */");
     }
@@ -339,10 +345,6 @@ public class LessRenderer {
       }
     }
 
-    // Eval/render-phase recovery warnings surface after the output.
-    for (String warning : ctx.drainWarnings()) {
-      model.comment("/* WARNING[" + (++warningId) + "] raised during recovery: " + warning + " */\n");
-    }
   }
 
   /**
