@@ -69,6 +69,10 @@ public class SelectorUtils {
   public static Selectors combine(Selectors ancestors, Selectors current, boolean truncate, boolean[] truncated)
       throws LessException {
     Selectors result = new Selectors();
+    // The complexity budget is shared across every flatten call of this
+    // combination, so the truncation cap bounds the COMBINED selector
+    // set (not each current selector independently).
+    int[] complexity = new int[1];
     List<Selector> selectors = current.selectors();
     int ilen = selectors.size();
     for (int i = 0; i < ilen; i++) {
@@ -80,7 +84,7 @@ public class SelectorUtils {
         List<List<Selector>> inputs = new ArrayList<>(2);
         inputs.add(ancestors.selectors());
         inputs.add(Arrays.asList(selector));
-        SelectorUtils.flatten(inputs, result, truncate, truncated);
+        SelectorUtils.flatten(inputs, result, truncate, truncated, complexity);
         continue;
       }
 
@@ -111,7 +115,7 @@ public class SelectorUtils {
         inputs.add(Arrays.asList(temp));
       }
 
-      SelectorUtils.flatten(inputs, result, truncate, truncated);
+      SelectorUtils.flatten(inputs, result, truncate, truncated, complexity);
     }
     return result;
   }
@@ -121,7 +125,7 @@ public class SelectorUtils {
    * selectors {@code result}.
    */
   public static void flatten(List<List<Selector>> selectors, Selectors result) throws LessException {
-    flatten(selectors, result, false, null);
+    flatten(selectors, result, false, null, new int[1]);
   }
 
   /**
@@ -129,12 +133,22 @@ public class SelectorUtils {
    * {@code truncate} is true the product stops at the complexity
    * threshold, keeping the selectors collected so far (the truncate-the
    * selector-at-the-upper-limit-keep-the-body contract). The {@code
-   * truncated} flag lets the caller warn.
+   * truncated} flag lets the caller warn. {@code complexity} carries the
+   * running element count across calls, so callers combining multiple
+   * input selectors cap the combined set rather than each one
+   * independently.
    */
   public static void flatten(List<List<Selector>> selectors, Selectors result, boolean truncate, boolean[] truncated)
       throws LessException {
+    flatten(selectors, result, truncate, truncated, new int[1]);
+  }
+
+  /**
+   * Flatten with a caller-owned complexity accumulator.
+   */
+  public static void flatten(List<List<Selector>> selectors, Selectors result, boolean truncate, boolean[] truncated,
+      int[] complexity) throws LessException {
     CartesianProduct<Selector> product = new CartesianProduct<>(selectors);
-    int complexity = 0;
     while (product.hasNext()) {
       Selector flat = new Selector();
       List<Selector> _selectors = product.next();
@@ -143,13 +157,13 @@ public class SelectorUtils {
         Selector tmp = _selectors.get(i);
         List<Element> elements = tmp.elements();
         int jsize = elements.size();
-        complexity += jsize;
+        complexity[0] += jsize;
         for (int j = 0; j < jsize; j++) {
           flat.add(elements.get(j));
         }
       }
       result.add(flat);
-      if (complexity > SELECTOR_THRESHOLD) {
+      if (complexity[0] > SELECTOR_THRESHOLD) {
         if (truncate) {
           if (truncated != null) {
             truncated[0] = true;

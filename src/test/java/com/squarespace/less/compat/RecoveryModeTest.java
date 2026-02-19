@@ -91,6 +91,40 @@ public class RecoveryModeTest {
   }
 
   @Test
+  public void testSelectorTruncationCapsCombinedSet() throws LessException {
+    // The complexity budget spans every current selector of a
+    // ruleset. Two selectors each individually under the threshold but
+    // 4680 elements combined must truncate to the ~4096-element bound
+    // (~114 rendered combos), not render all ~226.
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < 65; i++) {
+      if (i > 0) {
+        b.append(", ");
+      }
+      b.append(".a").append(i);
+    }
+    b.append(" {\n");
+    for (int d = 0; d < 34; d++) {
+      b.append("  ").append(".b").append(d).append(" {\n");
+    }
+    b.append("  .z1, .z2 {\n");
+    b.append("    color: red;\n");
+    b.append("  }\n");
+    for (int d = 33; d >= 0; d--) {
+      b.append("  }");
+    }
+    b.append("}\n");
+
+    String css = compile(b.toString(), fixedSafe());
+    int combos = css.split("\\.b33", -1).length - 1;
+    assertTrue(combos > 0, css);
+    // 4096 elements / 36 per combo = 113. The per-call cap would allow
+    // up to ~226. Pin the global bound.
+    assertTrue(combos <= 130, "rendered " + combos + " combos, expected <= 130:\n" + css);
+    assertTrue(css.contains("raised during recovery"), css);
+  }
+
+  @Test
   public void testTopLevelErrorKeepsFollowingRulesets() throws LessException {
     // A stray bad line between two valid rulesets must not truncate
     // the rest of the file. The followers re-parse at their line starts.
