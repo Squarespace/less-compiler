@@ -16,6 +16,7 @@
 
 package com.squarespace.less.compat;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -198,6 +199,16 @@ public class EvalRecoveryTest {
     // The following independent import must still resolve.
     assertTrue(css.contains(".d"), "later import dropped after a limit failure:\n" + css);
     assertTrue(!css.contains(".e"), css);
+  }
+
+  @Test
+  public void testDuplicateRecoveryWarningsAreDeduped() throws LessException {
+    // A mixin-defining ruleset is evaluated once as output and once as
+    // a mixin expansion. Each evaluation drops the same rule. The warning
+    // ledger must emit one entry for the source line, not two.
+    String css = compile(".m { x: (1px / 0); y: 2px; }\n.a { .m(); }\n", fixedSafeMode());
+    assertEquals(css.split("DIVIDE_BY_ZERO", -1).length - 1, 1, css);
+    assertTrue(css.contains("y: 2px"), css);
   }
 
   @Test

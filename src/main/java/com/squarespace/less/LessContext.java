@@ -19,7 +19,9 @@ package com.squarespace.less;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.BufferStack;
@@ -58,6 +60,14 @@ public class LessContext {
    * Drained by the renderer into the output's WARNING comments.
    */
   private final List<String> warnings = new ArrayList<>();
+
+  /**
+   * Exact-message dedupe key for the warning ledger: a construct that is
+   * evaluated more than once (e.g. a mixin-defining ruleset rendered both
+   * as output and as a mixin expansion) can otherwise emit one identical
+   * warning per evaluation.
+   */
+  private final Set<String> warningKeys = new HashSet<>();
 
   private final LessOptions opts;
 
@@ -161,7 +171,9 @@ public class LessContext {
    * Records a recovery warning.
    */
   public void addWarning(String warning) {
-    warnings.add(warning);
+    if (warningKeys.add(warning)) {
+      warnings.add(warning);
+    }
   }
 
   /**
@@ -178,6 +190,7 @@ public class LessContext {
   public List<String> drainWarnings() {
     List<String> drained = new ArrayList<>(warnings);
     warnings.clear();
+    warningKeys.clear();
     return drained;
   }
 
