@@ -20,9 +20,15 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.testng.annotations.Test;
 
 import com.squarespace.less.ExecuteErrorType;
+import com.squarespace.less.HashMapLessLoader;
 import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
@@ -148,6 +154,50 @@ public class EvalRecoveryTest {
     } catch (LessException e) {
       assertTrue(e.primaryError().type() == ExecuteErrorType.MIXIN_UNDEFINED, e.getMessage());
     }
+  }
+
+  @Test
+  public void testFailedMixinCallDoesNotLeakDepth() throws LessException {
+    // A matched mixin whose body throws must unwind the mixin-depth
+    // counter. With a leak, every later legit call chain trips the
+    // recursion limit and is dropped.
+    LessOptions opts = fixedSafeMode();
+    opts.mixinRecursionLimit(3);
+    String css = compile(
+        ".m() { x: (1px / 0); }\n"
+            + ".deep(@n) when (@n > 0) { .deep(@n - 1); }\n"
+            + ".deep(@n) when (@n = 0) { p: done; }\n"
+            + ".a { .m(); }\n"
+            + ".b { .deep(2); }\n",
+        opts);
+    assertTrue(css.contains("p: done"), "legit call chain after a failed call was dropped:\n" + css);
+  }
+
+  @Test
+  public void testFailedImportDoesNotLeakDepth() throws LessException {
+    // An import hitting the recursion limit must unwind the import
+    // depth. With a leak, every later import fails the depth check.
+    Map<Path, String> files = new HashMap<>();
+    files.put(Paths.get(".").resolve("a.less").toAbsolutePath().normalize(),
+        "@import 'b.less';\n@import 'd.less';\n");
+    files.put(Paths.get(".").resolve("b.less").toAbsolutePath().normalize(),
+        "@import 'c.less';\n");
+    files.put(Paths.get(".").resolve("c.less").toAbsolutePath().normalize(),
+        "@import 'e.less';\n");
+    files.put(Paths.get(".").resolve("e.less").toAbsolutePath().normalize(),
+        ".e { color: black; }\n");
+    files.put(Paths.get(".").resolve("d.less").toAbsolutePath().normalize(),
+        ".d { color: green; }\n");
+
+    LessOptions opts = fixedSafeMode();
+    opts.importRecursionLimit(2);
+    LessContext ctx = new LessContext(opts, new HashMapLessLoader(files));
+    ctx.setCompiler(COMPILER);
+    String css = COMPILER.compile("@import 'a.less';", ctx, Paths.get("."), Paths.get("t.less"));
+    // The recursive chain (a->b->c->e) trips the limit and is dropped.
+    // The following independent import must still resolve.
+    assertTrue(css.contains(".d"), "later import dropped after a limit failure:\n" + css);
+    assertTrue(!css.contains(".e"), css);
   }
 
   @Test

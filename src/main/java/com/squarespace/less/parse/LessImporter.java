@@ -83,15 +83,17 @@ public class LessImporter {
       return importNode;
     }
 
-    // Mark import recursion start. Always exit in finally so a failed import
-    // does not leak depth into later compiles on a reused context.
+    // Enforce the recursion limit before entering, so the depth counter
+    // never leaks on the limit exception (under recovery mode a failed
+    // import is dropped and compilation continues).
+    int limit = context.options().importRecursionLimit();
+    if (context.importDepth() >= limit) {
+      throw new LessException(importError(rawPath, "Recursion limit of " + limit + " exceeded"));
+    }
+
+    // Mark import recursion start.
     context.enterImport();
     try {
-      int limit = context.options().importRecursionLimit();
-      if (context.importDepth() > limit) {
-        throw new LessException(importError(rawPath, "Recursion limit of " + limit + " exceeded"));
-      }
-
       Stylesheet sheet = importStylesheet(rawPath, importNode);
       if (sheet == null) {
         // When import-once is used, we disappear the import node.

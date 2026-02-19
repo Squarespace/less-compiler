@@ -586,7 +586,8 @@ public class LessEvaluator {
       throw e;
     } finally {
       // Always exit, even on error. A skipped exit leaks depth and poisons
-      // later compiles that reuse this context.
+      // later compiles that reuse this context. In recovery mode the
+      // caller may swallow the failure and keep compiling.
       ctx.exitMixin();
       original.exit();
     }
