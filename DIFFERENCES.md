@@ -95,9 +95,10 @@ the mode decides *how violations behave*.
   dropped at a well-defined boundary, a `WARNING[n] ... raised during
   recovery: ...` comment is emitted, and compilation continues:
 
-  - parser: the stream is resynchronized at the next `;` or `}` at
-    brace depth 0 (strings/comments skipped); an unterminated tail is
-    truncated; input that recovers to nothing reports
+  - parser: the stream is resynchronized at well-defined boundaries —
+    a well-formed statement that follows the error (including a complete
+    top-level block) is re-parsed and kept; only the broken region is
+    dropped; an unterminated tail is truncated; input that recovers to nothing reports
     `stylesheet produced no output`;
   - evaluation: a failed block member (rule, mixin call, ...) is dropped
     and the next sibling is evaluated;
@@ -119,7 +120,7 @@ The `NONFINITE_AS_ZERO` patch is fixed at level 2: non-finite math values
 released levels (below 2) they render as `0`:
 
     y: sqrt(-1);   /* level 0 (released) -> 0; level 2 (fixed) -> NaN */
-    y: pow(0, -1); /* level 0 -> Infinity */
+    y: pow(0, -1); /* level 0 (released) -> 0; level 2 (fixed) -> Infinity */
 
 Modulo by zero follows the same contract as division: strict mode fails the
 compile, lenient mode warns, and the NaN result renders according to the
