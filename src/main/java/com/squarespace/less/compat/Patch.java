@@ -153,8 +153,8 @@ public enum Patch {
   }
 
   /**
-   * Highest threshold. The default level sits here, preserving released
-   * behavior.
+   * Highest threshold. The fully-fixed compiler sits here (every fix
+   * applied). The default level is 0, preserving released behavior.
    */
   public static int maxThreshold() {
     int max = 0;

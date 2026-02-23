@@ -131,9 +131,9 @@ public abstract class BaseColor implements Node {
   }
 
   /**
-   * Level 0: channel math keeps fractional precision until the ctor
-   * rounds and clamps, so the only rounding that happens is the final
-   * round.
+   * Fixed behavior (levels at/above COLOR_CHANNEL_PRECISION's threshold):
+   * channel math keeps fractional precision until the ctor rounds and
+   * clamps, so the only rounding that happens is the final round.
    */
   private BaseColor operateFixed(Operator op, BaseColor arg0, BaseColor arg1) throws LessException {
     RGBColor c0 = arg0.toRGB();
@@ -165,8 +165,8 @@ public abstract class BaseColor implements Node {
   }
 
   /**
-   * Level 0: a scalar operand stays a double so the ctor's rounding is
-   * the only rounding that happens.
+   * Fixed behavior: a scalar operand stays a double so the ctor's
+   * rounding is the only rounding that happens.
    */
   private BaseColor operateFixed(Operator op, BaseColor arg0, double val) throws LessException {
     RGBColor c0 = arg0.toRGB();

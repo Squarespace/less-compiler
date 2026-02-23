@@ -177,9 +177,10 @@ public class MixinMatcher {
       }
     }
 
-    // Build the final bindings block. Bindings stay in insertion order.
-    // At level 0 @arguments is emitted in parameter declaration order,
-    // like less.js.
+    // Build the final bindings block. Released behavior emits @arguments
+    // in binding insertion order. The fixed behavior (ARGUMENTS_ORDER,
+    // at/above its threshold) emits parameter declaration order, like
+    // less.js.
     Expression arguments = new Expression();
     Block bindings = new Block(boundValues.size());
     for (Map.Entry<String, Node> entry : boundValues.entrySet()) {

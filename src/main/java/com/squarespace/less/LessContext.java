@@ -177,15 +177,17 @@ public class LessContext {
   }
 
   /**
-   * The recovery warnings recorded so far (unmodifiable view).
+   * The recovery warnings recorded so far (the live backing list. They
+   * are drained by the renderer, which clears the ledger).
    */
   public List<String> warnings() {
     return warnings;
   }
 
   /**
-   * Returns and clears the recovery warnings (called by the renderer once
-   * per render pass so repeated renders do not duplicate them).
+   * Returns and clears the recovery warnings. The renderer drains at the
+   * start of render() (parse/eval-phase entries surface leading) and
+   * once more at its end (render-phase entries trail the output).
    */
   public List<String> drainWarnings() {
     List<String> drained = new ArrayList<>(warnings);

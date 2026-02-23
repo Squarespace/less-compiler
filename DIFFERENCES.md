@@ -52,7 +52,8 @@ Threshold 2 - legacy generation 2 (gated bug fixes; active below level 2):
 - `ARGUMENTS_ORDER` - `@arguments` follows binding insertion order instead
   of parameter declaration order.
 - `GUARD_COMPARE_UNCOMPARABLE` - uncomparable guard operands compare as -1,
-  so `<=`, `>=` and `!=` evaluate true.
+  so `<`, `<=` and `!=` evaluate true (the released truth table, pinned
+  by the compat matrix; at the fixed level only `<` stays true).
 - `IMPORT_EXT_CASE` - `@import` extensions match case-sensitively.
 - `IMPORT_ONCE_SUPPRESS` - a plain import caching the file first defeats a
   later `@import-once`, which re-inlines the file.
@@ -111,13 +112,13 @@ the mode decides *how violations behave*.
   mode) outcomes is pinned by RecoveryMatrixTest.
 
 
-#### Non-finite math values render as text below level 2
+#### Non-finite math values render as text at the fully-fixed level
 
-At the default level, the `NONFINITE_AS_ZERO` patch renders non-finite math
-values (NaN, Infinity) as `0`. Below level 2 the values render as visible
-text, same as less.js:
+The `NONFINITE_AS_ZERO` patch is fixed at level 2: non-finite math values
+(NaN, Infinity) render as visible text there, same as less.js. At the
+released levels (below 2) they render as `0`:
 
-    y: sqrt(-1);   /* level 0 -> NaN */
+    y: sqrt(-1);   /* level 0 (released) -> 0; level 2 (fixed) -> NaN */
     y: pow(0, -1); /* level 0 -> Infinity */
 
 Modulo by zero follows the same contract as division: strict mode fails the

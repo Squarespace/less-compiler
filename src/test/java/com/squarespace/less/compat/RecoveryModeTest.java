@@ -31,7 +31,7 @@ import com.squarespace.less.LessOptions;
 /**
  * Parser recovery in safe mode: hard errors become warn-and-continue at
  * synchronization points. Strict mode is unchanged. The per-cell
- * outcomes are pinned by the matrix contract test.
+ * outcomes are pinned by RecoveryMatrixTest.
  */
 public class RecoveryModeTest {
 
