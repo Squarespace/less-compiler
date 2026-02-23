@@ -147,6 +147,36 @@ public class RecoveryModeTest {
   }
 
   @Test
+  public void testMultiLineStringAfterErrorKeepsValidStatements() throws LessException {
+    // Statement boundaries tracked during recovery are string-aware.
+    // The bare-LF string is itself invalid (QUOTED_BARE_LF, a released
+    // hard error), but the valid statement after it must survive instead
+    // of being swallowed by the phantom-string cascade.
+    String css = compile("!!!\nx: \"abc\ndef\";\ny: 1;\n", fixedSafe());
+    assertTrue(css.contains("y: 1"), css);
+    assertTrue(!css.contains("truncated"), css);
+  }
+
+  @Test
+  public void testMultiLineStringAfterErrorInBlock() throws LessException {
+    // Same shape inside a block: the ruleset survives with its valid
+    // declaration. No unclosed-block truncation.
+    String css = compile(".a {\n  !!!\n  x: \"abc\n  def\";\n  y: 1;\n}\n", fixedSafe());
+    assertTrue(css.contains(".a"), css);
+    assertTrue(css.contains("y: 1"), css);
+    assertTrue(!css.contains("truncated"), css);
+    assertTrue(!css.contains("unclosed"), css);
+  }
+
+  @Test
+  public void testMultiLineCommentAfterErrorKeepsValidStatements() throws LessException {
+    // The forward boundary tracker skips newlines inside block comments.
+    String css = compile("!!!\n/* multi\nline */\nx: 1;\ny: 2;\n", fixedSafe());
+    assertTrue(css.contains("x: 1"), css);
+    assertTrue(css.contains("y: 2"), css);
+  }
+
+  @Test
   public void testRecoveryDoesNotLoopOnGarbageBlocks() throws LessException {
     // A garbage selector with a block is dropped. The surrounding
     // rulesets survive and recovery terminates.

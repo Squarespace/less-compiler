@@ -336,7 +336,9 @@ public class LessEvaluator {
           // Best effort: drop this member, warn, and continue with the
           // next sibling. Draining env warnings discards any partial
           // warnings a failed member may have produced.
-          env.warnings(); // drain (and discard) the failed member's pending warnings
+          // ExecEnv.warnings() joins AND clears the env's pending list:
+          // discarding the string drops the failed member's partial
+          // warnings so they cannot bleed into the next rule.
           rules.set(i, null);
           ctx.addWarning("eval: dropped " + node.type().name().toLowerCase() + ": " + e.getMessage());
           continue;
@@ -393,7 +395,9 @@ public class LessEvaluator {
             throw e;
           }
           // Best effort: drop the failing call and continue.
-          env.warnings(); // drain (and discard) the failed member's pending warnings
+          // ExecEnv.warnings() joins AND clears the env's pending list:
+          // discarding the string drops the failed member's partial
+          // warnings so they cannot bleed into the next rule.
           rules.set(i, null);
           ctx.addWarning("eval: dropped mixin call: " + e.getMessage());
           continue;

@@ -274,8 +274,8 @@ public class LessParser {
 
   /**
    * Best-effort recovery mode (the redefined safe mode). True = warn and
-   * recover at well-defined boundaries instead of failing. False (default)
-   * is strict. Independent of the compat level.
+   * recover at well-defined boundaries instead of failing, false (default)
+   * = strict. Independent of the compat level.
    */
   private boolean recovery;
 
@@ -361,18 +361,36 @@ public class LessParser {
   }
 
   /**
-   * Best-effort recovery: drops the stream region starting at the current
-   * position up to the next synchronization point and records a warning.
+   * Best-effort recovery: drops the invalid region starting at the current
+   * position, resynchronizes at a well-defined boundary, and records a
+   * warning. The contract, in order:
    *
-   * <p>Scanning tracks brace depth and skips strings and comments. Sync
-   * points are {@code ';'} at depth 0 (consumed) and {@code '}'} at depth 0
-   * (left for the caller, or consumed when the offending token itself).
-   * Remember: recovery is at statement/rule granularity. A block opened
-   * inside the dropped region is part of it. Without any sync point the
-   * remainder of the stream is dropped.
+   * <ol>
+   *   <li>The forward scan tracks brace depth and skips strings and
+   *       comments (escaped quotes and bare-LF phantom strings included).
+   *       It also tracks {@code lastBoundary}, the line start of the next
+   *       statement, updated only on newlines crossed outside strings and
+   *       comments, never mid-string.</li>
+   *   <li>The first {@code '{'} at depth 0 begins the next statement's
+   *       block: when that balanced block closes, the loop re-parses the
+   *       statement fresh from its line start (a valid follower survives,
+   *       a broken one re-recovers).</li>
+   *   <li>A {@code ';'} at depth 0 terminates the following statement:
+   *       resume at that statement's line start when it is strictly past
+   *       the scan start, otherwise consume the {@code ';'}.</li>
+   *   <li>A {@code '}'} at depth 0 with no candidate block is the sync
+   *       point (left for the caller, or consumed when it is the
+   *       offending token itself).</li>
+   *   <li>Without any sync point (or after a failed one-shot re-resume,
+   *       see the {@code lastRecoverStart} guard) the remainder of the
+   *       stream is dropped.</li>
+   * </ol>
    *
-   * <p>The position always advances past the scan start, so recovery cannot
-   * loop. Stale mark-slot state from the failed sub-parse is cleared.
+   * <p>Termination: resuming at the scan start itself is allowed once
+   * (the failed statement may have consumed up to the next construct's
+   * line); if that re-parse fails, the repeated-start guard drops the
+   * candidate, so positions strictly advance from the second recovery
+   * onward. Stale mark-slot state from the failed sub-parse is cleared.
    */
   private boolean recover(String what) {
     int start = pos;
@@ -385,6 +403,11 @@ public class LessParser {
     // one re-recovers, positions strictly advance). -1 means none found.
     boolean repeatedStart = (pos == lastRecoverStart);
     int resume = -1;
+    // Offset just after the most recent newline crossed outside strings
+    // and comments. The next statement's line start. Initialized to the
+    // scan start so a construct on the recovery line itself can resume
+    // there (one-shot, see the repeated-start guard).
+    int lastBoundary = start;
     int i = start;
     while (i < len) {
       char c = raw.charAt(i);
@@ -397,6 +420,17 @@ public class LessParser {
         }
         if (c == quote) {
           quote = 0;
+          i++;
+          continue;
+        }
+        if (c == '\n') {
+          // A string with a bare line feed is invalid LESS (QUOTED_BARE_LF)
+          // anyway, and the region is being dropped: end the phantom
+          // string at the newline so it can never swallow sync points or
+          // boundaries across lines (degenerate-input cascade guard). The
+          // newline itself is a statement boundary.
+          quote = 0;
+          lastBoundary = i + 1;
         }
         i++;
         continue;
@@ -416,26 +450,27 @@ public class LessParser {
         if (n == '/') {
           int end = raw.indexOf('\n', i + 2);
           i = end < 0 ? len : end + 1;
+          // A line comment ends at its newline, which is a statement
+          // boundary.
+          if (end >= 0) {
+            lastBoundary = end + 1;
+          }
           continue;
         }
       }
       if (c == '{') {
         if (depth == 0 && resume < 0) {
           // Remember the earliest balanced block: resume at the start of
-          // its line. The construct's line may begin exactly at the scan
-          // start (the failed statement consumed up to it), so the
-          // back-scan floor is start - 1. Resuming at the scan start
-          // itself is a one-shot opportunity: if that re-parse fails the
-          // repeated-start guard drops the candidate so the scan moves
-          // to the next balanced block (positions strictly advance, no
-          // loop).
-          for (int j = i - 1; j >= start - 1; j--) {
-            if (j >= 0 && raw.charAt(j) == '\n') {
-              if (j + 1 > start || (j + 1 == start && !repeatedStart)) {
-                resume = j + 1;
-              }
-              break;
-            }
+          // its line (lastBoundary, tracked forward and string/comment
+          // aware, no backward scan that could land inside a multi-line
+          // string). The construct's line may begin exactly at the scan
+          // start (the failed statement consumed up to it). Resuming at
+          // the scan start itself is a one-shot opportunity. If that
+          // re-parse fails, the repeated-start guard drops the candidate
+          // and the scan moves to the next balanced block (positions
+          // strictly advance, no loop).
+          if (lastBoundary > start || (lastBoundary == start && !repeatedStart)) {
+            resume = lastBoundary;
           }
         }
         depth++;
@@ -460,17 +495,18 @@ public class LessParser {
       }
       if (c == ';' && depth == 0) {
         // The ';' terminates the statement that follows the broken one:
-        // resume at that statement's line start when it is strictly past
-        // the scan start (same-line garbage keeps the consume-the-';'
-        // behavior, which cannot loop).
-        for (int j = i - 1; j >= start; j--) {
-          if (raw.charAt(j) == '\n') {
-            pos = j + 1;
-            return syncTo(what, startLine, start, "");
-          }
+        // resume at that statement's line start (lastBoundary) when it
+        // is strictly past the scan start (same-line garbage keeps the
+        // consume-the-';' behavior, which cannot loop).
+        if (lastBoundary > start) {
+          pos = lastBoundary;
+        } else {
+          pos = i + 1;
         }
-        pos = i + 1;
         return syncTo(what, startLine, start, "");
+      }
+      if (c == '\n') {
+        lastBoundary = i + 1;
       }
       i++;
     }
@@ -528,7 +564,7 @@ public class LessParser {
    *
    * <p>Behavioral change versus the pre-recovery semantics: previously
    * {@code true} pinned the parser to the default (released) level and
-   * {@code false} to the fully-fixed level. The level is now set via
+   * {@code false} to the fully-fixed level; the level is now set via
    * {@link LessOptions#compatLevel(int)} exclusively.
    */
   public void safeMode(boolean flag) {
