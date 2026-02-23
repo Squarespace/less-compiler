@@ -244,8 +244,11 @@ public class Condition implements Node {
       case 1:
         return operator == GREATER_THAN || operator == GREATER_THAN_OR_EQUAL || operator == NOT_EQUAL;
       case UNCOMPARABLE:
-        // '<' keeps the legacy quirk (upstream parity). The extension
-        // ops (<=, >=, !=) are false. No ordering or equality exists.
+        // No ordering or equality exists between the operands. '<' stays
+        // true for upstream (less.js) ordering parity. '<=', '!=', '>',
+        // '>=' and '==' are false. The fix targets '<=' and '!=', the two
+        // legacy-true operators that made guards fire accidentally. The
+        // full six-operator table is pinned by the compat matrix.
         return operator == LESS_THAN;
       default:
         throw new LessInternalException("Serious error: comparison functions must return -1, 0, or 1. Got " + result);
@@ -358,8 +361,11 @@ public class Condition implements Node {
   }
 
   /**
-   * Legacy level maps uncomparable operands to -1. Level 0 reports
-   * them as UNCOMPARABLE so <=, >= and != are false.
+   * Released level: uncomparable operands map to -1 (the less.js
+   * ordering), so '<', '<=' and '!=' are true (pinned byte-identical to
+   * the 1.7.2 truth table). Fully-fixed level: UNCOMPARABLE. No
+   * ordering or equality, so only '<' remains true (see the operator
+   * switch above for the rationale and the pinned table).
    */
   private int uncomparable(ExecEnv env) {
     return env.context().options().compatEnabled(Patch.GUARD_COMPARE_UNCOMPARABLE) ? -1 : UNCOMPARABLE;

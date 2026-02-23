@@ -318,6 +318,33 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testGuardCompareFullTable() throws LessException {
+    // Measured contract (1.7.2 = the released -1 semantics):
+    //   released:  < T  <= T  == F  != T  > F  >= F
+    //   fixed:     < T  <= F  == F  != F  > F  >= F   (only '<' true)
+    //   override at fixed: released table again.
+    String[] ops = { "<", "<=", "=", "!=", ">", ">=" };
+    boolean[] released = { true, true, false, true, false, false };
+    boolean[] fixed = { true, false, false, false, false, false };
+    for (int i = 0; i < ops.length; i++) {
+      String source = ".m(@a) when (@a " + ops[i] + " 10px) { p: 1; }\n.x { .m(red); }\n";
+      String css = compile(source, new LessOptions());
+      assertEquals(css.contains("p: 1"), released[i], ops[i] + " at the released level");
+
+      LessOptions opts = new LessOptions();
+      opts.compatLevel(Patch.maxThreshold());
+      css = compile(source, opts);
+      assertEquals(css.contains("p: 1"), fixed[i], ops[i] + " at the fixed level");
+
+      LessOptions overridden = new LessOptions();
+      overridden.compatLevel(Patch.maxThreshold());
+      overridden.compatPatch(Patch.GUARD_COMPARE_UNCOMPARABLE);
+      css = compile(source, overridden);
+      assertEquals(css.contains("p: 1"), released[i], ops[i] + " with the per-site override");
+    }
+  }
+
+  @Test
   public void testReplaceRegexGroups() throws LessException {
     String raw = "replace(\"abc 123\", \"([a-z]+) ([0-9]+)\", \"$2 $1\")";
 
