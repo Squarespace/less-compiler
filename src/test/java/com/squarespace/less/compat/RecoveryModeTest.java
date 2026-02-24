@@ -289,6 +289,31 @@ public class RecoveryModeTest {
   }
 
   @Test
+  public void testWarningLedgerResetBetweenCompiles() throws LessException {
+    // A compile that throws after recording recovery warnings (the
+    // renderer's drain never ran, e.g. the empty-recovery hard error)
+    // must not bleed stale WARNING comments into the next compile on
+    // the same context, nor suppress identical fresh warnings via the
+    // stale dedupe keys.
+    LessOptions opts = fixedSafe();
+    LessContext ctx = new LessContext(opts);
+    ctx.setCompiler(COMPILER);
+    try {
+      COMPILER.compile("!!!\ngarbage\n###", ctx);
+      fail("expected empty-recovery compile to fail");
+    } catch (LessException e) {
+      // expected: recovery warnings were recorded, then the empty-
+      // recovery hard error aborted before the renderer drained.
+    }
+    String css = COMPILER.compile(".a { color: red; }\n", ctx);
+    assertFalse(css.contains("WARNING["), css);
+    // Fresh recovery warnings still surface on the same context.
+    css = COMPILER.compile("!!!\ny: 1;\n", ctx);
+    assertTrue(css.contains("y: 1"), css);
+    assertTrue(css.contains("WARNING["), css);
+  }
+
+  @Test
   public void testStrayClosingBraceRecovers() throws LessException {
     String css = compile("}\n.a { color: red; }\n", fixedSafe());
     assertTrue(css.contains(".a"), css);

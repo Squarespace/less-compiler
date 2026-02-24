@@ -146,6 +146,11 @@ public class LessCompiler {
     // A prior failed compile may have left the depth counters nonzero.
     // Reset so a reused context does not fail fresh compiles.
     ctx.resetDepthCounters();
+    // A prior compile that died after recording recovery warnings (the
+    // renderer never drained them) would leak stale WARNING comments
+    // into this compile's output and suppress identical fresh warnings
+    // via the stale dedupe keys.
+    ctx.resetWarnings();
     Stylesheet sheet = parse0(raw, ctx, rootPath, fileName, safeMode);
     LessStats stats = ctx.stats();
     long started = stats.now();

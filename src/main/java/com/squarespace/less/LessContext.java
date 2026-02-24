@@ -202,6 +202,19 @@ public class LessContext {
     return drained;
   }
 
+  /**
+   * Clears the recovery-warning ledger without returning it. Called at
+   * the start of each compile: a prior compile that threw after
+   * recording warnings (the renderer's drain never ran, e.g. the
+   * empty-recovery hard error) must not leak stale warnings into the
+   * next compile on this context, nor suppress identical fresh
+   * warnings via the stale dedupe keys.
+   */
+  public void resetWarnings() {
+    warnings.clear();
+    warningKeys.clear();
+  }
+
   public Buffer acquireBuffer() {
     return bufferStack.acquireBuffer();
   }
