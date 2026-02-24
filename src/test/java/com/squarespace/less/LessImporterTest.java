@@ -73,11 +73,17 @@ public class LessImporterTest extends LessTestBase {
     }
 
     // Recovery mode (safeMode=true): the failing import is dropped with a
-    // warning and the compile succeeds.
+    // warning, but the top sheet is *only* that import. Recovery rescues
+    // nothing, so the empty-recovery outcome is a hard error even in
+    // safe mode. A blank stylesheet must not ship on a green build.
     LessContext recovery = new LessContext(opts, loader);
     recovery.setCompiler(COMPILER);
-    String css = COMPILER.compile(source, recovery, path("."), path("foo.less"), true);
-    assertTrue(css.contains("WARNING["), css);
+    try {
+      COMPILER.compile(source, recovery, path("."), path("foo.less"), true);
+      fail("Expected empty-recovery hard error");
+    } catch (LessException e) {
+      assertTrue(e.getMessage().contains("produced no output"), e.getMessage());
+    }
   }
 
   private static Path path(String path) {

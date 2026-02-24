@@ -79,16 +79,30 @@ public class RecoveryMatrixTest {
     final LessErrorType errorType;
     final Polarity polarity;
     final boolean cssUnchangedAtFix;
+    final boolean emptyRecovery;
     final Map<Path, String> files;
 
     Row(String name, String source, int threshold, LessErrorType errorType, Polarity polarity,
         boolean cssUnchangedAtFix, Map<Path, String> files) {
+      this(name, source, threshold, errorType, polarity, cssUnchangedAtFix, false, files);
+    }
+
+    /**
+     * @param emptyRecovery true when recovery at the fixed levels (for
+     *     REJECT_FIX) or the non-fixed levels (for ACCEPT_FIX) drops the
+     *     entire stylesheet. The empty-recovery outcome is a hard error
+     *     even in safe mode, so the safe cell expects the error instead
+     *     of ok + recovery warning.
+     */
+    Row(String name, String source, int threshold, LessErrorType errorType, Polarity polarity,
+        boolean cssUnchangedAtFix, boolean emptyRecovery, Map<Path, String> files) {
       this.name = name;
       this.source = source;
       this.threshold = threshold;
       this.errorType = errorType;
       this.polarity = polarity;
       this.cssUnchangedAtFix = cssUnchangedAtFix;
+      this.emptyRecovery = emptyRecovery;
       this.files = files;
     }
   }
@@ -140,7 +154,7 @@ public class RecoveryMatrixTest {
       // Threshold 2: the generation-2 patches
       new Row("ATTR_SELECTOR_UNTERMINATED",
           "a[href {\n  color: red;\n}\n",
-          2, SyntaxErrorType.INCOMPLETE_PARSE, Polarity.REJECT_FIX, false, null),
+          2, SyntaxErrorType.INCOMPLETE_PARSE, Polarity.REJECT_FIX, false, true, null),
       new Row("SELECTOR_COMPLEXITY_OVERFLOW",
           complexitySource(),
           2, ExecuteErrorType.SELECTOR_TOO_COMPLEX, Polarity.REJECT_FIX, false, null),
@@ -171,7 +185,7 @@ public class RecoveryMatrixTest {
           2, null, Polarity.OUTPUT_FIX, false, null),
       new Row("IMPORT_EXT_CASE",
           "@import \"A.LESS\";\n",
-          2, SyntaxErrorType.IMPORT_ERROR, Polarity.ACCEPT_FIX, false, filesOf("A.LESS", ".a { color: red; }\n")),
+          2, SyntaxErrorType.IMPORT_ERROR, Polarity.ACCEPT_FIX, false, true, filesOf("A.LESS", ".a { color: red; }\n")),
       new Row("IMPORT_ONCE_SUPPRESS",
           "@import 'f.less';\n@import-once 'f.less';\n",
           2, null, Polarity.OUTPUT_FIX, false, filesOf("f.less", ".f { color: red; }\n")),
@@ -280,15 +294,9 @@ public class RecoveryMatrixTest {
           failures++;
         }
 
-        // Safe mode: always compiles.
-        Outcome safe = run(row.source, level, true, row.files);
-        if (!safe.ok) {
-          report.append(row.name).append(" L").append(level).append(" safe: expected ok, got ")
-              .append(safe.errorType).append('\n');
-          failures++;
-          continue;
-        }
-        int warns = recoveryWarningCount(safe.css);
+        // Safe mode: always compiles, except rows whose recovery drops
+        // the entire stylesheet (emptyRecovery). Those are a hard error
+        // even in safe mode.
         boolean recoveryExpected;
         switch (row.polarity) {
           case REJECT_FIX:
@@ -301,6 +309,29 @@ public class RecoveryMatrixTest {
             recoveryExpected = false;
             break;
         }
+        Outcome safe = run(row.source, level, true, row.files);
+        boolean emptyRecoveryExpected = row.emptyRecovery && recoveryExpected;
+        if (!safe.ok) {
+          if (emptyRecoveryExpected) {
+            if (safe.errorType != SyntaxErrorType.GENERAL) {
+              report.append(row.name).append(" L").append(level).append(" safe: expected the ")
+                  .append("empty-recovery error (GENERAL), got ").append(safe.errorType).append('\n');
+              failures++;
+            }
+          } else {
+            report.append(row.name).append(" L").append(level).append(" safe: expected ok, got ")
+                .append(safe.errorType).append('\n');
+            failures++;
+          }
+          continue;
+        }
+        if (emptyRecoveryExpected) {
+          report.append(row.name).append(" L").append(level)
+              .append(" safe: expected the empty-recovery error, compiled\n");
+          failures++;
+          continue;
+        }
+        int warns = recoveryWarningCount(safe.css);
         if (recoveryExpected) {
           if (warns == 0) {
             report.append(row.name).append(" L").append(level)

@@ -263,9 +263,29 @@ public class RecoveryModeTest {
   }
 
   @Test
-  public void testGarbageInputWarnsNoOutput() throws LessException {
-    String css = compile("!!!\ngarbage\n###", fixedSafe());
-    assertRecoveredWith(css, "produced no output");
+  public void testGarbageInputIsHardError() {
+    // Recovery that rescues nothing is a broken sheet. A hard error even
+    // in safe mode, so a blank stylesheet can never ship on a green build
+    // (that is 1.7.2's failure contract for the worst input class. The
+    // partially-broken sheets recovery is meant to save still compiles).
+    try {
+      compile("!!!\ngarbage\n###", fixedSafe());
+      fail("expected empty-recovery compile to fail");
+    } catch (LessException e) {
+      assertTrue(e.getMessage().contains("produced no output"), e.getMessage());
+    }
+  }
+
+  @Test
+  public void testEmptyInputStillValid() throws LessException {
+    // Parity guard: genuinely empty (or comment-only) input is not a
+    // recovery outcome, so it compiles to empty output without warnings,
+    // exactly like 1.7.2's CLI (empty file: exit 0, empty css).
+    String css = compile("", fixedSafe());
+    assertTrue(!css.contains("WARNING["), css);
+    css = compile("/* just a comment */", fixedSafe());
+    assertTrue(css.contains("just a comment"), css);
+    assertTrue(!css.contains("WARNING["), css);
   }
 
   @Test

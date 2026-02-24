@@ -98,8 +98,11 @@ the mode decides *how violations behave*.
   - parser: the stream is resynchronized at well-defined boundaries —
     a well-formed statement that follows the error (including a complete
     top-level block) is re-parsed and kept; only the broken region is
-    dropped; an unterminated tail is truncated; input that recovers to nothing reports
-    `stylesheet produced no output`;
+    dropped; an unterminated tail is truncated; input that recovers to
+    nothing is a hard error even in safe mode (`stylesheet produced no
+    output`) — a blank stylesheet never ships on a green build, and
+    genuinely empty input still compiles to empty output (released
+    behavior);
   - evaluation: a failed block member (rule, mixin call, ...) is dropped
     and the next sibling is evaluated;
   - render: a node that fails to render is skipped;

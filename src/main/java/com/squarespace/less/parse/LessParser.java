@@ -908,7 +908,13 @@ public class LessParser {
 
     if (recovery && recovered > 0 && r instanceof Stylesheet) {
       if (((Stylesheet) r).block().rules().isEmpty()) {
-        ctx.addWarning("stylesheet produced no output; all input was skipped during recovery");
+        // Recovery that rescues nothing is a broken sheet. This is a hard
+        // error even in safe mode so a green build can never ship a blank
+        // stylesheet. The released 1.7.2 failure contract (garbage in, exit
+        // non-zero, no CSS) is preserved for the worst input class, while
+        // partially-broken sheets still recover.
+        throw parseError(new LessException(SyntaxErrorMaker.general(
+            "stylesheet produced no output; all input was skipped during recovery")));
       }
     }
 
