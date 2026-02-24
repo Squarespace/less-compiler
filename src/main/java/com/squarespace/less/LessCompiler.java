@@ -97,10 +97,12 @@ public class LessCompiler {
 
   private Stylesheet parse0(String raw, LessContext ctx, Path rootPath, Path fileName, Boolean safeMode)
       throws LessException {
-    // The legacy safeMode boolean is a transient, context-scoped recovery
-    // override: parse, evaluation and render all read ctx.safeMode(). It
-    // never mutates the caller's LessOptions, so a shared options object
-    // cannot be poisoned by one boolean-flag caller.
+    // The legacy safeMode boolean is a context-scoped recovery override
+    // (never written into the caller's LessOptions, so a shared options
+    // object cannot be poisoned by one boolean-flag caller, and it
+    // persists on this context across compiles. See
+    // LessContext.safeModeOverride. Parse, evaluation and render all
+    // read ctx.safeMode().
     if (safeMode != null) {
       ctx.safeModeOverride(safeMode);
     }

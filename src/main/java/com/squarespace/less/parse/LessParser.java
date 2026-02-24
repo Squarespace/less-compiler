@@ -408,6 +408,12 @@ public class LessParser {
     // scan start so a construct on the recovery line itself can resume
     // there (one-shot, see the repeated-start guard).
     int lastBoundary = start;
+    // The first newline crossed outside strings/comments closes the
+    // garbage line and yields the next line's start. Later newlines are
+    // mid-statement (multi-line declarations and selector lists are
+    // valid LESS) and are not boundaries. The parser's own acceptance
+    // decides where the statement ends once we resume at its start.
+    boolean firstLine = true;
     int i = start;
     while (i < len) {
       char c = raw.charAt(i);
@@ -505,8 +511,9 @@ public class LessParser {
         }
         return syncTo(what, startLine, start, "");
       }
-      if (c == '\n') {
+      if (c == '\n' && firstLine) {
         lastBoundary = i + 1;
+        firstLine = false;
       }
       i++;
     }

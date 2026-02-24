@@ -177,6 +177,40 @@ public class RecoveryModeTest {
   }
 
   @Test
+  public void testMultiLineStatementAfterErrorSurvives() throws LessException {
+    // A newline mid-statement is not a statement boundary. Recovery
+    // resumes at the statement's start and the parser decides.
+    String css = compile("!!!\nx: a\nb;\n", fixedSafe());
+    assertTrue(css.contains("x: a b"), css);
+  }
+
+  @Test
+  public void testMultiLineSelectorListAfterErrorKeepsAllSelectors() throws LessException {
+    // Dropping one line of a multi-line selector list used to render
+    // silently wrong CSS for the dropped selector.
+    String css = compile("!!!\n.a,\n.b { color: red; }\n", fixedSafe());
+    assertTrue(css.contains(".a,"), css);
+    assertTrue(css.contains(".b"), css);
+    assertTrue(css.contains("color: red"), css);
+  }
+
+  @Test
+  public void testNewlineTerminatedDeclarationAfterErrorSurvives() throws LessException {
+    String css = compile("!!!\nx: 1\ny: 2;\n", fixedSafe());
+    assertTrue(css.contains("y: 2"), css);
+  }
+
+  @Test
+  public void testEscapedLfStringAfterErrorSurvives() throws LessException {
+    // A backslash-escaped line feed continues a valid multi-line string.
+    // The scanner must not register a boundary or a phantom-string state
+    // across it.
+    String css = compile("!!!\nx: \"abc\\\ndef\";\ny: 1;\n", fixedSafe());
+    assertTrue(css.contains("y: 1"), css);
+    assertTrue(css.contains("abc\\" + "\n" + "def"), css);
+  }
+
+  @Test
   public void testRecoveryDoesNotLoopOnGarbageBlocks() throws LessException {
     // A garbage selector with a block is dropped. The surrounding
     // rulesets survive and recovery terminates.

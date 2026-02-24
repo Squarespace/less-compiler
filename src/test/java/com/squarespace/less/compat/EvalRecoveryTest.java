@@ -202,6 +202,20 @@ public class EvalRecoveryTest {
   }
 
   @Test
+  public void testDroppedMemberWarningsDoNotBleedIntoNextRule() throws LessException {
+    // A member that warns (lenient division) and then throws must take
+    // its partial warnings with it. The next rule stays clean.
+    LessOptions opts = fixedSafeMode();
+    opts.strict(false);
+    String css = compile(".a {\n  x: (1px / 0) @missing;\n  y: 2px;\n}\n", opts);
+    assertTrue(css.contains("VAR_UNDEFINED"), css);
+    int idx = css.indexOf("y: 2px");
+    int bleed = css.lastIndexOf("DIVIDE_BY_ZERO");
+    assertTrue(bleed < 0 || bleed < idx, "DIVIDE_BY_ZERO leaked onto a clean rule:\n" + css);
+    assertTrue(!css.contains("raised evaluating"), css);
+  }
+
+  @Test
   public void testDuplicateRecoveryWarningsAreDeduped() throws LessException {
     // A mixin-defining ruleset is evaluated once as output and once as
     // a mixin expansion. Each evaluation drops the same rule. The warning
