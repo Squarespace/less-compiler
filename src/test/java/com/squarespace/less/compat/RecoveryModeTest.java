@@ -201,6 +201,32 @@ public class RecoveryModeTest {
   }
 
   @Test
+  public void testLineCommentMidStatementDoesNotMoveBoundary() throws LessException {
+    // A line comment inside a multi-line statement must not move the
+    // boundary. The whole declaration re-parses and survives.
+    String css = compile("!!!\nx: a // c\nb;\n", fixedSafe());
+    assertTrue(css.contains("x: a"), css);
+    assertTrue(!css.contains("produced no output"), css);
+  }
+
+  @Test
+  public void testLineCommentMidSelectorListKeepsAllSelectors() throws LessException {
+    String css = compile("!!!\n.a, // c\n.b { color: red; }\n", fixedSafe());
+    assertTrue(css.contains(".a,"), css);
+    assertTrue(css.contains(".b"), css);
+    assertTrue(css.contains("color: red"), css);
+  }
+
+  @Test
+  public void testGarbageWithTrailingLineCommentRecovers() throws LessException {
+    // The boundary the comment-newline rule exists for: the garbage line
+    // ends in a line comment, and the next statement must survive.
+    String css = compile("!!! // c\ny: 1;\n", fixedSafe());
+    assertTrue(css.contains("y: 1"), css);
+    assertTrue(!css.contains("produced no output"), css);
+  }
+
+  @Test
   public void testEscapedLfStringAfterErrorSurvives() throws LessException {
     // A backslash-escaped line feed continues a valid multi-line string.
     // The scanner must not register a boundary or a phantom-string state

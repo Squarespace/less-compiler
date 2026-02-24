@@ -457,9 +457,12 @@ public class LessParser {
           int end = raw.indexOf('\n', i + 2);
           i = end < 0 ? len : end + 1;
           // A line comment ends at its newline, which is a statement
-          // boundary.
-          if (end >= 0) {
+          // boundary only under the generic-newline rule: the region's
+          // first external newline (mid-statement comments must not
+          // move the boundary).
+          if (end >= 0 && firstLine) {
             lastBoundary = end + 1;
+            firstLine = false;
           }
           continue;
         }
