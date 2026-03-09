@@ -2834,13 +2834,13 @@ public class LessParser {
 
       // Restore the operator when the right side fails to parse, so it can
       // be treated as a plain CSS separator (e.g. url(x) / cover center).
-      if (!safe_mode) {
+      if (!compat.enabled(Patch.BUG4)) {
         begin();
       }
       next();
 
       if (!ws()) {
-        if (!safe_mode) {
+        if (!compat.enabled(Patch.BUG4)) {
           rollback();
         }
         break;
@@ -2848,13 +2848,13 @@ public class LessParser {
 
       Node operand1 = operand();
       if (operand1 == null) {
-        if (!safe_mode) {
+        if (!compat.enabled(Patch.BUG4)) {
           rollback();
         }
         break;
       }
 
-      if (!safe_mode) {
+      if (!compat.enabled(Patch.BUG4)) {
         commit();
       }
       Operator operator = Operator.fromChar(c);
