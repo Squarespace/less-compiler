@@ -277,6 +277,25 @@ public class RecoveryModeTest {
   }
 
   @Test
+  public void testGarbageWithLeadingCommentIsHardError() {
+    // Gap found while building the corpus: comments are block
+    // members, so a sheet that is comments + fully-broken input must
+    // still hit the empty-recovery error, not ship a comment-only
+    // (semantically blank) stylesheet on a green build.
+    for (String raw : new String[] {
+        "// note\n!!!\ngarbage\n###",
+        "/* note */\n!!!\ngarbage\n###"
+    }) {
+      try {
+        compile(raw, fixedSafe());
+        fail("expected empty-recovery compile to fail: " + raw);
+      } catch (LessException e) {
+        assertTrue(e.getMessage().contains("produced no output"), e.getMessage());
+      }
+    }
+  }
+
+  @Test
   public void testEmptyInputStillValid() throws LessException {
     // Parity guard: genuinely empty (or comment-only) input is not a
     // recovery outcome, so it compiles to empty output without warnings,

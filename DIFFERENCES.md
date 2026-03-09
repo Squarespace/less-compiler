@@ -102,7 +102,8 @@ the mode decides *how violations behave*.
     nothing is a hard error even in safe mode (`stylesheet produced no
     output`) — a blank stylesheet never ships on a green build, and
     genuinely empty input still compiles to empty output (released
-    behavior);
+    behavior); comments do not count as output for this check, so a
+    sheet that is comments + fully-broken input errors too;
   - evaluation: a failed block member (rule, mixin call, ...) is dropped
     and the next sibling is evaluated;
   - render: a node that fails to render is skipped;

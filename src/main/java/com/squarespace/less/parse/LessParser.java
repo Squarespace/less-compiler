@@ -907,7 +907,7 @@ public class LessParser {
     complete();
 
     if (recovery && recovered > 0 && r instanceof Stylesheet) {
-      if (((Stylesheet) r).block().rules().isEmpty()) {
+      if (emptyOfNonComment(((Stylesheet) r).block())) {
         // Recovery that rescues nothing is a broken sheet. This is a hard
         // error even in safe mode so a green build can never ship a blank
         // stylesheet. The released 1.7.2 failure contract (garbage in, exit
@@ -919,6 +919,21 @@ public class LessParser {
     }
 
     return r;
+  }
+
+  /**
+   * True when the block holds no rule other than comments. Comments are
+   * tracked as block members, so a sheet that is comments + fully-broken
+   * input must still hit the empty-recovery error rather than ship a
+   * comment-only (semantically blank) stylesheet on a green build.
+   */
+  private static boolean emptyOfNonComment(Block block) {
+    for (int i = 0; i < block.rules().size(); i++) {
+      if (!(block.rules().get(i) instanceof Comment)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
