@@ -23,6 +23,8 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
+import com.squarespace.less.LessOptions;
+
 
 public class CompatLevelTest {
 
@@ -87,6 +89,36 @@ public class CompatLevelTest {
     CompatLevel defaulted = CompatLevel.defaultLevel().withPatch(Patch.BUG2);
     assertTrue(defaulted.enabled(Patch.BUG2));
     assertEquals(defaulted.level(), 0);
+  }
+
+  @Test
+  public void testWithLevelPreservesOverrides() {
+    // Changing the level must not silently discard the override set
+    // (the LessOptions setter-order trap: compatPatch then compatLevel).
+    CompatLevel patched = CompatLevel.at(0).withPatch(Patch.BUG3).withLevel(2);
+    assertEquals(patched.level(), 2);
+    for (Patch patch : Patch.values()) {
+      assertEquals(patched.enabled(patch), patch == Patch.BUG3, patch.name());
+    }
+    // A fresh level with no overrides still behaves like before.
+    assertEquals(CompatLevel.at(0).withLevel(Patch.maxThreshold()).level(), Patch.maxThreshold());
+    try {
+      CompatLevel.at(0).withLevel(-1);
+      fail("expected IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      // expected
+    }
+    // The same guarantee holds at the LessOptions level, in both orders.
+    LessOptions opts = new LessOptions();
+    opts.compatPatch(Patch.BUG1);
+    opts.compatLevel(2);
+    assertTrue(opts.compatEnabled(Patch.BUG1), "override must survive a later compatLevel()");
+    assertEquals(opts.compatLevel(), 2);
+    opts = new LessOptions();
+    opts.compatLevel(2);
+    opts.compatPatch(Patch.BUG1);
+    assertTrue(opts.compatEnabled(Patch.BUG1), "override must apply after compatLevel()");
+    assertEquals(opts.compatLevel(), 2);
   }
 
   @Test

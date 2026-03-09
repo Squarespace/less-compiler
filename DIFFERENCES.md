@@ -81,7 +81,12 @@ migrates to their threshold level or above.
 For backwards compatibility, the parser's boolean `safeMode()` flag is the
 recovery-mode flag (see below): `true` = best effort, `false` (default) =
 strict. It is independent of the compat level, which is set exclusively via
-`LessOptions.compatLevel(int)`.
+`LessOptions.compatLevel(int)`. Legacy note: on the released 1.7.2 compiler
+the 2-arg `compile(raw, ctx)` / `parse(raw, ctx)` entry points defaulted to
+`safeMode=true`. Here they apply no mode override (the options default:
+strict, level 0) — parser-equivalent to released behavior at level 0, but
+with no recovery; callers that want recovery must pass the flag explicitly
+or set `opts.safeMode(true)`.
 
 #### Recovery mode (safe mode)
 

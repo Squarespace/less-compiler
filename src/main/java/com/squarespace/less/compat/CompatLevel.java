@@ -99,6 +99,18 @@ public final class CompatLevel {
     return new CompatLevel(level, copy);
   }
 
+  /**
+   * Copy at a different ladder position, preserving the override set.
+   * Changing the level must not silently discard per-site legacy
+   * overrides, regardless of setter order on the options.
+   */
+  public CompatLevel withLevel(int level) {
+    if (level < 0) {
+      throw new IllegalArgumentException("compat level must be >= 0, got " + level);
+    }
+    return new CompatLevel(level, overrides);
+  }
+
   @Override
   public String toString() {
     return "CompatLevel(level=" + level + ", overrides=" + overrides + ")";

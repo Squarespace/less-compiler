@@ -202,14 +202,16 @@ public class LessOptions {
 
   /**
    * Compat level. 0 is the released behavior. A patch's fix is applied
-   * at its threshold level and above.
+   * at its threshold level and above. Per-site patch overrides
+   * ({@link #compatPatch}) survive a level change. Setter order is
+   * irrelevant.
    */
   public int compatLevel() {
     return compat.level();
   }
 
   public void compatLevel(int level) {
-    this.compat = CompatLevel.at(level);
+    this.compat = compat.withLevel(level);
   }
 
   /**
