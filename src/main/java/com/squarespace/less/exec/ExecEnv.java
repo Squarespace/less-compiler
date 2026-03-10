@@ -128,9 +128,14 @@ public class ExecEnv {
   }
 
   /**
-   * Adds a warning to the list.
+   * Adds a warning to the list, subject to the compile's per-type and
+   * overall budgets (the evaluation phase is the earliest choke point:
+   * warnings never accumulate in the arrays beyond the budget).
    */
   public void addWarning(String warning) {
+    if (!ctx.allowWarning(warning)) {
+      return;
+    }
     if (warnings == null) {
       warnings = new FlexList<>();
     }

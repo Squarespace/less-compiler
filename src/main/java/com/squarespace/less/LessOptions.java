@@ -56,6 +56,11 @@ public class LessOptions {
   // hard errors abort the compile). Orthogonal to the compat level.
   private boolean safeMode = false;
 
+  // Warning budgets, enforced per compile by the context ledger and the
+  // evaluation env (see LessContext.allowWarning).
+  private int maxWarnings = 0;
+  private int maxWarningsPerType = 25;
+
   public LessOptions() {
   }
 
@@ -147,6 +152,35 @@ public class LessOptions {
 
   public void hideWarnings(boolean flag) {
     set(flag, Option.HIDE_WARNINGS);
+  }
+
+  /**
+   * Maximum total number of warnings emitted per compile
+   * (0 = unlimited). A hard ceiling on the warning surface. Prefer the
+   * per-type budget ({@link #maxWarningsPerType}) so one noisy type
+   * cannot starve the others.
+   */
+  public int maxWarnings() {
+    return maxWarnings;
+  }
+
+  public void maxWarnings(int max) {
+    this.maxWarnings = max;
+  }
+
+  /**
+   * Maximum number of warnings of a given type emitted per compile
+   * (0 = unlimited, default 25). A per-compile counter per type caps
+   * the warning surface so a pathological sheet cannot flood the output
+   * or the warning arrays. The suppressed count is summarized in a
+   * single trailing comment at render.
+   */
+  public int maxWarningsPerType() {
+    return maxWarningsPerType;
+  }
+
+  public void maxWarningsPerType(int max) {
+    this.maxWarningsPerType = max;
   }
 
   public void importPaths(List<String> paths) {

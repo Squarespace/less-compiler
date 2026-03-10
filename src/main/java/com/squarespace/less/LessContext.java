@@ -18,10 +18,13 @@ package com.squarespace.less;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.exec.BufferStack;
@@ -68,6 +71,17 @@ public class LessContext {
    * warning per evaluation.
    */
   private final Set<String> warningKeys = new HashSet<>();
+
+  /**
+   * Per-compile warning budgets (see allowWarning): how many warnings of
+   * each type and in total have been emitted, and how many were
+   * suppressed. Reset together with the ledger at compile start so a
+   * reused context always gets a fresh budget.
+   */
+  private final Map<String, Integer> warningEmitted = new HashMap<>();
+  private final Map<String, Integer> warningSuppressed = new HashMap<>();
+  private int totalWarningEmitted = 0;
+  private int totalWarningSuppressed = 0;
 
   private final LessOptions opts;
 
@@ -174,10 +188,104 @@ public class LessContext {
   }
 
   /**
+   * Coarse per-type budget key derived from the warning text. Evaluation
+   * warnings embed their error type ({@code ExecuteError
+   * INCOMPATIBLE_UNITS: ...}). The drop/skip surfaces use their own
+   * stable prefixes. Everything else falls into the parse-recovery
+   * bucket.
+   */
+  static String warningType(String warning) {
+    Matcher m = WARNING_TYPE_PREFIX.matcher(warning);
+    if (m.find()) {
+      return m.group(1);
+    }
+    if (warning.startsWith("eval: dropped")) {
+      return "eval-drop";
+    }
+    if (warning.startsWith("render: skipped")) {
+      return "render-skip";
+    }
+    return "parse-recovery";
+  }
+
+  private static final Pattern WARNING_TYPE_PREFIX =
+      Pattern.compile("(?:SyntaxError|ExecuteError)\\s+([A-Z][A-Z0-9_]+)\\s*:");
+
+  /**
+   * Budget gate applied at both warning entry points (the context ledger
+   * and the evaluation env): returns true when this warning may be
+   * recorded/emitted. Counts suppressed warnings per type and in total
+   * when the configured limits are exhausted (0 = unlimited, see
+   * LessOptions.maxWarnings / maxWarningsPerType).
+   */
+  public boolean allowWarning(String warning) {
+    int perType = opts.maxWarningsPerType();
+    int total = opts.maxWarnings();
+    if (perType <= 0 && total <= 0) {
+      return true;
+    }
+    String type = warningType(warning);
+    boolean overType = perType > 0 && warningEmitted.getOrDefault(type, 0) >= perType;
+    boolean overTotal = total > 0 && totalWarningEmitted >= total;
+    if (overType) {
+      warningSuppressed.merge(type, 1, Integer::sum);
+      return false;
+    }
+    if (overTotal) {
+      totalWarningSuppressed++;
+      return false;
+    }
+    warningEmitted.merge(type, 1, Integer::sum);
+    totalWarningEmitted++;
+    return true;
+  }
+
+  /**
+   * One-line summary of warning-budget suppression, or null when nothing
+   * was suppressed. Emitted as a single trailing comment at render.
+   */
+  public String suppressedWarningSummary() {
+    if (warningSuppressed.isEmpty() && totalWarningSuppressed == 0) {
+      return null;
+    }
+    StringBuilder buf = new StringBuilder();
+    int total = 0;
+    for (Map.Entry<String, Integer> entry : warningSuppressed.entrySet()) {
+      if (buf.length() > 0) {
+        buf.append(", ");
+      }
+      buf.append(entry.getValue()).append(' ').append(entry.getKey());
+      total += entry.getValue();
+    }
+    if (totalWarningSuppressed > 0) {
+      if (buf.length() > 0) {
+        buf.append(", ");
+      }
+      buf.append(totalWarningSuppressed).append(" overall");
+      total += totalWarningSuppressed;
+    }
+    int perType = opts.maxWarningsPerType();
+    int overall = opts.maxWarnings();
+    StringBuilder limits = new StringBuilder();
+    if (perType > 0) {
+      limits.append("limit ").append(perType).append(" per type");
+    }
+    if (overall > 0) {
+      if (limits.length() > 0) {
+        limits.append(", ");
+      }
+      limits.append("limit ").append(overall).append(" overall");
+    }
+    return total + " warnings suppressed (" + buf + "); " + limits;
+  }
+
+  /**
    * Records a recovery warning.
    */
   public void addWarning(String warning) {
-    if (warningKeys.add(warning)) {
+    // Dedupe first (exact-message repeats are free), then apply the
+    // per-compile budgets to genuinely new ledger entries.
+    if (warningKeys.add(warning) && allowWarning(warning)) {
       warnings.add(warning);
     }
   }
@@ -208,11 +316,16 @@ public class LessContext {
    * recording warnings (the renderer's drain never ran, e.g. the
    * empty-recovery hard error) must not leak stale warnings into the
    * next compile on this context, nor suppress identical fresh
-   * warnings via the stale dedupe keys.
+   * warnings via the stale dedupe keys. Also resets the per-compile
+   * warning budgets so a reused context gets a fresh allowance.
    */
   public void resetWarnings() {
     warnings.clear();
     warningKeys.clear();
+    warningEmitted.clear();
+    warningSuppressed.clear();
+    totalWarningEmitted = 0;
+    totalWarningSuppressed = 0;
   }
 
   public Buffer acquireBuffer() {

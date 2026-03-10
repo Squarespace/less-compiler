@@ -145,6 +145,13 @@ public class LessRenderer {
       model.comment("/* WARNING[" + (++warningId) + "] raised during recovery: " + warning + " */\n");
     }
 
+    // One bounded summary when the per-compile warning budgets suppressed
+    // anything, so a capped flood still reports its own existence.
+    String suppressed = ctx.suppressedWarningSummary();
+    if (suppressed != null) {
+      model.comment("/* WARNING[" + (++warningId) + "] suppressed: " + suppressed + " */\n");
+    }
+
     if (model.complexity() > COMPLEXITY_THRESHOLD) {
       model.comment("/* RENDER: exceeded render complexity limit: " + model.complexity() + " */");
     }
