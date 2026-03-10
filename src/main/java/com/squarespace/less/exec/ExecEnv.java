@@ -130,7 +130,9 @@ public class ExecEnv {
   /**
    * Adds a warning to the list, subject to the compile's per-type and
    * overall budgets (the evaluation phase is the earliest choke point:
-   * warnings never accumulate in the arrays beyond the budget).
+   * warnings never accumulate in the arrays beyond the budget). Note:
+   * evaluation warnings are NOT deduped (unlike the context ledger).
+   * Repeats are capped purely by the budget.
    */
   public void addWarning(String warning) {
     if (!ctx.allowWarning(warning)) {
@@ -140,6 +142,28 @@ public class ExecEnv {
       warnings = new FlexList<>();
     }
     warnings.append(warning);
+  }
+
+  /**
+   * Joins and clears the pending warnings the caller is about to
+   * discard without rendering (a dropped member's partial warnings),
+   * rolling back the compile's budget accounting for them so the
+   * effective cap matches what is actually surfaced.
+   */
+  public String discardWarnings() {
+    if (warnings == null || warnings.isEmpty()) {
+      return null;
+    }
+    int size = warnings.size();
+    String[] pending = new String[size];
+    for (int i = 0; i < size; i++) {
+      pending[i] = warnings.get(i);
+    }
+    String joined = warnings();
+    for (String warning : pending) {
+      ctx.rollbackWarning(warning);
+    }
+    return joined;
   }
 
   /**

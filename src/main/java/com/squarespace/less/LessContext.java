@@ -188,22 +188,25 @@ public class LessContext {
   }
 
   /**
-   * Coarse per-type budget key derived from the warning text. Evaluation
-   * warnings embed their error type ({@code ExecuteError
-   * INCOMPATIBLE_UNITS: ...}). The drop/skip surfaces use their own
-   * stable prefixes. Everything else falls into the parse-recovery
-   * bucket.
+   * Coarse per-type budget key derived from the warning text. The
+   * drop/skip/truncate ledger surfaces use their own stable prefixes
+   * (checked first, they may embed an error-type payload in the
+   * message). Evaluation warnings embed their error type
+   * ({@code ExecuteError INCOMPATIBLE_UNITS: ...}). Everything else
+   * falls into the parse-recovery bucket (including one-off eval
+   * strings like the experimental replace() note, acceptable in a
+   * catch-all).
    */
   static String warningType(String warning) {
-    Matcher m = WARNING_TYPE_PREFIX.matcher(warning);
-    if (m.find()) {
-      return m.group(1);
-    }
     if (warning.startsWith("eval: dropped")) {
       return "eval-drop";
     }
-    if (warning.startsWith("render: skipped")) {
+    if (warning.startsWith("render: skipped") || warning.startsWith("render: truncated")) {
       return "render-skip";
+    }
+    Matcher m = WARNING_TYPE_PREFIX.matcher(warning);
+    if (m.find()) {
+      return m.group(1);
     }
     return "parse-recovery";
   }
@@ -280,7 +283,31 @@ public class LessContext {
   }
 
   /**
-   * Records a recovery warning.
+   * Undoes the budget accounting for one warning that was appended but
+   * never surfaced (safe-mode recovery discards a dropped member's
+   * pending warnings). Keeps {@code rendered + suppressed == generated}
+   * so the trailing summary arithmetic matches what the user sees. A
+   * no-op when the budgets are disabled.
+   */
+  public void rollbackWarning(String warning) {
+    int perType = opts.maxWarningsPerType();
+    int total = opts.maxWarnings();
+    if (perType <= 0 && total <= 0) {
+      return;
+    }
+    if (perType > 0) {
+      warningEmitted.compute(warningType(warning), (k, v) -> v == null || v <= 1 ? null : v - 1);
+    }
+    if (total > 0 && totalWarningEmitted > 0) {
+      totalWarningEmitted--;
+    }
+  }
+
+  /**
+   * Records a recovery warning. Exact-message repeats are free (dedupe
+   * runs before the budget). The suppressed counts therefore track
+   * *distinct* suppressed messages only. Repeats of an already-
+   * suppressed message are dropped silently.
    */
   public void addWarning(String warning) {
     // Dedupe first (exact-message repeats are free), then apply the

@@ -167,4 +167,48 @@ public class WarningBudgetTest {
     assertEquals(countOccurrences(css, "raised evaluating"), 2, css);
     assertEquals(countOccurrences(css, "raised during recovery"), 2, css);
   }
+
+  @Test
+  public void testWarningTypeClassification() {
+    // Stable surface prefixes win over the embedded error-type payload.
+    // Only bare evaluation warnings classify by their type.
+    assertEquals(LessContext.warningType("eval: dropped rule: ExecuteError VAR_UNDEFINED: missing @x"), "eval-drop");
+    assertEquals(LessContext.warningType("eval: dropped mixin call: ExecuteError INCOMPATIBLE_UNITS: bad"), "eval-drop");
+    assertEquals(LessContext.warningType("render: skipped rule: ExecuteError INCOMPATIBLE_UNITS: bad"), "render-skip");
+    assertEquals(LessContext.warningType("render: truncated selector combination exceeding complexity limit"), "render-skip");
+    assertEquals(LessContext.warningType("ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from EM to PX.. stripping unit."),
+        "INCOMPATIBLE_UNITS");
+    assertEquals(LessContext.warningType("skipped invalid statement at line 3"), "parse-recovery");
+  }
+
+  @Test
+  public void testDiscardedWarningsRollBackBudget() throws LessException {
+    // Warnings generated and then discarded by a dropped mixin call
+    // must not consume budget slots. A later genuine warning of the
+    // same type still surfaces, and the suppressed summary counts only
+    // what was actually suppressed.
+    StringBuilder b = new StringBuilder();
+    b.append(".mx(@a, @b) { use: @a; }\n");
+    for (int i = 0; i < 10; i++) {
+      // Arg 1 emits an INCOMPATIBLE_UNITS strip-unit warning, arg 2
+      // throws, so the call is dropped and its pending warnings discarded.
+      b.append(".x").append(i).append(" { .mx(1em + 1px, @undef-").append(i).append("); }\n");
+    }
+    b.append(".good { width: 1em + 1px; }\n");
+    LessOptions opts = new LessOptions();
+    opts.compatLevel(Patch.maxThreshold());
+    opts.safeMode(true);
+    opts.maxWarningsPerType(3);
+    String css = compile(b.toString(), opts);
+    // The genuine warning still renders: the discards rolled back.
+    assertEquals(countOccurrences(css, "raised evaluating"), 1, css);
+    // The 10 dropped calls surface as eval-drop recovery warnings, capped
+    // at the same budget.
+    assertTrue(countOccurrences(css, "raised during recovery") <= 3, css);
+    // Summary counts the surface buckets. INCOMPATIBLE_UNITS is not
+    // among the suppressed (rolling discards leave nothing suppressed
+    // for it).
+    assertTrue(css.contains("eval-drop"), css);
+  }
+
 }
