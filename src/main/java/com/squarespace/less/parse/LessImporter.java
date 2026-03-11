@@ -199,6 +199,13 @@ public class LessImporter {
         throw new LessException(importError(rawPath, "File cannot be found"));
       }
       result = context.compiler().parse(loader.load(path), context, path.getParent(), path.getFileName());
+      // Share the parsed import across compiles (batch mode, harness
+      // scans): every consume path below returns a fresh copy, so a
+      // compile can never mutate the shared tree. Keyed by the same
+      // absolute path the preCache lookup used above.
+      if (preCache != null) {
+        preCache.put(path, result);
+      }
     }
 
     // Stick it in the cache if not already present.

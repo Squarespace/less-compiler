@@ -28,6 +28,7 @@ import java.util.Map;
 import org.testng.annotations.Test;
 
 import com.squarespace.less.core.LessTestBase;
+import com.squarespace.less.model.Stylesheet;
 
 
 public class LessImporterTest extends LessTestBase {
@@ -151,4 +152,75 @@ public class LessImporterTest extends LessTestBase {
     return opts;
   }
 
+
+  @Test
+  public void testPreCacheSharesParsedImportsAcrossCompiles() throws LessException {
+    // A shared preCache means each imported stylesheet is parsed once
+    // across compiles (the harness scan / batch pattern). Every compile
+    // receives a fresh copy, so outputs are byte-identical to
+    // fresh-parse compiles and one compile can never taint the next.
+    Map<Path, String> files = new HashMap<>();
+    files.put(path("lib.less"),
+        ".lib-mixin(@v) { width: @v; }\n@size: 5px;\n.def { color: red; }\n");
+    CountingLoader counting = new CountingLoader(new HashMapLessLoader(files));
+    Map<Path, Stylesheet> preCache = new HashMap<>();
+
+    LessOptions opts1 = buildOptions();
+    LessContext ctx1 = new LessContext(opts1, counting, preCache);
+    ctx1.setCompiler(COMPILER);
+    // Compile 1 expands the imported mixin (mutating its copy).
+    String css1 = COMPILER.compile(".x { .lib-mixin(10px); }\n@import 'lib.less';\n",
+        ctx1, Paths.get("."), null, true);
+
+    LessOptions opts2 = buildOptions();
+    LessContext ctx2 = new LessContext(opts2, counting, preCache);
+    ctx2.setCompiler(COMPILER);
+    // Compile 2 imports the same library: must reuse the cached parse.
+    String css2 = COMPILER.compile("@import 'lib.less';\n.y { height: @size; }\n",
+        ctx2, Paths.get("."), null, true);
+    assertEquals(1, counting.count(),
+        "lib.less must be parsed exactly once across both compiles");
+
+    // Parity: outputs with the shared cache equal outputs with fresh
+    // per-compile caches (no cross-compile taint).
+    Map<Path, Stylesheet> fresh1 = new HashMap<>();
+    LessContext ctx3 = new LessContext(buildOptions(), counting, fresh1);
+    ctx3.setCompiler(COMPILER);
+    String css3 = COMPILER.compile(".x { .lib-mixin(10px); }\n@import 'lib.less';\n",
+        ctx3, Paths.get("."), null, true);
+    assertEquals(css1, css3);
+
+    Map<Path, Stylesheet> fresh2 = new HashMap<>();
+    LessContext ctx4 = new LessContext(buildOptions(), counting, fresh2);
+    ctx4.setCompiler(COMPILER);
+    String css4 = COMPILER.compile("@import 'lib.less';\n.y { height: @size; }\n",
+        ctx4, Paths.get("."), null, true);
+    assertEquals(css2, css4);
+  }
+
+  /** Wraps a loader, counting distinct load() invocations (tests only). */
+  private static final class CountingLoader implements LessLoader {
+
+    private final LessLoader delegate;
+    private int count = 0;
+
+    CountingLoader(LessLoader delegate) {
+      this.delegate = delegate;
+    }
+
+    int count() {
+      return count;
+    }
+
+    @Override
+    public boolean exists(Path path) {
+      return delegate.exists(path);
+    }
+
+    @Override
+    public String load(Path path) throws LessException {
+      count++;
+      return delegate.load(path);
+    }
+  }
 }
