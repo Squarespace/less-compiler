@@ -457,12 +457,15 @@ public class LessRenderer {
   }
 
   /**
-   * Emit a warning comment.
+   * Emit a warning comment. Non-populating (CssModel.warning): a scope
+   * whose only content would be warning comments is pruned, so warning-
+   * only rulesets do not materialize as empty `{ }` shells in the
+   * output.
    */
   private void emitWarnings(String what, String warnings) {
     if (warnings != null) {
       // Build a comment containing all of the warnings.
-      model.comment("/* WARNING[" + (++warningId) + "] raised evaluating " + what + ": " + warnings + " */\n");
+      model.warning("/* WARNING[" + (++warningId) + "] raised evaluating " + what + ": " + warnings + " */\n");
     }
   }
 

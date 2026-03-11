@@ -168,6 +168,60 @@ public class WarningBudgetTest {
     assertEquals(countOccurrences(css, "raised during recovery"), 2, css);
   }
 
+
+  @Test
+  public void testWarningOnlyScopeIsPruned() throws LessException {
+    // A ruleset whose body would render only warning comments must not
+    // materialize as an empty `{ }` shell (restores the released
+    // empty-scope omission).
+    String src = ""
+        + ".m() {\n"
+        + "  @x: 1920em + 1px;\n"
+        + "  @media screen {\n"
+        + "    .a { color: red; }\n"
+        + "  }\n"
+        + "}\n"
+        + ".tweak-only-warnings { .m(); }\n";
+    LessOptions opts = new LessOptions();
+    opts.maxWarningsPerType(0); // unlimited: warnings are present, not budget-capped
+    String css = compile(src, opts);
+    assertTrue(!css.contains(".tweak-only-warnings {"), css); // no `{ }` shell
+    assertTrue(css.contains("@media screen"), css);
+    assertTrue(css.contains(".tweak-only-warnings .a"), css);
+  }
+
+  @Test
+  public void testWarningsRenderInsideContentScopes() throws LessException {
+    // With real content present, the raised-evaluating comments still
+    // render inside the scope.
+    String src = ""
+        + ".m() { @x: 1920em + 1px; }\n"
+        + ".with-prop { color: blue; .m(); }\n";
+    LessOptions opts = new LessOptions();
+    opts.maxWarningsPerType(0);
+    String css = compile(src, opts);
+    assertTrue(css.contains(".with-prop"), css);
+    assertTrue(css.contains("raised evaluating definition '@x'"), css);
+    assertTrue(css.contains("color: blue"), css);
+  }
+
+  @Test
+  public void testMediaWithOnlyWarningShellsIsPruned() throws LessException {
+    // A @media whose only child would render as a warning shell is
+    // pruned as a whole, matching the released omission.
+    String src = ""
+        + ".m() { @x: 1920em + 1px; }\n"
+        + "@media screen {\n"
+        + "  .only-shell { .m(); }\n"
+        + "}\n"
+        + ".outside { color: red; }\n";
+    LessOptions opts = new LessOptions();
+    opts.maxWarningsPerType(0);
+    String css = compile(src, opts);
+    assertTrue(!css.contains("@media screen"), css);
+    assertTrue(!css.contains(".only-shell"), css);
+    assertTrue(css.contains(".outside"), css);
+  }
   @Test
   public void testWarningTypeClassification() {
     // Stable surface prefixes win over the embedded error-type payload.

@@ -153,6 +153,24 @@ public class CssModel {
   }
 
   /**
+   * Appends a diagnostic warning comment to the current block WITHOUT
+   * marking it populated: a scope whose only content would be warning
+   * comments is pruned (restoring the released empty-scope omission),
+   * while warnings inside content-bearing scopes render as before.
+   * Used for the per-node "raised evaluating" comments. The recovery
+   * drains stay populating. They are the only signal in drop-only
+   * sheets.
+   */
+  public CssModel warning(String value) {
+    this.complexity++;
+    this.size += value.length();
+    if (!value.isEmpty()) {
+      current.addWarning(new CssComment(value));
+    }
+    return this;
+  }
+
+  /**
    * Add raw strings to the header of the current block.
    */
   public CssModel header(String value) {
@@ -285,6 +303,15 @@ public class CssModel {
     public void add(CssNode node) {
       nodes.add(node);
       populated |= node.populated();
+    }
+
+    /**
+     * Appends a node without marking this block populated (diagnostic
+     * warning comments: a scope that would render only warnings is
+     * pruned, matching the released empty-scope omission).
+     */
+    public void addWarning(CssNode node) {
+      nodes.add(node);
     }
 
     @Override
