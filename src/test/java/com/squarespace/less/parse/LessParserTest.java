@@ -1,5 +1,13 @@
 package com.squarespace.less.parse;
 
+import com.squarespace.less.LessCompiler;
+import com.squarespace.less.LessContext;
+import com.squarespace.less.LessException;
+import com.squarespace.less.LessOptions;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import static com.squarespace.less.SyntaxErrorType.ALPHA_UNITS_INVALID;
 import static com.squarespace.less.SyntaxErrorType.EXPECTED;
 import static com.squarespace.less.SyntaxErrorType.GENERAL;
@@ -1105,6 +1113,41 @@ public class LessParserTest extends LessMaker {
 
   private static Tester tester(LessSyntax syntax) {
     return new Tester(syntax);
+  }
+
+
+  @Test
+  public void testFlatSelectorListOverflowPreservedAtReleasedLevel() throws LessException {
+    // A flat selector list whose combined elements exceed the 4096
+    // complexity budget must still render at the released level. The
+    // released counter was per-flatten-call, so flat lists could never
+    // overflow, and the shared budget must not silently drop them (a
+    // ~470-selector rule in the developers corpus vanished at L0).
+    StringBuilder sel = new StringBuilder();
+    for (int i = 0; i < 420; i++) {
+      if (i > 0) {
+        sel.append(",\n");
+      }
+      sel.append(".a").append(i).append(" .b").append(i).append(" .c").append(i).append(" .d").append(i)
+          .append(" .e").append(i).append(" .f").append(i).append(" .g").append(i).append(" .h").append(i)
+          .append(" .i").append(i).append(" .j").append(i).append(" .k").append(i).append(" .l").append(i);
+    }
+    String src = sel + " {\n  background-image: url(x.png);\n}\n";
+    LessOptions opts = new LessOptions();
+    String css = new LessCompiler().compile(src, new LessContext(opts));
+    assertTrue(css.contains(".a419 .b419"), css);
+    assertTrue(css.contains("background-image"), css);
+    assertEquals(countOccurrences(css, ".a"), 420, css);
+  }
+
+  private static int countOccurrences(String css, String needle) {
+    int count = 0;
+    int idx = 0;
+    while ((idx = css.indexOf(needle, idx)) >= 0) {
+      count++;
+      idx += needle.length();
+    }
+    return count;
   }
 
 }

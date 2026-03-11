@@ -110,7 +110,13 @@ public class RenderFrame {
         this.selectors = SelectorUtils.combine(ancestors, current, truncateOnOverflow, truncated);
       } catch (LessException e) {
         if (fallbackOnOverflow) {
-          this.selectors = ancestors;
+          // Released (legacy) overflow contract: the failure is swallowed.
+          // Nested combinators degrade to the parent selector. A FLAT
+          // top-level list has no ancestors, so keeping the current list
+          // preserves the released output (the released counter was
+          // per-flatten-call, so flat lists could never overflow, and the
+          // shared budget must not silently drop them).
+          this.selectors = ancestors.isEmpty() ? current : ancestors;
         } else {
           throw e;
         }
