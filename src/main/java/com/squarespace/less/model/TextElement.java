@@ -100,4 +100,13 @@ public class TextElement extends Element {
     return false;
   }
 
+  /**
+   * See {@link Node#deepCopy()}. This node is structurally immutable
+   * (final combinator and name), so it is safe to share.
+   */
+  @Override
+  public Node deepCopy() {
+    return this;
+  }
+
 }

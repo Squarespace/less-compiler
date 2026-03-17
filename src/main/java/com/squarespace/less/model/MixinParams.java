@@ -76,6 +76,25 @@ public class MixinParams implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. Derived flags (variadic, required,
+   * evaluate) are recomputed by re-adding the deep-copied parameters.
+   */
+  @Override
+  public MixinParams deepCopy() {
+    MixinParams result = new MixinParams();
+    if (params != null) {
+      int size = params.size();
+      for (int i = 0; i < size; i++) {
+        Parameter param = params.get(i);
+        if (param != null) {
+          result.add((Parameter)param.deepCopy());
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * Number of required parameters.
    */
   public int required() {

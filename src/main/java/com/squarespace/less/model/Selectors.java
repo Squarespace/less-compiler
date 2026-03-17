@@ -90,6 +90,25 @@ public class Selectors implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. Derived flags are recomputed by
+   * re-adding the deep-copied selectors.
+   */
+  @Override
+  public Selectors deepCopy() {
+    Selectors result = new Selectors();
+    if (selectors != null) {
+      int size = selectors.size();
+      for (int i = 0; i < size; i++) {
+        Selector selector = selectors.get(i);
+        if (selector != null) {
+          result.add((Selector)selector.deepCopy());
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * See {@link Node#needsEval()}
    */
   @Override

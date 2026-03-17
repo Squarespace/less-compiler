@@ -76,6 +76,14 @@ public class Operation implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Operation deepCopy() {
+    return new Operation(operator, left.deepCopy(), right.deepCopy());
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

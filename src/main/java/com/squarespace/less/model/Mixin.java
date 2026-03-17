@@ -98,6 +98,25 @@ public class Mixin extends BlockNode {
   }
 
   /**
+   * See {@link Node#deepCopy()}. Evaluation-time state is reset: the
+   * closure (a context-scoped environment) is dropped and the entry
+   * count starts at zero, so the copy behaves as if freshly parsed and
+   * can never taint the shared source tree.
+   */
+  @Override
+  public Mixin deepCopy() {
+    Mixin result = new Mixin(name,
+        params == null ? null : (MixinParams)params.deepCopy(),
+        guard == null ? null : (Guard)guard.deepCopy(),
+        block.deepCopy());
+    result.copyStructure(this);
+    result.setSize(size);
+    result.important = important;
+    result.fileName = fileName;
+    return result;
+  }
+
+  /**
    * Returns the mixin's name.
    */
   public String name() {

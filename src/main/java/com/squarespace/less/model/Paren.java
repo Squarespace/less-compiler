@@ -48,6 +48,14 @@ public class Paren implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Paren deepCopy() {
+    return new Paren(value.deepCopy());
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

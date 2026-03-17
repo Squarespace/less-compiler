@@ -93,6 +93,25 @@ public class ExpressionList implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. The evaluate flag is recomputed by
+   * re-adding the deep-copied values.
+   */
+  @Override
+  public ExpressionList deepCopy() {
+    ExpressionList result = new ExpressionList();
+    if (values != null) {
+      int size = values.size();
+      for (int i = 0; i < size; i++) {
+        Node node = values.get(i);
+        if (node != null) {
+          result.add(node.deepCopy());
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

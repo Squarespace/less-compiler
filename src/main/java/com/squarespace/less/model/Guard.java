@@ -67,6 +67,24 @@ public class Guard implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Guard deepCopy() {
+    Guard result = new Guard();
+    if (conditions != null) {
+      int size = conditions.size();
+      for (int i = 0; i < size; i++) {
+        Condition condition = conditions.get(i);
+        if (condition != null) {
+          result.add((Condition)condition.deepCopy());
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * See {@link Node#needsEval()}
    */
   @Override

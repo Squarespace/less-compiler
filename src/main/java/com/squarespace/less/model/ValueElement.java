@@ -113,5 +113,13 @@ public class ValueElement extends Element {
     return false;
   }
 
+  /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public ValueElement deepCopy() {
+    return new ValueElement(combinator, value.deepCopy());
+  }
+
 
 }

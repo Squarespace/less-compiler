@@ -34,6 +34,15 @@ public class Ratio implements Node {
     return value;
   }
 
+  /**
+   * See {@link Node#deepCopy()}. This node is structurally immutable
+   * (a single final string), so it is safe to share.
+   */
+  @Override
+  public Node deepCopy() {
+    return this;
+  }
+
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof Ratio) ? safeEquals(value, ((Ratio)obj).value) : false;

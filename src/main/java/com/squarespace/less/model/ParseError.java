@@ -67,6 +67,17 @@ public class ParseError implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public ParseError deepCopy() {
+    ParseError result = new ParseError();
+    result.filePath = filePath;
+    result.errorMessage = errorMessage;
+    return result;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

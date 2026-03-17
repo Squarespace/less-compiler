@@ -65,6 +65,14 @@ public class Shorthand implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Shorthand deepCopy() {
+    return new Shorthand(left.deepCopy(), right.deepCopy());
+  }
+
+  /**
    * See {@link Node#needsEval()}
    */
   @Override

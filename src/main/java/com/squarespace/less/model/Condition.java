@@ -80,6 +80,14 @@ public class Condition implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Condition deepCopy() {
+    return new Condition(operator, left.deepCopy(), right.deepCopy(), negate);
+  }
+
+  /**
    * Returns the left operand.
    */
   public Node left() {

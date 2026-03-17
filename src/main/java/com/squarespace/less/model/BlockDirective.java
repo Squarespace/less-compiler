@@ -64,6 +64,19 @@ public class BlockDirective extends BlockNode {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public BlockDirective deepCopy() {
+    BlockDirective result = new BlockDirective(name, block.deepCopy());
+    result.copyStructure(this);
+    result.setSize(size);
+    result.important = important;
+    result.fileName = fileName;
+    return result;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

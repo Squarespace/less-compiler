@@ -110,6 +110,15 @@ public class HSLColor extends BaseColor {
   }
 
   /**
+   * See {@link Node#deepCopy()}. This node is structurally immutable
+   * (final channel values, no children), so it is safe to share.
+   */
+  @Override
+  public Node deepCopy() {
+    return this;
+  }
+
+  /**
    * See {@link BaseColor#toRGB()}
    */
   @Override

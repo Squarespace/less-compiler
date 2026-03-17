@@ -136,6 +136,21 @@ public class Import extends StructuralNode {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Import deepCopy() {
+    Import result = new Import(path.deepCopy(),
+        features == null ? null : (Features)features.deepCopy(), once);
+    result.copyStructure(this);
+    result.setSize(size);
+    result.suppress = suppress;
+    result.rootPath = rootPath;
+    result.fileName = fileName;
+    return result;
+  }
+
+  /**
    * Renders the path {@link Node} to get the filesystem path for the
    * stylesheet to be imported.
    */

@@ -106,4 +106,22 @@ public class AttributeElement extends Element {
     return false;
   }
 
+  /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public AttributeElement deepCopy() {
+    AttributeElement result = new AttributeElement(combinator);
+    if (parts != null) {
+      int size = parts.size();
+      for (int i = 0; i < size; i++) {
+        Node part = parts.get(i);
+        if (part != null) {
+          result.add(part.deepCopy());
+        }
+      }
+    }
+    return result;
+  }
+
 }

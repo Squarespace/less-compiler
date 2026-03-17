@@ -152,6 +152,19 @@ public class Rule extends StructuralNode {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Rule deepCopy() {
+    Rule result = new Rule(property.deepCopy(), value.deepCopy(), important);
+    result.copyStructure(this);
+    result.setSize(size);
+    result.fileName = fileName;
+    result.warnings = warnings;
+    return result;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

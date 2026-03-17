@@ -61,6 +61,14 @@ public class Feature implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Feature deepCopy() {
+    return new Feature(property.deepCopy(), value.deepCopy());
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

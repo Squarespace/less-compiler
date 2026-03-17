@@ -68,6 +68,14 @@ public class Assignment implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Assignment deepCopy() {
+    return new Assignment(name, value.deepCopy());
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

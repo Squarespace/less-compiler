@@ -87,6 +87,15 @@ public class Comment implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. This node is structurally immutable
+   * (final body and flags), so it is safe to share.
+   */
+  @Override
+  public Node deepCopy() {
+    return this;
+  }
+
+  /**
    * Indicates if this comment body starts with an exclamation character.
    * When the final output is "minified", comments are removed. If a comment
    * starts with a '!' it will be retained.

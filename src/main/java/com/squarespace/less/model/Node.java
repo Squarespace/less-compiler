@@ -109,4 +109,34 @@ public interface Node {
     throw new LessException(ExecuteErrorMaker.invalidOperation(op, type(), argType));
   }
 
+  /**
+   * Creates a deep copy of this node: a new node graph that shares no
+   * mutable state with the source tree, so each consumer can mutate its
+   * copy without affecting the source or any other consumer.
+   *
+   * <p>Contract:</p>
+   * <ul>
+   * <li>Parse-time state (values, names, flags derived from content,
+   *     position, file metadata) is preserved faithfully.</li>
+   * <li>Evaluation-time state is reset to parse-time defaults: variable
+   *     caches and indexes are rebuilt from content, circular-reference
+   *     flags are cleared, and context-scoped state (e.g. a mixin's
+   *     closure) is dropped. The copy behaves as if it had just been
+   *     parsed.</li>
+   * <li>Every Node-typed reference reachable from the copy is either a
+   *     fresh instance or a node class that is structurally immutable
+   *     (no mutable fields, no Node children).</li>
+   * </ul>
+   *
+   * <p>The default implementation is a deliberate loud failure: every
+   * concrete node class must explicitly declare its copy semantics, so a
+   * future mutable node cannot silently share state through a shared
+   * parse-tree cache. Structurally immutable leaves (keywords, numbers,
+   * variable references, ...) override this to return {@code this}.</p>
+   */
+  default Node deepCopy() {
+    throw new UnsupportedOperationException(
+        "deepCopy() not implemented for " + type().toString());
+  }
+
 }

@@ -257,6 +257,30 @@ public class Block implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. The copy's flags and mixin index are
+   * rebuilt by re-appending the deep-copied rules, so they are always
+   * consistent with the copy's own content (a freshly parsed block);
+   * the variable cache starts unbuilt and the charset is deep-copied.
+   */
+  @Override
+  public Block deepCopy() {
+    Block result = new Block();
+    if (charset != null) {
+      result.charset((Directive)charset.deepCopy());
+    }
+    int size = rules.size();
+    for (int i = 0; i < size; i++) {
+      Node node = rules.get(i);
+      // Recovery mode can leave dropped members as null slots. Parse
+      // trees (deepCopy's intended input) never do.
+      if (node != null) {
+        result.appendNode(node.deepCopy());
+      }
+    }
+    return result;
+  }
+
+  /**
    * Sets this instance's flags by OR-ing with the arguments flags.
    */
   public void orFlags(Block block) {

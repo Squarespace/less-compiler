@@ -14,6 +14,14 @@ public class TransparentColor extends RGBColor {
     super(0, 0, 0);
   }
 
+  /**
+   * See {@link Node#deepCopy()}. Preserves the transparent subclass.
+   */
+  @Override
+  public TransparentColor deepCopy() {
+    return new TransparentColor();
+  }
+
   public String keyword() {
     return KEYWORD;
   }

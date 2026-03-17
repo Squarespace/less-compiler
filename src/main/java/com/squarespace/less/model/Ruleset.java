@@ -80,6 +80,21 @@ public class Ruleset extends BlockNode {
   }
 
   /**
+   * See {@link Node#deepCopy()}. The copy's evaluation flag is reset and
+   * its mixin-path flag is rebuilt from the copied selectors, so the copy
+   * behaves as if freshly parsed.
+   */
+  @Override
+  public Ruleset deepCopy() {
+    Ruleset result = new Ruleset((Selectors)selectors.deepCopy(), block.deepCopy());
+    result.copyStructure(this);
+    result.setSize(size);
+    result.important = important;
+    result.fileName = fileName;
+    return result;
+  }
+
+  /**
    * Returns the ruleset's selector set.
    */
   public Selectors selectors() {

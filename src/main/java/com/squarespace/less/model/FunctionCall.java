@@ -114,6 +114,26 @@ public class FunctionCall implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. The evaluate flag is recomputed by the
+   * constructor from the deep-copied arguments.
+   */
+  @Override
+  public FunctionCall deepCopy() {
+    List<Node> copiedArgs = null;
+    if (args != null) {
+      copiedArgs = new ArrayList<>(args.size());
+      int size = args.size();
+      for (int i = 0; i < size; i++) {
+        Node arg = args.get(i);
+        if (arg != null) {
+          copiedArgs.add(arg.deepCopy());
+        }
+      }
+    }
+    return new FunctionCall(name, copiedArgs, noImplementation);
+  }
+
+  /**
    * See {@link Node#needsEval()}
    */
   @Override

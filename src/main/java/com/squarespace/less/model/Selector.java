@@ -196,4 +196,28 @@ public class Selector implements Node {
     }
   }
 
+  /**
+   * See {@link Node#deepCopy()}. Element flags are recomputed by
+   * re-adding the deep-copied elements. A lazily built mixin path is
+   * rebuilt on the copy so its flag matches its content.
+   */
+  @Override
+  public Selector deepCopy() {
+    Selector result = new Selector();
+    if (elements != null) {
+      int size = elements.size();
+      for (int i = 0; i < size; i++) {
+        Element element = elements.get(i);
+        if (element != null) {
+          result.add((Element)element.deepCopy());
+        }
+      }
+    }
+    if (mixinPath != null) {
+      result.mixinPath = SelectorUtils.renderSelector(result);
+      result.flags |= FLAG_MIXIN_PATH_BUILT;
+    }
+    return result;
+  }
+
 }

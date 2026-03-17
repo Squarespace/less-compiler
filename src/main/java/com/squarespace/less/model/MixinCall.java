@@ -78,6 +78,20 @@ public class MixinCall extends StructuralNode {
   }
 
   /**
+   * See {@link Node#deepCopy()}. The selector path is recomputed from
+   * the deep-copied selector by the constructor.
+   */
+  @Override
+  public MixinCall deepCopy() {
+    MixinCall result = new MixinCall((Selector)selector.deepCopy(),
+        args == null ? null : (MixinCallArgs)args.deepCopy(), important);
+    result.copyStructure(this);
+    result.setSize(size);
+    result.fileName = fileName;
+    return result;
+  }
+
+  /**
    * Returns the selector for this mixin call.
    */
   public Selector selector() {

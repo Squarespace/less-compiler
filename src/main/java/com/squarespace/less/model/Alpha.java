@@ -53,6 +53,14 @@ public class Alpha implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Alpha deepCopy() {
+    return new Alpha(value.deepCopy());
+  }
+
+  /**
    * Return the opacity value.
    */
   public Node value() {

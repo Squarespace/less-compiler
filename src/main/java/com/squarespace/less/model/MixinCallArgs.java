@@ -88,6 +88,25 @@ public class MixinCallArgs implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. The evaluate flag is recomputed by
+   * re-adding the deep-copied arguments.
+   */
+  @Override
+  public MixinCallArgs deepCopy() {
+    MixinCallArgs result = new MixinCallArgs(delimiter);
+    if (args != null) {
+      int size = args.size();
+      for (int i = 0; i < size; i++) {
+        Argument arg = args.get(i);
+        if (arg != null) {
+          result.add((Argument)arg.deepCopy());
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

@@ -30,6 +30,19 @@ public class GenericBlock extends BlockNode {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public GenericBlock deepCopy() {
+    GenericBlock result = new GenericBlock(block.deepCopy());
+    result.copyStructure(this);
+    result.setSize(size);
+    result.important = important;
+    result.fileName = fileName;
+    return result;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

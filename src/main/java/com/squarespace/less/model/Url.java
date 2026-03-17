@@ -50,6 +50,14 @@ public class Url implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Url deepCopy() {
+    return new Url(value.deepCopy());
+  }
+
+  /**
    * See {@link Node#needsEval()}
    */
   @Override

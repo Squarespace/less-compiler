@@ -82,6 +82,19 @@ public class Media extends BlockNode {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Media deepCopy() {
+    Media result = new Media(features == null ? null : (Features)features.deepCopy(), block.deepCopy());
+    result.copyStructure(this);
+    result.setSize(size);
+    result.important = important;
+    result.fileName = fileName;
+    return result;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

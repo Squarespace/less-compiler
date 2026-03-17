@@ -91,6 +91,17 @@ public class MixinMarker implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public MixinMarker deepCopy() {
+    MixinMarker result = new MixinMarker((MixinCall)call.deepCopy(),
+        (BlockNode)definition.deepCopy(), beginning);
+    result.fileName = fileName;
+    return result;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

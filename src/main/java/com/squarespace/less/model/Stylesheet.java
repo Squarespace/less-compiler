@@ -50,6 +50,17 @@ public class Stylesheet extends BlockNode {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Stylesheet deepCopy() {
+    Stylesheet result = new Stylesheet(block.deepCopy());
+    result.copyStructure(this);
+    result.setSize(size);
+    return result;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

@@ -51,6 +51,15 @@ public class Keyword implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. This node is structurally immutable
+   * (a single final string), so it is safe to share.
+   */
+  @Override
+  public Node deepCopy() {
+    return this;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

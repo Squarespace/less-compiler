@@ -138,6 +138,14 @@ public class Argument implements Node {
     return false;
   }
 
+  /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Argument deepCopy() {
+    return new Argument(name, value.deepCopy());
+  }
+
   @Override
   public String toString() {
     return ModelUtils.toString(this);

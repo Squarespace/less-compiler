@@ -95,6 +95,15 @@ public class Variable implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. This node is structurally immutable
+   * (final name and flags, no children), so it is safe to share.
+   */
+  @Override
+  public Node deepCopy() {
+    return this;
+  }
+
+  /**
    * Traverses the variable reference, to get its value.
    */
   protected Node dereference(Definition def, ExecEnv env) throws LessException {

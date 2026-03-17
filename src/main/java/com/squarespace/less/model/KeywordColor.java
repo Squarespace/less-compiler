@@ -15,6 +15,16 @@ public class KeywordColor extends RGBColor {
     return keyword;
   }
 
+  /**
+   * See {@link Node#deepCopy()}. Preserves the keyword subclass.
+   */
+  @Override
+  public KeywordColor deepCopy() {
+    KeywordColor result = new KeywordColor(keyword, red, green, blue);
+    result.forceHex = forceHex;
+    return result;
+  }
+
   @Override
   public void modelRepr(Buffer buf) {
     super.modelRepr(buf);

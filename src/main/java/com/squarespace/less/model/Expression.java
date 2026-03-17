@@ -77,6 +77,25 @@ public class Expression implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. The evaluate flag is recomputed by
+   * re-adding the deep-copied values.
+   */
+  @Override
+  public Expression deepCopy() {
+    Expression result = new Expression();
+    if (values != null) {
+      int size = values.size();
+      for (int i = 0; i < size; i++) {
+        Node node = values.get(i);
+        if (node != null) {
+          result.add(node.deepCopy());
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * Returns the number of values in the expression.
    */
   public int size() {

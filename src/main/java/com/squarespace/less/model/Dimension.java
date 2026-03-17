@@ -75,6 +75,15 @@ public class Dimension implements Node {
     return unit;
   }
 
+  /**
+   * See {@link Node#deepCopy()}. This node is structurally immutable
+   * (a final value and unit), so it is safe to share.
+   */
+  @Override
+  public Node deepCopy() {
+    return this;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Dimension) {

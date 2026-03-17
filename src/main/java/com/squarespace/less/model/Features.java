@@ -71,6 +71,25 @@ public class Features implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. The evaluate flag is recomputed by
+   * re-adding the deep-copied features.
+   */
+  @Override
+  public Features deepCopy() {
+    Features result = new Features();
+    if (features != null) {
+      int size = features.size();
+      for (int i = 0; i < size; i++) {
+        Node node = features.get(i);
+        if (node != null) {
+          result.add(node.deepCopy());
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * Indicates whether this the feature list is empty.
    */
   public boolean isEmpty() {

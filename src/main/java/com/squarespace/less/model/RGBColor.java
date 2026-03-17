@@ -103,6 +103,17 @@ public class RGBColor extends BaseColor {
   }
 
   /**
+   * See {@link Node#deepCopy()}. Colors carry a mutable forceHex flag,
+   * so a fresh instance is always allocated (cheap value object).
+   */
+  @Override
+  public RGBColor deepCopy() {
+    RGBColor result = new RGBColor(red, green, blue, alpha);
+    result.forceHex = forceHex;
+    return result;
+  }
+
+  /**
    * Return the color's colorspace.
    */
   public Colorspace getColorspace() {

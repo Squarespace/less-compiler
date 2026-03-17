@@ -118,6 +118,20 @@ public class Definition extends StructuralNode {
     return new Definition(this, newValue);
   }
 
+  /**
+   * See {@link Node#deepCopy()}. The circular-reference flag is reset,
+   * so a copy can never inherit an "evaluating" state from the source.
+   */
+  @Override
+  public Definition deepCopy() {
+    Definition result = new Definition(name, value.deepCopy());
+    result.copyStructure(this);
+    result.setSize(size);
+    result.fileName = fileName;
+    result.warnings = warnings;
+    return result;
+  }
+
   public String name() {
     return name;
   }

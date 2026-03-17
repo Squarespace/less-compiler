@@ -57,6 +57,14 @@ public class ImportMarker implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public ImportMarker deepCopy() {
+    return new ImportMarker((Import)importStatement.deepCopy(), beginning);
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override

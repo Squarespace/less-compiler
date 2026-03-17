@@ -185,6 +185,18 @@ public class Parameter implements Node, HasUserData {
     return false;
   }
 
+  /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Parameter deepCopy() {
+    Parameter result = variadic
+        ? new Parameter(name, true)
+        : new Parameter(name, value == null ? null : value.deepCopy());
+    result.userData = userData;
+    return result;
+  }
+
   @Override
   public String toString() {
     return ModelUtils.toString(this);

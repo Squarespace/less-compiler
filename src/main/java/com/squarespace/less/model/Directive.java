@@ -72,6 +72,18 @@ public class Directive extends StructuralNode {
   }
 
   /**
+   * See {@link Node#deepCopy()}.
+   */
+  @Override
+  public Directive deepCopy() {
+    Directive result = new Directive(name, value.deepCopy());
+    result.copyStructure(this);
+    result.setSize(size);
+    result.fileName = fileName;
+    return result;
+  }
+
+  /**
    * Return the path to the filename in which this directive was defined.
    */
   public Path fileName() {

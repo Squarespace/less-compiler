@@ -146,6 +146,25 @@ public class Quoted implements Node {
   }
 
   /**
+   * See {@link Node#deepCopy()}. Unlike {@link #copy()}, the escape
+   * flag is preserved and the parts are deep-copied.
+   */
+  @Override
+  public Quoted deepCopy() {
+    Quoted result = new Quoted(delim, escaped);
+    if (parts != null) {
+      int size = parts.size();
+      for (int i = 0; i < size; i++) {
+        Node part = parts.get(i);
+        if (part != null) {
+          result.append(part.deepCopy());
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * See {@link Node#type()}
    */
   @Override
