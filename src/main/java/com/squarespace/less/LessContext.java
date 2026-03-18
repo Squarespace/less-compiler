@@ -122,6 +122,18 @@ public class LessContext {
     this(opts, loader, null);
   }
 
+  /**
+   * Constructs a context that shares parsed import trees across compiles
+   * via {@code preCache}: each imported stylesheet is parsed once and every
+   * consume receives a private deep copy, so concurrent compiles are safe.
+   *
+   * <p>Threading contract: when this cache is shared across threads, the
+   * caller must supply a thread-safe map (e.g. a ConcurrentHashMap). The
+   * cache is only ever read by compiles (writes happen once, at parse
+   * time, and concurrent puts of the same path are last-write-wins between
+   * equivalent parse results). A {@code null} cache keeps a private
+   * per-context map with the pre-sharing behavior.</p>
+   */
   public LessContext(LessOptions opts, LessLoader loader, Map<Path, Stylesheet> preCache) {
     this.opts = opts;
     this.importer = new LessImporter(this, loader, preCache);

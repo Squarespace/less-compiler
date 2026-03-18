@@ -67,10 +67,30 @@ public class LessImporter {
 
   private final Map<Path, Stylesheet> preCache;
 
+  /**
+   * True when the caller supplied a preCache that may be shared across
+   * compiles and threads. Only in that case are consumed trees shared, so
+   * every consume must hand out a private deep copy; with a private cache
+   * the existing shallow copy is sufficient and cheaper.
+   */
+  private final boolean sharedCache;
+
   public LessImporter(LessContext ctx, LessLoader loader, Map<Path, Stylesheet> preCache) {
     this.context = ctx;
     this.loader = (loader == null) ? new FilesystemLessLoader() : loader;
     this.preCache = (preCache == null) ? new HashMap<Path, Stylesheet>() : preCache;
+    this.sharedCache = (preCache != null);
+  }
+
+  /**
+   * Hands a consumed stylesheet tree to the calling compile. When the
+   * preCache is shared the tree may be concurrently read by other
+   * compiles, so the consumer receives a fully private deep copy. With a
+   * private cache the pre-existing shallow copy is used, so single-compile
+   * callers see no behavior or performance change.
+   */
+  private Stylesheet take(Stylesheet sheet) {
+    return sharedCache ? sheet.deepCopy() : sheet.copy();
   }
 
   /**
@@ -169,7 +189,7 @@ public class LessImporter {
       }
 
       context.stats().importDone(true);
-      return record.stylesheeet().copy();
+      return take(record.stylesheeet());
     }
 
     // If a pre-populated parsed stylesheet cache has been provided, use it.
@@ -200,9 +220,12 @@ public class LessImporter {
       }
       result = context.compiler().parse(loader.load(path), context, path.getParent(), path.getFileName());
       // Share the parsed import across compiles (batch mode, harness
-      // scans): every consume path below returns a fresh copy, so a
-      // compile can never mutate the shared tree. Keyed by the same
-      // absolute path the preCache lookup used above.
+      // scans): in shared mode every consume path below hands out a
+      // private deep copy, so a compile can never mutate the shared tree.
+      // Keyed by the same absolute path the preCache lookup used above.
+      // Callers sharing this cache across threads must use a thread-safe
+      // map (e.g. ConcurrentHashMap). Concurrent puts of the same path
+      // are last-write-wins between equivalent parse results.
       if (preCache != null) {
         preCache.put(path, result);
       }
@@ -213,7 +236,7 @@ public class LessImporter {
       importCache.put(path, new ImportRecord(path, result, once));
     }
     context.stats().importDone(false);
-    return result.copy();
+    return take(result);
   }
 
   /**

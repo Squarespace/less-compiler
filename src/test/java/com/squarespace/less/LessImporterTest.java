@@ -17,13 +17,19 @@
 package com.squarespace.less;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.testng.annotations.Test;
 
@@ -157,29 +163,52 @@ public class LessImporterTest extends LessTestBase {
   public void testPreCacheSharesParsedImportsAcrossCompiles() throws LessException {
     // A shared preCache means each imported stylesheet is parsed once
     // across compiles (the harness scan / batch pattern). Every compile
-    // receives a fresh copy, so outputs are byte-identical to
+    // receives a fresh deep copy, so outputs are byte-identical to
     // fresh-parse compiles and one compile can never taint the next.
     Map<Path, String> files = new HashMap<>();
     files.put(path("lib.less"),
-        ".lib-mixin(@v) { width: @v; }\n@size: 5px;\n.def { color: red; }\n");
+        "@size: 5px;\n" +
+        ".lib-mixin(@v) when (@v > 0px) {\n" +
+        "  width: @v;\n" +
+        "  .inner(@v) when (default()) {\n" +
+        "    margin: @v * 2;\n" +
+        "    color: @size;\n" +
+        "  }\n" +
+        "  .inner(@v);\n" +
+        "}\n" +
+        ".def { color: red; }\n");
     CountingLoader counting = new CountingLoader(new HashMapLessLoader(files));
     Map<Path, Stylesheet> preCache = new HashMap<>();
 
     LessOptions opts1 = buildOptions();
     LessContext ctx1 = new LessContext(opts1, counting, preCache);
     ctx1.setCompiler(COMPILER);
-    // Compile 1 expands the imported mixin (mutating its copy).
+    // Compile 1 expands the imported mixin (splicing its copy).
     String css1 = COMPILER.compile(".x { .lib-mixin(10px); }\n@import 'lib.less';\n",
         ctx1, Paths.get("."), null, true);
 
     LessOptions opts2 = buildOptions();
     LessContext ctx2 = new LessContext(opts2, counting, preCache);
     ctx2.setCompiler(COMPILER);
-    // Compile 2 imports the same library: must reuse the cached parse.
-    String css2 = COMPILER.compile("@import 'lib.less';\n.y { height: @size; }\n",
+    // Compile 2 imports the same library with different mixin arguments:
+    // splice-sensitive. Leaked expansion state from compile 1 would
+    // show up as wrong margin/color values here. Must reuse the cached
+    // parse.
+    String css2 = COMPILER.compile("@import 'lib.less';\n.y { .lib-mixin(20px); height: @size; }\n",
         ctx2, Paths.get("."), null, true);
     assertEquals(1, counting.count(),
         "lib.less must be parsed exactly once across both compiles");
+
+    // The cached parse must be pristine after two consuming compiles:
+    // content-identical to an independent fresh parse of the same file.
+    LessContext pristine = new LessContext(buildOptions(), new HashMapLessLoader(files));
+    pristine.setCompiler(COMPILER);
+    Stylesheet freshLib = COMPILER.parse(files.get(path("lib.less")), pristine,
+        Paths.get("."), null);
+    Stylesheet cachedLib = preCache.get(path("lib.less"));
+    assertNotNull(cachedLib, "lib.less must have been cached");
+    assertEquals(cachedLib.toString(), freshLib.toString(),
+        "cached parse tree must be unmutated by consuming compiles");
 
     // Parity: outputs with the shared cache equal outputs with fresh
     // per-compile caches (no cross-compile taint).
@@ -193,9 +222,89 @@ public class LessImporterTest extends LessTestBase {
     Map<Path, Stylesheet> fresh2 = new HashMap<>();
     LessContext ctx4 = new LessContext(buildOptions(), counting, fresh2);
     ctx4.setCompiler(COMPILER);
-    String css4 = COMPILER.compile("@import 'lib.less';\n.y { height: @size; }\n",
+    String css4 = COMPILER.compile("@import 'lib.less';\n.y { .lib-mixin(20px); height: @size; }\n",
         ctx4, Paths.get("."), null, true);
     assertEquals(css2, css4);
+  }
+
+  @Test
+  public void testSharedPreCacheConcurrency() throws Exception {
+    // The exact failure mode that forced the harness to a thread-local
+    // cache: one shared parsed-import map consumed concurrently produced
+    // nondeterministic spurious VAR_CIRCULAR_REFERENCE errors and silently
+    // corrupted output bytes. With deepCopy at the consume handoff, any
+    // number of compiles may share the cache: zero errors and byte
+    // parity with fresh-parse compiles.
+    Map<Path, String> files = new HashMap<>();
+    files.put(path("core.less"),
+        "@core-hue: 200;\n@core-color: hsl(@core-hue, 50%, 50%);\n");
+    files.put(path("lib.less"),
+        "@import 'core.less';\n" +
+        "@lib-accent: @core-color;\n" +
+        ".outer(@p, @c) when (@p > 0px) {\n" +
+        "  border: @p solid @c;\n" +
+        "  .inner(@p, @c) when (default()) {\n" +
+        "    margin: @p * 2;\n" +
+        "    padding: @p;\n" +
+        "    color: @lib-accent;\n" +
+        "  }\n" +
+        "  .inner(@p, @c);\n" +
+        "}\n");
+
+    int threads = 8;
+    int filesPerThread = 20;
+    int rounds = 5;
+
+    // Reference: every file compiled alone, no shared cache at all.
+    Map<Integer, String> reference = new HashMap<>();
+    for (int i = 0; i < filesPerThread; i++) {
+      String source = "@import 'lib.less';\n"
+          + ".page-" + i + " { .outer(" + (i + 1) + "px, blue); }\n";
+      LessContext ctx = new LessContext(buildOptions(),
+          new HashMapLessLoader(files));
+      ctx.setCompiler(COMPILER);
+      reference.put(i, COMPILER.compile(source, ctx, Paths.get("."), null, true));
+    }
+
+    final Map<Path, Stylesheet> sharedCache = new java.util.concurrent.ConcurrentHashMap<>();
+    for (int round = 0; round < rounds; round++) {
+      final List<Future<String>> futures = new ArrayList<>();
+      ExecutorService pool = Executors.newFixedThreadPool(threads);
+      try {
+        for (int i = 0; i < filesPerThread; i++) {
+          final int idx = i;
+          futures.add(pool.submit(() -> {
+            String source = "@import 'lib.less';\n"
+                + ".page-" + idx + " { .outer(" + (idx + 1) + "px, blue); }\n";
+            LessContext ctx = new LessContext(buildOptions(),
+                new HashMapLessLoader(files), sharedCache);
+            ctx.setCompiler(COMPILER);
+            return COMPILER.compile(source, ctx, Paths.get("."), null, true);
+          }));
+        }
+        for (int i = 0; i < filesPerThread; i++) {
+          // A LessException here is the spurious VAR_CIRCULAR_REFERENCE
+          // (or similar) mode. A mismatch is the silent-corruption mode.
+          String out = futures.get(i).get();
+          assertEquals(out, reference.get(i),
+              "round " + round + ": file " + i + " output diverged from fresh-parse reference");
+        }
+      } finally {
+        pool.shutdown();
+      }
+    }
+
+    // After all rounds, every cached tree must still be pristine.
+    LessContext pristine = new LessContext(buildOptions(), new HashMapLessLoader(files));
+    pristine.setCompiler(COMPILER);
+    for (String name : new String[] { "lib.less", "core.less" }) {
+      Stylesheet cached = sharedCache.get(path(name));
+      assertNotNull(cached, name + " must have been cached");
+      Stylesheet fresh = COMPILER.parse(files.get(path(name)), pristine,
+          Paths.get("."), null);
+      assertEquals(cached.toString(), fresh.toString(),
+          name + ": cached parse tree must stay unmutated under concurrency");
+    }
   }
 
   /** Wraps a loader, counting distinct load() invocations (tests only). */
