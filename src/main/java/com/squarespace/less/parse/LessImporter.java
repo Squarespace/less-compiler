@@ -69,11 +69,18 @@ public class LessImporter {
 
   /**
    * True when the caller supplied a preCache that may be shared across
-   * compiles and threads. Only in that case are consumed trees shared, so
-   * every consume must hand out a private deep copy; with a private cache
-   * the existing shallow copy is sufficient and cheaper.
+   * compiles and threads. Only in that case are consumed trees shared.
    */
   private final boolean sharedCache;
+
+  /**
+   * Per-compile memo of trees handed out from the shared preCache. The
+   * released semantics share one node instance across every import site
+   * of the same path within a compile (mixin closures register on the
+   * original node, so the first-evaluated site's scope must remain
+   * visible to later sites). Keyed by path. One memo per compile.
+   */
+  private final Map<Path, Stylesheet> taken = new HashMap<>();
 
   public LessImporter(LessContext ctx, LessLoader loader, Map<Path, Stylesheet> preCache) {
     this.context = ctx;
@@ -85,12 +92,24 @@ public class LessImporter {
   /**
    * Hands a consumed stylesheet tree to the calling compile. When the
    * preCache is shared the tree may be concurrently read by other
-   * compiles, so the consumer receives a fully private deep copy. With a
-   * private cache the pre-existing shallow copy is used, so single-compile
-   * callers see no behavior or performance change.
+   * compiles, so the consumer receives a private deep copy, but only
+   * ONE per path per compile, handed to every import site of that path,
+   * which reproduces the released (shallow-copy, shared-node) alias
+   * semantics within a compile while never exposing the cached tree. With
+   * a private cache the pre-existing shallow copy is used, so
+   * single-compile callers see no behavior or performance change.
    */
-  private Stylesheet take(Stylesheet sheet) {
-    return sharedCache ? sheet.deepCopy() : sheet.copy();
+  private Stylesheet take(Path path, Stylesheet sheet) {
+    if (!sharedCache) {
+      return sheet.copy();
+    }
+    Stylesheet result = taken.get(path);
+    if (result != null) {
+      return result;
+    }
+    result = sheet.deepCopy();
+    taken.put(path, result);
+    return result;
   }
 
   /**
@@ -189,7 +208,7 @@ public class LessImporter {
       }
 
       context.stats().importDone(true);
-      return take(record.stylesheeet());
+      return take(path, record.stylesheeet());
     }
 
     // If a pre-populated parsed stylesheet cache has been provided, use it.
@@ -236,7 +255,7 @@ public class LessImporter {
       importCache.put(path, new ImportRecord(path, result, once));
     }
     context.stats().importDone(false);
-    return take(result);
+    return take(path, result);
   }
 
   /**
