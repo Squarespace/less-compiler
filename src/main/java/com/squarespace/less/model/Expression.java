@@ -84,6 +84,12 @@ public class Expression implements Node {
   public Expression deepCopy() {
     Expression result = new Expression();
     if (values != null) {
+      if (values.isEmpty()) {
+        // A parse can produce an explicitly empty expression (e.g. an
+        // empty arg binding); preserve the initialized-empty list so the
+        // copy's state matches the source exactly ("as if freshly parsed").
+        result.values = LessUtils.initList(null, 2);
+      }
       int size = values.size();
       for (int i = 0; i < size; i++) {
         Node node = values.get(i);

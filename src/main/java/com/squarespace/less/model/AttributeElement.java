@@ -113,6 +113,9 @@ public class AttributeElement extends Element {
   public AttributeElement deepCopy() {
     AttributeElement result = new AttributeElement(combinator);
     if (parts != null) {
+      if (parts.isEmpty()) {
+        result.parts = LessUtils.initList(null, 2);
+      }
       int size = parts.size();
       for (int i = 0; i < size; i++) {
         Node part = parts.get(i);
