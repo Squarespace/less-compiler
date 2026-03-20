@@ -63,6 +63,11 @@ Threshold 2 - legacy generation 2 (gated bug fixes; active below level 2):
   intermediates before the final rounding.
 - `ATTR_SELECTOR_UNTERMINATED` - an unterminated attribute selector or
   parenthesized element is silently dropped instead of failing the compile.
+- `NUMBER_EXPO` - numeric values have no exponent: `1e3` tokenizes as the
+  number `1` and the identifier `e3` (emitted literally, invalid CSS), and
+  `7E705E` as `7` and `E705E`. At level 2, `1e2`, `2E2` and `1.5e-3` parse
+  as single numbers; `em`/`ex` units are unaffected (`e` is an exponent only
+  when a digit follows).
 
 At level 0 every legacy behavior is active. At level 1 the threshold-1
 patches are fixed. At level 2 every patch is fixed. The fix ladder is

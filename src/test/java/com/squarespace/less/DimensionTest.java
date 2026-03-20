@@ -21,6 +21,7 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Unit;
@@ -68,19 +69,31 @@ public class DimensionTest extends LessTestBase {
     h.parseEquals("2.3PX", dim(2.3, Unit.PX));
     h.parseEquals("2.3CM", dim(2.3, Unit.CM));
 
-    // Exponents are part of the number, e.g. 1e2 == 100
-    h.parseEquals("1e2", dim(100));
-    h.parseEquals("1E2", dim(100));
-    h.parseEquals("2E2", dim(200));
-    h.parseEquals("1e2px", dim(100, Unit.PX));
-    h.parseEquals("1.5e3", dim(1500));
-    h.parseEquals("1.5e3px", dim(1500, Unit.PX));
-    h.parseEquals("1.5e-2", dim(0.015));
-    h.parseEquals("1e-1", dim(0.1));
-    h.parseEquals("+1e2", dim(100));
-    h.parseEquals("-1e2", dim(-100));
-    h.parseEquals("-1.5e-2", dim(-0.015));
-    h.parseEquals("1e2%", dim(100, Unit.PERCENTAGE));
+    // Patch.NUMBER_EXPO: the released grammar (default level) stops a
+    // number at 'e'/'E'. The exponent becomes a stray identifier (pinned
+    // in testRepr and CompatPatchTest.testNumberExpo, since the leftover
+    // tokens fail a bare-DIMENSION complete()). The fixed level reads a
+    // single CSS number, e.g. 1e2 == 100.
+    LessOptions fixed = new LessOptions();
+    fixed.compatLevel(Patch.maxThreshold());
+    h.parseEquals("1e2", dim(100), fixed);
+    h.parseEquals("1E2", dim(100), fixed);
+    h.parseEquals("2E2", dim(200), fixed);
+    h.parseEquals("1e2px", dim(100, Unit.PX), fixed);
+    h.parseEquals("1.5e3", dim(1500), fixed);
+    h.parseEquals("1.5e3px", dim(1500, Unit.PX), fixed);
+    h.parseEquals("1.5e-2", dim(0.015), fixed);
+    h.parseEquals("1e-1", dim(0.1), fixed);
+    h.parseEquals("+1e2", dim(100), fixed);
+    h.parseEquals("-1e2", dim(-100), fixed);
+    h.parseEquals("-1.5e-2", dim(-0.015), fixed);
+    h.parseEquals("1e2%", dim(100, Unit.PERCENTAGE), fixed);
+
+    // em/ex are units, not exponents, at every level.
+    h.parseEquals("1em", dim(1, Unit.EM));
+    h.parseEquals("1em", dim(1, Unit.EM), fixed);
+    h.parseEquals("1.5ex", dim(1.5, Unit.EX));
+    h.parseEquals("1.5ex", dim(1.5, Unit.EX), fixed);
 
     // units starting with e are not mistaken for exponents
     h.parseEquals("1em", dim(1, Unit.EM));
@@ -100,10 +113,14 @@ public class DimensionTest extends LessTestBase {
     h.renderEquals("foo: -1.5/3", "foo: -.5");
     h.renderEquals("foo: 8/-63333333333333333333333333333;", "foo: 0");
 
-    // exponent notation parses and renders as the plain value
-    h.renderEquals("foo: 1e2;", "foo: 100");
-    h.renderEquals("foo: 1e2px;", "foo: 100px");
-    h.renderEquals("foo: 1.5e-2;", "foo: .015");
+    // Exponent notation: the released level renders the split tokens
+    // literally. The fixed level renders the plain value (Patch.NUMBER_EXPO).
+    h.renderEquals("foo: 1e2;", "foo: 1 e2");
+    LessOptions fixed = new LessOptions();
+    fixed.compatLevel(Patch.maxThreshold());
+    h.renderEquals("foo: 1e2;", "foo: 100", fixed);
+    h.renderEquals("foo: 1e2px;", "foo: 100px", fixed);
+    h.renderEquals("foo: 1.5e-2;", "foo: .015", fixed);
   }
 
 }

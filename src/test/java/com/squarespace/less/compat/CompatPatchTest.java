@@ -356,4 +356,48 @@ public class CompatPatchTest {
     String fixed = evalRenderExt(raw, level(Patch.maxThreshold()));
     assertTrue(fixed.contains("$2 $1"), fixed);
   }
+
+  @Test
+  public void testNumberExpo() throws LessException {
+    // Corpus evidence (coyote-beagle-sfhy.less, chasewild.less): the
+    // release tokenizer stops a number at 'e'/'E' and the exponent
+    // becomes identifier(+number) noise; the fixed grammar reads a
+    // single CSS number. em/ex units must be unaffected at every level.
+    String less = ".a { z-index: 9.999999999999999e+31; }\n"
+        + ".b { colour: 7E705E !important; }\n"
+        + ".c { width: 1e3; }\n"
+        + ".d { width: 5em; letter-spacing: 1.5ex; }\n";
+
+    // Level 0 (released surface): number + stray identifier tokens.
+    String legacy = compile(less, level(0));
+    assertTrue(legacy.contains("z-index: 10 e 31;"), legacy);
+    assertTrue(legacy.contains("colour: 7 E705E !important;"), legacy);
+    assertTrue(legacy.contains("width: 1 e3;"), legacy);
+    assertTrue(legacy.contains("width: 5em;"), legacy);
+    assertTrue(legacy.contains("letter-spacing: 1.5ex;"), legacy);
+
+    // Level 1: the exponent fix is a threshold-2 patch, so tokenization
+    // still matches the release.
+    String mid = compile(less, level(1));
+    assertTrue(mid.contains("z-index: 10 e 31;"), mid);
+    assertTrue(mid.contains("colour: 7 E705E !important;"), mid);
+
+    // Fully fixed: single numbers. 7E705 overflows to +Infinity and the
+    // NONFINITE_AS_ZERO legacy patch is lifted at this level too, so it
+    // renders visibly.
+    String fixed = compile(less, level(Patch.maxThreshold()));
+    assertTrue(fixed.contains("z-index: 99999999999999990000000000000000;"), fixed);
+    assertTrue(fixed.contains("colour: Infinity E !important;"), fixed);
+    assertTrue(fixed.contains("width: 1000;"), fixed);
+    assertTrue(fixed.contains("width: 5em;"), fixed);
+    assertTrue(fixed.contains("letter-spacing: 1.5ex;"), fixed);
+
+    // A per-site override restores the released tokenization at the
+    // fully fixed level.
+    LessOptions overridden = level(Patch.maxThreshold());
+    overridden.compatPatch(Patch.NUMBER_EXPO);
+    String relegacy = compile(less, overridden);
+    assertTrue(relegacy.contains("z-index: 10 e 31;"), relegacy);
+    assertTrue(relegacy.contains("width: 1 e3;"), relegacy);
+  }
 }

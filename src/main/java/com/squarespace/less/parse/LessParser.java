@@ -1614,9 +1614,15 @@ public class LessParser {
    * DIMENSION
    *
    * Numeric values with optional unit suffix, like '1.3' or '-12px'.
+   * The released grammar has no exponent (Patch.NUMBER_EXPO): '1e3'
+   * tokenizes as number 1 + identifier 'e3'; at the fixed level the
+   * exponent is part of the number.
    */
   private Dimension dimension() {
-    if (!match(Patterns.DIMENSION_VALUE)) {
+    Recognizer dimensionValue = compat.enabled(Patch.NUMBER_EXPO)
+        ? Patterns.DIMENSION_VALUE_LEGACY
+        : Patterns.DIMENSION_VALUE;
+    if (!match(dimensionValue)) {
       return null;
     }
 

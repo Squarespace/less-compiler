@@ -110,6 +110,17 @@ public class LessHarness {
     assertEquals(res, expected, raw);
   }
 
+  /**
+   * Parse-level assertion at an explicit compat level (the default
+   * constructor compiles at the released level 0).
+   */
+  public void parseEquals(String raw, Node expected, LessOptions opts) throws LessException {
+    LessParser parser = new LessParser(context(opts), raw);
+    Node res = parser.parse(syntax);
+    parser.complete();
+    assertEquals(res, expected, raw);
+  }
+
   public void parseFails(String raw, LessErrorType expected) {
     try {
       parse(raw);
@@ -122,6 +133,23 @@ public class LessHarness {
   public void renderEquals(String raw, String expected) throws LessException {
     ExecEnv env = define(definitions);
     Node res = evaluate(raw, syntax, env);
+    assertEquals(env.context().render(res), expected, raw);
+  }
+
+  /**
+   * Render-level assertion at an explicit compat level (the default
+   * constructor compiles at the released level 0).
+   */
+  public void renderEquals(String raw, String expected, LessOptions opts) throws LessException {
+    LessContext ctx = context(opts);
+    ExecEnv env = ctx.newEnv();
+    for (GenericBlock block : definitions) {
+      env.push(block);
+    }
+    LessParser parser = new LessParser(ctx, raw);
+    Node res = parser.parse(syntax);
+    parser.complete();
+    res.eval(env);
     assertEquals(env.context().render(res), expected, raw);
   }
 

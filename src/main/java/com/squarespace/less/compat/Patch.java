@@ -135,7 +135,16 @@ public enum Patch {
    * An unterminated attribute selector or parenthesized element is
    * silently dropped instead of failing the compile.
    */
-  ATTR_SELECTOR_UNTERMINATED(2);
+  ATTR_SELECTOR_UNTERMINATED(2),
+
+  /**
+   * Exponents are not part of a number: '1e3' tokenizes as the number 1
+   * and the identifier 'e3' (emitted literally, invalid CSS), and
+   * '7E705E' as 7 and 'E705E'. At the fixed level '1e2', '2E2' and
+   * '1.5e-3' parse as single CSS numbers; em/ex units are unaffected
+   * (e is an exponent only when a digit follows).
+   */
+  NUMBER_EXPO(2);
 
   /**
    * Lowest level where this legacy behavior is active. Frozen once a

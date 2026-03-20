@@ -69,6 +69,13 @@ public class Patterns {
 
   public static final Recognizer DIMENSION_VALUE = Recognizers.dimension();
 
+  /**
+   * Released 1.7.2 numeric grammar (no exponent): the legacy path for
+   * Patch.NUMBER_EXPO. Level 0 must tokenize numbers exactly as the
+   * release did.
+   */
+  public static final Recognizer DIMENSION_VALUE_LEGACY = Recognizers.dimensionLegacy();
+
   // REGEX: "@[a-z-]+"
   public static final Recognizer DIRECTIVE = Recognizers.directive();
 

@@ -116,7 +116,16 @@ public class Recognizers {
   }
 
   public static Recognizer dimension() {
-    return new Dimension();
+    return new Dimension(true);
+  }
+
+  /**
+   * Released 1.7.2 grammar for numeric values: no exponent part. Kept as
+   * the legacy path for Patch.NUMBER_EXPO so level 0 tokenizes exactly as
+   * the release did ('1e3' -> number 1 + identifier 'e3').
+   */
+  public static Recognizer dimensionLegacy() {
+    return new Dimension(false);
   }
 
   public static Recognizer directive() {
@@ -628,6 +637,13 @@ public class Recognizers {
    */
   static class Dimension implements Recognizer {
 
+    /** True when 'e/E[+-]?digits' is consumed as part of the number. */
+    private final boolean exponent;
+
+    Dimension(boolean exponent) {
+      this.exponent = exponent;
+    }
+
     @Override
     public int match(CharSequence seq, int pos, int len) {
       int save = pos;
@@ -646,7 +662,7 @@ public class Recognizers {
           if (res == FAIL) {
             return FAIL;
           }
-          int end = EXPONENT.match(seq, res, len);
+          int end = exponent ? EXPONENT.match(seq, res, len) : FAIL;
           return end == FAIL ? res : end;
         }
 
@@ -656,9 +672,10 @@ public class Recognizers {
         }
         res = pos;
 
-        // optionally consume exponent part, e.g. 1e2, 2E2, 1.5e-3.
-        // if none, continue: a following '.' is the fraction part.
-        int end = EXPONENT.match(seq, pos, len);
+        // Optionally consume the exponent part, e.g. 1e2, 2E2, 1.5e-3.
+        // If none, continue: a following '.' is the fraction part.
+        // The released grammar has no exponent: 'e' starts an identifier.
+        int end = exponent ? EXPONENT.match(seq, pos, len) : FAIL;
         if (end != FAIL) {
           return end;
         }
