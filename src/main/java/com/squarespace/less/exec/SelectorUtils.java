@@ -55,23 +55,46 @@ public class SelectorUtils {
    * 1. If a selector contains no wildcards, it is appended to each of the ancestors.
    * 2. Otherwise, we need to replace each wildcard element in the selector with
    *    the list of ancestors, and then return the cartesian product.
+   *
+   * The plain combine uses the released overflow contract: the complexity
+   * budget is per flatten call (per current selector), never shared.
    */
   public static Selectors combine(Selectors ancestors, Selectors current) throws LessException {
-    return combine(ancestors, current, false, null);
+    return combine(ancestors, current, false, false, null);
   }
 
   /**
    * Combine with optional truncation (best-effort recovery): when true,
    * the cartesian product stops at the complexity threshold, keeping the
    * selectors collected so far instead of throwing. The {@code
-   * truncated} flag lets the caller warn.
+   * truncated} flag lets the caller warn. The complexity budget is
+   * shared across every flatten call of the combination, so the cap bounds
+   * the COMBINED selector set (not each current selector independently).
+   * That is the fixed-level contract.
    */
   public static Selectors combine(Selectors ancestors, Selectors current, boolean truncate, boolean[] truncated)
       throws LessException {
+    return combine(ancestors, current, truncate, true, truncated);
+  }
+
+  /**
+   * Combine with an explicit complexity-budget mode. {@code sharedBudget}
+   * true spans one budget across every flatten call of the combination,
+   * so the cap bounds the COMBINED selector set (the fixed-level contract);
+   * false gives each flatten call a fresh budget, exactly as the released
+   * compiler counted (per current selector). The legacy levels require the
+   * per-call contract for released byte-parity: a nested combination whose
+   * per-selector sums each fit under the threshold (e.g. 32 x 21 x 3 =
+   * 6048 combined, 2016 per call) overflows with a shared budget but not
+   * in the release, and the legacy fallback would drop the whole current
+   * selector list (found via ditldesign.less in the corpus).
+   */
+  public static Selectors combine(Selectors ancestors, Selectors current, boolean truncate,
+      boolean sharedBudget, boolean[] truncated) throws LessException {
     Selectors result = new Selectors();
-    // The complexity budget is shared across every flatten call of this
-    // combination, so the truncation cap bounds the COMBINED selector
-    // set (not each current selector independently).
+    // One budget for the whole combination when shared. Otherwise each
+    // flatten call gets a fresh budget, the released per-call contract
+    // (see flattenCall).
     int[] complexity = new int[1];
     List<Selector> selectors = current.selectors();
     int ilen = selectors.size();
@@ -84,7 +107,7 @@ public class SelectorUtils {
         List<List<Selector>> inputs = new ArrayList<>(2);
         inputs.add(ancestors.selectors());
         inputs.add(Arrays.asList(selector));
-        SelectorUtils.flatten(inputs, result, truncate, truncated, complexity);
+        flattenCall(inputs, result, truncate, sharedBudget, complexity, truncated);
         continue;
       }
 
@@ -115,14 +138,31 @@ public class SelectorUtils {
         inputs.add(Arrays.asList(temp));
       }
 
-      SelectorUtils.flatten(inputs, result, truncate, truncated, complexity);
+      flattenCall(inputs, result, truncate, sharedBudget, complexity, truncated);
     }
     return result;
   }
 
   /**
+   * One flatten step of a combine. With a shared budget (or a truncate
+   * request, which always shares) the caller's accumulator carries the
+   * running element count across calls. Otherwise each call gets a fresh
+   * budget, the released overflow contract.
+   */
+  private static void flattenCall(List<List<Selector>> inputs, Selectors result, boolean truncate,
+      boolean sharedBudget, int[] complexity, boolean[] truncated) throws LessException {
+    if (truncate || sharedBudget) {
+      SelectorUtils.flatten(inputs, result, truncate, truncated, complexity);
+    } else {
+      SelectorUtils.flatten(inputs, result);
+    }
+  }
+
+  /**
    * Generates a cartesian product from {@code selectors} and appends the flattened
-   * selectors {@code result}.
+   * selectors {@code result}. Uses a fresh complexity budget for this call,
+   * the released overflow contract (the released compiler reset its counter
+   * on every flatten call, so a flat top-level list could never overflow).
    */
   public static void flatten(List<List<Selector>> selectors, Selectors result) throws LessException {
     flatten(selectors, result, false, null, new int[1]);

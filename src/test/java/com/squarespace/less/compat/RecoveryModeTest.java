@@ -16,6 +16,7 @@
 
 package com.squarespace.less.compat;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -71,6 +72,51 @@ public class RecoveryModeTest {
     return opts;
   }
 
+  private static LessOptions releasedStrict() {
+    LessOptions opts = new LessOptions();
+    opts.compatLevel(0);
+    opts.safeMode(false);
+    return opts;
+  }
+
+  private static LessOptions level1Safe() {
+    LessOptions opts = new LessOptions();
+    opts.compatLevel(1);
+    opts.safeMode(true);
+    return opts;
+  }
+
+  /**
+   * Three nested comma-separated selector lists: {@code parents} top-level
+   * siblings, {@code mids} nested siblings, {@code children} inner siblings.
+   * Each rendered combination is {@code .cN .mM .xK} (3 elements).
+   */
+  private static String nestedCommaLists(int parents, int mids, int children) {
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < parents; i++) {
+      if (i > 0) {
+        b.append(", ");
+      }
+      b.append(".c").append(i);
+    }
+    b.append(" {\n");
+    for (int i = 0; i < mids; i++) {
+      if (i > 0) {
+        b.append(", ");
+      }
+      b.append(".m").append(i);
+    }
+    b.append(" {\n");
+    for (int i = 1; i <= children; i++) {
+      if (i > 1) {
+        b.append(", ");
+      }
+      b.append(".x").append(i);
+    }
+    b.append(" {\n  color: red;\n}\n}\n}\n");
+    return b.toString();
+  }
+
   private static void assertRecovered(String css) {
     assertTrue(css.contains("WARNING["), "expected a recovery warning, css:\n" + css);
   }
@@ -122,6 +168,55 @@ public class RecoveryModeTest {
     // up to ~226. Pin the global bound.
     assertTrue(combos <= 130, "rendered " + combos + " combos, expected <= 130:\n" + css);
     assertTrue(css.contains("raised during recovery"), css);
+  }
+
+  @Test
+  public void testNestedCumulativeOverflowKeptAtReleasedLevel() throws LessException {
+    // The ditldesign window (developers corpus: ditldesign.less, 32 x 21 x 3
+    // nested comma lists): each current selector's expansion is 672 x 3 =
+    // 2016 elements (under the 4096 budget) but the combined set is 6048
+    // (over it). The released compiler counted per flatten call, so it
+    // rendered all 2016 combinations; the legacy levels must count the same
+    // way, or the legacy fallback drops the whole child list (672 lines).
+    String raw = nestedCommaLists(32, 21, 3);
+    for (LessOptions opts : new LessOptions[] { releasedSafe(), releasedStrict(), level1Safe() }) {
+      String css = compile(raw, opts);
+      int combos = css.split(" \\.x", -1).length - 1;
+      assertEquals(combos, 32 * 21 * 3,
+          "level " + opts.compatLevel() + " (safe=" + opts.safeMode() + ") rendered " + combos
+              + " combos, expected " + 32 * 21 * 3);
+      assertTrue(!css.contains("truncated"), css);
+    }
+  }
+
+  @Test
+  public void testLegacyPerCallOverflowDegradesToAncestors() throws LessException {
+    // A single current selector whose expansion exceeds the budget (1521
+    // ancestors x 3 elements = 4563 > 4096) overflows per-call even at the
+    // released level: the legacy fallback degrades the rule to its ancestor
+    // selectors. That is the released contract (the release threw per-call
+    // and the rule degraded identically), pinned so a future budget change
+    // cannot silently keep or drop the child list here.
+    String raw = nestedCommaLists(39, 39, 1);
+    for (LessOptions opts : new LessOptions[] { releasedSafe(), releasedStrict() }) {
+      String css = compile(raw, opts);
+      int ancestors = css.split(" \\.m", -1).length - 1;
+      assertEquals(ancestors, 39 * 39, css);
+      assertTrue(!css.contains(".x1"), css);
+    }
+  }
+
+  @Test
+  public void testFixedStrictFailsOnCombinedOverflow() {
+    // The fixed level keeps the shared budget (its complexity limit is a
+    // guard against runaway expansion). The ditldesign window (per-call
+    // fits, combined 6048 > 4096) must fail the strict compile.
+    try {
+      compile(nestedCommaLists(32, 21, 3), fixedStrict());
+      fail("expected the fixed strict level to fail on the combined overflow");
+    } catch (LessException e) {
+      // expected
+    }
   }
 
   @Test

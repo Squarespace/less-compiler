@@ -99,6 +99,14 @@ public class RenderFrame {
    * complexity overflow truncates the combined selectors at the limit
    * instead of falling back or failing. The {@code truncated} flag
    * lets the caller warn.
+   *
+   * The shared combined-set complexity budget is fixed-level only. At the
+   * legacy levels ({@code fallbackOnOverflow}) the released compiler reset
+   * the complexity counter per current-selector flatten call, so the
+   * overflow decision stays per-call. Otherwise a nested combination
+   * whose per-selector sums each fit under the limit (e.g. 32 x 21 x 3 =
+   * 6048 combined, 2016 per call) overflows here but not in the release,
+   * and the fallback below would drop the whole current selector list.
    */
   public void mergeSelectors(Selectors current, boolean fallbackOnOverflow, boolean truncateOnOverflow,
       boolean[] truncated) throws LessException {
@@ -107,7 +115,8 @@ public class RenderFrame {
       this.selectors = ancestors;
     } else {
       try {
-        this.selectors = SelectorUtils.combine(ancestors, current, truncateOnOverflow, truncated);
+        this.selectors = SelectorUtils.combine(ancestors, current, truncateOnOverflow,
+            !fallbackOnOverflow, truncated);
       } catch (LessException e) {
         if (fallbackOnOverflow) {
           // Released (legacy) overflow contract: the failure is swallowed.
