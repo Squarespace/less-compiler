@@ -541,27 +541,55 @@ public class DeepCopyTest extends LessTestBase {
     LessContext ctx = new LessContext(opts, new HashMapLessLoader(importFiles()));
     ctx.setCompiler(COMPILER);
 
-    // Warmup for JIT.
-    COMPILER.parse(big, ctx, Paths.get("."), null);
-    Stylesheet warm = COMPILER.parse(big, ctx, Paths.get("."), null);
-    warm.deepCopy();
-
-    long parseTime = System.nanoTime();
-    for (int i = 0; i < 5; i++) {
-      COMPILER.parse(big, ctx, Paths.get("."), null);
+    // Interleaved warmup so both ops reach the JIT together.
+    // Warming only parse leaves deepCopy cold and inverts the ratio.
+    for (int i = 0; i < 15; i++) {
+      COMPILER.parse(big, ctx, Paths.get("."), null).deepCopy();
     }
-    parseTime = System.nanoTime() - parseTime;
 
-    Stylesheet parsed = COMPILER.parse(big, ctx, Paths.get("."), null);
-    long copyTime = System.nanoTime();
-    for (int i = 0; i < 5; i++) {
-      parsed.deepCopy();
+    // Small batches, alternating order, min per op.
+    // The min is steady-state cost, immune to hiccups.
+    final int batches = 50;
+    final int iters = 3;
+    long minParse = Long.MAX_VALUE;
+    long minCopy = Long.MAX_VALUE;
+    Stylesheet s = COMPILER.parse(big, ctx, Paths.get("."), null);
+    for (int b = 0; b < batches; b++) {
+      long parseNs;
+      long copyNs;
+      if ((b & 1) == 0) {
+        long t0 = System.nanoTime();
+        for (int i = 0; i < iters; i++) {
+          s = COMPILER.parse(big, ctx, Paths.get("."), null);
+        }
+        long t1 = System.nanoTime();
+        for (int i = 0; i < iters; i++) {
+          s.deepCopy();
+        }
+        long t2 = System.nanoTime();
+        parseNs = (t1 - t0) / iters;
+        copyNs = (t2 - t1) / iters;
+      } else {
+        long t0 = System.nanoTime();
+        for (int i = 0; i < iters; i++) {
+          s.deepCopy();
+        }
+        long t1 = System.nanoTime();
+        for (int i = 0; i < iters; i++) {
+          s = COMPILER.parse(big, ctx, Paths.get("."), null);
+        }
+        long t2 = System.nanoTime();
+        copyNs = (t1 - t0) / iters;
+        parseNs = (t2 - t1) / iters;
+      }
+      minParse = Math.min(minParse, parseNs);
+      minCopy = Math.min(minCopy, copyNs);
     }
-    copyTime = System.nanoTime() - copyTime;
 
-    assertTrue(copyTime * 3 < parseTime,
-        "deepCopy (" + copyTime / 1_000_000 + "us) must be << parse ("
-            + parseTime / 1_000_000 + "us)");
+    assertTrue(minCopy * 3 < minParse,
+        "deepCopy (" + minCopy / 1_000 + "us) must be << parse ("
+            + minParse / 1_000 + "us), ratio "
+            + String.format("%.1f", (double) minParse / minCopy) + "x");
   }
 
 }
