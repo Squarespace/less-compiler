@@ -147,9 +147,9 @@ public enum Patch {
   NUMBER_EXPO(2);
 
   /**
-   * Lowest level where this legacy behavior is active. Frozen once a
-   * release ships: raising it silently changes live sites at intermediate
-   * levels.
+   * Level at which this fix is applied; the legacy behavior is active
+   * below it. Frozen once a release ships: raising it silently changes
+   * live sites at intermediate levels.
    */
   private final int threshold;
 

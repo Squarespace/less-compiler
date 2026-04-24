@@ -44,7 +44,7 @@ import com.squarespace.less.plugins.ext.ExtStringFunctions;
 
 /**
  * Both-behavior checks for the generation-2 patches: the default level
- * keeps the released behavior, level 0 applies the fix.
+ * keeps the released behavior, the fully-fixed level applies the fix.
  */
 public class CompatPatchTest {
 
