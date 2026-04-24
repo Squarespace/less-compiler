@@ -384,7 +384,12 @@ public class LessRenderer {
    * Render an {@link Import}
    */
   private void renderImport(Import imp) throws LessException {
+    // The features render through this scratch buffer, which is built
+    // outside the buffer stack; give it the context's compat level so
+    // number formatting (e.g. NaN/Infinity) matches the rest of the
+    // output instead of the buffer's fully-fixed default.
     Buffer buf = new Buffer(0);
+    buf.compat(ctx.options().compat());
     buf.append("@import ");
     ctx.render(buf, imp.path());
     Features features = imp.features();

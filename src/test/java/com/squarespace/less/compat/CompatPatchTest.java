@@ -104,6 +104,25 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testImportFeaturesNumberFormatting() throws LessException {
+    // The @import line renders its evaluated media features through a
+    // scratch buffer built outside the buffer stack. That buffer must
+    // inherit the context's compat level, so number formatting matches
+    // the rest of the output. Regression: it once used the buffer's
+    // fully-fixed default and rendered NaN while the sheet rendered 0.
+    String source = "@w: sqrt(-1);\n"
+        + "@import url(\"a.less\") screen and (max-width: @w);\n"
+        + ".y { x: @w; }\n";
+
+    LessContext ctx = new LessContext(new LessOptions());
+    ctx.setCompiler(COMPILER);
+    String css = COMPILER.compile(source, ctx, Paths.get("."), Paths.get("t.less"));
+    assertTrue(css.contains("max-width: 0"), css);
+    assertTrue(css.contains("x: 0"), css);
+    assertTrue(!css.contains("NaN"), css);
+  }
+
+  @Test
   public void testSelectorComplexityOverflow() throws LessException {
     // 65 comma siblings at 64 nesting levels: the cartesian product of
     // combined selectors exceeds the complexity threshold.
