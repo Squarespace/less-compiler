@@ -90,6 +90,19 @@ public class LessImporter {
   }
 
   /**
+   * Clears the per-compile take() memo. A LessContext (and the LessImporter
+   * it owns) can be reused across several compiles; without this, a second
+   * compile on the same context would receive the first compile's already
+   * evaluated deep copy instead of a fresh one, and, with tracing on, would
+   * append its import markers onto the first compile's markers instead of
+   * starting clean. Called once per compile, alongside the depth counter
+   * and warning ledger resets.
+   */
+  public void reset() {
+    taken.clear();
+  }
+
+  /**
    * Hands a consumed stylesheet tree to the calling compile. When the
    * preCache is shared the tree may be concurrently read by other
    * compiles, so the consumer receives a private deep copy, but only

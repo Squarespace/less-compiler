@@ -367,6 +367,14 @@ public class LessContext {
     totalWarningSuppressed = 0;
   }
 
+  /**
+   * Clears the importer's per-compile take() memo so a reused context
+   * starts each compile with a clean slate against a shared preCache.
+   */
+  public void resetImporter() {
+    importer.reset();
+  }
+
   public Buffer acquireBuffer() {
     return bufferStack.acquireBuffer();
   }

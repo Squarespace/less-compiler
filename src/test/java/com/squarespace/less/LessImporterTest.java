@@ -228,6 +228,54 @@ public class LessImporterTest extends LessTestBase {
   }
 
   @Test
+  public void testReusedContextResetsImportTakeBetweenCompiles() throws LessException {
+    // A LessContext (and the LessImporter it owns) may be reused for
+    // several compiles against the same shared preCache. Each compile
+    // must take its own copy of an imported path instead of reusing the
+    // previous compile's already rendered tree. Tracing makes a leaked
+    // take() visible directly: a leaked copy already carries the first
+    // compile's import markers, so the second compile's markers would
+    // wrap around them instead of standing alone.
+    Map<Path, String> files = new HashMap<>();
+    files.put(path("lib.less"), ".lib { color: red; }\n");
+
+    LessOptions opts = new LessOptions();
+    opts.tracing(true);
+    opts.importOnce(false);
+    Map<Path, Stylesheet> preCache = new HashMap<>();
+    LessContext ctx = new LessContext(opts, new HashMapLessLoader(files), preCache);
+    ctx.setCompiler(COMPILER);
+
+    String source = "@import 'lib.less';\n.page { width: 1px; }\n";
+    COMPILER.compile(source, ctx, Paths.get("."), null, true);
+    String second = COMPILER.compile(source, ctx, Paths.get("."), null, true);
+
+    LessContext fresh = new LessContext(opts, new HashMapLessLoader(files));
+    fresh.setCompiler(COMPILER);
+    String independent = COMPILER.compile(source, fresh, Paths.get("."), null, true);
+
+    assertEquals(second, independent,
+        "a compile on a reused context must match an independent compile of the same source");
+    // A leaked take() from the first compile already carries an import
+    // marker pair; the second compile would then wrap its own pair
+    // around it, doubling the "start"/"end" import markers even though
+    // the source only names the import once.
+    assertEquals(countOccurrences(second, "start   @import"), 1,
+        "the second compile must carry only its own import markers, not the first compile's: " + second);
+  }
+
+  private static int countOccurrences(String text, String needle) {
+    int count = 0;
+    int from = 0;
+    int at;
+    while ((at = text.indexOf(needle, from)) >= 0) {
+      count++;
+      from = at + needle.length();
+    }
+    return count;
+  }
+
+  @Test
   public void testSharedPreCacheConcurrency() throws Exception {
     // The exact failure mode that forced the harness to a thread-local
     // cache: one shared parsed-import map consumed concurrently produced
