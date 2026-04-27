@@ -167,31 +167,38 @@ public class LessRenderer {
   private void renderRuleset(Ruleset ruleset) throws LessException {
     env.push(ruleset);
     model.push(NodeType.RULESET);
+    try {
+      // Check if selector complexity threshold was exceeded and emit a comment
 
-    // Check if selector complexity threshold was exceeded and emit a comment
-
-    Selectors selectors = env.frame().selectors();
-    if (!selectors.isEmpty()) {
-      // Selectors are indented and delimited by the model.
-      Buffer buf = ctx.acquireBuffer();
-      try {
-        List<Selector> _selectors = selectors.selectors();
-        int size = _selectors.size();
-        for (int i = 0; i < size; i++) {
-          Selector selector = _selectors.get(i);
-          ctx.render(buf, selector);
-          model.header(buf.toString());
-          buf.reset();
+      Selectors selectors = env.frame().selectors();
+      if (!selectors.isEmpty()) {
+        // Selectors are indented and delimited by the model.
+        Buffer buf = ctx.acquireBuffer();
+        try {
+          List<Selector> _selectors = selectors.selectors();
+          int size = _selectors.size();
+          for (int i = 0; i < size; i++) {
+            Selector selector = _selectors.get(i);
+            ctx.render(buf, selector);
+            model.header(buf.toString());
+            buf.reset();
+          }
+        } finally {
+          // Always give the buffer back, even if render threw.
+          ctx.returnBuffer();
         }
-      } finally {
-        // Always give the buffer back, even if render threw.
-        ctx.returnBuffer();
       }
-    }
 
-    renderBlock(ruleset.block(), true);
-    model.pop();
-    env.pop();
+      renderBlock(ruleset.block(), true);
+    } finally {
+      // Keep the env/model stacks balanced even when selector or block
+      // rendering above throws and a caller further up recovers from it
+      // (safe mode): an unpopped push here would attach every later
+      // sibling under the wrong frame and could trip the model's
+      // stylesheet-depth check at the end of the render.
+      model.pop();
+      env.pop();
+    }
   }
 
   /**
@@ -200,15 +207,19 @@ public class LessRenderer {
   private void renderMedia(Media media) throws LessException {
     env.push(media);
     model.push(NodeType.MEDIA);
-    model.header("@media " + ctx.render(env.frame().features()));
+    try {
+      model.header("@media " + ctx.render(env.frame().features()));
 
-    // Force any parent selectors to be emitted, to wrap our rules.
-    Ruleset inner = new Ruleset();
-    inner.setBlock(media.block());
-    renderRuleset(inner);
-
-    model.pop();
-    env.pop();
+      // Force any parent selectors to be emitted, to wrap our rules.
+      Ruleset inner = new Ruleset();
+      inner.setBlock(media.block());
+      renderRuleset(inner);
+    } finally {
+      // See renderRuleset: keep the stacks balanced if feature rendering
+      // throws and is recovered from higher up.
+      model.pop();
+      env.pop();
+    }
   }
 
   /**

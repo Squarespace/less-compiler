@@ -91,19 +91,22 @@ public class RenderEnv {
     Selectors selectors = null;
     Features features = null;
     NodeType blockType = blockNode.type();
-    if (blockNode != null) {
-      if (blockType.equals(NodeType.RULESET)) {
-        selectors = ((Ruleset)blockNode).selectors();
-      } else if (blockType.equals(NodeType.MEDIA)) {
-        features = ((Media)blockNode).features();
-      }
+    if (blockType.equals(NodeType.RULESET)) {
+      selectors = ((Ruleset)blockNode).selectors();
+    } else if (blockType.equals(NodeType.MEDIA)) {
+      features = ((Media)blockNode).features();
     }
 
-    depth++;
-    frame = new RenderFrame(frame, blockNode, depth);
-
+    // Build the candidate frame and let it absorb the selectors/features
+    // before committing it. mergeSelectors can throw (a complexity
+    // overflow in strict mode), and a caller further up the stack may
+    // recover from that and keep rendering (safe mode). Committing
+    // depth/frame only once the merge succeeds keeps push() atomic: a
+    // thrown exception here never leaves the stack half-advanced with
+    // no matching pop.
+    RenderFrame next = new RenderFrame(frame, blockNode, depth + 1);
     if (blockType.equals(NodeType.BLOCK_DIRECTIVE)) {
-      frame.pushEmptySelectors();
+      next.pushEmptySelectors();
     } else if (selectors != null) {
       // Best-effort recovery truncates the combined selectors at the
       // complexity limit instead of failing (strict) or silently
@@ -111,13 +114,16 @@ public class RenderEnv {
       // legacy levels).
       boolean legacy = ctx.options().compatEnabled(Patch.SELECTOR_COMPLEXITY_OVERFLOW);
       boolean[] truncated = new boolean[1];
-      frame.mergeSelectors(selectors, legacy, ctx.safeMode() && !legacy, truncated);
+      next.mergeSelectors(selectors, legacy, ctx.safeMode() && !legacy, truncated);
       if (truncated[0]) {
         ctx.addWarning("render: truncated selector combination exceeding complexity limit");
       }
     } else if (features != null) {
-      frame.mergeFeatures(features);
+      next.mergeFeatures(features);
     }
+
+    depth++;
+    frame = next;
   }
 
   /**
