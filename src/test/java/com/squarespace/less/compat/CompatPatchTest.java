@@ -150,6 +150,29 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testFormatUnknownSpecifierUngated() throws LessException {
+    // Unknown %X specifiers pass through format() literally and consume
+    // no argument, so %('100% off', 5) renders '100% off' instead of
+    // '1005off'. Ungated: no output could depend on the arg-mangling,
+    // so level 0 must agree with the fully-fixed level.
+    String source = ".c {\n"
+        + "  a: %('100% off', 5);\n"
+        + "  b: %('%x counts', 1);\n"
+        + "  c: %('%s %x %d', one, 2);\n"
+        + "}\n";
+    LessContext ctx0 = new LessContext(level(0));
+    ctx0.setCompiler(COMPILER);
+    String v0 = COMPILER.compile(source, ctx0);
+    LessContext ctxMax = new LessContext(level(Patch.maxThreshold()));
+    ctxMax.setCompiler(COMPILER);
+    String vMax = COMPILER.compile(source, ctxMax);
+    assertEquals(vMax, v0);
+    assertTrue(v0.contains("a: '100% off';\n"), v0);
+    assertTrue(v0.contains("b: '%x counts';\n"), v0);
+    assertTrue(v0.contains("c: 'one %x 2';\n"), v0);
+  }
+
+  @Test
   public void testImportFeaturesNumberFormatting() throws LessException {
     // The @import line renders its evaluated media features through a
     // scratch buffer built outside the buffer stack. That buffer must

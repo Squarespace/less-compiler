@@ -101,6 +101,14 @@ public class StringFunctions implements Registry<Function> {
           i++;
           continue;
         }
+        // Only s/S/d/D/a/A are real format specifiers.  Pass any other
+        // "%X" through literally, without consuming an argument.
+        if (ch != 's' && ch != 'S' && ch != 'd' && ch != 'D' && ch != 'a' && ch != 'A') {
+          buf.append('%');
+          buf.append(ch);
+          i++;
+          continue;
+        }
         formatters++;
         if (j >= args.size()) {
           i++;
