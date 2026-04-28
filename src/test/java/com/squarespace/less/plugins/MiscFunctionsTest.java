@@ -52,7 +52,7 @@ public class MiscFunctionsTest extends LessTestBase {
     h.evalFails("convert(1)", ARG_COUNT);
     h.evalFails("convert('foo', 1)", INVALID_ARG_EXT);
 
-    h.evalEquals("convert(1cm, mm)", dim(1000, MM));
+    h.evalEquals("convert(1cm, mm)", dim(10, MM));
     h.evalEquals("convert(10px, pt)", dim(7.5, PT));
   }
 

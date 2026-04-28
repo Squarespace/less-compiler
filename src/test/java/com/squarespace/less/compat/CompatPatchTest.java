@@ -104,6 +104,29 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testUnitConversionFactorsUngated() throws LessException {
+    // The corrected conversion factors are ungated: they apply at every
+    // compat level, so a sheet must compile identically at level 0 and at
+    // the fully-fixed level. Guards against a future patch coupling the
+    // conversion table to the level.
+    String source = ".c {\n"
+        + "  a: convert(1in, mm);\n"
+        + "  b: convert(1cm, mm);\n"
+        + "  c: convert(180deg, grad);\n"
+        + "}\n";
+    LessContext ctx0 = new LessContext(level(0));
+    ctx0.setCompiler(COMPILER);
+    String v0 = COMPILER.compile(source, ctx0);
+    LessContext ctxMax = new LessContext(level(Patch.maxThreshold()));
+    ctxMax.setCompiler(COMPILER);
+    String vMax = COMPILER.compile(source, ctxMax);
+    assertEquals(vMax, v0);
+    assertTrue(v0.contains("25.4mm"), v0);
+    assertTrue(v0.contains("10mm"), v0);
+    assertTrue(v0.contains("200grad"), v0);
+  }
+
+  @Test
   public void testImportFeaturesNumberFormatting() throws LessException {
     // The @import line renders its evaluated media features through a
     // scratch buffer built outside the buffer stack. That buffer must

@@ -46,6 +46,10 @@ public class UnitConversions {
    */
   private static final double[][] CONVERSIONS;
 
+  // 1 inch = 25.4 millimeters exactly. This anchors every length conversion:
+  // 1in = 2.54cm = 25.4mm = 96px = 72pt = 6pc.
+  private static final double MM_PER_IN = 25.4;
+
   private UnitConversions() { }
 
   /**
@@ -72,38 +76,45 @@ public class UnitConversions {
     }
 
     create(IN, CM, 2.54);
-    create(IN, MM, 2.54 * 1000.0);
+    create(IN, MM, MM_PER_IN);
     create(IN, PX, 96.0);
     create(IN, PT, 72.0);
-    create(IN, PC, 12.0 * 72.0);
+    create(IN, PC, 6.0);
 
-    create(CM, MM, 1000.0);
-    create(CM, PX, 2.54 * 96.0);
-    create(CM, PT, 2.54 * 72.0);
-    create(CM, PC, 2.54 * 72.0 * 12.0);
+    // 1cm = 1/2.54in, so cm->mm = MM_PER_IN/2.54 = 10 and cm->px = 96/2.54
+    // (NOT 2.54*96), cm->pc = 6/2.54.
+    create(CM, MM, MM_PER_IN / 2.54);
+    create(CM, PX, 96.0 / 2.54);
+    create(CM, PT, 72.0 / 2.54);
+    create(CM, PC, 6.0 / 2.54);
 
-    create(PX, MM, (2.54 * 1000.0) / 96.0);
+    // 1px = 1/96in
+    create(PX, MM, MM_PER_IN / 96.0);
     create(PX, PT, 0.75);
     create(PX, PC, 0.75 / 12.0);
 
-    create(PC, MM, 1000.0 * factor(PC, CM));
+    // 1pc = 12pt = 1/6in
+    create(PC, MM, MM_PER_IN / 6.0);
     create(PC, PT, 12.0);
 
-    create(PT, MM, (2.54 * 1000.0) / 72.0);
+    // 1pt = 1/72in
+    create(PT, MM, MM_PER_IN / 72.0);
 
     create(S, MS, 1000.0);
 
     create(KHZ, HZ, 1000.0);
 
+    // 1dppx = 1 dot per px = 96dpi (CSS reference pixel); 1dpcm = 1 dot per cm
+    // = 2.54dpi. So dppx->dpcm = 96/2.54 (NOT 2.54*96) and dppx->dpi = 96.
     create(DPCM, DPI, 2.54);
     create(DPPX, DPI, 96.0);
-    create(DPPX, DPCM, 2.54 * 96.0);
+    create(DPPX, DPCM, 96.0 / 2.54);
 
     create(TURN, DEG, 360.0);
     create(TURN, GRAD, 400.0);
     create(TURN, RAD, 2 * Math.PI);
     create(DEG, RAD, 1.0 / (180.0 / Math.PI));
-    create(DEG, GRAD, 9 / 10.0);
+    create(DEG, GRAD, 10.0 / 9.0);
     create(RAD, GRAD, 1 / (Math.PI / 200.0));
   }
 
