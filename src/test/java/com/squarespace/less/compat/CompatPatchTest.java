@@ -127,6 +127,29 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testBadHexLengthUngated() throws LessException {
+    // Non-3/6-digit hex runs parse as anonymous values and render verbatim.
+    // Ungated: the old output and the new output are equally invalid CSS, so
+    // no compat level accumulates a Patch for this and level 0 must agree
+    // with the fully-fixed level.
+    String source = ".c {\n"
+        + "  a: #0000;\n"
+        + "  b: #00000;\n"
+        + "  c: #0000000;\n"
+        + "}\n";
+    LessContext ctx0 = new LessContext(level(0));
+    ctx0.setCompiler(COMPILER);
+    String v0 = COMPILER.compile(source, ctx0);
+    LessContext ctxMax = new LessContext(level(Patch.maxThreshold()));
+    ctxMax.setCompiler(COMPILER);
+    String vMax = COMPILER.compile(source, ctxMax);
+    assertEquals(vMax, v0);
+    assertTrue(v0.contains("a: #0000;"), v0);
+    assertTrue(v0.contains("b: #00000;"), v0);
+    assertTrue(v0.contains("c: #0000000;"), v0);
+  }
+
+  @Test
   public void testImportFeaturesNumberFormatting() throws LessException {
     // The @import line renders its evaluated media features through a
     // scratch buffer built outside the buffer stack. That buffer must

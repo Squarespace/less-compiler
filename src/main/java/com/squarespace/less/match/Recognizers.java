@@ -832,16 +832,20 @@ public class Recognizers {
 
   /**
    * LengthChoice. Pattern can be one of several unique lengths. Lengths must be
-   * ordered from longest to shortest.
+   * ordered from longest to shortest. The whole run must be exactly one of the
+   * allowed lengths; longer runs fail instead of being truncated.
    */
   static class LengthChoice implements Recognizer {
 
     private final int[] choices;
 
+    private final Recognizer pattern;
+
     private final Recognizer cardinality;
 
     LengthChoice(Recognizer pattern, int... choices) {
       this.choices = choices;
+      this.pattern = pattern;
       int min = 0;
       int max = 1;
       if (choices.length > 0) {
@@ -853,14 +857,20 @@ public class Recognizers {
 
     @Override
     public int match(CharSequence seq, int pos, int len) {
-      int i = this.cardinality.match(seq, pos, len);
-      if (i != FAIL) {
-        int sz = i - pos;
-        for (int j = 0; j < this.choices.length; j++) {
-          int exp = this.choices[j];
-          if (sz >= exp) {
+      int end = this.cardinality.match(seq, pos, len);
+      if (end == FAIL) {
+        return FAIL;
+      }
+      int sz = end - pos;
+      for (int j = 0; j < this.choices.length; j++) {
+        int exp = this.choices[j];
+        if (sz == exp) {
+          // Run may continue past the longest choice, e.g. a 7th hex digit
+          // after 6. Reject it rather than eat a prefix and re-parse the rest.
+          if (this.pattern.match(seq, pos + exp, len) == FAIL) {
             return pos + exp;
           }
+          return FAIL;
         }
       }
       return FAIL;

@@ -313,9 +313,15 @@ public class RecognizersTest {
     Recognizer pattern = Recognizers.hexcolor();
 
     assertEquals(match(pattern, "#aaa"), 4);
-    assertEquals(match(pattern, "#aaaa"), 4); // matches "#aaa"
     assertEquals(match(pattern, "#112233"), 7);
-    assertEquals(match(pattern, "#11223344"), 7); // matches "#112233"
+    // Longer or in-between runs fail instead of being truncated.
+    assertEquals(match(pattern, "#aaaa"), FAIL);
+    assertEquals(match(pattern, "#11223344"), FAIL);
+    assertEquals(match(pattern, "#1122334"), FAIL);
+    assertEquals(match(pattern, "#11223"), FAIL);
+    // Run must end cleanly: the char after the color must not be a hex digit.
+    assertEquals(match(pattern, "#aaa" + "4"), FAIL);
+    assertEquals(match(pattern, "#112233" + "4"), FAIL);
   }
 
   @Test
