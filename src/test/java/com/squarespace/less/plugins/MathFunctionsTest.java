@@ -25,6 +25,8 @@ import static com.squarespace.less.model.Unit.TURN;
 import org.testng.annotations.Test;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.LessOptions;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Unit;
@@ -165,7 +167,15 @@ public class MathFunctionsTest extends LessTestBase {
 
     h.evalFails("mod()", ARG_COUNT);
 
-    h.evalEquals("mod(0cm, 0px)", dim(Double.NaN, Unit.CM));
+    // mod by zero stays reachable with the legacy tolerance forced on
+    // at the fixed level (Patch.MOD_ZERO_STRICT); below it the call no
+    // longer evaluates to reach the function at all
+    // (Patch.FUNCTION_CALL_IN_VALUE).
+    LessOptions modZero = new LessOptions();
+    modZero.compatLevel(Patch.maxThreshold());
+    modZero.compatPatch(Patch.MOD_ZERO_STRICT);
+    h.evalEquals("mod(0cm, 0px)", dim(Double.NaN, Unit.CM), modZero);
+
     h.evalEquals("mod(11cm, 6px)", dim(5, Unit.CM));
     h.evalEquals("mod(-26%, -5)", dim(-1, Unit.PERCENTAGE));
   }

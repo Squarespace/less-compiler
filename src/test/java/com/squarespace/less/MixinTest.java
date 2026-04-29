@@ -27,6 +27,9 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
+import com.squarespace.less.LessException;
+import com.squarespace.less.LessOptions;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Guard;
@@ -198,6 +201,7 @@ public class MixinTest extends LessTestBase {
     LessHarness h = new LessHarness();
     LessOptions opts = new LessOptions();
     opts.strict(false);
+    opts.compatLevel(Patch.maxThreshold());
     String withMixin = h.execute(".m(){a:replace('abc','b','c');} .x{.m();}", opts);
     String plain = h.execute(".x{a:replace('abc','b','c');}", opts);
     assertEquals(withMixin, plain);

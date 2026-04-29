@@ -195,6 +195,9 @@ public class RecoveryMatrixTest {
       new Row("COLOR_CHANNEL_PRECISION",
           ".cp { c: #fff * 0.5; }\n",
           2, null, Polarity.OUTPUT_FIX, false, null),
+      new Row("FUNCTION_CALL_IN_VALUE",
+          "@x: 1in;\n.fc { w: convert(@x, px); }\n",
+          2, null, Polarity.OUTPUT_FIX, false, null),
   };
 
   private static final class Outcome {

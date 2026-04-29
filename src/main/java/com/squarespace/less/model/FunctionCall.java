@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.squarespace.less.LessException;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.Buffer;
 import com.squarespace.less.core.LessInternalException;
 import com.squarespace.less.core.LessUtils;
@@ -150,8 +151,12 @@ public class FunctionCall implements Node {
       return new FunctionCall(name, evaluate ? evalArgs(env) : args, true);
     }
 
-    // Check if this function is built-in.
-    Function func = env.context().findFunction(name);
+    // While Patch.FUNCTION_CALL_IN_VALUE is active, skip the built-in
+    // lookup so the call renders literally with its evaluated arguments,
+    // matching the bare context (no function table). At the fixed level
+    // the lookup runs normally.
+    boolean legacy = env.context().options().compatEnabled(Patch.FUNCTION_CALL_IN_VALUE);
+    Function func = legacy ? null : env.context().findFunction(name);
     if (func != null) {
       // Invoke built-in function
       List<Node> values = evalArgs(env);

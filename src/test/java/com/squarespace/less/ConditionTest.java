@@ -33,6 +33,8 @@ import static org.testng.Assert.assertNotEquals;
 
 import org.testng.annotations.Test;
 
+import com.squarespace.less.LessException;
+import com.squarespace.less.LessOptions;
 import com.squarespace.less.core.Constants;
 import com.squarespace.less.core.LessHarness;
 import com.squarespace.less.core.LessTestBase;
@@ -181,14 +183,19 @@ public class ConditionTest extends LessTestBase {
 
   private void compare(boolean expected, Condition ... conditions) throws LessException {
     LessHarness h = new LessHarness();
+    // The guard truth table here is the released one: uncomparable
+    // operands keep the released -1 comparisons
+    // (Patch.GUARD_COMPARE_UNCOMPARABLE), pinned at level 0.
+    LessOptions opts = new LessOptions();
+    opts.compatLevel(0);
     Node actual = null;
     if (conditions.length == 1) {
-      actual = h.evaluate(conditions[0]);
+      actual = h.evaluate(conditions[0], opts);
 
     } else {
       Guard guard = new Guard();
       guard.addAll(conditions);
-      actual = h.evaluate(guard);
+      actual = h.evaluate(guard, opts);
     }
 
     if (expected) {

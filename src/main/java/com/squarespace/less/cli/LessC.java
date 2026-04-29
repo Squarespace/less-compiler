@@ -24,6 +24,7 @@ import java.util.Map;
 
 import com.squarespace.less.LessBuildProperties;
 import com.squarespace.less.LessOptions;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.LessUtils;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
@@ -203,8 +204,12 @@ public class LessC {
     try {
       Namespace res = parser.parseArgs(args);
 
-      // Options used by the compiler.
+      // Options used by the compiler. The compiler surface ships at the
+      // fully-fixed level (functions evaluate, Patch.FUNCTION_CALL_IN_VALUE);
+      // the released level-0 surfaces are the compat-ladder's legacy
+      // branch, migrated per site.
       LessOptions opts = new LessOptions();
+      opts.compatLevel(Patch.maxThreshold());
       opts.compress(res.getBoolean("compress"));
       opts.importOnce(res.getBoolean("import_once"));
       opts.importPaths(parseImportPaths(res));

@@ -2931,10 +2931,14 @@ public class LessParser {
         break;
 
       default:
-        // maybe function call
-        node = function_call();
-        if (node != null) {
-          break;
+        // Maybe function call. Below the fixed level value-position
+        // calls stay plain values (Patch.FUNCTION_CALL_IN_VALUE): the
+        // call is reached via expression_sub() and rendered literally.
+        if (!compat.enabled(Patch.FUNCTION_CALL_IN_VALUE)) {
+          node = function_call();
+          if (node != null) {
+            break;
+          }
         }
 
         // maybe color keyword

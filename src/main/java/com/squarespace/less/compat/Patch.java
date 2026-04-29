@@ -144,7 +144,17 @@ public enum Patch {
    * '1.5e-3' parse as single CSS numbers; em/ex units are unaffected
    * (e is an exponent only when a digit follows).
    */
-  NUMBER_EXPO(2);
+  NUMBER_EXPO(2),
+
+  /**
+   * Value-position function calls in a wired context render literally
+   * (arguments evaluated) instead of evaluating against the function
+   * table, and do not act as math operands. At the fixed level the
+   * calls parse as operands and evaluate. The bare context (no
+   * function table) has no function-table behavior to gate and is
+   * unaffected at every level.
+   */
+  FUNCTION_CALL_IN_VALUE(2);
 
   /**
    * Level at which this fix is applied; the legacy behavior is active

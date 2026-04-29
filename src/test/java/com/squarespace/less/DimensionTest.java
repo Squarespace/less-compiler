@@ -115,7 +115,9 @@ public class DimensionTest extends LessTestBase {
 
     // Exponent notation: the released level renders the split tokens
     // literally. The fixed level renders the plain value (Patch.NUMBER_EXPO).
-    h.renderEquals("foo: 1e2;", "foo: 1 e2");
+    LessOptions released = new LessOptions();
+    released.compatLevel(0);
+    h.renderEquals("foo: 1e2;", "foo: 1 e2", released);
     LessOptions fixed = new LessOptions();
     fixed.compatLevel(Patch.maxThreshold());
     h.renderEquals("foo: 1e2;", "foo: 100", fixed);

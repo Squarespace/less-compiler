@@ -37,6 +37,7 @@ import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessOptions;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.LessTestBase;
 
 
@@ -429,6 +430,7 @@ public class DeepCopyTest extends LessTestBase {
   private static Stylesheet parse(String source, Map<Path, String> files) throws LessException {
     LessOptions opts = new LessOptions();
     opts.compress(true);
+    opts.compatLevel(Patch.maxThreshold());
     LessContext ctx = new LessContext(opts, new HashMapLessLoader(files));
     ctx.setCompiler(COMPILER);
     return COMPILER.parse(source, ctx, Paths.get("."), null);
@@ -538,6 +540,7 @@ public class DeepCopyTest extends LessTestBase {
 
     LessOptions opts = new LessOptions();
     opts.compress(true);
+    opts.compatLevel(Patch.maxThreshold());
     LessContext ctx = new LessContext(opts, new HashMapLessLoader(importFiles()));
     ctx.setCompiler(COMPILER);
 

@@ -111,8 +111,12 @@ public class OperationTest extends LessTestBase {
     h.evalEquals("1px + @tenIN + @tenPX", dim(971, Unit.PX));
     h.evalEquals("@tenIN + 48px", dim(10.5, Unit.IN));
 
-    // incomplete, ignored trailing operators
-    h.evalEquals("1+2*", dim(3));
+    // Incomplete, ignored trailing operator. BUG4 keeps the released
+    // tolerance (the dangling operator is consumed); at the fixed level
+    // it rolls back and fails the parse.
+    LessOptions legacyMath = new LessOptions();
+    legacyMath.compatLevel(0);
+    h.evalEquals("1+2*", dim(3), legacyMath);
 
     // percentages
     h.evalEquals("100% * 10px", dim(1000, Unit.PERCENTAGE));

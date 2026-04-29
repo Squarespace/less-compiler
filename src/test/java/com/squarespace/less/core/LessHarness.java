@@ -27,6 +27,7 @@ import com.squarespace.less.LessContext;
 import com.squarespace.less.LessErrorType;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.exec.ExecEnv;
 import com.squarespace.less.exec.FunctionTable;
 import com.squarespace.less.model.GenericBlock;
@@ -79,7 +80,15 @@ public class LessHarness {
   }
 
   public LessContext context(LessOptions opts) {
-    LessContext ctx = (opts == null) ? new LessContext() : new LessContext(opts);
+    // Mainline tests pin the fully-fixed compiler surface: the compat
+    // tests alone pin the released level-0 surface. Function calls
+    // evaluate only at the fixed level (Patch.FUNCTION_CALL_IN_VALUE),
+    // so the default here is the fixed level, not the released level 0.
+    if (opts == null) {
+      opts = new LessOptions();
+      opts.compatLevel(Patch.maxThreshold());
+    }
+    LessContext ctx = new LessContext(opts);
     ctx.setCompiler(compiler);
     return ctx;
   }
@@ -158,6 +167,18 @@ public class LessHarness {
     assertEquals(res, expected, raw);
   }
 
+  /**
+   * Evaluation-level assertion at an explicit compat level.
+   */
+  public void evalEquals(String raw, Node expected, LessOptions opts) throws LessException {
+    LessContext ctx = context(opts);
+    ExecEnv env = define(ctx, definitions);
+    LessParser parser = new LessParser(ctx, raw);
+    Node res = parser.parse(syntax);
+    parser.complete();
+    assertEquals(res.eval(env), expected, raw);
+  }
+
   public void evalEquals(Node input, Node expected) throws LessException {
     Node result = evaluate(input, define(definitions));
     assertEquals(result, expected, input.repr());
@@ -189,6 +210,10 @@ public class LessHarness {
     return node.eval(define(definitions));
   }
 
+  public Node evaluate(Node node, LessOptions opts) throws LessException {
+    return node.eval(define(context(opts), definitions));
+  }
+
   public Node evaluate(Node node, ExecEnv env) throws LessException {
     return node.eval(env);
   }
@@ -209,7 +234,10 @@ public class LessHarness {
   }
 
   private ExecEnv define(List<GenericBlock> blocks) throws LessException {
-    LessContext ctx = context();
+    return define(context(), blocks);
+  }
+
+  private ExecEnv define(LessContext ctx, List<GenericBlock> blocks) throws LessException {
     ExecEnv env = ctx.newEnv();
     // The first block pushed will be the top-most stack frame.
     for (GenericBlock block : blocks) {

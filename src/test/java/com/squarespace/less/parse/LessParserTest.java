@@ -4,6 +4,7 @@ import com.squarespace.less.LessCompiler;
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
+import com.squarespace.less.compat.Patch;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -740,6 +741,10 @@ public class LessParserTest extends LessMaker {
   @Test
   public void testOperand() throws LessException {
     Tester t = tester(LessSyntax.OPERAND);
+    // Function calls join the operand grammar only at the fixed level
+    // (Patch.FUNCTION_CALL_IN_VALUE); below it they parse as plain
+    // values instead.
+    t.compatLevel(Patch.maxThreshold());
 
     t.ok("-12px", dim(-12, Unit.PX));
 
@@ -846,8 +851,10 @@ public class LessParserTest extends LessMaker {
     t.ok("foo: @foo();", rule(prop("foo"), var("@foo", false)));
 
     // BUG4
-    t.ok("font-size: random(98) + px;",
-        rule(prop("font-size"), expn(call("random", dim(98)), kwd("px"))));
+    // Below the fixed level a call is not an operand
+    // (Patch.FUNCTION_CALL_IN_VALUE), so the trailing '+ px' fails the
+    // parse: the released grammar had no call operands.
+    t.fail("font-size: random(98) + px;", INCOMPLETE_PARSE);
 
     t.ok("font-size: 1 + px;",
         rule(prop("font-size"), expn(dim(1), kwd("px"))));

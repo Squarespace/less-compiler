@@ -91,9 +91,12 @@ public class CompatPatchTest {
 
   @Test
   public void testNonFiniteAsZero() throws LessException {
-    // sqrt(-1) evaluates to a NaN dimension. The legacy default renders
-    // it as 0, the fully-fixed level renders visible text.
-    assertEquals(evalRender("sqrt(-1)", new LessOptions()), "0");
+    // sqrt(-1) evaluates to a NaN dimension. Below the fixed level the
+    // call renders literally without evaluating
+    // (Patch.FUNCTION_CALL_IN_VALUE); the legacy 0 formatting is only
+    // reachable with the patch forced on at the fixed level. The
+    // fully-fixed level renders visible text.
+    assertEquals(evalRender("sqrt(-1)", level(0)), "sqrt(-1)");
     assertEquals(evalRender("sqrt(-1)", level(Patch.maxThreshold())), "NaN");
 
     // A per-site override restores the legacy formatting at the fully
@@ -105,10 +108,11 @@ public class CompatPatchTest {
 
   @Test
   public void testUnitConversionFactorsUngated() throws LessException {
-    // The corrected conversion factors are ungated: they apply at every
-    // compat level, so a sheet must compile identically at level 0 and at
-    // the fully-fixed level. Guards against a future patch coupling the
-    // conversion table to the level.
+    // The corrected conversion factors are ungated: no Patch gates the
+    // table. The level-0 comparison no longer applies though: below the
+    // fixed level the calls render literally without evaluating
+    // (Patch.FUNCTION_CALL_IN_VALUE), so the factors only show at the
+    // fixed level. Pin both surfaces.
     String source = ".c {\n"
         + "  a: convert(1in, mm);\n"
         + "  b: convert(1cm, mm);\n"
@@ -117,13 +121,16 @@ public class CompatPatchTest {
     LessContext ctx0 = new LessContext(level(0));
     ctx0.setCompiler(COMPILER);
     String v0 = COMPILER.compile(source, ctx0);
+    assertTrue(v0.contains("convert(1in, mm);"), v0);
+    assertTrue(v0.contains("convert(1cm, mm);"), v0);
+    assertTrue(v0.contains("convert(180deg, grad);"), v0);
+
     LessContext ctxMax = new LessContext(level(Patch.maxThreshold()));
     ctxMax.setCompiler(COMPILER);
     String vMax = COMPILER.compile(source, ctxMax);
-    assertEquals(vMax, v0);
-    assertTrue(v0.contains("25.4mm"), v0);
-    assertTrue(v0.contains("10mm"), v0);
-    assertTrue(v0.contains("200grad"), v0);
+    assertTrue(vMax.contains("25.4mm"), vMax);
+    assertTrue(vMax.contains("10mm"), vMax);
+    assertTrue(vMax.contains("200grad"), vMax);
   }
 
   @Test
@@ -151,13 +158,17 @@ public class CompatPatchTest {
 
   @Test
   public void testInvalidColorUngated() throws LessException {
-    // color('xyz') is a clean LESS error at every compat level: the
-    // guard is ungated and adds no Patch member, so level 0 must fail
-    // exactly like the fully-fixed level.
+    // color('xyz') is a clean LESS error at the fixed level: the guard
+    // is ungated and adds no Patch member. Below the fixed level the
+    // call renders literally without evaluating, so the error is only
+    // reachable at the fixed level.
     String source = ".c {\n"
         + "  a: color('xyz');\n"
         + "}\n";
-    assertInvalidColor(source, level(0));
+    LessContext legacy = new LessContext(level(0));
+    legacy.setCompiler(COMPILER);
+    String css = COMPILER.compile(source, legacy);
+    assertTrue(css.contains("color('xyz');"), css);
     assertInvalidColor(source, level(Patch.maxThreshold()));
   }
 
@@ -166,7 +177,7 @@ public class CompatPatchTest {
     ctx.setCompiler(COMPILER);
     try {
       COMPILER.compile(source, ctx);
-      fail("expected INVALID_COLOR at every compat level");
+      fail("expected INVALID_COLOR at the fixed level");
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), ExecuteErrorType.INVALID_COLOR);
     }
@@ -176,8 +187,10 @@ public class CompatPatchTest {
   public void testFormatUnknownSpecifierUngated() throws LessException {
     // Unknown %X specifiers pass through format() literally and consume
     // no argument, so %('100% off', 5) renders '100% off' instead of
-    // '1005off'. Ungated: no output could depend on the arg-mangling,
-    // so level 0 must agree with the fully-fixed level.
+    // '1005off'. Ungated: no output could depend on the arg-mangling.
+    // Below the fixed level the call renders literally without
+    // evaluating (Patch.FUNCTION_CALL_IN_VALUE), so both surfaces are
+    // pinned here.
     String source = ".c {\n"
         + "  a: %('100% off', 5);\n"
         + "  b: %('%x counts', 1);\n"
@@ -186,22 +199,27 @@ public class CompatPatchTest {
     LessContext ctx0 = new LessContext(level(0));
     ctx0.setCompiler(COMPILER);
     String v0 = COMPILER.compile(source, ctx0);
+    assertTrue(v0.contains("a: %('100% off', 5);"), v0);
+    assertTrue(v0.contains("b: %('%x counts', 1);"), v0);
+    assertTrue(v0.contains("c: %('%s %x %d', one, 2);"), v0);
+
     LessContext ctxMax = new LessContext(level(Patch.maxThreshold()));
     ctxMax.setCompiler(COMPILER);
     String vMax = COMPILER.compile(source, ctxMax);
-    assertEquals(vMax, v0);
-    assertTrue(v0.contains("a: '100% off';\n"), v0);
-    assertTrue(v0.contains("b: '%x counts';\n"), v0);
-    assertTrue(v0.contains("c: 'one %x 2';\n"), v0);
+    assertTrue(vMax.contains("a: '100% off';\n"), vMax);
+    assertTrue(vMax.contains("b: '%x counts';\n"), vMax);
+    assertTrue(vMax.contains("c: 'one %x 2';\n"), vMax);
   }
 
   @Test
   public void testImportFeaturesNumberFormatting() throws LessException {
     // The @import line renders its evaluated media features through a
     // scratch buffer built outside the buffer stack. That buffer must
-    // inherit the context's compat level, so number formatting matches
-    // the rest of the output. Regression: it once used the buffer's
-    // fully-fixed default and rendered NaN while the sheet rendered 0.
+    // inherit the context's compat level, so the import line and the
+    // rules render the same value. Below the fixed level the feature's
+    // function call renders literally (Patch.FUNCTION_CALL_IN_VALUE);
+    // at the fixed level both surfaces would show the non-finite text
+    // ('NaN'), never a scratch-buffer/level mismatch.
     String source = "@w: sqrt(-1);\n"
         + "@import url(\"a.less\") screen and (max-width: @w);\n"
         + ".y { x: @w; }\n";
@@ -209,8 +227,8 @@ public class CompatPatchTest {
     LessContext ctx = new LessContext(new LessOptions());
     ctx.setCompiler(COMPILER);
     String css = COMPILER.compile(source, ctx, Paths.get("."), Paths.get("t.less"));
-    assertTrue(css.contains("max-width: 0"), css);
-    assertTrue(css.contains("x: 0"), css);
+    assertTrue(css.contains("max-width: sqrt(-1)"), css);
+    assertTrue(css.contains("x: sqrt(-1)"), css);
     assertTrue(!css.contains("NaN"), css);
   }
 
@@ -249,8 +267,16 @@ public class CompatPatchTest {
 
   @Test
   public void testModZeroStrict() throws LessException {
-    // Legacy default: mod by zero silently returns NaN (renders as 0).
-    assertEquals(evalRender("mod(10, 0)", new LessOptions()), "0");
+    // Legacy mod-by-zero (silent NaN, renders 0) is reachable only with
+    // the patch forced on at the fixed level: below it the call renders
+    // literally without evaluating (Patch.FUNCTION_CALL_IN_VALUE).
+    assertEquals(evalRender("mod(10, 0)", level(0)), "mod(10, 0)");
+    LessOptions legacy = level(Patch.maxThreshold());
+    legacy.compatPatch(Patch.MOD_ZERO_STRICT);
+    // The NaN also renders as released text (0): NONFINITE_AS_ZERO is
+    // fixed at this level, so it needs its own override too.
+    legacy.compatPatch(Patch.NONFINITE_AS_ZERO);
+    assertEquals(evalRender("mod(10, 0)", legacy), "0");
 
     // Fully fixed level, strict: fails like division.
     try {
@@ -265,7 +291,7 @@ public class CompatPatchTest {
     lenient.strict(false);
     assertEquals(evalRender("mod(10, 0)", lenient), "NaN");
 
-    // Non-zero divisors work at every level.
+    // Non-zero divisors work at the fixed level.
     assertEquals(evalRender("mod(11, 3)", level(Patch.maxThreshold())), "2");
   }
 
@@ -292,8 +318,14 @@ public class CompatPatchTest {
 
   @Test
   public void testConvertIncompatibleUnits() throws LessException {
-    // Legacy: convert() to an incompatible unit silently emits 0.
-    assertEquals(evalRender("convert(16px, em)", new LessOptions()), "0em");
+    // Legacy convert() to an incompatible unit (silent 0) is reachable
+    // only with the patch forced on at the fixed level: below it the
+    // call renders literally without evaluating
+    // (Patch.FUNCTION_CALL_IN_VALUE).
+    assertEquals(evalRender("convert(16px, em)", level(0)), "convert(16px, em)");
+    LessOptions legacy = level(Patch.maxThreshold());
+    legacy.compatPatch(Patch.CONVERT_INCOMPATIBLE_UNITS);
+    assertEquals(evalRender("convert(16px, em)", legacy), "0em");
 
     // Fixed: fails the compile with INCOMPATIBLE_UNITS.
     try {
@@ -303,7 +335,7 @@ public class CompatPatchTest {
       assertEquals(e.primaryError().type(), ExecuteErrorType.INCOMPATIBLE_UNITS);
     }
 
-    // Compatible conversions work at every level.
+    // Compatible conversions work at the fixed level.
     assertEquals(evalRender("convert(1in, px)", level(Patch.maxThreshold())), "96px");
   }
 
@@ -339,8 +371,15 @@ public class CompatPatchTest {
   public void testColorBlendAlpha() throws LessException {
     String raw = "multiply(rgba(255, 0, 0, 0.5), rgba(0, 0, 255, 0.25))";
 
-    // Legacy: the blend result is opaque.
-    assertEquals(evalRender(raw, new LessOptions()), "#000");
+    // Below the fixed level the call renders literally without
+    // evaluating (Patch.FUNCTION_CALL_IN_VALUE); the legacy opaque-blend
+    // result is reachable only with the patch forced on at the fixed
+    // level.
+    assertEquals(evalRender(raw, level(0)),
+        "multiply(rgba(255, 0, 0, .5), rgba(0, 0, 255, .25))");
+    LessOptions overridden = level(Patch.maxThreshold());
+    overridden.compatPatch(Patch.COLOR_BLEND_ALPHA);
+    assertEquals(evalRender(raw, overridden), "#000");
 
     // Fixed: the result keeps the larger input alpha.
     assertEquals(evalRender(raw, level(Patch.maxThreshold())), "rgba(0, 0, 0, .5)");
@@ -459,13 +498,108 @@ public class CompatPatchTest {
   public void testReplaceRegexGroups() throws LessException {
     String raw = "replace(\"abc 123\", \"([a-z]+) ([0-9]+)\", \"$2 $1\")";
 
-    // Legacy: the replacement is a regex replacement, group refs work.
-    String legacy = evalRenderExt(raw, new LessOptions());
+    // Below the fixed level the call renders literally without
+    // evaluating (Patch.FUNCTION_CALL_IN_VALUE); the legacy regex
+    // replacement is reachable only with the patch forced on at the
+    // fixed level.
+    String literal = evalRenderExt(raw, level(0));
+    assertTrue(literal.contains("\"$2 $1\""), literal);
+    assertTrue(literal.startsWith("replace("), literal);
+    LessOptions overridden = level(Patch.maxThreshold());
+    overridden.compatPatch(Patch.REPLACE_REGEX_GROUPS);
+    String legacy = evalRenderExt(raw, overridden);
     assertTrue(legacy.contains("123 abc"), legacy);
 
     // Fixed: the replacement is inserted literally.
     String fixed = evalRenderExt(raw, level(Patch.maxThreshold()));
     assertTrue(fixed.contains("$2 $1"), fixed);
+  }
+
+  @Test
+  public void testFunctionCallInValue() throws LessException {
+    // Value-position calls have two surfaces: the bare context renders
+    // them literally (no function table), the wired context evaluates
+    // them. Below the fixed level the wired context matches the bare
+    // context exactly; at the fixed level today's wired behavior holds.
+
+    // Standalone call: literal at level 0/1 with variables substituted
+    // in the arguments, evaluated at level 2.
+    assertEquals(evalRender("convert(1in, px)", level(0)), "convert(1in, px)");
+    assertEquals(evalRender("convert(1in, px)", level(1)), "convert(1in, px)");
+    assertEquals(evalRender("convert(1in, px)", level(Patch.maxThreshold())), "96px");
+
+    // A var-arg call renders with the variable substituted at level 0
+    // and evaluates at level 2; the wired level-0 render equals the
+    // bare level-0 render byte-for-byte.
+    String sheet = "@x: 1in;\n.a { a: convert(@x, px); }\n";
+    LessContext wired0 = new LessContext(level(0));
+    wired0.setCompiler(COMPILER);
+    String wired0Css = COMPILER.compile(sheet, wired0);
+    assertTrue(wired0Css.contains("a: convert(1in, px);"), wired0Css);
+    LessContext bare0 = new LessContext(level(0));
+    assertEquals(wired0Css, COMPILER.compile(sheet, bare0));
+
+    LessContext wiredMax = new LessContext(level(Patch.maxThreshold()));
+    wiredMax.setCompiler(COMPILER);
+    String wiredMaxCss = COMPILER.compile(sheet, wiredMax);
+    assertTrue(wiredMaxCss.contains("a: 96px;"), wiredMaxCss);
+
+    // The bare context is level-independent: level 0 and level 2 render
+    // the same bytes.
+    assertEquals(COMPILER.compile(sheet, bare0), COMPILER.compile(sheet, new LessContext(level(Patch.maxThreshold()))));
+
+    // url() is a value, not a math operand, at every level and in both
+    // contexts: the legacy parse reaches it as a plain value, the fixed
+    // parse rolls the operand back.
+    String urlSheet = ".c { c: url(x) / 100% 50%; }\n";
+    LessContext wired0Url = new LessContext(level(0));
+    wired0Url.setCompiler(COMPILER);
+    String wired0UrlCss = COMPILER.compile(urlSheet, wired0Url);
+    assertTrue(wired0UrlCss.contains("c: url(x) / 100% 50%;"), wired0UrlCss);
+    LessContext wiredMaxUrl = new LessContext(level(Patch.maxThreshold()));
+    wiredMaxUrl.setCompiler(COMPILER);
+    String wiredMaxUrlCss = COMPILER.compile(urlSheet, wiredMaxUrl);
+    assertEquals(wiredMaxUrlCss, wired0UrlCss);
+    assertEquals(COMPILER.compile(urlSheet, new LessContext(level(0))), wired0UrlCss);
+
+    // Calls in @media features: literal at level 0 (matching the bare
+    // context), evaluated at level 2.
+    String mediaSheet = "@media screen and (min-width: convert(20cm, px)) { .m { w: 1px; } }\n";
+    LessContext wired0Media = new LessContext(level(0));
+    wired0Media.setCompiler(COMPILER);
+    String wired0MediaCss = COMPILER.compile(mediaSheet, wired0Media);
+    assertTrue(wired0MediaCss.contains("min-width: convert(20cm, px)"), wired0MediaCss);
+    assertEquals(wired0MediaCss, COMPILER.compile(mediaSheet, new LessContext(level(0))));
+    LessContext wiredMaxMedia = new LessContext(level(Patch.maxThreshold()));
+    wiredMaxMedia.setCompiler(COMPILER);
+    String wiredMaxMediaCss = COMPILER.compile(mediaSheet, wiredMaxMedia);
+    assertTrue(wiredMaxMediaCss.contains("min-width: 755.90551181px"), wiredMaxMediaCss);
+
+    // Math-adjacent call at level 0: the call is not an operand, so the
+    // trailing operator fails the parse in both contexts (the observed
+    // level-0 behavior).
+    String mathSheet = ".b { b: convert(1in, px) + 1px; }\n";
+    assertIncompleteParse(mathSheet, level(0), true);
+    assertIncompleteParse(mathSheet, level(0), false);
+
+    // A per-site override restores the legacy literal rendering at the
+    // fully fixed level.
+    LessOptions overridden = level(Patch.maxThreshold());
+    overridden.compatPatch(Patch.FUNCTION_CALL_IN_VALUE);
+    assertEquals(evalRender("convert(1in, px)", overridden), "convert(1in, px)");
+  }
+
+  private void assertIncompleteParse(String source, LessOptions opts, boolean wired) throws LessException {
+    LessContext ctx = new LessContext(opts);
+    if (wired) {
+      ctx.setCompiler(COMPILER);
+    }
+    try {
+      COMPILER.compile(source, ctx);
+      fail("expected INCOMPLETE_PARSE");
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), SyntaxErrorType.INCOMPLETE_PARSE);
+    }
   }
 
   @Test

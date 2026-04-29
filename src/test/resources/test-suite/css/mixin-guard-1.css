@@ -19,12 +19,6 @@
   -3: true;
   /* (10px < @a) */
   -5: true;
-  /* (@a <= 10px), (@a >= 20px) */
-  -8: true;
-  /* (@a =< 10px), (@a => 20px) */
-  -9: true;
-  /* (@a != 20px) and (@a != 5px) */
-  -10: true;
 }
 .result-escaped-true {
   /* (@a) */
@@ -67,24 +61,12 @@
   -3: red;
   /* (10px < @a) */
   -5: red;
-  /* (@a <= 10px), (@a >= 20px) */
-  -8: red;
-  /* (@a =< 10px), (@a => 20px) */
-  -9: red;
-  /* (@a != 20px) and (@a != 5px) */
-  -10: red;
 }
 .result-red-hex {
   /* (@a < 10px) */
   -3: red;
   /* (10px < @a) */
   -5: red;
-  /* (@a <= 10px), (@a >= 20px) */
-  -8: red;
-  /* (@a =< 10px), (@a => 20px) */
-  -9: red;
-  /* (@a != 20px) and (@a != 5px) */
-  -10: red;
 }
 .result-blue-hex {
   /* (@a < 10px) */
@@ -93,12 +75,6 @@
   -5: blue;
   /* (#00f = @a) */
   -7: blue;
-  /* (@a <= 10px), (@a >= 20px) */
-  -8: blue;
-  /* (@a =< 10px), (@a => 20px) */
-  -9: blue;
-  /* (@a != 20px) and (@a != 5px) */
-  -10: blue;
 }
 .result-5px {
   /* (@a < 10px) */

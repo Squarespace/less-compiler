@@ -33,6 +33,9 @@ import java.util.concurrent.Future;
 
 import org.testng.annotations.Test;
 
+import com.squarespace.less.LessException;
+import com.squarespace.less.LessOptions;
+import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.LessTestBase;
 import com.squarespace.less.model.Stylesheet;
 
@@ -150,6 +153,7 @@ public class LessImporterTest extends LessTestBase {
   private static LessOptions buildOptions() {
     LessOptions opts = new LessOptions();
     opts.compress(true);
+    opts.compatLevel(Patch.maxThreshold());
     opts.tracing(false);
     opts.indent(4);
     opts.importOnce(true);

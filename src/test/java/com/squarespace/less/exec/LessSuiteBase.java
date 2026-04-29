@@ -62,8 +62,7 @@ public class LessSuiteBase {
   }
 
   protected Stylesheet parse(String source, Path importRoot, boolean safeMode) throws LessException {
-    LessOptions opts = new LessOptions();
-    opts.addImportPath(importRoot.toString());
+    LessOptions opts = fixedOpts(importRoot);
     LessContext ctx = new LessContext(opts);
     LessCompiler compiler = new LessCompiler();
     ctx.setCompiler(compiler);
@@ -77,10 +76,13 @@ public class LessSuiteBase {
   protected String compile(String source, Path importRoot, boolean tracing, Path parent, Path fileName)
       throws LessException {
 
-    // Setup the compiler
-    LessOptions opts = new LessOptions();
+    // Setup the compiler. The suite pins the fully-fixed surface: the
+    // released level-0 surface is pinned only by the compat tests.
+    // Function calls evaluate only at the fixed level
+    // (Patch.FUNCTION_CALL_IN_VALUE), so the options default to the
+    // fixed level instead of the released level 0.
+    LessOptions opts = fixedOpts(importRoot);
     opts.tracing(tracing);
-    opts.addImportPath(importRoot.toString());
 
     LessContext ctx = new LessContext(opts);
     LessCompiler compiler = new LessCompiler();
@@ -123,8 +125,7 @@ public class LessSuiteBase {
    * Parse source and return canonical representation of stylesheet.
    */
   protected String canonicalize(String source, Path importRoot, int indent) throws LessException {
-    LessOptions opts = new LessOptions();
-    opts.addImportPath(importRoot.toString());
+    LessOptions opts = fixedOpts(importRoot);
     LessContext ctx = new LessContext(opts);
     LessCompiler compiler = new LessCompiler();
     ctx.setCompiler(compiler);
@@ -133,6 +134,16 @@ public class LessSuiteBase {
     Buffer buf = new Buffer(2);
     sheet.repr(buf);
     return buf.toString();
+  }
+
+  /**
+   * Suite options at the fixed compat level (see the compile comment).
+   */
+  private static LessOptions fixedOpts(Path importRoot) {
+    LessOptions opts = new LessOptions();
+    opts.compatLevel(com.squarespace.less.compat.Patch.maxThreshold());
+    opts.addImportPath(importRoot.toString());
+    return opts;
   }
 
   /**
