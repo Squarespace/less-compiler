@@ -42,6 +42,32 @@ public class Colors {
   public static final RGBColor WHITE = new RGBColor(0xff, 0xff, 0xff);
 
   /**
+   * Returns true if the string is a valid CSS hex color:
+   * an optional '#' followed by 3 or 6 hex digits.
+   */
+  public static boolean isHexColor(String raw) {
+    int len = raw.length();
+    int start = 0;
+    if (start < len && raw.charAt(start) == Chars.NUMBER_SIGN) {
+      start++;
+    }
+    int digits = len - start;
+    if (digits != 3 && digits != 6) {
+      return false;
+    }
+    for (int i = start; i < len; i++) {
+      char ch = raw.charAt(i);
+      boolean isHex = (ch >= '0' && ch <= '9')
+          || (ch >= 'a' && ch <= 'f')
+          || (ch >= 'A' && ch <= 'F');
+      if (!isHex) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Parses a hexadecimal color string into the corresponding RGB color value.
    * Throws an exception if the string is invalid.
    */

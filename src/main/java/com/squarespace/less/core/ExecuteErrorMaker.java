@@ -85,6 +85,10 @@ public class ExecuteErrorMaker {
         .arg3(got.repr());
   }
 
+  public static LessErrorInfo invalidColor(Object obj) {
+    return error(ExecuteErrorType.INVALID_COLOR).arg0(obj);
+  }
+
   public static LessErrorInfo invalidOperation(Object op, Object type) {
     return error(ExecuteErrorType.INVALID_OPERATION1).arg0(op).arg1(type);
   }

@@ -17,6 +17,7 @@
 package com.squarespace.less.plugins;
 
 import static com.squarespace.less.core.ExecuteErrorMaker.incompatibleUnits;
+import static com.squarespace.less.core.ExecuteErrorMaker.invalidColor;
 import static com.squarespace.less.core.ExecuteErrorMaker.unknownUnit;
 
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import com.squarespace.less.exec.Function;
 import com.squarespace.less.exec.Registry;
 import com.squarespace.less.exec.SymbolTable;
 import com.squarespace.less.model.Anonymous;
+import com.squarespace.less.model.Colors;
 import com.squarespace.less.model.Dimension;
 import com.squarespace.less.model.Keyword;
 import com.squarespace.less.model.Node;
@@ -60,6 +62,11 @@ public class MiscFunctions implements Registry<Function> {
       str = str.copy();
       str.setEscape(true);
       String repr = env.context().render(str);
+      if (!Colors.isHexColor(repr)) {
+        // Avoid a raw IllegalArgumentException on bad lengths
+        // and silently mapping bad digits to #000.
+        throw new LessException(invalidColor(repr));
+      }
       return RGBColor.fromHex(repr);
     }
   };

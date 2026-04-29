@@ -150,6 +150,29 @@ public class CompatPatchTest {
   }
 
   @Test
+  public void testInvalidColorUngated() throws LessException {
+    // color('xyz') is a clean LESS error at every compat level: the
+    // guard is ungated and adds no Patch member, so level 0 must fail
+    // exactly like the fully-fixed level.
+    String source = ".c {\n"
+        + "  a: color('xyz');\n"
+        + "}\n";
+    assertInvalidColor(source, level(0));
+    assertInvalidColor(source, level(Patch.maxThreshold()));
+  }
+
+  private void assertInvalidColor(String source, LessOptions opts) throws LessException {
+    LessContext ctx = new LessContext(opts);
+    ctx.setCompiler(COMPILER);
+    try {
+      COMPILER.compile(source, ctx);
+      fail("expected INVALID_COLOR at every compat level");
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), ExecuteErrorType.INVALID_COLOR);
+    }
+  }
+
+  @Test
   public void testFormatUnknownSpecifierUngated() throws LessException {
     // Unknown %X specifiers pass through format() literally and consume
     // no argument, so %('100% off', 5) renders '100% off' instead of

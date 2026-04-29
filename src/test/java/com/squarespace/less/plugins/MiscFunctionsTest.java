@@ -42,6 +42,13 @@ public class MiscFunctionsTest extends LessTestBase {
     h.evalEquals("color('#fff')", color("#fff"));
     h.evalEquals("color('#010203')", color("#010203"));
     h.evalEquals("color('#aabbcc')", rgb(0xaa, 0xbb, 0xcc));
+
+    // Bad lengths or non-hex digits are LESS errors, not
+    // a crash or a silent #000.
+    h.evalFails("color('12')", INVALID_COLOR);
+    h.evalFails("color('#ffff')", INVALID_COLOR);
+    h.evalFails("color('xyz')", INVALID_COLOR);
+    h.evalFails("color('#12z')", INVALID_COLOR);
   }
 
   @Test
