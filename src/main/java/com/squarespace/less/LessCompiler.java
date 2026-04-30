@@ -106,6 +106,11 @@ public class LessCompiler {
     if (safeMode != null) {
       ctx.safeModeOverride(safeMode);
     }
+    // A prior parse or compile on a reused context against a shared
+    // preCache may have memoized one deep copy per imported path. Reset
+    // so this parse takes fresh copies; compile() reaches this entry
+    // point once per compile, which keeps its reset intact.
+    ctx.resetImporter();
     LessStats stats = ctx.stats();
     long started = stats.now();
     LessParser parser = new LessParser(ctx, raw, rootPath, fileName);
@@ -151,11 +156,6 @@ public class LessCompiler {
     // into this compile's output and suppress identical fresh warnings
     // via the stale dedupe keys.
     ctx.resetWarnings();
-    // A prior compile against a shared preCache may have memoized a
-    // deep copy per imported path. Reset so this compile takes its own
-    // copies instead of reusing (and further mutating) the previous
-    // compile's already evaluated trees.
-    ctx.resetImporter();
     Stylesheet sheet = parse0(raw, ctx, rootPath, fileName, safeMode);
     LessStats stats = ctx.stats();
     long started = stats.now();

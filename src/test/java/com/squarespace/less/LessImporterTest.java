@@ -17,6 +17,7 @@
 package com.squarespace.less;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -36,7 +37,11 @@ import org.testng.annotations.Test;
 import com.squarespace.less.LessException;
 import com.squarespace.less.LessOptions;
 import com.squarespace.less.compat.Patch;
+import com.squarespace.less.core.FlexList;
 import com.squarespace.less.core.LessTestBase;
+import com.squarespace.less.model.Node;
+import com.squarespace.less.model.NodeType;
+import com.squarespace.less.model.Ruleset;
 import com.squarespace.less.model.Stylesheet;
 
 
@@ -295,6 +300,46 @@ public class LessImporterTest extends LessTestBase {
         "each import site must render exactly one start marker: " + css);
     assertEquals(countOccurrences(css, "end   @import"), 2,
         "each import site must render exactly one end marker: " + css);
+  }
+
+  @Test
+  public void testParseResetsImportTakeOnReusedContext() throws LessException {
+    // The take() memo is per-compile, and parse() consumes imports
+    // through the same take(). A reused context must reset the memo
+    // before parsing too, not only at compile() time; otherwise the
+    // second parse receives the first parse's memoized deep copy and
+    // the two parses share node instances.
+    Map<Path, String> files = new HashMap<>();
+    files.put(path("lib.less"), ".lib { color: red; }\n");
+
+    LessOptions opts = new LessOptions();
+    opts.tracing(true);
+    opts.importOnce(false);
+    Map<Path, Stylesheet> preCache = new HashMap<>();
+    LessContext ctx = new LessContext(opts, new HashMapLessLoader(files), preCache);
+    ctx.setCompiler(COMPILER);
+
+    String source = "@import 'lib.less';\n";
+    Stylesheet first = COMPILER.parse(source, ctx, Paths.get("."), null);
+    Stylesheet second = COMPILER.parse(source, ctx, Paths.get("."), null);
+
+    // The imported ruleset comes from the memoized take() of the shared
+    // preCache. The second parse must hold a fresh copy, not the first
+    // parse's instance.
+    assertNotSame(findFirstRuleset(first), findFirstRuleset(second),
+        "the second parse must take a fresh copy of the imported sheet");
+  }
+
+  private static Ruleset findFirstRuleset(Stylesheet sheet) {
+    FlexList<Node> rules = sheet.block().rules();
+    int size = rules.size();
+    for (int i = 0; i < size; i++) {
+      Node node = rules.get(i);
+      if (node != null && node.type() == NodeType.RULESET) {
+        return (Ruleset) node;
+      }
+    }
+    throw new AssertionError("expected an imported ruleset in tree: " + sheet);
   }
 
   private static int countOccurrences(String text, String needle) {
