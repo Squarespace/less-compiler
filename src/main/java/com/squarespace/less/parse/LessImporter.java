@@ -160,6 +160,17 @@ public class LessImporter {
         block.appendNode(media);
       }
       if (context.options().tracing()) {
+        // Unless media features wrapped the import, this is the taken
+        // copy's own block, shared by every import site of the path in
+        // the compile. Markers must not accumulate on that copy: a later
+        // site would render this site's TRACE pair inside its own
+        // content. Build a fresh per-site block holding the same rule
+        // instances instead.
+        if (block == sheet.block()) {
+          Block site = new Block();
+          site.appendBlock(block);
+          block = site;
+        }
         block.prependNode(new ImportMarker(importNode, true));
         block.appendNode(new ImportMarker(importNode, false));
       }

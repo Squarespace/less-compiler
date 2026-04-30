@@ -268,6 +268,35 @@ public class LessImporterTest extends LessTestBase {
         "the second compile must carry only its own import markers, not the first compile's: " + second);
   }
 
+  @Test
+  public void testSharedTakeImportMarkersArePerSite() throws LessException {
+    // The take() memo hands every import site of a path the same
+    // per-compile copy. When tracing is on, each site's marker pair must
+    // go onto a fresh per-site block over that copy's rules; a site must
+    // not render an earlier site's TRACE pair inside its own content.
+    Map<Path, String> files = new HashMap<>();
+    files.put(path("lib.less"), ".lib { color: red; }\n");
+
+    LessOptions opts = new LessOptions();
+    opts.tracing(true);
+    opts.importOnce(false);
+    Map<Path, Stylesheet> preCache = new HashMap<>();
+    LessContext ctx = new LessContext(opts, new HashMapLessLoader(files), preCache);
+    ctx.setCompiler(COMPILER);
+
+    String source = "@import 'lib.less';\n.page { width: 1px; }\n@import 'lib.less';\n";
+    String css = COMPILER.compile(source, ctx, Paths.get("."), null, true);
+
+    // Two import statements, so the output must carry exactly two
+    // start/end pairs. A second site taking the same memoized copy would
+    // wrap this site's pair around the first site's pair, doubling the
+    // counts.
+    assertEquals(countOccurrences(css, "start   @import"), 2,
+        "each import site must render exactly one start marker: " + css);
+    assertEquals(countOccurrences(css, "end   @import"), 2,
+        "each import site must render exactly one end marker: " + css);
+  }
+
   private static int countOccurrences(String text, String needle) {
     int count = 0;
     int from = 0;
