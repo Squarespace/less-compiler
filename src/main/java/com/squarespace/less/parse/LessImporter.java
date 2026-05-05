@@ -261,7 +261,7 @@ public class LessImporter {
       if (path == null) {
         throw new LessException(importError(rawPath, "File cannot be found"));
       }
-      result = context.compiler().parse(loader.load(path), context, path.getParent(), path.getFileName());
+      result = context.compiler().parseImport(loader.load(path), context, path.getParent(), path.getFileName());
       // Share the parsed import across compiles (batch mode, harness
       // scans): in shared mode every consume path below hands out a
       // private deep copy, so a compile can never mutate the shared tree.

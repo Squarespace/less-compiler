@@ -74,29 +74,45 @@ public class LessCompiler {
    * (default: every legacy behavior active).
    */
   public Stylesheet parse(String raw, LessContext ctx) throws LessException {
-    return parse0(raw, ctx, null, null, null);
+    return parse0(raw, ctx, null, null, null, true);
   }
 
   /**
    * Parse source with the legacy safeMode flag.
    */
   public Stylesheet parse(String raw, LessContext ctx, boolean safeMode) throws LessException {
-    return parse0(raw, ctx, null, null, safeMode);
+    return parse0(raw, ctx, null, null, safeMode, true);
   }
 
   /**
    * Parse the source into a stylesheet, putting the parser into safe mode by default.
    */
   public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
-    return parse0(raw, ctx, rootPath, fileName, null);
+    return parse0(raw, ctx, rootPath, fileName, null, true);
   }
 
   public Stylesheet parse(String raw, LessContext ctx, Path rootPath, Path fileName, boolean safeMode) throws LessException {
-    return parse0(raw, ctx, rootPath, fileName, safeMode);
+    return parse0(raw, ctx, rootPath, fileName, safeMode, true);
   }
 
-  private Stylesheet parse0(String raw, LessContext ctx, Path rootPath, Path fileName, Boolean safeMode)
-      throws LessException {
+  /**
+   * Parse an imported stylesheet inside an ongoing top-level parse.
+   *
+   * <p>The importer consumes every not-yet-cached @import by recursing
+   * into this entry, so an imported sheet is a continuation of the
+   * current top-level parse, not a fresh one. Unlike the public
+   * parse() overloads this entry does not call ctx.resetImporter():
+   * resetting here would wipe the take() memo entries this compile has
+   * already recorded, and a later import site of an earlier path would
+   * take a second, non-identical deep copy. The reset runs exactly once
+   * per top-level parse or compile, at the outermost call.
+   */
+  public Stylesheet parseImport(String raw, LessContext ctx, Path rootPath, Path fileName) throws LessException {
+    return parse0(raw, ctx, rootPath, fileName, null, false);
+  }
+
+  private Stylesheet parse0(String raw, LessContext ctx, Path rootPath, Path fileName, Boolean safeMode,
+      boolean resetImporter) throws LessException {
     // The legacy safeMode boolean is a context-scoped recovery override
     // (never written into the caller's LessOptions, so a shared options
     // object cannot be poisoned by one boolean-flag caller, and it
@@ -108,9 +124,12 @@ public class LessCompiler {
     }
     // A prior parse or compile on a reused context against a shared
     // preCache may have memoized one deep copy per imported path. Reset
-    // so this parse takes fresh copies; compile() reaches this entry
-    // point once per compile, which keeps its reset intact.
-    ctx.resetImporter();
+    // once per top-level parse/compile so this parse takes fresh copies.
+    // Recursive import parses must not reset: they are part of the
+    // current top-level parse and would drop the copies it already took.
+    if (resetImporter) {
+      ctx.resetImporter();
+    }
     LessStats stats = ctx.stats();
     long started = stats.now();
     LessParser parser = new LessParser(ctx, raw, rootPath, fileName);
@@ -156,7 +175,7 @@ public class LessCompiler {
     // into this compile's output and suppress identical fresh warnings
     // via the stale dedupe keys.
     ctx.resetWarnings();
-    Stylesheet sheet = parse0(raw, ctx, rootPath, fileName, safeMode);
+    Stylesheet sheet = parse0(raw, ctx, rootPath, fileName, safeMode, true);
     LessStats stats = ctx.stats();
     long started = stats.now();
     String result = "";

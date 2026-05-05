@@ -19,6 +19,7 @@ package com.squarespace.less;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -39,9 +40,12 @@ import com.squarespace.less.LessOptions;
 import com.squarespace.less.compat.Patch;
 import com.squarespace.less.core.FlexList;
 import com.squarespace.less.core.LessTestBase;
+import com.squarespace.less.exec.SelectorUtils;
+import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Node;
 import com.squarespace.less.model.NodeType;
 import com.squarespace.less.model.Ruleset;
+import com.squarespace.less.model.Selector;
 import com.squarespace.less.model.Stylesheet;
 
 
@@ -348,6 +352,68 @@ public class LessImporterTest extends LessTestBase {
     // parse's instance.
     assertNotSame(findFirstRuleset(first), findFirstRuleset(second),
         "the second parse must take a fresh copy of the imported sheet");
+  }
+
+  @Test
+  public void testTakeMemoSurvivesDistinctImportsInOneCompile() throws LessException {
+    // parse0 resets the take() memo on entry, but it is also re-entered
+    // recursively for every @import not already in the shared preCache.
+    // A compile importing two distinct uncached paths wiped the memo
+    // when the second path was read, dropping the first path's copy, so
+    // the later site of the first path took a fresh deep copy instead
+    // of the same instance. Both sites of one path must alias within
+    // the same top-level parse (which parse() and compile() share).
+    Map<Path, String> files = new HashMap<>();
+    files.put(path("a.less"), ".from-a { a: 1; }\n");
+    files.put(path("b.less"), ".from-b { b: 2; }\n");
+
+    LessOptions opts = new LessOptions();
+    opts.tracing(true);
+    opts.importOnce(false);
+    Map<Path, Stylesheet> preCache = new HashMap<>();
+    LessContext ctx = new LessContext(opts, new HashMapLessLoader(files), preCache);
+    ctx.setCompiler(COMPILER);
+
+    String source = "@import 'a.less';\n@import 'b.less';\n@import 'a.less';\n";
+    Stylesheet sheet = COMPILER.parse(source, ctx, Paths.get("."), null);
+
+    List<Ruleset> fromA = findRulesetsNamed(sheet, ".from-a");
+    assertEquals(fromA.size(), 2, "a.less is imported at two sites");
+    assertSame(fromA.get(0), fromA.get(1),
+        "both a.less sites must share the same instance within one parse");
+  }
+
+  private static List<Ruleset> findRulesetsNamed(Stylesheet sheet, String name) {
+    List<Ruleset> found = new ArrayList<>();
+    collectRulesetsNamed(sheet.block(), name, found);
+    return found;
+  }
+
+  private static void collectRulesetsNamed(Block block, String name, List<Ruleset> found) {
+    FlexList<Node> rules = block.rules();
+    int size = rules.size();
+    for (int i = 0; i < size; i++) {
+      Node node = rules.get(i);
+      if (node == null) {
+        continue;
+      }
+      if (node.type() == NodeType.RULESET) {
+        if (rulesetName((Ruleset) node).equals(name)) {
+          found.add((Ruleset) node);
+        }
+      } else if (node.type() == NodeType.BLOCK) {
+        collectRulesetsNamed((Block) node, name, found);
+      }
+    }
+  }
+
+  private static String rulesetName(Ruleset ruleset) {
+    List<Selector> selectors = ruleset.selectors().selectors();
+    if (selectors.isEmpty()) {
+      return "";
+    }
+    List<String> parts = SelectorUtils.renderSelector(selectors.get(0));
+    return parts == null ? "" : String.join(" ", parts);
   }
 
   private static Ruleset findFirstRuleset(Stylesheet sheet) {
