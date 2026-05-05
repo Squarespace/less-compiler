@@ -69,11 +69,19 @@ Threshold 2 - legacy generation 2 (gated bug fixes; active below level 2):
   as single numbers; `em`/`ex` units are unaffected (`e` is an exponent only
   when a digit follows).
 - `FUNCTION_CALL_IN_VALUE` - a wired context (a compiler attached via
-  `ctx.setCompiler`) renders value-position function calls literally with
-  their arguments evaluated, and does not treat them as math operands,
-  matching the bare context (no function table), which is unaffected at
-  every level. At level 2 the calls evaluate against the function table.
-  Wired consumers that want evaluated calls compile at level 2.
+  `ctx.setCompiler`) renders function calls literally with their
+  arguments evaluated below level 2, at every position a call can
+  evaluate: value positions, font shorthand (either side of the `/`),
+  and directive values, matching the bare context (no function
+  table), which is unaffected at every level; calls are never math
+  operands. At level 2 the same calls evaluate against the function
+  table. Guards need level 2: `operand()` suppresses the call below
+  it, the condition fails to parse, and a parenthesized call that
+  survives stays an incomparable literal the comparison rejects with
+  UNCOMPARABLE_TYPE. Selectors never evaluate the node, so a call in
+  a parenthesized selector value renders as written in both contexts
+  at every level. Wired consumers that want evaluated calls compile
+  at level 2.
 
 At level 0 every legacy behavior is active. At level 1 the threshold-1
 patches are fixed. At level 2 every patch is fixed. The fix ladder is

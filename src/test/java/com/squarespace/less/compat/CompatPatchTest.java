@@ -62,6 +62,12 @@ public class CompatPatchTest {
     return COMPILER.compile(raw, new LessContext(opts));
   }
 
+  private String compileWired(String raw, LessOptions opts) throws LessException {
+    LessContext ctx = new LessContext(opts);
+    ctx.setCompiler(COMPILER);
+    return COMPILER.compile(raw, ctx);
+  }
+
   private static LessOptions level(int level) {
     LessOptions opts = new LessOptions();
     opts.compatLevel(level);
@@ -600,6 +606,109 @@ public class CompatPatchTest {
     } catch (LessException e) {
       assertEquals(e.primaryError().type(), SyntaxErrorType.INCOMPLETE_PARSE);
     }
+  }
+
+  @Test
+  public void testGuardCallNeedsLevelTwo() throws LessException {
+    // A guard condition containing a call only works wired at level 2.
+    // Below it, operand() suppresses the call, so the condition never
+    // finishes parsing (EXPECTED) in either context: the released
+    // surface has no output for this sheet. A call the parser does
+    // admit (extra parenthesized) stays a literal FunctionCall node
+    // that Condition compare rejects with UNCOMPARABLE_TYPE at every
+    // level; a wired level-2 compile evaluates it and the guard fires.
+    String source = "@w: 75%;\n"
+        + ".m(@v) when (percentage(@v) > 50%) { matched: yes; }\n"
+        + ".u { .m(@w); }\n";
+    assertGuardParseFailure(source, level(0), false);
+    assertGuardParseFailure(source, level(0), true);
+    assertGuardParseFailure(source, level(1), true);
+    assertTrue(compileWired(source, level(Patch.maxThreshold())).contains("matched: yes"));
+    assertGuardUncomparable(source, level(Patch.maxThreshold()), false);
+
+    String wrapped = "@w: 75%;\n"
+        + ".m(@v) when (((percentage(@v))) > 50%) { matched: yes; }\n"
+        + ".u { .m(@w); }\n";
+    assertGuardUncomparable(wrapped, level(0), false);
+    assertGuardUncomparable(wrapped, level(0), true);
+    assertTrue(compileWired(wrapped, level(Patch.maxThreshold())).contains("matched: yes"));
+  }
+
+  private void assertGuardParseFailure(String source, LessOptions opts, boolean wired) throws LessException {
+    LessContext ctx = new LessContext(opts);
+    if (wired) {
+      ctx.setCompiler(COMPILER);
+    }
+    try {
+      COMPILER.compile(source, ctx);
+      fail("expected the guard call to fail the parse");
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), SyntaxErrorType.EXPECTED);
+    }
+  }
+
+  private void assertGuardUncomparable(String source, LessOptions opts, boolean wired) throws LessException {
+    LessContext ctx = new LessContext(opts);
+    if (wired) {
+      ctx.setCompiler(COMPILER);
+    }
+    try {
+      COMPILER.compile(source, ctx);
+      fail("expected UNCOMPARABLE_TYPE");
+    } catch (LessException e) {
+      assertEquals(e.primaryError().type(), ExecuteErrorType.UNCOMPARABLE_TYPE);
+    }
+  }
+
+  @Test
+  public void testFontShorthandCallPosition() throws LessException {
+    // Font shorthand builds the call node through entity() at every
+    // level, on either side of the '/'. Below the fixed level the wired
+    // context renders it literally with its arguments evaluated,
+    // byte-identical to the bare context; at the fixed level it
+    // evaluates.
+    String source = ".c { font: convert(20cm, px)/2px; }\n";
+    String level0 = compileWired(source, level(0));
+    assertTrue(level0.contains("font: convert(20cm, px) / 2px;"), level0);
+    assertEquals(level0, compile(source, level(0)));
+    String fixed = compileWired(source, level(Patch.maxThreshold()));
+    assertTrue(fixed.contains("font: 755.90551181px / 2px;"), fixed);
+    assertTrue(compile(source, level(Patch.maxThreshold())).contains("font: convert(20cm, px) / 2px;"));
+
+    // The entity side of a font value rides the same funnel.
+    String entity = "@x: 1in;\n.c { font: 12px/30px convert(@x, px); }\n";
+    String e0 = compileWired(entity, level(0));
+    assertTrue(e0.contains("font: 12px/30px convert(1in, px);"), e0);
+    assertEquals(e0, compile(entity, level(0)));
+    assertTrue(compileWired(entity, level(Patch.maxThreshold())).contains("font: 12px/30px 96px;"));
+  }
+
+  @Test
+  public void testDirectiveValueCallPosition() throws LessException {
+    // A non-media directive value reaches function_call() through
+    // entity() at every level, so the same scope applies: literal below
+    // the fixed level (matching the bare context), evaluated at it.
+    // url() and alpha() are special-cased inside function_call() and
+    // never reach the eval gate as FunctionCall nodes.
+    String source = "@foo convert(1in, px);\n.a { color: red; }\n";
+    String level0 = compileWired(source, level(0));
+    assertTrue(level0.contains("@foo convert(1in, px);"), level0);
+    assertEquals(level0, compile(source, level(0)));
+    String fixed = compileWired(source, level(Patch.maxThreshold()));
+    assertTrue(fixed.contains("@foo 96px;"), fixed);
+    assertTrue(compile(source, level(Patch.maxThreshold())).contains("@foo convert(1in, px);"));
+  }
+
+  @Test
+  public void testSelectorCallPositionNotEvaluated() throws LessException {
+    // A call in a parenthesized selector value builds a FunctionCall
+    // node, but selectors never evaluate it, so the output is the same
+    // in both contexts at every level and the eval gate does not reach
+    // selectors.
+    String source = ".a (convert(1in, px)) { color: blue; }\n";
+    assertEquals(compile(source, level(0)), compileWired(source, level(0)));
+    assertEquals(compileWired(source, level(0)), compileWired(source, level(Patch.maxThreshold())));
+    assertEquals(compile(source, level(0)), compile(source, level(Patch.maxThreshold())));
   }
 
   @Test
