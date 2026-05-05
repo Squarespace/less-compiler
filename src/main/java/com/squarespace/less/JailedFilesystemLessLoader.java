@@ -45,8 +45,24 @@ public class JailedFilesystemLessLoader extends FilesystemLessLoader {
    */
   private final Path jailRoot;
 
+  /**
+   * Real path of the jail root. The root itself may sit behind symlinks
+   * (e.g. /tmp on macOS), so containment compares real paths on both
+   * sides. Falls back to the lexical root when it cannot be resolved.
+   */
+  private final Path realJailRoot;
+
   public JailedFilesystemLessLoader(Path jailRoot) {
     this.jailRoot = jailRoot.toAbsolutePath().normalize();
+    // The root is final and set once here, so resolve its real path once
+    // at construction instead of on every containment check.
+    Path real;
+    try {
+      real = this.jailRoot.toRealPath();
+    } catch (IOException e) {
+      real = this.jailRoot;
+    }
+    this.realJailRoot = real;
   }
 
   @Override
@@ -82,26 +98,13 @@ public class JailedFilesystemLessLoader extends FilesystemLessLoader {
     }
     try {
       Path real = candidate.toRealPath();
-      if (!real.startsWith(realJailRoot())) {
+      if (!real.startsWith(realJailRoot)) {
         return null;
       }
       return real;
     } catch (IOException e) {
       // Missing file or broken link.
       return null;
-    }
-  }
-
-  /**
-   * Real path of the jail root. The root itself may sit behind symlinks
-   * (e.g. /tmp on macOS), so containment compares real paths on both
-   * sides. Falls back to the lexical root when it cannot be resolved.
-   */
-  private Path realJailRoot() {
-    try {
-      return jailRoot.toRealPath();
-    } catch (IOException e) {
-      return jailRoot;
     }
   }
 
