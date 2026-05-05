@@ -158,8 +158,9 @@ public class MixinResolver {
     MixinParams params = mixin.params();
     ExecEnv env = matcher.callEnv().copy();
 
-    // Append the mixin definitions closure frames, if any.
-    ExecEnv defEnv = mixin.closure();
+    // Append this compile's closure for the definition, if captured.
+    Map<Mixin, ExecEnv> closures = matcher.closures();
+    ExecEnv defEnv = closures == null ? null : closures.get(mixin.original());
     if (defEnv != null) {
       env.append(defEnv.frames().copy());
     }

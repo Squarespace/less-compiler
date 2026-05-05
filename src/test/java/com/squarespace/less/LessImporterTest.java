@@ -148,6 +148,26 @@ public class LessImporterTest extends LessTestBase {
         ".child{font-size:12px}");
   }
 
+  @Test
+  public void testMixinClosurePerCompile() throws LessException {
+    // The mixin definition lives in a cached import. The definition-site
+    // closure must be captured per compile, not cached on the shared tree.
+    Map<Path, String> map = new HashMap<>();
+    map.put(path("lib.less"), ".use-leak() { p: @leak; }\n");
+    LessLoader loader = new HashMapLessLoader(map);
+    LessOptions opts = buildOptions();
+    opts.importOnce(false); // compile 2 must re-resolve the import from cache
+    LessContext ctx = new LessContext(opts, loader);
+    ctx.setCompiler(COMPILER);
+
+    String first = COMPILER.compile("@leak: red; @import 'lib.less'; .a { .use-leak(); }", ctx, path("."), null, true);
+    assertEquals(first, ".a{p:red}");
+
+    // Same context, second compile: must see this compile's @leak value.
+    String second = COMPILER.compile("@leak: blue; @import 'lib.less'; .a { .use-leak(); }", ctx, path("."), null, true);
+    assertEquals(second, ".a{p:blue}");
+  }
+
   private static Map<Path, String> buildMap() {
     Map<Path, String> map = new HashMap<>();
     map.put(path("base.less"), "@color: #abc; @import 'child.less';");

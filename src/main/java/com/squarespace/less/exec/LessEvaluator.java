@@ -20,7 +20,9 @@ import static com.squarespace.less.core.Constants.FALSE;
 import static com.squarespace.less.core.ExecuteErrorMaker.mixinRecurse;
 import static com.squarespace.less.core.ExecuteErrorMaker.mixinUndefined;
 
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.squarespace.less.LessContext;
 import com.squarespace.less.LessException;
@@ -72,6 +74,11 @@ public class LessEvaluator {
    * Context for the current compile.
    */
   protected final LessContext ctx;
+
+  // Closure env captured per mixin definition, per compile. Parse trees are
+  // cached and shared (import cache), so closures must not be stored on the
+  // nodes themselves: a stale closure would leak a previous compile's values.
+  private final Map<Mixin, ExecEnv> closures = new IdentityHashMap<>();
 
   /**
    * Options for the current compile.
@@ -293,10 +300,11 @@ public class LessEvaluator {
             break;
 
           case MIXIN:
-            // Register the closure on the original MIXIN.
-            Mixin mixin = (Mixin) ((Mixin)node).original();
-            if (mixin.closure() == null) {
-              mixin.closure(env);
+            // Capture the definition-site env on the first touch in this
+            // compile; a later compile recaptures it with fresh values.
+            Mixin defn = (Mixin) ((Mixin)node).original();
+            if (!closures.containsKey(defn)) {
+              closures.put(defn, env.copy());
             }
             break;
 
@@ -455,7 +463,7 @@ public class LessEvaluator {
       return null;
     }
 
-    MixinMatcher matcher = new MixinMatcher(env, call);
+    MixinMatcher matcher = new MixinMatcher(env, call, closures);
     MixinResolver resolver = ctx.mixinResolver();
     resolver.reset(matcher);
     env.resolveMixins(resolver);
@@ -525,10 +533,11 @@ public class LessEvaluator {
       return false;
     }
 
-    // If the closure has been set on this mixin, use it.
+    // If a closure was captured for this mixin definition in this compile,
+    // resolve variables against the definition-site scope.
     env = env.copy();
     Mixin original = (Mixin) mixin.original();
-    ExecEnv closureEnv = original.closure();
+    ExecEnv closureEnv = closures.get(original);
     if (closureEnv != null) {
       env.append(closureEnv.frames());
     }

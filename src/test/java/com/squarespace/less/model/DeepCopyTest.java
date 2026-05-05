@@ -514,7 +514,6 @@ public class DeepCopyTest extends LessTestBase {
     Mixin mixin = findFirst(a, Mixin.class);
     Mixin copyMixin = findFirst(copy, Mixin.class);
     assertNotSame(mixin, copyMixin);
-    assertNull(copyMixin.closure(), "copy closure must start unset");
     copyMixin.enter();
     copyMixin.exit();
     assertEquals(mixin.entryCount(), 0, "source entry count must stay zero");

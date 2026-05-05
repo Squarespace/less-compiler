@@ -19,7 +19,6 @@ package com.squarespace.less.model;
 import static com.squarespace.less.core.LessUtils.safeEquals;
 
 import com.squarespace.less.core.Buffer;
-import com.squarespace.less.exec.ExecEnv;
 
 
 /**
@@ -56,11 +55,6 @@ public class Mixin extends BlockNode {
   protected final Guard guard;
 
   /**
-   * Closure attached to this mixin definition.
-   */
-  protected ExecEnv closure;
-
-  /**
    * Number of times this mixin's body has been evaluated. Used to detect
    * and limit recursion.
    */
@@ -90,7 +84,6 @@ public class Mixin extends BlockNode {
   public Mixin copy() {
     Mixin result = new Mixin(name, params, guard, block.copy());
     result.copyStructure(this);
-    result.closure = closure;
     if (originalBlockNode != null) {
       result.originalBlockNode = originalBlockNode;
     }
@@ -99,9 +92,8 @@ public class Mixin extends BlockNode {
 
   /**
    * See {@link Node#deepCopy()}. Evaluation-time state is reset: the
-   * closure (a context-scoped environment) is dropped and the entry
-   * count starts at zero, so the copy behaves as if freshly parsed and
-   * can never taint the shared source tree.
+   * entry count starts at zero, so the copy behaves as if freshly parsed
+   * and can never taint the shared source tree.
    */
   @Override
   public Mixin deepCopy() {
@@ -156,20 +148,6 @@ public class Mixin extends BlockNode {
    */
   public void exit() {
     entryCount--;
-  }
-
-  /**
-   * Returns the closure environment attached to the mixin's definition.
-   */
-  public ExecEnv closure() {
-    return closure;
-  }
-
-  /**
-   * Sets the closure on this mixin definition.
-   */
-  public void closure(ExecEnv env) {
-    this.closure = env.copy();
   }
 
   /**

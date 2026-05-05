@@ -33,6 +33,7 @@ import com.squarespace.less.model.Argument;
 import com.squarespace.less.model.Block;
 import com.squarespace.less.model.Expression;
 import com.squarespace.less.model.GenericBlock;
+import com.squarespace.less.model.Mixin;
 import com.squarespace.less.model.MixinCall;
 import com.squarespace.less.model.MixinCallArgs;
 import com.squarespace.less.model.MixinParams;
@@ -52,9 +53,16 @@ public class MixinMatcher {
 
   private final MixinCallArgs mixinArgs;
 
+  private final Map<Mixin, ExecEnv> closures;
+
   public MixinMatcher(ExecEnv callEnv, MixinCall call) throws LessException {
+    this(callEnv, call, null);
+  }
+
+  public MixinMatcher(ExecEnv callEnv, MixinCall call, Map<Mixin, ExecEnv> closures) throws LessException {
     this.callEnv = callEnv;
     this.mixinCall = call;
+    this.closures = closures;
     MixinCallArgs args = call.args();
     this.mixinArgs = (MixinCallArgs) (args == null ? args : args.eval(callEnv));
   }
@@ -69,6 +77,13 @@ public class MixinMatcher {
 
   public ExecEnv callEnv() {
     return callEnv;
+  }
+
+  /**
+   * Per-compile mixin closures, or null when not evaluating.
+   */
+  public Map<Mixin, ExecEnv> closures() {
+    return closures;
   }
 
   /**
