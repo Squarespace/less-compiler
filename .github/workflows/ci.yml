@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 1.x]
+  pull_request:
+    branches: [main, 1.x]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: build & test (JDK ${{ matrix.java-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        java-version: ['11', '17']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java-version }}
+          cache: gradle
+
+      - name: Build and test
+        run: ./gradlew build jacocoTestReport --continue --console=plain
+
+      - name: Upload reports and jars
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-jdk${{ matrix.java-version }}-${{ github.ref_name }}
+          path: |
+            build/libs/
+            build/reports/tests/test/
+            build/test-results/test/
+            build/jacoco-report/
+          if-no-files-found: ignore
