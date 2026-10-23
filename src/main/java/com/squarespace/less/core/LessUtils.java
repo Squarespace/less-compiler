@@ -205,7 +205,7 @@ public class LessUtils {
   }
 
   /**
-   * Reads a UTF-8-encoded string into a string.
+   * Reads a UTF-8-encoded stream into a string.
    */
   public static String readStream(InputStream stream) throws IOException {
     try (InputStreamReader reader = new InputStreamReader(stream, Constants.UTF8)) {
